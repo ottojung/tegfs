@@ -47,7 +47,7 @@
      "\n# This file was automatically created by tegfs-add\n\n\n")))
 
 (define (tegfs-add/parse
-         <title> <tag...>
+         <target> <title> <tag...>
          <key...> <value...>
          <registry-file> <date>)
 
@@ -60,13 +60,13 @@
   (define tags (or <tag...> '()))
 
   (tegfs-add
-   <title> tags
+   <target> <title> tags
    key-value-pairs
    <registry-file> <date>
    input))
 
 (define (tegfs-add
-         <title> tags
+         <target> <title> tags
          key-value-pairs
          <registry-file> <date>
          input)
@@ -75,8 +75,17 @@
     (or <date> (get-date)))
 
   (define key-value-pairs1
-    (cons (cons "date" (string-append "[" date "]"))
-          key-value-pairs))
+    (cons
+     (cons "target" <target>)
+     (cons
+      (cons "date" (string-append "[" date "]"))
+      key-value-pairs)))
+
+  (unless <target>
+    (fatal "No target specified"))
+
+  (unless (file-or-directory-exists? <target>)
+    (fatal "Target ~s does not exist. Note that filepath must be relative to the root" <target>))
 
   (init-registry-file <registry-file>)
 

@@ -52,7 +52,8 @@
       FUNC : add ADDOPT+
       /      save
       /      status
-      ADDOPT : --title <title>
+      ADDOPT : --target <add-target>
+      /        --title <title>
       /        --tag <tag...>
       /        --key <key...> <value...>
       /        --registry-file <registry-file>
@@ -69,7 +70,7 @@
 
      (cond
       (add (tegfs-add/parse
-            <title> <tag...> <key...> <value...>
+            <add-target> <title> <tag...> <key...> <value...>
             <registry-file> <date>))
       (save (tegfs-save/parse))
       (status
