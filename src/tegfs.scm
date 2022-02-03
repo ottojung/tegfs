@@ -28,7 +28,7 @@
 %use (string-strip) "./euphrates/string-strip.scm"
 %use (list-intersperse) "./euphrates/list-intersperse.scm"
 
-%use (tegfs-add) "./add.scm"
+%use (tegfs-add/parse) "./add.scm"
 %use (fatal) "./fatal.scm"
 
 (define (main)
@@ -66,7 +66,7 @@
      (cd-to-root <root>)
 
      (cond
-      (add (tegfs-add
+      (add (tegfs-add/parse
             <title> <tag...> <key...> <value...>
             <registry-file> <date>))
       (status

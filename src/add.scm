@@ -15,6 +15,7 @@
 %run guile
 
 %var tegfs-add
+%var tegfs-add/parse
 
 %use (with-cli define-cli:show-help) "./euphrates/define-cli.scm"
 %use (system-environment-get) "./euphrates/system-environment.scm"
@@ -31,36 +32,53 @@
 
 %use (fatal) "./fatal.scm"
 
-(define (tegfs-add <title> <tag...>
-                   <key...> <value...>
-                   <registry-file> <date>)
-  (define (get-date)
-    (string-strip
-     (car
-      (system-re "date --utc '+%Y-%m-%d %H:%M:%S+0000'"))))
+(define (get-date)
+  (string-strip
+   (car
+    (system-re "date --utc '+%Y-%m-%d %H:%M:%S+0000'"))))
 
-  (define (init-registry-file <registry-file>)
-    (unless <registry-file>
-      (fatal "Parameter <registry-file> is required, but it is not set"))
+(define (init-registry-file <registry-file>)
+  (unless <registry-file>
+    (fatal "Parameter <registry-file> is required, but it is not set"))
 
-    (unless (file-or-directory-exists? <registry-file>)
-      (write-string-file
-       <registry-file>
-       "\n# This file was automatically created by tegfs-add\n\n\n")))
+  (unless (file-or-directory-exists? <registry-file>)
+    (write-string-file
+     <registry-file>
+     "\n# This file was automatically created by tegfs-add\n\n\n")))
 
-  (init-registry-file <registry-file>)
+(define (tegfs-add/parse
+         <title> <tag...>
+         <key...> <value...>
+         <registry-file> <date>)
 
   (define input
     (read-all-port (current-input-port)))
 
+  (define key-value-pairs
+    (list-zip (or <key...> '()) (or <value...> '())))
+
+  (define tags (or <tag...> '()))
+
+  (tegfs-add
+   <title> tags
+   key-value-pairs
+   <registry-file> <date>
+   input))
+
+(define (tegfs-add
+         <title> tags
+         key-value-pairs
+         <registry-file> <date>
+         input)
+
   (define date
     (or <date> (get-date)))
 
-  (define key-value-pairs
+  (define key-value-pairs1
     (cons (cons "date" (string-append "[" date "]"))
-          (list-zip (or <key...> '()) (or <value...> '()))))
+          key-value-pairs))
 
-  (define tags (or <tag...> '()))
+  (init-registry-file <registry-file>)
 
   (append-string-file
    <registry-file>
