@@ -31,7 +31,7 @@
 
   (define (cd-to-root root)
     (unless root
-      (fatal "Cannot cd into root because ~s env variable is not defined" ROOT_VAR_NAME))
+      (fatal "Cannot cd into root because $~a env variable is not defined" ROOT_VAR_NAME))
 
     (unless (file-or-directory-exists? root)
       (make-directories root))
