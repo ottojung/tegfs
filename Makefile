@@ -9,6 +9,9 @@ test1: build/add
 		--key SCHEDULED 3 \
 
 
+test2: build/add
+	TEGFS_ROOT=$(TEST_ROOT) src/scripts/save
+
 build/add: src/add.scm build
 	czempak install src/add.scm "$@"
 
