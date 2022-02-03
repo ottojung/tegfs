@@ -14,14 +14,7 @@
 
 %run guile
 
-%var cd-to-root
+%var custom-preferences-filename
 
-%use (root/p) "./root-p.scm"
-
-(define (cd-to-root)
-  (define root (root/p))
-
-  (unless (file-or-directory-exists? root)
-    (make-directories root))
-
-  (chdir root))
+(define custom-preferences-filename
+  ".tegfs-preferences")

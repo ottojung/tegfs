@@ -35,9 +35,19 @@
 %use (mimetype/extensions) "./euphrates/mimetype-extensions.scm"
 %use (file-delete) "./euphrates/file-delete.scm"
 %use (file-or-directory-exists?) "./euphrates/file-or-directory-exists-q.scm"
+%use (assoc-set-value) "./euphrates/assoc-set-value.scm"
+%use (remove-common-prefix) "./euphrates/remove-common-prefix.scm"
+%use (read-string-file) "./euphrates/read-string-file.scm"
+%use (eval-in-current-namespace) "./euphrates/eval-in-current-namespace.scm"
+%use (read-list) "./euphrates/read-list.scm"
+%use (range) "./euphrates/range.scm"
+%use (assoc-set-default) "./euphrates/assoc-set-default.scm"
+%use (comp) "./euphrates/comp.scm"
 
 %use (fatal) "./fatal.scm"
 %use (regfile-suffix) "./regfile-suffix.scm"
+%use (root/p) "./root-p.scm"
+%use (custom-preferences-filename) "./custom-preferences-filename.scm"
 
 %use (debug) "./euphrates/debug.scm"
 
@@ -90,6 +100,7 @@
       (string-prefix? "https://" string)))
 
 (define (download-temp string)
+  (dprintln "Downloading...")
   (let ((target (make-temporary-filename)))
     (unless (= 0 (system-fmt "curl ~a --output ~a" string target))
       (fatal "Could not download ~s" string))
@@ -99,29 +110,330 @@
   (let* ((ret (system-re "xdg-mime query filetype ~a" target))
          (mimetype (car ret))
          (code (cdr ret)))
-    (unless (= 0 code)
-      (fatal "Could not determine a file type of ~s" string))
-    (string-strip mimetype)))
+    (if (= 0 code)
+        (string-strip mimetype)
+        #f)))
 
 (define (a-media-mimetype? mimetype)
   (or (string-prefix? "video/" mimetype)
       (string-prefix? "audio/" mimetype)
       (string-prefix? "image/" mimetype)))
 
-(define (download directory string)
+(define (download directory string target-maybe)
   (let* ((temp-name (download-temp string))
          (mimetype (get-file-mimetype temp-name)))
     (if (a-media-mimetype? mimetype)
         (let* ((ext (get-mime-extension mimetype))
-               (new-name (get-random-filename directory ext)))
+               (new-name (or target-maybe
+                             (get-random-filename directory ext))))
           (rename-file temp-name new-name)
-          new-name)
+          (dprintln "Downloaded a media file")
+          (cons new-name mimetype))
         (begin
+          (dprintln "Downloaded some garbage, not media...")
           (file-delete temp-name)
           #f))))
 
 (define (a-real-filepath? string)
   (file-or-directory-exists? string))
+
+(define property-table
+  '((title . ,get-title)
+    (registry-file . ,get-registry-file)
+    (real-type . ,get-real-type)
+    (download? . ,get-download-flag)
+    (tags . ,get-tags)
+    (description . ,get-description)
+    (data-type . ,get-data-type)
+    (target-extension . ,get-target-extension)
+    (target . ,get-target)
+    (confirm . ,get-confirm)
+    (-temporary-file . #f)
+    (-text-content . #f)
+    (-selection-content . #f)
+    (-types-list . #f)))
+
+(define (initialize-state)
+  (map
+   (lambda (key setter)
+     (cons key #f))
+   property-table))
+
+(define (set-selection-content-preference state)
+  (define selection-content
+    (car (system-re "xclip -selection primary -out")))
+  (assoc-set-default '-selection-content selection-content state))
+
+(define (set-text-content-preference state)
+  (define text-content
+    (car (system-re "xclip -selection clipboard -out")))
+  (assoc-set-default '-text-content text-content state))
+
+(define (set-types-list-preference state)
+  (define types-list/str
+    (car (system-re "xclip -o -target TARGETS -selection clipboard")))
+  (define types-list
+    (string->lines types-list))
+  (assoc-set-default '-types-list types-list state))
+
+(define (state-set-generic-preferences state)
+  (set-data-type-preference
+   (download-maybe
+    (set-real-type-preference
+     (assoc-set-default
+      'confirm 'no
+      (assoc-set-default
+       'description '-none
+       (assoc-set-default
+        'download 'yes
+        state)))))))
+
+(define (get-custom-prefernences-code)
+  (define custom-file (append-posix-path (root/p) custom-preferences-filename))
+  (and (file-or-directory-exists? custom-file)
+       (with-input-from-file custom-file
+         (lambda _
+           (cons 'let (cons '() (read-list (current-input-port))))))))
+
+(define (state-set-custom-preferences preferences-code state)
+  (if preferences-code
+      (eval-in-current-namespace preferences-code)
+      state))
+
+(define (get-title)
+  (read-answer "Enter the title:"))
+
+(define (get-registry-file)
+  (define registry-files
+    (map (lambda (path)
+           (remove-common-prefix path (string-append (root/p) "/")))
+         (map car
+              (directory-files-rec/filter
+               (lambda (fullname)
+                 (string-suffix? regfile-suffix (basename fullname)))
+               (root/p)))))
+
+  (case (length registry-files)
+    ((0)
+     (let ((answer
+            (read-answer "No existing registry files found.\nEnter a name for a new one:")))
+       (string-append answer regfile-suffix)))
+    ((1) (car registry-files))
+    (else
+     (let* ((fzf-input (lines->string registry-files))
+            (ret (system-re "echo ~a | fzf" fzf-input))
+            (code (cdr ret))
+            (chosen (string-strip (car ret))))
+       (unless (= 0 code)
+         (fatal "Cancelled"))
+       chosen))))
+
+(define (get-real-type state)
+  (let loop ()
+    (define answer (string->symbol (read-answer "Real type: (data/link)")))
+    (case answer
+      ((data link) answer)
+      (else
+       (dprintln "Please answer either \"data\" or \"link\"")
+       (loop)))))
+
+(define (get-download-flag)
+  (let loop ()
+    (case (string->symbol (read-answer "Download the target? (yes/no)"))
+      ((yes Yes YES) 'yes)
+      ((no No NO) 'no)
+      (else
+       (dprintln "Please answer \"yes\" or \"no\"")
+       (loop)))))
+
+(define (get-tags)
+  (string->words (read-answer "Enter tags separated by whitespace:")))
+
+(define (set-real-type-preference state)
+  (define text-content (cdr (assoc '-text-content state)))
+  (define value
+    (if (string-null? text-content)
+        'data
+        'link))
+  (assoc-set-default 'real-type value state))
+
+(define (get-description)
+  (define answer (read-answer "Enter description: (-none/-selection/custom text)"))
+  (cond
+   ((member answer '("-none" "-selection")) (string->symbol answer))
+   (else answer)))
+
+;; (define (set-target-preference 
+
+(define (download-maybe state)
+  (define download? (cdr (assoc 'download? state)))
+  (define data-type (cdr (assoc 'data-type state)))
+  (define real-type (cdr (assoc 'real-type state)))
+  (define text-content (cdr (assoc '-text-content state)))
+  (define target (cdr (assoc 'target state)))
+  (define registry-file (cdr (assoc 'registry-file state)))
+  (define target-directory (and registry-file (dirname registry-file)))
+
+  (cond
+   ((and target-directory
+         (equal? 'link real-type)
+         (not data-type)
+         (equal? 'yes download?)
+         (a-weblink? text-content))
+    (let* ((temp-name (download-temp text-content)))
+      (assoc-set-value '-temporary-file temp-name state)))
+   (else state)))
+
+(define (set-data-type-preference state)
+  (define data-type (cdr (assoc 'data-type state)))
+  (define real-type (cdr (assoc 'real-type state)))
+  (define text-content (cdr (assoc '-text-content state)))
+  (define target (cdr (assoc 'target state)))
+  (define registry-file (cdr (assoc 'registry-file state)))
+  (define target-directory (and registry-file (dirname registry-file)))
+  (define -temporary-file (cdr (assoc '-temporary-file state)))
+
+  (cond
+   ((and -temporary-file (not data-type))
+    (let ((mimetype (get-file-mimetype -temporary-file)))
+      (if mimetype
+          (assoc-set-default 'data-type mimetype state)
+          (begin
+            (dprintln "Could not determine a file type of ~s" string)
+            state))))
+   (else state)))
+
+(define (set-extension-preference state)
+  (define data-type (cdr (assoc 'data-type state)))
+  (define real-type (cdr (assoc 'real-type state)))
+  (define text-content (cdr (assoc '-text-content state)))
+  (define target (cdr (assoc 'target state)))
+  (define registry-file (cdr (assoc 'registry-file state)))
+  (define target-directory (and registry-file (dirname registry-file)))
+  (define -temporary-file (cdr (assoc '-temporary-file state)))
+
+  (cond
+   ((and data-type)
+    (assoc-set-default 'target-extension (get-mime-extension data-type) state))
+   (else state)))
+
+(define (set-target-preference state)
+  (define data-type (cdr (assoc 'data-type state)))
+  (define real-type (cdr (assoc 'real-type state)))
+  (define text-content (cdr (assoc '-text-content state)))
+  (define target (cdr (assoc 'target state)))
+  (define registry-file (cdr (assoc 'registry-file state)))
+  (define target-directory (and registry-file (dirname registry-file)))
+  (define -temporary-file (cdr (assoc '-temporary-file state)))
+  (define target-extension (cdr (assoc 'target-extension state)))
+
+  (cond
+   ((and (not target) target-extension -temporary-file)
+    (let ((new-name (string-append -temporary-file target-extension)))
+      (rename-file -temporary-file new-name)
+      (assoc-set-default
+       'target new-name
+       (assoc-set-value
+        '-temporary-file new-name
+        state))))
+   (else state)))
+
+(define (get-data-type)
+  (define state (state/p))
+  (define types-list (cdr (assoc '-types-list state)))
+  (define types-list/str (lines->string types-list))
+
+  (let* ((ret (system-re "echo ~a | fzf" types-list/str))
+         (chosen (car ret))
+         (code (cdr ret)))
+    (unless (= 0 code)
+      (fatal "Cancelled"))
+    (string-strip chosen)))
+
+(define (get-target)
+  (read-answer "Enter target path relative to tegfs root: "))
+
+(define (get-target-extension)
+  (read-answer "Enter extension with a dot: "))
+
+(define (get-confirm)
+  (let loop ()
+    (case (string->symbol (read-answer "Is confirmation necessary? (yes/no)"))
+      ((yes Yes YES) 'yes)
+      ((no No NO) 'no)
+      (else
+       (dprintln "Please answer \"yes\" or \"no\"")
+       (loop)))))
+
+(define (index-to-key state i)
+  (if (< i 0) #f
+      (let loop ((state state) (i i))
+        (if (null? state) #f
+            (let* ((x (car state))
+                   (key (car x)))
+              (if (= 0 i) key
+                  (loop (cdr state) (- i 1))))))))
+
+(define (read-answer question)
+  (let loop ()
+    (define _ (dprintln question))
+    (define state (state/p))
+    (define answer (read-string-line))
+    (define num (string->number answer))
+    (if num
+        (let ((key (index-to-key state num)))
+          (if key
+              ((menu-callback) key)
+              (begin
+                (dprintln "Bad index ~s, must be one of the listed items" num)
+                (loop))))
+        answer)))
+
+(define (get-setter state-key)
+  (define got (assoc state-key property-table))
+  (and got (cdr got)))
+
+(define menu-callback
+  (make-parameter #f))
+
+(define state/p
+  (make-parameter #f))
+
+(define (set-by-key key state)
+  (define callback #f)
+  (define setter
+    (call-with-current-continuation
+     (lambda (k)
+       (set! callback k)
+       (get-setter key))))
+  (parameterize ((menu-callback callback))
+    (and setter
+         (assoc-set-value key (setter) state))))
+
+(define (print-state state)
+  (dprintln " Enter *number* to edit one of below:")
+  (for-each
+   (lambda (param i)
+     (when (get-setter (car param))
+       (dprintln "   ~a) ~a: ~a" (+ 1 i) (car param) (cdr param))))
+   state
+   (range (length state))))
+
+(define (eval-state-next set-preferences state0)
+  (define state (set-preferences state0))
+
+  (print-state state)
+  (newline) (newline)
+
+  (let loop ((cur state))
+    (if (null? cur) #f
+        (let* ((param (car cur))
+               (key (car param))
+               (value (cdr param)))
+          (if value
+              (loop (cdr cur))
+              (parameterize ((state/p state))
+                (set-by-key key state)))))))
 
 (define (tegfs-save/parse)
   (define _
@@ -131,92 +443,66 @@
       (unless (= 0 (system-fmt "command -v xdg-mime 1>/dev/null 2>/dev/null"))
         (fatal "Save requires 'xdg-mime' program, but it is not available"))))
 
-  (define registry-files
-    (map car
-         (directory-files-rec/filter
-          (lambda (fullname)
-            (string-suffix? regfile-suffix (basename fullname)))
-          ".")))
+  (define preferences-code (get-custom-prefernences-code))
+  (define set-preferences
+    (comp state-set-generic-preferences
+          (state-set-custom-preferences preferences-code)))
 
-  (define chosen-registry-file
-    (case (length registry-files)
-      ((0)
-       (dprintln "No existing registry files found.")
-       (dprintln "Enter a name for a new one:")
-       (let ((new-filename
-              (string-append (symbol->string (read)) regfile-suffix)))
-         (write-string-file
-          new-filename
-          "\n # This file was automatically created by tagfs-save command\n\n\n")
-         new-filename))
-      ((1) (car registry-files))
-      (else
-       (let* ((fzf-input (lines->string registry-files))
-              (ret (system-re "echo ~a | fzf" fzf-input))
-              (code (cdr ret))
-              (chosen (string-strip (car ret))))
-         (unless (= 0 code)
-           (fatal "Cancelled"))
-         chosen))))
+  (define state
+    (let loop ((state (initialize-state)))
+      (let ((next (eval-state-next set-preferences state)))
+        (if next (loop next) state))))
 
-  (define target-directory
-    (dirname chosen-registry-file))
+  ;; (define chosen-type
+  ;;   (let* ((ret (system-re "echo ~a | fzf" xclip-types/str))
+  ;;          (chosen (car ret))
+  ;;          (code (cdr ret)))
+  ;;     (unless (= 0 code)
+  ;;       (fatal "Cancelled"))
+  ;;     (string-strip chosen)))
 
-  (define xclip-types/str
-    (car (system-re "xclip -o -target TARGETS -selection clipboard")))
-  (define xclip-types/lines
-    (string->lines xclip-types/str))
+  ;; (dprintln "You have chosen ~s" chosen-type)
 
-  (define chosen-type
-    (let* ((ret (system-re "echo ~a | fzf" xclip-types/str))
-           (chosen (car ret))
-           (code (cdr ret)))
-      (unless (= 0 code)
-        (fatal "Cancelled"))
-      (string-strip chosen)))
+  ;; (define real-type0
+  ;;   (cond
+  ;;    ((string-type? chosen-type) "text")
+  ;;    (else #f)))
 
-  (dprintln "You have chosen ~s" chosen-type)
+  ;; (if real-type0
+  ;;     (dprintln "I think that is ~s" real-type0)
+  ;;     (dprintln "I don't know what type that is, must assume it's a generic file"))
 
-  (define real-type0
-    (cond
-     ((string-type? chosen-type) "text")
-     (else #f)))
+  ;; (dprintln "To change type information, enter \"!\"")
 
-  (if real-type0
-      (dprintln "I think that is ~s" real-type0)
-      (dprintln "I don't know what type that is, must assume it's a generic file"))
+  ;; (define input1
+  ;;   (read-title))
 
-  (dprintln "To change type information, enter \"!\"")
+  ;; (define-values (title real-type)
+  ;;   (if (equal? input1 "!")
+  ;;       (begin
+  ;;         (dprintln "Enter correct type: ")
+  ;;         (let ((real (read-string-line)))
+  ;;           (dprintln "OK, changed the type") ;; FIXME: what if I dont know such type???
+  ;;           (values (read-title) real)))
+  ;;       (values input1 real-type0)))
 
-  (define input1
-    (read-title))
+  ;; (define tags (read-tags))
 
-  (define-values (title real-type)
-    (if (equal? input1 "!")
-        (begin
-          (dprintln "Enter correct type: ")
-          (let ((real (read-string-line)))
-            (dprintln "OK, changed the type") ;; FIXME: what if I dont know such type???
-            (values (read-title) real)))
-        (values input1 real-type0)))
+  ;; (define content
+  ;;   (get-clipboard-content real-type chosen-type target-directory))
 
-  (define tags (read-tags))
+  ;; (debug "content: ~s" content)
 
-  (define content
-    (get-clipboard-content real-type chosen-type target-directory))
+  ;; (define target
+  ;;   (cond
+  ;;    ((a-weblink? content)
+  ;;     (download target-directory content))
+  ;;    ((a-real-filepath? content)
+  ;;     content)
+  ;;    (else
+  ;;     (fatal "What you copied is neither a file nor a link. Don't know what to do"))))
 
-  (debug "content: ~s" content)
-
-  (define target
-    (cond
-     ((a-weblink? content)
-      (download target-directory content))
-     ((a-real-filepath? content)
-      content)
-     (else
-      (fatal "What you copied is neither a file nor a link. Don't know what to do"))))
-
-  (debug "target: ~s" target)
+  ;; (debug "target: ~s" target)
 
   (dprintln "Saved!"))
 

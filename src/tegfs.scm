@@ -58,6 +58,9 @@
      (when --help
        (define-cli:show-help))
 
+     (unless <root>
+       (fatal "Root is unknown because $~a env variable is not defined" ROOT_VAR_NAME))
+
      (parameterize ((root/p <root>))
        (cond
         (add (tegfs-add/parse
