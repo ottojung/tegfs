@@ -29,6 +29,7 @@
 %use (list-intersperse) "./euphrates/list-intersperse.scm"
 
 %use (tegfs-add/parse) "./add.scm"
+%use (tegfs-save/parse) "./save.scm"
 %use (fatal) "./fatal.scm"
 
 (define (main)
@@ -49,6 +50,7 @@
       MAIN : ROOT* FUNC
       /      --help
       FUNC : add ADDOPT+
+      /      save
       /      status
       ADDOPT : --title <title>
       /        --tag <tag...>
@@ -69,6 +71,7 @@
       (add (tegfs-add/parse
             <title> <tag...> <key...> <value...>
             <registry-file> <date>))
+      (save (tegfs-save/parse))
       (status
        (display "NOT IMPLEMENTED YET") (newline)
        (exit 1))

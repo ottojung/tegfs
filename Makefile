@@ -10,7 +10,7 @@ test1: build/tegfs
 
 
 test2: build/tegfs
-	TEGFS_ROOT=$(TEST_ROOT) src/scripts/save
+	TEGFS_ROOT=$(TEST_ROOT) build/tegfs save
 
 build/tegfs: src/*.scm build
 	czempak install src/tegfs.scm "$@"
