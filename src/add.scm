@@ -67,19 +67,19 @@
 
 (define (tegfs-add
          <target> <title> tags
-         key-value-pairs
+         key-value-pairs0
          <registry-file> <date>
          input)
 
   (define date
     (or <date> (get-date)))
 
-  (define key-value-pairs1
+  (define key-value-pairs
     (cons
      (cons "target" <target>)
      (cons
       (cons "date" (string-append "[" date "]"))
-      key-value-pairs)))
+      key-value-pairs0)))
 
   (unless <target>
     (fatal "No target specified"))
