@@ -101,7 +101,7 @@
          (code (cdr ret)))
     (unless (= 0 code)
       (fatal "Could not determine a file type of ~s" string))
-    mimetype))
+    (string-strip mimetype)))
 
 (define (a-media-mimetype? mimetype)
   (or (string-prefix? "video/" mimetype)
