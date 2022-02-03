@@ -18,10 +18,11 @@
 
 %use (system-fmt) "./euphrates/system-fmt.scm"
 %use (system-re) "./euphrates/system-re.scm"
-%use (system-re) "./euphrates/system-re.scm"
+%use (write-string-file) "./euphrates/write-string-file.scm"
 %use (dprintln) "./euphrates/dprintln.scm"
 %use (directory-files-rec/filter) "./euphrates/directory-files-rec-filter.scm"
 %use (lines->string) "./euphrates/lines-to-string.scm"
+%use (string-strip) "./euphrates/string-strip.scm"
 
 %use (fatal) "./fatal.scm"
 %use (regfile-suffix) "./regfile-suffix.scm"
@@ -45,13 +46,18 @@
       ((0)
        (dprintln "No existing registry files found.")
        (dprintln "Enter a name for a new one:")
-       (string-append (symbol->string (read)) regfile-suffix))
+       (let ((new-filename
+              (string-append (symbol->string (read)) regfile-suffix)))
+         (write-string-file
+          new-filename
+          "\n # This file was automatically created by tagfs-save command\n\n\n")
+         new-filename))
       ((1) (car registry-files))
       (else
        (let* ((fzf-input (lines->string registry-files))
               (ret (system-re "echo ~a | fzf" fzf-input))
               (code (cdr ret))
-              (chosen (car ret)))
+              (chosen (string-strip (car ret))))
          (unless (= 0 code)
            (fatal "Cancelled"))
          chosen))))
