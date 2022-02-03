@@ -35,8 +35,8 @@
      (MAIN
       MAIN : ROOT* FUNC
       /      --help
-      FUNC : --add ADDOPT+
-      /      --status
+      FUNC : add ADDOPT+
+      /      status
       ADDOPT : --title <title>
       /        --tag <tag...>
       /        --key <key...> <value...>
@@ -53,10 +53,10 @@
      (cd-to-root <root>)
 
      (cond
-      (--add (tegfs-add
+      (add (tegfs-add
             <title> <tag...> <key...> <value...>
             <registry-file> <date>))
-      (--status
+      (status
        (display "NOT IMPLEMENTED YET") (newline)
        (exit 1))
       (else
