@@ -85,12 +85,17 @@
   (define date
     (or <date> (get-date)))
 
-  (define key-value-pairs
+  (define key-value-pairs1
     (cons
-     (cons "target" <target>)
-     (cons
-      (cons "date" (string-append "[" date "]"))
-      key-value-pairs0)))
+     (cons "date" (string-append "[" date "]"))
+     key-value-pairs0))
+
+  (define key-value-pairs
+    (if <target>
+        (cons
+         (cons "target" <target>)
+         key-value-pairs1)
+        key-value-pairs1))
 
   (define registry-file
     (init-registry-file <registry-file>))
@@ -98,13 +103,11 @@
   (define registry-dir
     (dirname registry-file))
 
-  (unless <target>
-    (fatal "No target specified"))
-
-  (let ((target-full (append-posix-path registry-dir <target>)))
-    (unless (or (file-or-directory-exists? target-full)
-                (a-weblink? <target>))
-      (fatal "Target ~s does not exist. Note that filepath must be relative to the root" <target>)))
+  (when <target>
+    (let ((target-full (append-posix-path registry-dir <target>)))
+      (unless (or (file-or-directory-exists? target-full)
+                  (a-weblink? <target>))
+        (fatal "Target ~s does not exist. Note that filepath must be relative to the root" <target>))))
 
   (append-string-file
    registry-file
