@@ -528,7 +528,12 @@
         -text-content))
 
   (when -temporary-file
-    (let ((new-name (append-posix-path registry-dir <target>)))
+    (let* ((new-name0 (append-posix-path registry-dir <target>))
+           (new-name (if (file-or-directory-exists? new-name0)
+                         (append-posix-path
+                          registry-dir
+                          (string-append (get-random-basename) <target>))
+                         new-name0)))
       (rename-file -temporary-file new-name)))
 
   (tegfs-add
