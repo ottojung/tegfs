@@ -43,6 +43,8 @@
 %use (range) "./euphrates/range.scm"
 %use (assoc-set-default) "./euphrates/assoc-set-default.scm"
 %use (comp) "./euphrates/comp.scm"
+%use (path-without-extension) "./euphrates/path-without-extension.scm"
+%use (path-get-basename) "./euphrates/path-get-basename.scm"
 
 %use (fatal) "./fatal.scm"
 %use (regfile-suffix) "./regfile-suffix.scm"
@@ -291,8 +293,11 @@
   (define registry-file (cdr (assoc 'registry-file state)))
   (define target-directory (and registry-file (dirname registry-file)))
   (define -temporary-file (cdr (assoc '-temporary-file state)))
+  (define download? (cdr (assoc 'download? state)))
 
   (cond
+   ((and (equal? 'link real-type) (a-weblink? text-content) (equal? 'no download?))
+    (assoc-set-default 'data-type 'ignore state))
    ((and -temporary-file (not data-type))
     (let ((mimetype (get-file-mimetype -temporary-file)))
       (if mimetype
@@ -309,14 +314,33 @@
   (define registry-file (cdr (assoc 'registry-file state)))
   (define target-directory (and registry-file (dirname registry-file)))
   (define -temporary-file (cdr (assoc '-temporary-file state)))
+  (define download? (cdr (assoc 'download? state)))
 
   (cond
+   ((and (equal? 'link real-type) (a-weblink? text-content) (equal? 'no download?))
+    (assoc-set-default 'target-extension 'ignore state))
    ((and data-type)
     (assoc-set-default 'target-extension (get-mime-extension data-type) state))
    (else state)))
 
 (define (set-target-basename-preference state)
-  (assoc-set-default 'target-basename (get-random-basename) state))
+  (define data-type (cdr (assoc 'data-type state)))
+  (define real-type (cdr (assoc 'real-type state)))
+  (define text-content (cdr (assoc '-text-content state)))
+  (define registry-file (cdr (assoc 'registry-file state)))
+  (define target-directory (and registry-file (dirname registry-file)))
+  (define -temporary-file (cdr (assoc '-temporary-file state)))
+  (define download? (cdr (assoc 'download? state)))
+
+  (cond
+   ((and (not (a-weblink? text-content))
+         (equal? 'link real-type))
+    (let ((name
+           (path-get-basename
+            (path-without-extension text-content))))
+      (assoc-set-default 'target-basename name state)))
+   (else
+    (assoc-set-default 'target-basename (get-random-basename) state))))
 
 (define (get-data-type edit?)
   (define state (state/p))
