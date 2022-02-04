@@ -29,8 +29,10 @@
 %use (system-re) "./euphrates/system-re.scm"
 %use (string-strip) "./euphrates/string-strip.scm"
 %use (list-intersperse) "./euphrates/list-intersperse.scm"
+%use (append-posix-path) "./euphrates/append-posix-path.scm"
 
 %use (fatal) "./fatal.scm"
+%use (root/p) "./root-p.scm"
 
 (define (get-date)
   (string-strip
@@ -38,13 +40,17 @@
     (system-re "date --utc '+%Y-%m-%d %H:%M:%S+0000'"))))
 
 (define (init-registry-file <registry-file>)
-  (unless <registry-file>
+  (define registry-file (append-posix-path (root/p) <registry-file>))
+
+  (unless registry-file
     (fatal "Parameter <registry-file> is required, but it is not set"))
 
-  (unless (file-or-directory-exists? <registry-file>)
+  (unless (file-or-directory-exists? registry-file)
     (write-string-file
-     <registry-file>
-     "\n# This file was automatically created by tegfs-add\n\n\n")))
+     registry-file
+     "\n# This file was automatically created by tegfs-add\n\n\n"))
+
+  registry-file)
 
 (define (tegfs-add/parse
          <target> <title> <tag...>
@@ -85,12 +91,13 @@
     (fatal "No target specified"))
 
   (unless (file-or-directory-exists? <target>)
-    (fatal "Target ~s does not exist. Note that filepath must be relative to the root" <target>))
+    (fatal "Target ~s does not exist" <target>))
 
-  (init-registry-file <registry-file>)
+  (define registry-file
+    (init-registry-file <registry-file>))
 
   (append-string-file
-   <registry-file>
+   registry-file
    (with-output-to-string
      (lambda ()
        (newline)

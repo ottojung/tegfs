@@ -31,18 +31,10 @@
 %use (tegfs-add/parse) "./add.scm"
 %use (tegfs-save/parse) "./save.scm"
 %use (fatal) "./fatal.scm"
+%use (root/p) "./root-p.scm"
 
 (define (main)
   (define ROOT_VAR_NAME "TEGFS_ROOT")
-
-  (define (cd-to-root root)
-    (unless root
-      (fatal "Cannot cd into root because $~a env variable is not defined" ROOT_VAR_NAME))
-
-    (unless (file-or-directory-exists? root)
-      (make-directories root))
-
-    (chdir root))
 
   (parameterize ((current-program-path/p "tegfs"))
     (with-cli
@@ -66,18 +58,17 @@
      (when --help
        (define-cli:show-help))
 
-     (cd-to-root <root>)
-
-     (cond
-      (add (tegfs-add/parse
-            <add-target> <title> <tag...> <key...> <value...>
-            <registry-file> <date>))
-      (save (tegfs-save/parse))
-      (status
-       (display "NOT IMPLEMENTED YET") (newline)
-       (exit 1))
-      (else
-       (display "Impossible") (newline)
-       (exit 1))))))
+     (parameterize ((root/p <root>))
+       (cond
+        (add (tegfs-add/parse
+              <add-target> <title> <tag...> <key...> <value...>
+              <registry-file> <date>))
+        (save (tegfs-save/parse))
+        (status
+         (display "NOT IMPLEMENTED YET") (newline)
+         (exit 1))
+        (else
+         (display "Impossible") (newline)
+         (exit 1)))))))
 
 (main)
