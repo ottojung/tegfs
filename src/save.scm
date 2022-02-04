@@ -418,9 +418,7 @@
    state
    (range (length state))))
 
-(define (eval-state-next set-preferences state0)
-  (define state (set-preferences state0))
-
+(define (eval-state-next state)
   (print-state state)
   (newline) (newline)
 
@@ -433,6 +431,12 @@
               (loop (cdr cur))
               (parameterize ((state/p state))
                 (set-by-key key state)))))))
+
+(define (loop-state set-preferences initial)
+  (let loop ((current initial))
+    (let* ((state (set-preferences current))
+           (next (eval-state-next state)))
+      (if next (loop next) state))))
 
 (define state-set-generic-preferences
   (comp
@@ -504,9 +508,7 @@
           (state-set-custom-preferences preferences-code)))
 
   (define state
-    (let loop ((state (initialize-state)))
-      (let ((next (eval-state-next set-preferences state)))
-        (if next (loop next) state))))
+    (loop-state set-preferences (initialize-state)))
 
   ;; (dprintln "FINAL STATE:\n~s" state)
 
