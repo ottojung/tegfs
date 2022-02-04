@@ -48,6 +48,7 @@
 %use (regfile-suffix) "./regfile-suffix.scm"
 %use (root/p) "./root-p.scm"
 %use (custom-preferences-filename) "./custom-preferences-filename.scm"
+%use (a-weblink?) "./a-weblink-q.scm"
 
 %use (debug) "./euphrates/debug.scm"
 
@@ -94,10 +95,6 @@
       (system-fmt "xclip -selection clipboard -target ~a -out > ~a"
                   chosen-type target)
       target))))
-
-(define (a-weblink? string)
-  (or (string-prefix? "http://" string)
-      (string-prefix? "https://" string)))
 
 (define (dump-xclip-temp data-type)
   (dprintln "Dumping xclip...")
