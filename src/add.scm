@@ -70,7 +70,9 @@
    <target> <title> tags
    key-value-pairs
    <registry-file> <date>
-   input))
+   input)
+
+  (display "Added!\n"))
 
 (define (tegfs-add
          <target> <title> tags
@@ -135,6 +137,4 @@
          (unless (string-suffix? "\n" input)
            (newline))
          (display "  #+END_SRC text") (newline))
-       (newline))))
-
-  (display "Added!\n"))
+       (newline)))))
