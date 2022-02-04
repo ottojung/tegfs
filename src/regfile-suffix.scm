@@ -16,4 +16,4 @@
 
 %var regfile-suffix
 
-(define regfile-suffix ".tegfs.org")
+(define regfile-suffix ".tegfs.yaml")

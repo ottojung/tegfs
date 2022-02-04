@@ -30,6 +30,8 @@
 %use (string-strip) "./euphrates/string-strip.scm"
 %use (list-intersperse) "./euphrates/list-intersperse.scm"
 %use (append-posix-path) "./euphrates/append-posix-path.scm"
+%use (words->string) "./euphrates/words-to-string.scm"
+%use (string->lines) "./euphrates/string-to-lines.scm"
 
 %use (fatal) "./fatal.scm"
 %use (root/p) "./root-p.scm"
@@ -38,7 +40,7 @@
 (define (get-date)
   (string-strip
    (car
-    (system-re "date --utc '+%Y-%m-%d %H:%M:%S+0000'"))))
+    (system-re "date --utc '+%Y-%m-%dT%H:%M:%S+0000'"))))
 
 (define (init-registry-file <registry-file>)
   (define registry-file (append-posix-path (root/p) <registry-file>))
@@ -85,17 +87,12 @@
   (define date
     (or <date> (get-date)))
 
-  (define key-value-pairs1
-    (cons
-     (cons "date" (string-append "[" date "]"))
-     key-value-pairs0))
-
   (define key-value-pairs
     (if <target>
         (cons
          (cons "target" <target>)
-         key-value-pairs1)
-        key-value-pairs1))
+         key-value-pairs0)
+        key-value-pairs0))
 
   (define registry-file
     (init-registry-file <registry-file>))
@@ -112,37 +109,37 @@
   (append-string-file
    registry-file
    (with-output-to-string
-     (lambda ()
+     (lambda _
        (newline)
+       (display "- title: ")
+       (write (or <title> 'null)) (newline)
 
-       (display "*")
-       (when <title>
-         (display " ")
-         (display <title>))
+       (when date
+         (display "  date: ")
+         (display date)
+         (newline))
+
        (unless (null? tags)
-         (display " ")
-         (display ":")
-         (display
-          (apply string-append (list-intersperse ":" tags)))
-         (display ":"))
-       (newline)
+         (display "  tags: ")
+         (display (words->string tags))
+         (newline))
 
        (unless (null? key-value-pairs)
-         (display "  :PROPERTIES:") (newline)
          (for-each
           (lambda (pair)
-            (display "  :")
+            (display "  ")
             (display (car pair))
             (display ": ")
-            (display (cdr pair))
+            (write (cdr pair))
             (newline))
-          key-value-pairs)
-         (display "  :END:") (newline))
+          key-value-pairs))
 
        (unless (or (not input) (string-null? input))
-         (display "  #+BEGIN_SRC text") (newline)
-         (display input)
-         (unless (string-suffix? "\n" input)
-           (newline))
-         (display "  #+END_SRC text") (newline))
+         (display "  description: |2") (newline)
+         (for-each
+          (lambda (line)
+            (display "    ")
+            (display line)
+            (newline))
+          (string->lines input)))
        (newline)))))
