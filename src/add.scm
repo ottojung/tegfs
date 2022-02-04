@@ -91,10 +91,13 @@
   (define registry-file
     (init-registry-file <registry-file>))
 
+  (define registry-dir
+    (dirname registry-file))
+
   (unless <target>
     (fatal "No target specified"))
 
-  (let ((target-full (append-posix-path (root/p) <target>)))
+  (let ((target-full (append-posix-path registry-dir <target>)))
     (unless (or (file-or-directory-exists? target-full)
                 (a-weblink? <target>))
       (fatal "Target ~s does not exist. Note that filepath must be relative to the root" <target>)))
