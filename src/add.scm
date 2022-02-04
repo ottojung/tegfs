@@ -30,6 +30,9 @@
 %use (string-strip) "./euphrates/string-strip.scm"
 %use (list-intersperse) "./euphrates/list-intersperse.scm"
 %use (append-posix-path) "./euphrates/append-posix-path.scm"
+%use (absolute-posix-path?) "./euphrates/absolute-posix-path-q.scm"
+%use (remove-common-prefix) "./euphrates/remove-common-prefix.scm"
+%use (get-current-directory) "./euphrates/get-current-directory.scm"
 
 %use (fatal) "./fatal.scm"
 %use (root/p) "./root-p.scm"
@@ -101,13 +104,20 @@
     (unless (file-or-directory-exists? <target>)
       (fatal "Target ~s does not exist" <target>)))
 
-  (define target
-    (if (string-prefix? (root/p) <target>)
+  (define <target>-fullname
+    (if (absolute-posix-path? <target>)
         <target>
-        (let ((new-name
-               (append-posix-path default-directory (basename <target>))))
-          (rename-file <target> new-name)
-          new-name)))
+        (append-posix-path (get-current-directory) <target>)))
+
+  (define target
+    (remove-common-prefix
+     (root/p)
+     (if (string-prefix? (root/p) <target>-fullname)
+         <target>-fullname
+         (let ((new-name
+                (append-posix-path default-directory (basename <target>-fullname))))
+           (rename-file <target>-fullname new-name)
+           new-name))))
 
   (append-string-file
    registry-file
