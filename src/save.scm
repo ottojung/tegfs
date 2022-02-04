@@ -45,6 +45,7 @@
 %use (comp) "./euphrates/comp.scm"
 %use (path-without-extension) "./euphrates/path-without-extension.scm"
 %use (path-get-basename) "./euphrates/path-get-basename.scm"
+%use (path-extension) "./euphrates/path-extension.scm"
 
 %use (fatal) "./fatal.scm"
 %use (regfile-suffix) "./regfile-suffix.scm"
@@ -214,11 +215,11 @@
 
 (define (get-real-type edit?)
   (let loop ()
-    (define answer (string->symbol (read-answer "Real type: (data/link)")))
+    (define answer (string->symbol (read-answer "Real type: (data/link/localfile)")))
     (case answer
-      ((data link) answer)
+      ((data link localfile) answer)
       (else
-       (dprintln "Please answer either \"data\" or \"link\"")
+       (dprintln "Please answer either \"data\" or \"link\" or \"localfile\"")
        (loop)))))
 
 (define (get-download-flag edit?)
@@ -246,10 +247,14 @@
 (define (set-real-type-preference state)
   (define text-content (cdr (assoc '-text-content state)))
   (define value
-    (if (string-null? text-content)
-        'data
-        'link))
-  (assoc-set-default 'real-type value state))
+    (cond
+     ((string-null? text-content) 'data)
+     ((a-weblink? text-content) 'link)
+     ((file-or-directory-exists? text-content) 'localfile)
+     (else #f)))
+  (if value
+      (assoc-set-default 'real-type value state)
+      state))
 
 (define (get-description edit?)
   (define answer (read-answer "Enter description: (-none/-selection/custom text)"))
@@ -286,6 +291,18 @@
       (assoc-set-value '-temporary-file temp-name state)))
    (else state)))
 
+(define (handle-localfile-maybe state)
+  (define data-type (cdr (assoc 'data-type state)))
+  (define real-type (cdr (assoc 'real-type state)))
+  (define -temporary-file (cdr (assoc '-temporary-file state)))
+  (define -text-content (cdr (assoc '-text-content state)))
+
+  (cond
+   ((and (equal? 'localfile real-type)
+         (not -temporary-file))
+    (assoc-set-value '-temporary-file -text-content state))
+   (else state)))
+
 (define (set-data-type-preference state)
   (define data-type (cdr (assoc 'data-type state)))
   (define real-type (cdr (assoc 'real-type state)))
@@ -296,6 +313,8 @@
   (define download? (cdr (assoc 'download? state)))
 
   (cond
+   ((and (equal? 'localfile real-type))
+    (assoc-set-default 'data-type 'ignore state))
    ((and (equal? 'link real-type) (a-weblink? text-content) (equal? 'no download?))
     (assoc-set-default 'data-type 'ignore state))
    ((and -temporary-file (not data-type))
@@ -317,6 +336,8 @@
   (define download? (cdr (assoc 'download? state)))
 
   (cond
+   ((and (equal? 'localfile real-type))
+    (assoc-set-default 'target-extension (path-extension text-content) state))
    ((and (equal? 'link real-type) (a-weblink? text-content) (equal? 'no download?))
     (assoc-set-default 'target-extension 'ignore state))
    ((and data-type)
@@ -333,11 +354,8 @@
   (define download? (cdr (assoc 'download? state)))
 
   (cond
-   ((and (not (a-weblink? text-content))
-         (equal? 'link real-type))
-    (let ((name
-           (path-get-basename
-            (path-without-extension text-content))))
+   ((and (equal? 'localfile real-type))
+    (let ((name (path-without-extension (path-get-basename text-content))))
       (assoc-set-default 'target-basename name state)))
    (else
     (assoc-set-default 'target-basename (get-random-basename) state))))
@@ -467,15 +485,16 @@
    set-selection-content-preference
    set-text-content-preference
    set-types-list-preference
-   set-target-basename-preference
    (assoc-set-default 'confirm 'no)
    (assoc-set-default 'description '-none)
    set-download-preference
    set-real-type-preference
    download-maybe
    dump-xclip-data-maybe
+   handle-localfile-maybe
    set-data-type-preference
    set-target-extension-preference
+   set-target-basename-preference
    ))
 
 (define (get-custom-prefernences-code)
