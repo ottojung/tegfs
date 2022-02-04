@@ -47,6 +47,8 @@
     (fatal "Parameter <registry-file> is required, but it is not set"))
 
   (unless (file-or-directory-exists? registry-file)
+    (let ((registry-dir (dirname registry-file)))
+      (make-directories registry-dir))
     (write-string-file
      registry-file
      "\n# This file was automatically created by tegfs-add\n\n\n"))
