@@ -225,18 +225,13 @@
        (loop)))))
 
 (define (get-download-flag edit?)
-  (if edit?
-      (case (cdr (assoc 'download? (state/p)))
-        ((#f no) 'yes)
-        ((yes) 'no))
-
-      (let loop ()
-        (case (string->symbol (read-answer "Download the target? (yes/no)"))
-          ((yes Yes YES) 'yes)
-          ((no No NO) 'no)
-          (else
-           (dprintln "Please answer \"yes\" or \"no\"")
-           (loop))))))
+  (let loop ()
+    (case (string->symbol (read-answer "Download the target? (yes/no)"))
+      ((yes Yes YES) 'yes)
+      ((no No NO) 'no)
+      (else
+       (dprintln "Please answer \"yes\" or \"no\"")
+       (loop)))))
 
 (define (set-download-preference state)
   (define text-content (cdr (assoc '-text-content state)))
