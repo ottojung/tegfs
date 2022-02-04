@@ -7,7 +7,7 @@ TEST_ROOT=build/testroot
 all: | submodules build/tegfs
 
 install: all
-	ln -srf $(PWD)/build/tegfs $(PREFIX_BIN)/
+	ln -sf $(PWD)/build/tegfs $(PREFIX_BIN)/
 
 test1: build/tegfs
 	touch $(TEST_ROOT)/hi.txt
