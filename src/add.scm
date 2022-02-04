@@ -127,7 +127,7 @@
           (newline))
         key-value-pairs)
 
-       (unless (string-null? input)
+       (unless (or (not input) (string-null? input))
          (display "  #+BEGIN_SRC text") (newline)
          (display input)
          (unless (string-suffix? "\n" input)
