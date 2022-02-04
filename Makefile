@@ -9,6 +9,12 @@ all: | submodules build/tegfs
 install: all
 	ln -sf $(PWD)/build/tegfs $(PREFIX_BIN)/
 
+reinstall: | clean install
+
+clean:
+	git submodule foreach --recursive 'git clean -dfx'
+	git clean -dfx
+
 test1: build/tegfs
 	touch $(TEST_ROOT)/hi.txt
 	echo hi | TEGFS_ROOT=$(TEST_ROOT) build/tegfs add \
@@ -32,4 +38,4 @@ build/tegfs: src/*.scm build
 build:
 	mkdir -p "$@"
 
-.PHONY: submodules test1 test2 all install
+.PHONY: submodules test1 test2 all clean install reinstall
