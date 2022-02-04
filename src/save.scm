@@ -334,7 +334,9 @@
         (string-strip chosen))))
 
 (define (get-target-extension edit?)
-  (read-answer "Enter extension with a dot: "))
+  (define input (read-answer "Enter target extension: "))
+  (if (string-prefix? "." input) input
+      (string-append "." input)))
 
 (define (get-target-basename edit?)
   (read-answer "Enter target basename relative to the registry file: "))
