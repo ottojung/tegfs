@@ -29,7 +29,7 @@
 %use (read-string-line) "./euphrates/read-string-line.scm"
 %use (list-or-map) "./euphrates/list-or-map.scm"
 %use (random-choice) "./euphrates/random-choice.scm"
-%use (alphanum/alphabet) "./euphrates/alphanum-alphabet.scm"
+%use (alphanum-lowercase/alphabet) "./euphrates/alphanum-lowercase-alphabet.scm"
 %use (append-posix-path) "./euphrates/append-posix-path.scm"
 %use (make-temporary-filename) "./euphrates/make-temporary-filename.scm"
 %use (mimetype/extensions) "./euphrates/mimetype-extensions.scm"
@@ -76,7 +76,7 @@
 
 (define (get-random-basename)
   (list->string
-   (random-choice 20 alphanum/alphabet)))
+   (random-choice 20 alphanum-lowercase/alphabet)))
 
 (define (get-random-filename directory extension)
   (append-posix-path directory (string-append (get-random-basename) extension)))
