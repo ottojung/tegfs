@@ -216,11 +216,11 @@
 
 (define (get-real-type edit?)
   (let loop ()
-    (define answer (string->symbol (read-answer "Real type: (data/link/localfile)")))
+    (define answer (string->symbol (read-answer "Real type: (data/link/localfile/pasta)")))
     (case answer
-      ((data link localfile) answer)
+      ((data link localfile pasta) answer)
       (else
-       (dprintln "Please answer either \"data\" or \"link\" or \"localfile\"")
+       (dprintln "Please answer either \"data\" or \"link\" or \"localfile\" or \"pasta\"")
        (loop)))))
 
 (define (get-download-flag edit?)
@@ -252,10 +252,8 @@
      ((string-null? text-content) 'data)
      ((a-weblink? text-content) 'link)
      ((file-or-directory-exists? text-content) 'localfile)
-     (else #f)))
-  (if value
-      (assoc-set-default 'real-type value state)
-      state))
+     (else 'pasta)))
+  (assoc-set-default 'real-type value state))
 
 (define (get-description edit?)
   (define answer (read-answer "Enter description: (-none/-selection/custom text)"))
@@ -304,6 +302,17 @@
     (assoc-set-value '-temporary-file -text-content state))
    (else state)))
 
+(define (handle-pasta-maybe state)
+  (define data-type (cdr (assoc 'data-type state)))
+  (define real-type (cdr (assoc 'real-type state)))
+  (define -temporary-file (cdr (assoc '-temporary-file state)))
+  (define -text-content (cdr (assoc '-text-content state)))
+
+  (cond
+   ((and (equal? 'pasta real-type))
+    (assoc-set-value 'description -text-content state))
+   (else state)))
+
 (define (set-data-type-preference state)
   (define data-type (cdr (assoc 'data-type state)))
   (define real-type (cdr (assoc 'real-type state)))
@@ -314,7 +323,7 @@
   (define download? (cdr (assoc 'download? state)))
 
   (cond
-   ((and (equal? 'localfile real-type))
+   ((and (member real-type '(localfile pasta)))
     (assoc-set-default 'data-type 'ignore state))
    ((and (equal? 'link real-type) (a-weblink? text-content) (equal? 'no download?))
     (assoc-set-default 'data-type 'ignore state))
@@ -339,6 +348,8 @@
   (cond
    ((and (equal? 'localfile real-type))
     (assoc-set-default 'target-extension (path-extension text-content) state))
+   ((and (equal? 'pasta real-type))
+    (assoc-set-default 'target-extension 'ignore state))
    ((and (equal? 'link real-type) (a-weblink? text-content) (equal? 'no download?))
     (assoc-set-default 'target-extension 'ignore state))
    ((and data-type)
@@ -355,6 +366,8 @@
   (define download? (cdr (assoc 'download? state)))
 
   (cond
+   ((and (equal? 'pasta real-type))
+    (assoc-set-default 'target-extension 'ignore state))
    ((and (equal? 'localfile real-type))
     (let ((name (path-without-extension (path-get-basename text-content))))
       (assoc-set-default 'target-basename name state)))
@@ -493,6 +506,7 @@
    download-maybe
    dump-xclip-data-maybe
    handle-localfile-maybe
+   handle-pasta-maybe
    set-data-type-preference
    set-target-extension-preference
    set-target-basename-preference
@@ -523,9 +537,11 @@
   (define <input> (handle-description description))
   (define <date> #f)
   (define <target>
-    (if -temporary-file
-        (string-append target-basename target-extension)
-        -text-content))
+    (cond
+     (-temporary-file
+      (string-append target-basename target-extension))
+     ((equal? real-type 'pasta) #f)
+     (else -text-content)))
 
   (unless (file-or-directory-exists? registry-dir)
     (make-directories registry-dir))
