@@ -47,6 +47,7 @@
 %use (path-get-basename) "./euphrates/path-get-basename.scm"
 %use (path-extension) "./euphrates/path-extension.scm"
 %use (make-directories) "./euphrates/make-directories.scm"
+%use (list-take-n) "./euphrates/list-take-n.scm"
 
 %use (fatal) "./fatal.scm"
 %use (regfile-suffix) "./regfile-suffix.scm"
@@ -469,8 +470,16 @@
   (dprintln " Enter *number* to edit one of below:")
   (for-each
    (lambda (param i)
+     (define value0 (cdr param))
+     (define value
+            (if (and (string? value0) (< 50 (string-length value0)))
+                (string-append (list->string (list-take-n 50 (string->list value0))) "...")
+                value0))
      (when (get-setter (car param))
-       (dprintln "   ~a) ~a: ~a" (+ 1 i) (car param) (cdr param))))
+       (dprintln "   ~a) ~a: ~s"
+                 (+ 1 i)
+                 (car param)
+                 value)))
    state
    (range (length state))))
 
