@@ -87,14 +87,27 @@
       (cons "date" (string-append "[" date "]"))
       key-value-pairs0)))
 
-  (unless <target>
-    (fatal "No target specified"))
-
-  (unless (file-or-directory-exists? <target>)
-    (fatal "Target ~s does not exist" <target>))
-
   (define registry-file
     (init-registry-file <registry-file>))
+
+  (define default-directory
+    (dirname registry-file))
+
+  (define _1
+    (unless <target>
+      (fatal "No target specified")))
+
+  (define _2
+    (unless (file-or-directory-exists? <target>)
+      (fatal "Target ~s does not exist" <target>)))
+
+  (define target
+    (if (string-prefix? (root/p) <target>)
+        <target>
+        (let ((new-name
+               (append-posix-path default-directory (basename <target>))))
+          (rename-file <target> new-name)
+          new-name)))
 
   (append-string-file
    registry-file
