@@ -48,6 +48,7 @@
 %use (path-extension) "./euphrates/path-extension.scm"
 %use (make-directories) "./euphrates/make-directories.scm"
 %use (list-take-n) "./euphrates/list-take-n.scm"
+%use (print-in-frame) "./euphrates/print-in-frame.scm"
 
 %use (fatal) "./fatal.scm"
 %use (regfile-suffix) "./regfile-suffix.scm"
@@ -172,7 +173,11 @@
     (car (system-re "xclip -selection clipboard -out")))
   (if (cdr (assoc '-text-content state)) state
       (begin
-        (dprintln "\n\n Clipboard text content: ~s" text-content)
+        (newline)
+        (print-in-frame #t #f 3 35 0 #\space "    Clipboard text content")
+        (newline)
+        (print-in-frame #t #t 3 60 0 #\space text-content)
+        (newline)
         (assoc-set-value '-text-content text-content state))))
 
 (define (set-types-list-preference state)
@@ -460,8 +465,10 @@
     (and setter
          (assoc-set-value key (setter (> counter 1)) state))))
 
+
+
 (define (print-state state)
-  (dprintln "\n\n\n")
+  (dprintln "\n\n")
   (dprintln " Enter *number* to edit one of below:")
   (for-each
    (lambda (param i)
