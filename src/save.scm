@@ -368,7 +368,7 @@
 
   (cond
    ((and (equal? 'pasta real-type))
-    (assoc-set-default 'target-extension 'ignore state))
+    (assoc-set-default 'target-basename 'ignore state))
    ((and (equal? 'localfile real-type))
     (let ((name (path-without-extension (path-get-basename text-content))))
       (assoc-set-default 'target-basename name state)))
@@ -464,8 +464,6 @@
   (parameterize ((menu-callback callback))
     (and setter
          (assoc-set-value key (setter (> counter 1)) state))))
-
-
 
 (define (print-state state)
   (dprintln "\n\n")
