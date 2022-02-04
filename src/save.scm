@@ -46,6 +46,7 @@
 %use (path-without-extension) "./euphrates/path-without-extension.scm"
 %use (path-get-basename) "./euphrates/path-get-basename.scm"
 %use (path-extension) "./euphrates/path-extension.scm"
+%use (make-directories) "./euphrates/make-directories.scm"
 
 %use (fatal) "./fatal.scm"
 %use (regfile-suffix) "./regfile-suffix.scm"
@@ -514,7 +515,6 @@
   (define real-type (cdr (assoc 'real-type state)))
   (define description (cdr (assoc 'description state)))
   (define registry-file (cdr (assoc 'registry-file state)))
-  (define target-directory (and registry-file (dirname registry-file)))
   (define -temporary-file (cdr (assoc '-temporary-file state)))
   (define -text-content (cdr (assoc '-text-content state)))
   (define registry-dir (append-posix-path (root/p) (dirname registry-file)))
@@ -526,6 +526,9 @@
     (if -temporary-file
         (string-append target-basename target-extension)
         -text-content))
+
+  (unless (file-or-directory-exists? registry-dir)
+    (make-directories registry-dir))
 
   (when -temporary-file
     (let* ((new-name0 (append-posix-path registry-dir <target>))
