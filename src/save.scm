@@ -167,7 +167,7 @@
     (car (system-re "xclip -selection clipboard -out")))
   (if (cdr (assoc '-text-content state)) state
       (begin
-        (debug "\n\n Clipboard text content: ~s" text-content)
+        (dprintln "\n\n Clipboard text content: ~s" text-content)
         (assoc-set-value '-text-content text-content state))))
 
 (define (set-types-list-preference state)
@@ -509,8 +509,6 @@
 
   (define state
     (loop-state set-preferences (initialize-state)))
-
-  ;; (dprintln "FINAL STATE:\n~s" state)
 
   (send-state state)
 
