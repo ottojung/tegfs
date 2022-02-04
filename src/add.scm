@@ -127,14 +127,17 @@
          (display ":"))
        (newline)
 
-       (for-each
-        (lambda (pair)
-          (display "  ")
-          (display (car pair))
-          (display ": ")
-          (display (cdr pair))
-          (newline))
-        key-value-pairs)
+       (unless (null? key-value-pairs)
+         (display "  :PROPERTIES:") (newline)
+         (for-each
+          (lambda (pair)
+            (display "  :")
+            (display (car pair))
+            (display ": ")
+            (display (cdr pair))
+            (newline))
+          key-value-pairs)
+         (display "  :END:") (newline))
 
        (unless (or (not input) (string-null? input))
          (display "  #+BEGIN_SRC text") (newline)
