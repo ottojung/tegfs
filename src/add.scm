@@ -108,10 +108,12 @@
      (lambda ()
        (newline)
 
-       (display "* ")
+       (display "*")
        (when <title>
+         (display " ")
          (display <title>))
        (unless (null? tags)
+         (display " ")
          (display ":")
          (display
           (apply string-append (list-intersperse ":" tags)))
