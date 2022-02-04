@@ -99,6 +99,14 @@
   (or (string-prefix? "http://" string)
       (string-prefix? "https://" string)))
 
+(define (dump-xclip-temp data-type)
+  (dprintln "Dumping xclip...")
+  (let ((target (make-temporary-filename)))
+    (unless (= 0 (system-fmt "xclip -selection clipboard -target ~a -out > ~a"
+                             data-type target))
+      (fatal "Could not dump"))
+    target))
+
 (define (download-temp string)
   (dprintln "Downloading...")
   (let ((target (make-temporary-filename)))
@@ -176,25 +184,6 @@
     (string->lines types-list))
   (assoc-set-default '-types-list types-list state))
 
-(define (state-set-generic-preferences state)
-  (set-data-type-preference
-   (download-maybe
-    (set-real-type-preference
-     (assoc-set-default
-      'confirm 'no
-      (assoc-set-default
-       'description '-none
-       (assoc-set-default
-        'download 'yes
-        state)))))))
-
-(define (get-custom-prefernences-code)
-  (define custom-file (append-posix-path (root/p) custom-preferences-filename))
-  (and (file-or-directory-exists? custom-file)
-       (with-input-from-file custom-file
-         (lambda _
-           (cons 'let (cons '() (read-list (current-input-port))))))))
-
 (define (state-set-custom-preferences preferences-code state)
   (if preferences-code
       (eval-in-current-namespace preferences-code)
@@ -263,24 +252,32 @@
    ((member answer '("-none" "-selection")) (string->symbol answer))
    (else answer)))
 
-;; (define (set-target-preference 
-
 (define (download-maybe state)
+  (define download? (cdr (assoc 'download? state)))
+  (define real-type (cdr (assoc 'real-type state)))
+  (define text-content (cdr (assoc '-text-content state)))
+  (define -temporary-file (cdr (assoc '-temporary-file state)))
+
+  (cond
+   ((and (equal? 'link real-type)
+         (equal? 'yes download?)
+         (not -temporary-file)
+         (a-weblink? text-content))
+    (let* ((temp-name (download-temp text-content)))
+      (assoc-set-value '-temporary-file temp-name state)))
+   (else state)))
+
+(define (dump-xclip-data-maybe state)
   (define download? (cdr (assoc 'download? state)))
   (define data-type (cdr (assoc 'data-type state)))
   (define real-type (cdr (assoc 'real-type state)))
-  (define text-content (cdr (assoc '-text-content state)))
-  (define target (cdr (assoc 'target state)))
-  (define registry-file (cdr (assoc 'registry-file state)))
-  (define target-directory (and registry-file (dirname registry-file)))
+  (define -temporary-file (cdr (assoc '-temporary-file state)))
 
   (cond
-   ((and target-directory
-         (equal? 'link real-type)
-         (not data-type)
-         (equal? 'yes download?)
-         (a-weblink? text-content))
-    (let* ((temp-name (download-temp text-content)))
+   ((and data-type
+         (equal? 'data real-type)
+         (not -temporary-file))
+    (let* ((temp-name (dump-xclip-temp data-type)))
       (assoc-set-value '-temporary-file temp-name state)))
    (else state)))
 
@@ -327,16 +324,14 @@
   (define -temporary-file (cdr (assoc '-temporary-file state)))
   (define target-extension (cdr (assoc 'target-extension state)))
 
-  (cond
-   ((and (not target) target-extension -temporary-file)
-    (let ((new-name (string-append -temporary-file target-extension)))
-      (rename-file -temporary-file new-name)
-      (assoc-set-default
-       'target new-name
-       (assoc-set-value
-        '-temporary-file new-name
-        state))))
-   (else state)))
+  (fatal "TODO"))
+
+  ;; (cond
+  ;;  ((and (not target) target-extension -temporary-file)
+  ;;   (let ((new-name (string-append -temporary-file target-extension)))
+  ;;     (assoc-set-default 'target new-name)))
+  ;;  (else (not target) target-extension -temporary-file
+  ;;   state)))
 
 (define (get-data-type)
   (define state (state/p))
@@ -357,13 +352,8 @@
   (read-answer "Enter extension with a dot: "))
 
 (define (get-confirm)
-  (let loop ()
-    (case (string->symbol (read-answer "Is confirmation necessary? (yes/no)"))
-      ((yes Yes YES) 'yes)
-      ((no No NO) 'no)
-      (else
-       (dprintln "Please answer \"yes\" or \"no\"")
-       (loop)))))
+  (dprintln "Press enter if parameters are OK")
+  'done)
 
 (define (index-to-key state i)
   (if (< i 0) #f
@@ -434,6 +424,25 @@
               (loop (cdr cur))
               (parameterize ((state/p state))
                 (set-by-key key state)))))))
+
+(define state-set-generic-preferences
+  (comp
+   (assoc-set-default 'confirm 'no)
+   (assoc-set-default 'description '-none)
+   (assoc-set-default 'download 'yes)
+   set-real-type-preference
+   download-maybe
+   dump-xclip-data-maybe
+   set-data-type-preference
+   set-target-preference
+   ))
+
+(define (get-custom-prefernences-code)
+  (define custom-file (append-posix-path (root/p) custom-preferences-filename))
+  (and (file-or-directory-exists? custom-file)
+       (with-input-from-file custom-file
+         (lambda _
+           (cons 'let (cons '() (read-list (current-input-port))))))))
 
 (define (tegfs-save/parse)
   (define _
