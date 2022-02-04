@@ -158,7 +158,10 @@
 (define (set-text-content-preference state)
   (define text-content
     (car (system-re "xclip -selection clipboard -out")))
-  (assoc-set-value '-text-content text-content state))
+  (if (cdr (assoc '-text-content state)) state
+      (begin
+        (debug "\n\n Clipboard text content: ~s" text-content)
+        (assoc-set-value '-text-content text-content state))))
 
 (define (set-types-list-preference state)
   (define types-list/str
@@ -172,10 +175,10 @@
       (eval-in-current-namespace preferences-code)
       state))
 
-(define (get-title)
+(define (get-title edit?)
   (read-answer "Enter the title:"))
 
-(define (get-registry-file)
+(define (get-registry-file edit?)
   (define registry-files
     (map (lambda (path)
            (remove-common-prefix path (string-append (root/p) "/")))
@@ -200,7 +203,7 @@
          (fatal "Cancelled"))
        chosen))))
 
-(define (get-real-type state)
+(define (get-real-type edit?)
   (let loop ()
     (define answer (string->symbol (read-answer "Real type: (data/link)")))
     (case answer
@@ -209,16 +212,26 @@
        (dprintln "Please answer either \"data\" or \"link\"")
        (loop)))))
 
-(define (get-download-flag)
-  (let loop ()
-    (case (string->symbol (read-answer "Download the target? (yes/no)"))
-      ((yes Yes YES) 'yes)
-      ((no No NO) 'no)
-      (else
-       (dprintln "Please answer \"yes\" or \"no\"")
-       (loop)))))
+(define (get-download-flag edit?)
+  (if edit?
+      (case (cdr (assoc 'download? (state/p)))
+        ((#f no) 'yes)
+        ((yes) 'no))
 
-(define (get-tags)
+      (let loop ()
+        (case (string->symbol (read-answer "Download the target? (yes/no)"))
+          ((yes Yes YES) 'yes)
+          ((no No NO) 'no)
+          (else
+           (dprintln "Please answer \"yes\" or \"no\"")
+           (loop))))))
+
+(define (set-download-preference state)
+  (define text-content (cdr (assoc '-text-content state)))
+  (if (a-weblink? text-content) state
+      (assoc-set-default 'download? 'no state)))
+
+(define (get-tags edit?)
   (string->words (read-answer "Enter tags separated by whitespace:")))
 
 (define (set-real-type-preference state)
@@ -229,7 +242,7 @@
         'link))
   (assoc-set-default 'real-type value state))
 
-(define (get-description)
+(define (get-description edit?)
   (define answer (read-answer "Enter description: (-none/-selection/custom text)"))
   (cond
    ((member answer '("-none" "-selection")) (string->symbol answer))
@@ -298,29 +311,33 @@
 (define (set-target-preference state)
   (assoc-set-default 'target-basename (get-random-basename) state))
 
-(define (get-data-type)
+(define (get-data-type edit?)
   (define state (state/p))
   (define types-list (cdr (assoc '-types-list state)))
   (define types-list/str (lines->string types-list))
+  (define -text-content (cdr (assoc '-text-content state)))
 
-  (let* ((ret (system-re "echo ~a | fzf" types-list/str))
-         (chosen (car ret))
-         (code (cdr ret)))
-    (unless (= 0 code)
-      (fatal "Cancelled"))
-    (string-strip chosen)))
+  (if (a-weblink? -text-content)
+      (read-answer "Enter mimetype: ")
+      (let* ((ret (system-re "echo ~a | fzf" types-list/str))
+             (chosen (car ret))
+             (code (cdr ret)))
+        (unless (= 0 code)
+          (fatal "Cancelled"))
+        (string-strip chosen))))
 
-(define (get-target-basename)
-  (read-answer "Enter target basename relative to the registry file: "))
-
-(define (get-target-extension)
+(define (get-target-extension edit?)
   (read-answer "Enter extension with a dot: "))
 
-(define (get-confirm)
+(define (get-target-basename edit?)
+  (read-answer "Enter target basename relative to the registry file: "))
+
+(define (get-confirm edit?)
   (dprintln "Press enter if parameters are OK")
   'done)
 
-(define (index-to-key state i)
+(define (index-to-key state i0)
+  (define i (- i0 1))
   (if (< i 0) #f
       (let loop ((state state) (i i))
         (if (null? state) #f
@@ -331,7 +348,7 @@
 
 (define (read-answer question)
   (let loop ()
-    (define _ (dprintln question))
+    (define _ (dprintln " ~a" question))
     (define state (state/p))
     (define answer (read-string-line))
     (define num (string->number answer))
@@ -370,18 +387,20 @@
 (define state/p
   (make-parameter #f))
 
-(define (set-by-key key state)
+(define (set-by-key key0 state)
   (define callback #f)
-  (define setter
+  (define counter 0)
+  (define key
     (call-with-current-continuation
-     (lambda (k)
-       (set! callback k)
-       (get-setter key))))
+     (lambda (k) (set! callback k) key0)))
+  (set! counter (+ 1 counter))
+  (define setter (get-setter key))
   (parameterize ((menu-callback callback))
     (and setter
-         (assoc-set-value key (setter) state))))
+         (assoc-set-value key (setter (> counter 1)) state))))
 
 (define (print-state state)
+  (dprintln "\n\n\n")
   (dprintln " Enter *number* to edit one of below:")
   (for-each
    (lambda (param i)
@@ -407,20 +426,19 @@
                 (set-by-key key state)))))))
 
 (define state-set-generic-preferences
-  (apply compose
-         (reverse (list
-                   (lambda (s) (assoc-set-default 'confirm 'no s))
-                   (lambda (s) (assoc-set-default 'description '-none s))
-                   (lambda (s) (assoc-set-default 'download 'yes s))
-                   set-selection-content-preference
-                   set-text-content-preference
-                   set-types-list-preference
-                   set-real-type-preference
-                   download-maybe
-                   dump-xclip-data-maybe
-                   set-data-type-preference
-                   set-target-preference
-                   ))))
+  (comp
+   set-selection-content-preference
+   set-text-content-preference
+   set-types-list-preference
+   (assoc-set-default 'confirm 'no)
+   (assoc-set-default 'description '-none)
+   set-download-preference
+   set-real-type-preference
+   download-maybe
+   dump-xclip-data-maybe
+   set-data-type-preference
+   set-target-preference
+   ))
 
 (define (get-custom-prefernences-code)
   (define custom-file (append-posix-path (root/p) custom-preferences-filename))
@@ -447,7 +465,7 @@
       (let ((next (eval-state-next set-preferences state)))
         (if next (loop next) state))))
 
-  (dprintln "FINAL STATE:\n~a" state)
+  (dprintln "FINAL STATE:\n~s" state)
 
   (dprintln "Saved!"))
 
