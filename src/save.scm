@@ -52,6 +52,9 @@
 
 %use (debug) "./euphrates/debug.scm"
 
+;; TODO: factor out graph UI to euphrates
+;;       and use progfun in it.
+
 (define (string-type? s)
   (or (member s '("STRING" "UTF8_STRING" "TEXT" "COMPOUND_TEXT"))
       (string-prefix? "text/" s)))
@@ -64,13 +67,12 @@
   (dprintln "Enter the title: ")
   (read-string-line))
 
+(define (get-random-basename)
+  (list->string
+   (random-choice 20 alphanum/alphabet)))
+
 (define (get-random-filename directory extension)
-  (append-posix-path
-   directory
-   (string-append
-    (list->string
-     (random-choice 20 alphanum/alphabet))
-    extension)))
+  (append-posix-path directory (string-append (get-random-basename) extension)))
 
 (define (get-mime-extension mimetype)
   (let ((ext (assoc mimetype mimetype/extensions)))
@@ -142,26 +144,10 @@
 (define (a-real-filepath? string)
   (file-or-directory-exists? string))
 
-(define property-table
-  '((title . ,get-title)
-    (registry-file . ,get-registry-file)
-    (real-type . ,get-real-type)
-    (download? . ,get-download-flag)
-    (tags . ,get-tags)
-    (description . ,get-description)
-    (data-type . ,get-data-type)
-    (target-extension . ,get-target-extension)
-    (target . ,get-target)
-    (confirm . ,get-confirm)
-    (-temporary-file . #f)
-    (-text-content . #f)
-    (-selection-content . #f)
-    (-types-list . #f)))
-
 (define (initialize-state)
   (map
-   (lambda (key setter)
-     (cons key #f))
+   (lambda (p)
+     (cons (car p) #f))
    property-table))
 
 (define (set-selection-content-preference state)
@@ -172,13 +158,13 @@
 (define (set-text-content-preference state)
   (define text-content
     (car (system-re "xclip -selection clipboard -out")))
-  (assoc-set-default '-text-content text-content state))
+  (assoc-set-value '-text-content text-content state))
 
 (define (set-types-list-preference state)
   (define types-list/str
     (car (system-re "xclip -o -target TARGETS -selection clipboard")))
   (define types-list
-    (string->lines types-list))
+    (string->lines types-list/str))
   (assoc-set-default '-types-list types-list state))
 
 (define (state-set-custom-preferences preferences-code state)
@@ -282,7 +268,6 @@
   (define data-type (cdr (assoc 'data-type state)))
   (define real-type (cdr (assoc 'real-type state)))
   (define text-content (cdr (assoc '-text-content state)))
-  (define target (cdr (assoc 'target state)))
   (define registry-file (cdr (assoc 'registry-file state)))
   (define target-directory (and registry-file (dirname registry-file)))
   (define -temporary-file (cdr (assoc '-temporary-file state)))
@@ -301,7 +286,6 @@
   (define data-type (cdr (assoc 'data-type state)))
   (define real-type (cdr (assoc 'real-type state)))
   (define text-content (cdr (assoc '-text-content state)))
-  (define target (cdr (assoc 'target state)))
   (define registry-file (cdr (assoc 'registry-file state)))
   (define target-directory (and registry-file (dirname registry-file)))
   (define -temporary-file (cdr (assoc '-temporary-file state)))
@@ -312,23 +296,7 @@
    (else state)))
 
 (define (set-target-preference state)
-  (define data-type (cdr (assoc 'data-type state)))
-  (define real-type (cdr (assoc 'real-type state)))
-  (define text-content (cdr (assoc '-text-content state)))
-  (define target (cdr (assoc 'target state)))
-  (define registry-file (cdr (assoc 'registry-file state)))
-  (define target-directory (and registry-file (dirname registry-file)))
-  (define -temporary-file (cdr (assoc '-temporary-file state)))
-  (define target-extension (cdr (assoc 'target-extension state)))
-
-  (fatal "TODO"))
-
-  ;; (cond
-  ;;  ((and (not target) target-extension -temporary-file)
-  ;;   (let ((new-name (string-append -temporary-file target-extension)))
-  ;;     (assoc-set-default 'target new-name)))
-  ;;  (else (not target) target-extension -temporary-file
-  ;;   state)))
+  (assoc-set-default 'target-basename (get-random-basename) state))
 
 (define (get-data-type)
   (define state (state/p))
@@ -342,8 +310,8 @@
       (fatal "Cancelled"))
     (string-strip chosen)))
 
-(define (get-target)
-  (read-answer "Enter target path relative to tegfs root: "))
+(define (get-target-basename)
+  (read-answer "Enter target basename relative to the registry file: "))
 
 (define (get-target-extension)
   (read-answer "Enter extension with a dot: "))
@@ -375,6 +343,22 @@
                 (dprintln "Bad index ~s, must be one of the listed items" num)
                 (loop))))
         answer)))
+
+(define property-table
+  `((title . ,get-title)
+    (registry-file . ,get-registry-file)
+    (real-type . ,get-real-type)
+    (download? . ,get-download-flag)
+    (tags . ,get-tags)
+    (description . ,get-description)
+    (data-type . ,get-data-type)
+    (target-extension . ,get-target-extension)
+    (target-basename . ,get-target-basename)
+    (confirm . ,get-confirm)
+    (-temporary-file . #f)
+    (-text-content . #f)
+    (-selection-content . #f)
+    (-types-list . #f)))
 
 (define (get-setter state-key)
   (define got (assoc state-key property-table))
@@ -423,16 +407,20 @@
                 (set-by-key key state)))))))
 
 (define state-set-generic-preferences
-  (comp
-   (assoc-set-default 'confirm 'no)
-   (assoc-set-default 'description '-none)
-   (assoc-set-default 'download 'yes)
-   set-real-type-preference
-   download-maybe
-   dump-xclip-data-maybe
-   set-data-type-preference
-   set-target-preference
-   ))
+  (apply compose
+         (reverse (list
+                   (lambda (s) (assoc-set-default 'confirm 'no s))
+                   (lambda (s) (assoc-set-default 'description '-none s))
+                   (lambda (s) (assoc-set-default 'download 'yes s))
+                   set-selection-content-preference
+                   set-text-content-preference
+                   set-types-list-preference
+                   set-real-type-preference
+                   download-maybe
+                   dump-xclip-data-maybe
+                   set-data-type-preference
+                   set-target-preference
+                   ))))
 
 (define (get-custom-prefernences-code)
   (define custom-file (append-posix-path (root/p) custom-preferences-filename))
@@ -459,56 +447,7 @@
       (let ((next (eval-state-next set-preferences state)))
         (if next (loop next) state))))
 
-  ;; (define chosen-type
-  ;;   (let* ((ret (system-re "echo ~a | fzf" xclip-types/str))
-  ;;          (chosen (car ret))
-  ;;          (code (cdr ret)))
-  ;;     (unless (= 0 code)
-  ;;       (fatal "Cancelled"))
-  ;;     (string-strip chosen)))
-
-  ;; (dprintln "You have chosen ~s" chosen-type)
-
-  ;; (define real-type0
-  ;;   (cond
-  ;;    ((string-type? chosen-type) "text")
-  ;;    (else #f)))
-
-  ;; (if real-type0
-  ;;     (dprintln "I think that is ~s" real-type0)
-  ;;     (dprintln "I don't know what type that is, must assume it's a generic file"))
-
-  ;; (dprintln "To change type information, enter \"!\"")
-
-  ;; (define input1
-  ;;   (read-title))
-
-  ;; (define-values (title real-type)
-  ;;   (if (equal? input1 "!")
-  ;;       (begin
-  ;;         (dprintln "Enter correct type: ")
-  ;;         (let ((real (read-string-line)))
-  ;;           (dprintln "OK, changed the type") ;; FIXME: what if I dont know such type???
-  ;;           (values (read-title) real)))
-  ;;       (values input1 real-type0)))
-
-  ;; (define tags (read-tags))
-
-  ;; (define content
-  ;;   (get-clipboard-content real-type chosen-type target-directory))
-
-  ;; (debug "content: ~s" content)
-
-  ;; (define target
-  ;;   (cond
-  ;;    ((a-weblink? content)
-  ;;     (download target-directory content))
-  ;;    ((a-real-filepath? content)
-  ;;     content)
-  ;;    (else
-  ;;     (fatal "What you copied is neither a file nor a link. Don't know what to do"))))
-
-  ;; (debug "target: ~s" target)
+  (dprintln "FINAL STATE:\n~a" state)
 
   (dprintln "Saved!"))
 
