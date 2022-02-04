@@ -49,6 +49,7 @@
 %use (root/p) "./root-p.scm"
 %use (custom-preferences-filename) "./custom-preferences-filename.scm"
 %use (a-weblink?) "./a-weblink-q.scm"
+%use (tegfs-add) "./add.scm"
 
 %use (debug) "./euphrates/debug.scm"
 
@@ -105,6 +106,12 @@
                              data-type target))
       (fatal "Could not dump"))
     target))
+
+(define (handle-description description)
+  (case description
+    ((-none) #f)
+    ((-selection) (car (system-re "xclip -selection primary -out")))
+    (else description)))
 
 (define (download-temp string)
   (dprintln "Downloading...")
@@ -447,6 +454,39 @@
          (lambda _
            (cons 'let (cons '() (read-list (current-input-port))))))))
 
+(define (send-state state)
+  (define title (cdr (assoc 'title state)))
+  (define tags (cdr (assoc 'tags state)))
+  (define target-extension (cdr (assoc 'target-extension state)))
+  (define target-basename (cdr (assoc 'target-basename state)))
+  (define types-list (cdr (assoc '-types-list state)))
+  (define data-type (cdr (assoc 'data-type state)))
+  (define real-type (cdr (assoc 'real-type state)))
+  (define description (cdr (assoc 'description state)))
+  (define registry-file (cdr (assoc 'registry-file state)))
+  (define target-directory (and registry-file (dirname registry-file)))
+  (define -temporary-file (cdr (assoc '-temporary-file state)))
+  (define -text-content (cdr (assoc '-text-content state)))
+  (define registry-dir (append-posix-path (root/p) (dirname registry-file)))
+  (define source (and (a-weblink? -text-content) -temporary-file -text-content))
+  (define key-value-pairs (if source (list (cons "source" source)) (list)))
+  (define <input> (handle-description description))
+  (define <date> #f)
+  (define <target>
+    (if -temporary-file
+        (string-append target-basename target-extension)
+        -text-content))
+
+  (when -temporary-file
+    (let ((new-name (append-posix-path registry-dir <target>)))
+      (rename-file -temporary-file new-name)))
+
+  (tegfs-add
+   <target> title tags
+   key-value-pairs
+   registry-file <date>
+   <input>))
+
 (define (tegfs-save/parse)
   (define _
     (begin
@@ -465,7 +505,9 @@
       (let ((next (eval-state-next set-preferences state)))
         (if next (loop next) state))))
 
-  (dprintln "FINAL STATE:\n~s" state)
+  ;; (dprintln "FINAL STATE:\n~s" state)
+
+  (send-state state)
 
   (dprintln "Saved!"))
 
