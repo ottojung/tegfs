@@ -302,7 +302,7 @@
             state))))
    (else state)))
 
-(define (set-extension-preference state)
+(define (set-target-extension-preference state)
   (define data-type (cdr (assoc 'data-type state)))
   (define real-type (cdr (assoc 'real-type state)))
   (define text-content (cdr (assoc '-text-content state)))
@@ -315,7 +315,7 @@
     (assoc-set-default 'target-extension (get-mime-extension data-type) state))
    (else state)))
 
-(define (set-target-preference state)
+(define (set-target-basename-preference state)
   (assoc-set-default 'target-basename (get-random-basename) state))
 
 (define (get-data-type edit?)
@@ -439,6 +439,7 @@
    set-selection-content-preference
    set-text-content-preference
    set-types-list-preference
+   set-target-basename-preference
    (assoc-set-default 'confirm 'no)
    (assoc-set-default 'description '-none)
    set-download-preference
@@ -446,7 +447,7 @@
    download-maybe
    dump-xclip-data-maybe
    set-data-type-preference
-   set-target-preference
+   set-target-extension-preference
    ))
 
 (define (get-custom-prefernences-code)
