@@ -32,6 +32,9 @@ deps/euphrates/src:
 test2: build/tegfs
 	TEGFS_ROOT=$(TEST_ROOT) build/tegfs save
 
+test3: build/tegfs
+	TEGFS_ROOT=$(TEST_ROOT) build/tegfs categorize
+
 build/tegfs: src/*.scm build
 	czempak install src/tegfs.scm "$@"
 
