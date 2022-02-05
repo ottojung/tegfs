@@ -15,7 +15,8 @@
 %run guile
 
 %var tegfs-categorize/parse
-%var tegfs-query-tags
+%var tegfs-categorize
+%var tegfs-edit-tags
 
 %use (make-temporary-filename) "./euphrates/make-temporary-filename.scm"
 %use (system-fmt) "./euphrates/system-fmt.scm"
@@ -42,8 +43,6 @@
 
 %use (categorization-filename) "./categorization-filename.scm"
 %use (root/p) "./root-p.scm"
-
-%use (debug) "./euphrates/debug.scm"
 
 (define (tegfs-categorize/parse)
   (define categorization-file (append-posix-path (root/p) categorization-filename))
