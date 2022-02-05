@@ -2,12 +2,21 @@
 PREFIX=$(HOME)/.local
 PREFIX_BIN=$(PREFIX)/bin
 
+BINARY_PATH=$(PREFIX_BIN)/tegfs
+
 TEST_ROOT=build/testroot
 
-all: | submodules build/tegfs
+SUBMODULES=deps/euphrates/src
 
-install: all
-	ln -sf $(PWD)/build/tegfs $(PREFIX_BIN)/
+all: build/tegfs
+
+install: $(BINARY_PATH)
+
+$(BINARY_PATH): build/tegfs $(PREFIX_BIN)
+	cp $(PWD)/build/tegfs $(PREFIX_BIN)
+
+$(PREFIX_BIN):
+	mkdir -p "$@"
 
 reinstall: | clean install
 
@@ -24,8 +33,6 @@ test1: build/tegfs
 		--key b 2 \
 		--key SCHEDULED 3 \
 
-submodules: deps/euphrates/src
-
 deps/euphrates/src:
 	git submodule update --init
 
@@ -35,10 +42,10 @@ test2: build/tegfs
 test3: build/tegfs
 	TEGFS_ROOT=$(TEST_ROOT) build/tegfs categorize
 
-build/tegfs: src/*.scm build
+build/tegfs: src/*.scm build $(SUBMODULES)
 	czempak install src/tegfs.scm "$@"
 
 build:
 	mkdir -p "$@"
 
-.PHONY: submodules test1 test2 all clean install reinstall
+.PHONY: test1 test2 all clean install reinstall
