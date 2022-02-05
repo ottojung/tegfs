@@ -45,11 +45,11 @@
 %use (root/p) "./root-p.scm"
 
 (define (tegfs-categorize/parse)
-  (define categorization-file (append-posix-path (root/p) categorization-filename))
-  (define result (tegfs-categorize categorization-file))
+  (define result (tegfs-categorize))
   (dprintln "Categorized! Chosen tags: ~s" (cdr result)))
 
-(define (tegfs-categorize categorization-file)
+(define (tegfs-categorize)
+  (define categorization-file (append-posix-path (root/p) categorization-filename))
   (define working-file (make-temporary-filename))
 
   (unless (file-or-directory-exists? categorization-file)

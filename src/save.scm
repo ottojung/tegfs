@@ -244,6 +244,7 @@
       (assoc-set-default 'download? 'no state)))
 
 (define (get-tags edit?)
+  (tegfs-categorize
   (string->words (read-answer "Enter tags separated by whitespace:")))
 
 (define (set-real-type-preference state)
