@@ -30,6 +30,7 @@
 
 %use (tegfs-add/parse) "./add.scm"
 %use (tegfs-save/parse) "./save.scm"
+%use (tegfs-categorize/parse) "./tags-reader.scm"
 %use (fatal) "./fatal.scm"
 %use (root/p) "./root-p.scm"
 
@@ -43,6 +44,7 @@
       /      --help
       FUNC : add ADDOPT+
       /      save
+      /      categorize
       /      status
       ADDOPT : --target <add-target>
       /        --title <title>
@@ -61,12 +63,16 @@
      (unless <root>
        (fatal "Root is unknown because $~a env variable is not defined" ROOT_VAR_NAME))
 
+     (unless (file-or-directory-exists? <root>)
+       (make-directories <root>))
+
      (parameterize ((root/p <root>))
        (cond
         (add (tegfs-add/parse
               <add-target> <title> <tag...> <key...> <value...>
               <registry-file> <date>))
         (save (tegfs-save/parse))
+        (categorize (tegfs-categorize/parse))
         (status
          (display "NOT IMPLEMENTED YET") (newline)
          (exit 1))
