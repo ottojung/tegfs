@@ -206,8 +206,9 @@
        'error
        (map
         (lambda (amb)
-          (cons (unstar-symbol amb)
-                (map unstar-symbol (get-parents/transitive ast/flatten amb))))
+          (define unstarred (unstar-symbol amb))
+          (cons unstarred
+                (map unstar-symbol (get-parents/transitive ast/flatten/unstarred unstarred))))
         ambiguous-starred-productions))))
 
 
