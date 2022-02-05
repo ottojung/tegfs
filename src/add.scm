@@ -32,6 +32,7 @@
 %use (append-posix-path) "./euphrates/append-posix-path.scm"
 %use (words->string) "./euphrates/words-to-string.scm"
 %use (string->lines) "./euphrates/string-to-lines.scm"
+%use (list-deduplicate) "./euphrates/list-deduplicate.scm"
 
 %use (fatal) "./fatal.scm"
 %use (root/p) "./root-p.scm"
@@ -79,10 +80,13 @@
   (display "Added!\n"))
 
 (define (tegfs-add
-         <target> <title> tags
+         <target> <title> tags0
          key-value-pairs0
          <registry-file> <date>
          input)
+
+  (define tags
+    (list-deduplicate tags0))
 
   (define date
     (or <date> (get-date)))
