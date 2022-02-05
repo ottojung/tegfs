@@ -399,8 +399,10 @@
   (read-answer "Enter target basename relative to the registry file: "))
 
 (define (get-confirm edit?)
-  (dprintln "Press enter if parameters are OK")
-  'done)
+  (if edit? #f
+      (begin
+        (dprintln "Press enter if parameters are OK")
+        'done)))
 
 (define (index-to-key state i0)
   (define i (- i0 1))
