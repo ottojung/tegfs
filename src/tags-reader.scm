@@ -15,7 +15,7 @@
 %run guile
 
 %var tegfs-categorize/parse
-%var tags-reader-edit
+%var tegfs-query-tags
 
 %use (make-temporary-filename) "./euphrates/make-temporary-filename.scm"
 %use (system-fmt) "./euphrates/system-fmt.scm"
@@ -38,6 +38,7 @@
 %use (CFG-CLI->CFG-AST) "./euphrates/parse-cfg-cli.scm"
 %use (list-deduplicate) "./euphrates/list-deduplicate.scm"
 %use (raisu) "./euphrates/raisu.scm"
+%use (file-delete) "./euphrates/file-delete.scm"
 
 %use (categorization-filename) "./categorization-filename.scm"
 %use (root/p) "./root-p.scm"
@@ -46,10 +47,10 @@
 
 (define (tegfs-categorize/parse)
   (define categorization-file (append-posix-path (root/p) categorization-filename))
-  (tags-reader-edit categorization-file)
-  (dprintln "Edited!"))
+  (define result (tegfs-categorize categorization-file))
+  (dprintln "Categorized! Chosen tags: ~s" (cdr result)))
 
-(define (tags-reader-edit categorization-file)
+(define (tegfs-categorize categorization-file)
   (define working-file (make-temporary-filename))
 
   (unless (file-or-directory-exists? categorization-file)
@@ -59,14 +60,32 @@
 
   (copy-file categorization-file working-file)
 
+  (let loop ()
+    (define result (tegfs-edit-tags working-file))
+    (if (equal? 'ok (car result))
+        (begin
+          (rename-file working-file categorization-file)
+          result)
+        (begin
+          (dprintln "Error categorizing:")
+          (print-errors (cdr result))
+          (loop)))))
+
+(define (print-errors errors)
+  (for-each
+   (lambda (line)
+     (dprintln "Tag \"~s\" has ambiguous parents: ~s" (car line) (cdr line)))
+   errors))
+
+(define (tegfs-edit-tags working-file)
+  (unless working-file
+    (raisu 'must-provide-working-file))
+
   (system-fmt "$EDITOR ~a" working-file)
-
-  (process-categorization-text (read-string-file working-file))
-
-  (system-fmt "sed 's/*//g' ~a" working-file)
-  (rename-file working-file categorization-file)
-
-  )
+  (let ((result (process-categorization-text (read-string-file working-file))))
+    (when (equal? 'ok (car result))
+      (system-fmt "sed -i 's/\\*//g' ~a" working-file))
+    result))
 
 (define unstar-symbol
   (comp symbol->string
@@ -110,6 +129,8 @@
           (member tag (cdr production)))
         ast/flatten/unstarred))))
 
+;; returns either `(ok ,list-of-chosen-tags)
+;;             or `(error ,list-of-ambiguous-tags-with-parents)
 (define (process-categorization-text text)
   (define lines (string->lines text))
   (define stripped (map string-strip lines))
@@ -129,8 +150,6 @@
   (define ast
     (CFG-CLI->CFG-AST words-flat))
 
-  (debug "parsed: ~s" ast)
-
   (define ast/flatten
     (map (lambda (production)
            (cons (car production)
@@ -138,17 +157,11 @@
                   (apply append (cdr production)))))
          ast))
 
-  (debug "parsed/flat: ~s" ast/flatten)
-
   (define starred
     (filter starred-symbol? words-flat))
 
-  (debug "starred: ~s" starred)
-
   (define starred-productions
     (filter starred-symbol? (map car ast)))
-
-  (debug "starred-productions: ~s" starred-productions)
 
   (define starred-non-productions
     (apply
@@ -156,8 +169,6 @@
      (map (lambda (production)
             (filter starred-symbol? (cdr production)))
           ast/flatten)))
-
-  (debug "starred-non-productions: ~s" starred-non-productions)
 
   (define ast/flatten/unstarred
     (map (lambda (production)
@@ -167,22 +178,14 @@
              (map unstar-symbol (cdr production)))))
          ast/flatten))
 
-  (debug "parsed/flat/unstarred: ~s" ast/flatten/unstarred)
-
   (define doubles
     (filter (comp (has-multiple-parents? ast/flatten/unstarred)) starred))
-
-  (debug "doubles: ~s" doubles)
 
   (define doubles-parents
     (map unstar-symbol (apply append (map (comp (get-parents/transitive ast/flatten)) doubles))))
 
-  (debug "doubles-parents: ~s" doubles-parents)
-
   (define all-starred-productions
     (append starred-productions doubles-parents))
-
-  (debug "all-starred-productions: ~s" all-starred-productions)
 
   (define ambiguous-starred-productions
     (let ((starred-non-productions/unstarred
@@ -193,8 +196,6 @@
          (and (has-multiple-parents? ast/flatten/unstarred tag)
               (not (member tag starred-non-productions/unstarred))))
        all-starred-productions)))
-
-  (debug "ambiguous-starred-productions: ~s" ambiguous-starred-productions)
 
   (if (null? ambiguous-starred-productions)
       (cons
