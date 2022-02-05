@@ -56,6 +56,7 @@
 %use (custom-preferences-filename) "./custom-preferences-filename.scm"
 %use (a-weblink?) "./a-weblink-q.scm"
 %use (tegfs-add) "./add.scm"
+%use (tegfs-categorize) "./tags-reader.scm"
 
 %use (debug) "./euphrates/debug.scm"
 
@@ -244,8 +245,8 @@
       (assoc-set-default 'download? 'no state)))
 
 (define (get-tags edit?)
-  (tegfs-categorize
-  (string->words (read-answer "Enter tags separated by whitespace:")))
+  (define result (cdr (tegfs-categorize)))
+  (map symbol->string result))
 
 (define (set-real-type-preference state)
   (define text-content (cdr (assoc '-text-content state)))
