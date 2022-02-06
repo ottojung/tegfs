@@ -83,7 +83,7 @@
   (system-fmt "$EDITOR ~a" working-file)
   (let ((result (process-categorization-text (read-string-file working-file))))
     (when (equal? 'ok (car result))
-      (system-fmt "sed -i 's/\\*//g' ~a" working-file))
+      (system-fmt "sed -i 's/\\*//g ; s/\\w\\w*_\\(\\w\\w*\\)/_\\1/g ; s/\\(\\w\\w*)^\\w\\w*/\\1^/g' ~a" working-file))
     result))
 
 (define unstar-symbol
