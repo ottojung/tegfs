@@ -40,6 +40,8 @@
 %use (list-deduplicate) "./euphrates/list-deduplicate.scm"
 %use (raisu) "./euphrates/raisu.scm"
 %use (file-delete) "./euphrates/file-delete.scm"
+%use (list-and-map) "./euphrates/list-and-map.scm"
+%use (compose-under) "./euphrates/compose-under.scm"
 
 %use (categorization-filename) "./categorization-filename.scm"
 %use (root/p) "./root-p.scm"
@@ -105,7 +107,8 @@
 (define starred-symbol?
   (comp symbol->string string->list (member #\*)))
 
-(define (get-parents/transitive ast/flatten tag/starred)
+;; transitive over type-symbols, but not a general transitive closure
+(define (get-parents ast/flatten tag/starred)
   (let loop ((tag/starred tag/starred) (buf '()))
     (when (member tag/starred buf)
       (raisu 'cycle-detected! tag/starred buf))
@@ -123,14 +126,27 @@
                     (list immediate)))))
        ast/flatten)))))
 
-(define (has-multiple-parents? ast/flatten/unstarred tag/starred)
-  (define tag (unstar-symbol tag/starred))
-  (<= 2
-      (length
-       (filter
-        (lambda (production)
-          (member tag (cdr production)))
-        ast/flatten/unstarred))))
+;; transitive over symbols that have single parent
+(define (get-parents/transitive/reflexive ast/flatten tag/starred)
+  (cons
+   tag/starred
+   (let loop ((tag/starred tag/starred) (buf '()))
+     (when (member tag/starred buf)
+       (raisu 'cycle-detected! tag/starred buf))
+
+     (let ((immediate-parents
+            (filter
+             identity
+             (map
+              (lambda (production)
+                (and (member tag/starred (cdr production))
+                     (car production)))
+              ast/flatten))))
+       (if (or (null? immediate-parents)
+               (not (null? (cdr immediate-parents))))
+           '()
+           (let ((parent (car immediate-parents)))
+             (cons parent (loop parent (cons tag/starred buf)))))))))
 
 ;; returns either `(ok ,list-of-chosen-tags)
 ;;             or `(error ,list-of-ambiguous-tags-with-parents)
@@ -163,6 +179,9 @@
   (define starred
     (filter starred-symbol? words-flat))
 
+  (define starred/unstarred
+    (map unstar-symbol starred))
+
   (define starred-productions
     (filter starred-symbol? (map car ast)))
 
@@ -182,13 +201,34 @@
          ast/flatten))
 
   (define doubles
-    (filter (comp (has-multiple-parents? ast/flatten/unstarred)) starred))
+    (filter
+     (comp unstar-symbol (get-parents ast/flatten/unstarred) length (< 1))
+     starred))
 
   (define doubles-parents
-    (map unstar-symbol (apply append (map (comp (get-parents/transitive ast/flatten)) doubles))))
+    (apply append (map (comp (get-parents ast/flatten)) doubles)))
 
-  (define all-starred-productions
-    (append starred-productions doubles-parents))
+  (define all-parents
+    (list-deduplicate
+     (append
+      starred-productions
+      (apply
+       append
+       (map (comp (get-parents ast/flatten)) starred-non-productions)))))
+
+  (define tags-to-return/starred
+    (list-deduplicate (append starred doubles-parents)))
+
+  (define tags-to-return
+    (map unstar-symbol tags-to-return/starred))
+
+  (define all-parents/transitive/reflexive
+    (map
+     unstar-symbol
+     (list-deduplicate
+      (apply
+       append
+       (map (comp (get-parents/transitive/reflexive ast/flatten)) tags-to-return/starred)))))
 
   (define ambiguous-starred-productions
     (let ((starred-non-productions/unstarred
@@ -196,22 +236,22 @@
       (filter
        (lambda (tag/starred)
          (define tag (unstar-symbol tag/starred))
-         (and (has-multiple-parents? ast/flatten/unstarred tag)
-              (not (member tag starred-non-productions/unstarred))))
-       all-starred-productions)))
+         (define parents (get-parents ast/flatten/unstarred tag))
+         (and (< 1 (length parents))
+              (list-and-map
+               (fn not (member % all-parents/transitive/reflexive))
+               parents)))
+       all-parents)))
 
   (if (null? ambiguous-starred-productions)
-      (cons
-       'ok
-       (list-deduplicate
-        (map unstar-symbol (append starred doubles-parents))))
+      (cons 'ok tags-to-return)
       (cons
        'error
        (map
         (lambda (amb)
           (define unstarred (unstar-symbol amb))
           (cons unstarred
-                (map unstar-symbol (get-parents/transitive ast/flatten/unstarred unstarred))))
+                (map unstar-symbol (get-parents ast/flatten/unstarred unstarred))))
         ambiguous-starred-productions))))
 
 
