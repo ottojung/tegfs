@@ -435,8 +435,8 @@
         answer)))
 
 (define property-table
-  `((tags . ,get-tags)
-    (title . ,get-title)
+  `((title . ,get-title)
+    (tags . ,get-tags)
     (registry-file . ,get-registry-file)
     (real-type . ,get-real-type)
     (download? . ,get-download-flag)
