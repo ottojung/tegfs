@@ -42,6 +42,7 @@
 %use (file-delete) "./euphrates/file-delete.scm"
 %use (list-and-map) "./euphrates/list-and-map.scm"
 %use (compose-under) "./euphrates/compose-under.scm"
+%use (read-string-line) "./euphrates/read-string-line.scm"
 
 %use (categorization-filename) "./categorization-filename.scm"
 %use (root/p) "./root-p.scm"
@@ -77,6 +78,8 @@
         (begin
           (dprintln "Error categorizing:")
           (print-errors (cdr result))
+          (dprintln "Press enter to continue...")
+          (read-string-line)
           (loop)))))
 
 (define (print-errors errors)
