@@ -45,25 +45,32 @@
 %use (root/p) "./root-p.scm"
 
 (define (tegfs-categorize/parse)
-  (define result (tegfs-categorize))
+  (define result (tegfs-categorize #f))
   (dprintln "Categorized! Chosen tags: ~s" (cdr result)))
 
-(define (tegfs-categorize)
+(define (tegfs-categorize working-file-maybe)
   (define categorization-file (append-posix-path (root/p) categorization-filename))
-  (define working-file (make-temporary-filename))
+  (define working-file
+    (or working-file-maybe
+        (make-temporary-filename)))
 
   (unless (file-or-directory-exists? categorization-file)
     (write-string-file
      categorization-file
      "# This file is for categorization of the tags\n\n-----------\n\n"))
 
-  (copy-file categorization-file working-file)
+  (unless (file-or-directory-exists? working-file)
+    (copy-file categorization-file working-file))
 
   (let loop ()
     (define result (tegfs-edit-tags working-file))
     (if (equal? 'ok (car result))
         (begin
-          (rename-file working-file categorization-file)
+          (if working-file-maybe
+              (copy-file working-file categorization-file)
+              (rename-file working-file categorization-file))
+          (system-fmt "sed -i 's/\\*//g ; s/\\w\\w*_\\(\\w\\w*\\)/_\\1/g ; s/\\(\\w\\w*\\)^\\w\\w*/\\1^/g' ~a"
+                      categorization-file)
           result)
         (begin
           (dprintln "Error categorizing:")
@@ -81,10 +88,7 @@
     (raisu 'must-provide-working-file))
 
   (system-fmt "$EDITOR ~a" working-file)
-  (let ((result (process-categorization-text (read-string-file working-file))))
-    (when (equal? 'ok (car result))
-      (system-fmt "sed -i 's/\\*//g ; s/\\w\\w*_\\(\\w\\w*\\)/_\\1/g ; s/\\(\\w\\w*)^\\w\\w*/\\1^/g' ~a" working-file))
-    result))
+  (process-categorization-text (read-string-file working-file)))
 
 (define unstar-symbol
   (comp symbol->string

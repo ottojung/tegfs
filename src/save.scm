@@ -244,8 +244,11 @@
   (if (a-weblink? text-content) state
       (assoc-set-default 'download? 'no state)))
 
+(define working-file
+  (make-temporary-filename))
+
 (define (get-tags edit?)
-  (define result (cdr (tegfs-categorize)))
+  (define result (cdr (tegfs-categorize working-file)))
   (map symbol->string result))
 
 (define (set-real-type-preference state)
@@ -567,6 +570,8 @@
                           (string-append (get-random-basename) <target>))
                          new-name0)))
       (rename-file -temporary-file new-name)))
+
+  (file-delete working-file)
 
   (tegfs-add
    <target> title tags
