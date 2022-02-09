@@ -59,21 +59,22 @@
 %use (tegfs-categorize) "./tags-reader.scm"
 
 %use (debug) "./euphrates/debug.scm"
+%use (debugv) "./euphrates/debugv.scm"
 
 ;; TODO: factor out graph UI to euphrates
 ;;       and use progfun in it.
 
+(define (assoc-set-preference key value state)
+  (define got (assoc key state))
+  (define current (and got (cadr got)))
+  (define set-by-user? (and got (caddr got)))
+  (if set-by-user?
+      state
+      (assoc-set-value key (list value set-by-user?) state)))
+
 (define (string-type? s)
   (or (member s '("STRING" "UTF8_STRING" "TEXT" "COMPOUND_TEXT"))
       (string-prefix? "text/" s)))
-
-(define (read-tags)
-  (dprintln "Enter tags separated by whitespace: ")
-  (string->words (read-string-line)))
-
-(define (read-title)
-  (dprintln "Enter the title: ")
-  (read-string-line))
 
 (define (get-random-basename)
   (list->string
@@ -161,32 +162,32 @@
 (define (initialize-state)
   (map
    (lambda (p)
-     (cons (car p) #f))
+     (list (car p) #f #f))
    property-table))
 
 (define (set-selection-content-preference state)
   (define selection-content
     (car (system-re "xclip -selection primary -out")))
-  (assoc-set-default '-selection-content selection-content state))
+  (assoc-set-preference '-selection-content selection-content state))
 
 (define (set-text-content-preference state)
   (define text-content
     (car (system-re "xclip -selection clipboard -out")))
-  (if (cdr (assoc '-text-content state)) state
+  (if (cadr (assoc '-text-content state)) state
       (begin
         (newline)
         (print-in-frame #t #f 3 35 0 #\space "    Clipboard text content")
         (newline)
         (print-in-frame #t #t 3 60 0 #\space text-content)
         (newline)
-        (assoc-set-value '-text-content text-content state))))
+        (assoc-set-preference '-text-content text-content state))))
 
 (define (set-types-list-preference state)
   (define types-list/str
     (car (system-re "xclip -o -target TARGETS -selection clipboard")))
   (define types-list
     (string->lines types-list/str))
-  (assoc-set-default '-types-list types-list state))
+  (assoc-set-preference '-types-list types-list state))
 
 (define (state-set-custom-preferences preferences-code state)
   (if preferences-code
@@ -240,9 +241,9 @@
        (loop)))))
 
 (define (set-download-preference state)
-  (define text-content (cdr (assoc '-text-content state)))
+  (define text-content (cadr (assoc '-text-content state)))
   (if (a-weblink? text-content) state
-      (assoc-set-default 'download? 'no state)))
+      (assoc-set-preference 'download? 'no state)))
 
 (define working-file
   (make-temporary-filename))
@@ -252,14 +253,14 @@
   (map symbol->string result))
 
 (define (set-real-type-preference state)
-  (define text-content (cdr (assoc '-text-content state)))
+  (define text-content (cadr (assoc '-text-content state)))
   (define value
     (cond
      ((string-null? text-content) 'data)
      ((a-weblink? text-content) 'link)
      ((file-or-directory-exists? text-content) 'localfile)
      (else 'pasta)))
-  (assoc-set-default 'real-type value state))
+  (assoc-set-preference 'real-type value state))
 
 (define (get-description edit?)
   (define answer (read-answer "Enter description: (-none/-selection/custom text)"))
@@ -268,10 +269,10 @@
    (else answer)))
 
 (define (download-maybe state)
-  (define download? (cdr (assoc 'download? state)))
-  (define real-type (cdr (assoc 'real-type state)))
-  (define text-content (cdr (assoc '-text-content state)))
-  (define -temporary-file (cdr (assoc '-temporary-file state)))
+  (define download? (cadr (assoc 'download? state)))
+  (define real-type (cadr (assoc 'real-type state)))
+  (define text-content (cadr (assoc '-text-content state)))
+  (define -temporary-file (cadr (assoc '-temporary-file state)))
 
   (cond
    ((and (equal? 'link real-type)
@@ -279,112 +280,112 @@
          (not -temporary-file)
          (a-weblink? text-content))
     (let* ((temp-name (download-temp text-content)))
-      (assoc-set-value '-temporary-file temp-name state)))
+      (assoc-set-preference '-temporary-file temp-name state)))
    (else state)))
 
 (define (dump-xclip-data-maybe state)
-  (define download? (cdr (assoc 'download? state)))
-  (define data-type (cdr (assoc 'data-type state)))
-  (define real-type (cdr (assoc 'real-type state)))
-  (define -temporary-file (cdr (assoc '-temporary-file state)))
+  (define download? (cadr (assoc 'download? state)))
+  (define data-type (cadr (assoc 'data-type state)))
+  (define real-type (cadr (assoc 'real-type state)))
+  (define -temporary-file (cadr (assoc '-temporary-file state)))
 
   (cond
    ((and data-type
          (equal? 'data real-type)
          (not -temporary-file))
     (let* ((temp-name (dump-xclip-temp data-type)))
-      (assoc-set-value '-temporary-file temp-name state)))
+      (assoc-set-preference '-temporary-file temp-name state)))
    (else state)))
 
 (define (handle-localfile-maybe state)
-  (define data-type (cdr (assoc 'data-type state)))
-  (define real-type (cdr (assoc 'real-type state)))
-  (define -temporary-file (cdr (assoc '-temporary-file state)))
-  (define -text-content (cdr (assoc '-text-content state)))
+  (define data-type (cadr (assoc 'data-type state)))
+  (define real-type (cadr (assoc 'real-type state)))
+  (define -temporary-file (cadr (assoc '-temporary-file state)))
+  (define -text-content (cadr (assoc '-text-content state)))
 
   (cond
    ((and (equal? 'localfile real-type)
          (not -temporary-file))
-    (assoc-set-value '-temporary-file -text-content state))
+    (assoc-set-preference '-temporary-file -text-content state))
    (else state)))
 
 (define (handle-pasta-maybe state)
-  (define data-type (cdr (assoc 'data-type state)))
-  (define real-type (cdr (assoc 'real-type state)))
-  (define -temporary-file (cdr (assoc '-temporary-file state)))
-  (define -text-content (cdr (assoc '-text-content state)))
+  (define data-type (cadr (assoc 'data-type state)))
+  (define real-type (cadr (assoc 'real-type state)))
+  (define -temporary-file (cadr (assoc '-temporary-file state)))
+  (define -text-content (cadr (assoc '-text-content state)))
 
   (cond
    ((and (equal? 'pasta real-type))
-    (assoc-set-value 'description -text-content state))
+    (assoc-set-preference 'description -text-content state))
    (else state)))
 
 (define (set-data-type-preference state)
-  (define data-type (cdr (assoc 'data-type state)))
-  (define real-type (cdr (assoc 'real-type state)))
-  (define text-content (cdr (assoc '-text-content state)))
-  (define registry-file (cdr (assoc 'registry-file state)))
+  (define data-type (cadr (assoc 'data-type state)))
+  (define real-type (cadr (assoc 'real-type state)))
+  (define text-content (cadr (assoc '-text-content state)))
+  (define registry-file (cadr (assoc 'registry-file state)))
   (define target-directory (and registry-file (dirname registry-file)))
-  (define -temporary-file (cdr (assoc '-temporary-file state)))
-  (define download? (cdr (assoc 'download? state)))
+  (define -temporary-file (cadr (assoc '-temporary-file state)))
+  (define download? (cadr (assoc 'download? state)))
 
   (cond
    ((and (member real-type '(localfile pasta)))
-    (assoc-set-default 'data-type 'ignore state))
+    (assoc-set-preference 'data-type 'ignore state))
    ((and (equal? 'link real-type) (a-weblink? text-content) (equal? 'no download?))
-    (assoc-set-default 'data-type 'ignore state))
+    (assoc-set-preference 'data-type 'ignore state))
    ((and -temporary-file (not data-type))
     (let ((mimetype (get-file-mimetype -temporary-file)))
       (if mimetype
-          (assoc-set-default 'data-type mimetype state)
+          (assoc-set-preference 'data-type mimetype state)
           (begin
             (dprintln "Could not determine a file type of ~s" string)
             state))))
    (else state)))
 
 (define (set-target-extension-preference state)
-  (define data-type (cdr (assoc 'data-type state)))
-  (define real-type (cdr (assoc 'real-type state)))
-  (define text-content (cdr (assoc '-text-content state)))
-  (define registry-file (cdr (assoc 'registry-file state)))
+  (define data-type (cadr (assoc 'data-type state)))
+  (define real-type (cadr (assoc 'real-type state)))
+  (define text-content (cadr (assoc '-text-content state)))
+  (define registry-file (cadr (assoc 'registry-file state)))
   (define target-directory (and registry-file (dirname registry-file)))
-  (define -temporary-file (cdr (assoc '-temporary-file state)))
-  (define download? (cdr (assoc 'download? state)))
+  (define -temporary-file (cadr (assoc '-temporary-file state)))
+  (define download? (cadr (assoc 'download? state)))
 
   (cond
    ((and (equal? 'localfile real-type))
-    (assoc-set-default 'target-extension (path-extension text-content) state))
+    (assoc-set-preference 'target-extension (path-extension text-content) state))
    ((and (equal? 'pasta real-type))
-    (assoc-set-default 'target-extension 'ignore state))
+    (assoc-set-preference 'target-extension 'ignore state))
    ((and (equal? 'link real-type) (a-weblink? text-content) (equal? 'no download?))
-    (assoc-set-default 'target-extension 'ignore state))
+    (assoc-set-preference 'target-extension 'ignore state))
    ((and data-type)
-    (assoc-set-default 'target-extension (get-mime-extension data-type) state))
+    (assoc-set-preference 'target-extension (get-mime-extension data-type) state))
    (else state)))
 
 (define (set-target-basename-preference state)
-  (define data-type (cdr (assoc 'data-type state)))
-  (define real-type (cdr (assoc 'real-type state)))
-  (define text-content (cdr (assoc '-text-content state)))
-  (define registry-file (cdr (assoc 'registry-file state)))
+  (define data-type (cadr (assoc 'data-type state)))
+  (define real-type (cadr (assoc 'real-type state)))
+  (define text-content (cadr (assoc '-text-content state)))
+  (define registry-file (cadr (assoc 'registry-file state)))
   (define target-directory (and registry-file (dirname registry-file)))
-  (define -temporary-file (cdr (assoc '-temporary-file state)))
-  (define download? (cdr (assoc 'download? state)))
+  (define -temporary-file (cadr (assoc '-temporary-file state)))
+  (define download? (cadr (assoc 'download? state)))
 
   (cond
    ((and (equal? 'pasta real-type))
-    (assoc-set-default 'target-basename 'ignore state))
+    (assoc-set-preference 'target-basename 'ignore state))
    ((and (equal? 'localfile real-type))
     (let ((name (path-without-extension (path-get-basename text-content))))
-      (assoc-set-default 'target-basename name state)))
+      (assoc-set-preference 'target-basename name state)))
    (else
-    (assoc-set-default 'target-basename (get-random-basename) state))))
+    (assoc-set-preference 'target-basename (get-random-basename) state))))
 
 (define (get-data-type edit?)
   (define state (state/p))
-  (define types-list (cdr (assoc '-types-list state)))
+  (define types-list (cadr (assoc '-types-list state)))
   (define types-list/str (lines->string types-list))
-  (define -text-content (cdr (assoc '-text-content state)))
+  (define -text-content (cadr (assoc '-text-content state)))
 
   (if (a-weblink? -text-content)
       (read-answer "Enter mimetype: ")
@@ -470,14 +471,14 @@
   (define setter (get-setter key))
   (parameterize ((menu-callback callback))
     (and setter
-         (assoc-set-value key (setter (> counter 1)) state))))
+         (assoc-set-value key (list (setter (> counter 1)) #t) state))))
 
 (define (print-state state)
   (dprintln "\n\n")
   (dprintln " Enter *number* to edit one of below:")
   (for-each
    (lambda (param i)
-     (define value0 (cdr param))
+     (define value0 (cadr param))
      (define value
             (if (and (string? value0) (< 50 (string-length value0)))
                 (string-append (list->string (list-take-n 50 (string->list value0))) "...")
@@ -498,7 +499,7 @@
     (if (null? cur) #f
         (let* ((param (car cur))
                (key (car param))
-               (value (cdr param)))
+               (value (cadr param)))
           (if value
               (loop (cdr cur))
               (parameterize ((state/p state))
@@ -515,8 +516,8 @@
    set-selection-content-preference
    set-text-content-preference
    set-types-list-preference
-   (assoc-set-default 'confirm 'no)
-   (assoc-set-default 'description '-none)
+   (assoc-set-preference 'confirm 'no)
+   (assoc-set-preference 'description '-none)
    set-download-preference
    set-real-type-preference
    download-maybe
@@ -536,17 +537,17 @@
            (cons 'let (cons '() (read-list (current-input-port))))))))
 
 (define (send-state state)
-  (define title (cdr (assoc 'title state)))
-  (define tags (cdr (assoc 'tags state)))
-  (define target-extension (cdr (assoc 'target-extension state)))
-  (define target-basename (cdr (assoc 'target-basename state)))
-  (define types-list (cdr (assoc '-types-list state)))
-  (define data-type (cdr (assoc 'data-type state)))
-  (define real-type (cdr (assoc 'real-type state)))
-  (define description (cdr (assoc 'description state)))
-  (define registry-file (cdr (assoc 'registry-file state)))
-  (define -temporary-file (cdr (assoc '-temporary-file state)))
-  (define -text-content (cdr (assoc '-text-content state)))
+  (define title (cadr (assoc 'title state)))
+  (define tags (cadr (assoc 'tags state)))
+  (define target-extension (cadr (assoc 'target-extension state)))
+  (define target-basename (cadr (assoc 'target-basename state)))
+  (define types-list (cadr (assoc '-types-list state)))
+  (define data-type (cadr (assoc 'data-type state)))
+  (define real-type (cadr (assoc 'real-type state)))
+  (define description (cadr (assoc 'description state)))
+  (define registry-file (cadr (assoc 'registry-file state)))
+  (define -temporary-file (cadr (assoc '-temporary-file state)))
+  (define -text-content (cadr (assoc '-text-content state)))
   (define registry-dir (append-posix-path (root/p) (dirname registry-file)))
   (define source (and (a-weblink? -text-content) -temporary-file -text-content))
   (define key-value-pairs (if source (list (cons "source" source)) (list)))
