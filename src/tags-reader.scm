@@ -199,6 +199,11 @@
   (define starred/unstarred
     (map unstar-symbol starred))
 
+  (define _1
+    (unless (= (length (list-deduplicate starred/unstarred))
+               (length starred/unstarred))
+      (raisu 'you-chose-some-tags-twice,dont-do-that starred)))
+
   (define starred-productions
     (filter starred-symbol? (map car ast)))
 
