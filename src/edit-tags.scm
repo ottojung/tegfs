@@ -14,8 +14,6 @@
 
 %run guile
 
-%var tegfs-categorize/parse
-%var tegfs-categorize
 %var tegfs-edit-tags
 
 %use (make-temporary-filename) "./euphrates/make-temporary-filename.scm"
@@ -44,52 +42,6 @@
 %use (list-find-first) "./euphrates/list-find-first.scm"
 %use (compose-under) "./euphrates/compose-under.scm"
 %use (read-string-line) "./euphrates/read-string-line.scm"
-
-%use (categorization-filename) "./categorization-filename.scm"
-%use (root/p) "./root-p.scm"
-
-%use (debugv) "./euphrates/debugv.scm"
-
-(define (tegfs-categorize/parse)
-  (define result (tegfs-categorize #f))
-  (dprintln "Categorized! Chosen tags: ~s" (cdr result)))
-
-(define (tegfs-categorize working-file-maybe)
-  (define categorization-file (append-posix-path (root/p) categorization-filename))
-  (define working-file
-    (or working-file-maybe
-        (make-temporary-filename)))
-
-  (unless (file-or-directory-exists? categorization-file)
-    (write-string-file
-     categorization-file
-     "# This file is for categorization of the tags\n\n-----------\n\n"))
-
-  (unless (file-or-directory-exists? working-file)
-    (copy-file categorization-file working-file))
-
-  (let loop ()
-    (define result (tegfs-edit-tags working-file))
-    (if (equal? 'ok (car result))
-        (begin
-          (if working-file-maybe
-              (copy-file working-file categorization-file)
-              (rename-file working-file categorization-file))
-          (system-fmt "sed -i 's/\\*//g ; s/\\w\\w*_\\(\\w\\w*\\)/_\\1/g ; s/\\(\\w\\w*\\)^\\w\\w*/\\1^/g' ~a"
-                      categorization-file)
-          result)
-        (begin
-          (dprintln "Error categorizing:")
-          (print-errors (cdr result))
-          (dprintln "Press enter to continue...")
-          (read-string-line)
-          (loop)))))
-
-(define (print-errors errors)
-  (for-each
-   (lambda (line)
-     (dprintln "Tag \"~s\" has ambiguous parents: ~s" (car line) (cdr line)))
-   errors))
 
 (define (tegfs-edit-tags working-file)
   (unless working-file

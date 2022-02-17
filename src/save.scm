@@ -56,7 +56,7 @@
 %use (custom-preferences-filename) "./custom-preferences-filename.scm"
 %use (a-weblink?) "./a-weblink-q.scm"
 %use (tegfs-add) "./add.scm"
-%use (tegfs-categorize) "./tags-reader.scm"
+%use (tegfs-categorize) "./categorize.scm"
 
 %use (debug) "./euphrates/debug.scm"
 %use (debugv) "./euphrates/debugv.scm"

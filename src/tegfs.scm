@@ -30,7 +30,7 @@
 
 %use (tegfs-add/parse) "./add.scm"
 %use (tegfs-save/parse) "./save.scm"
-%use (tegfs-categorize/parse) "./tags-reader.scm"
+%use (tegfs-categorize/parse) "./categorize.scm"
 %use (fatal) "./fatal.scm"
 %use (root/p) "./root-p.scm"
 
