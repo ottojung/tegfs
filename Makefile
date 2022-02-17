@@ -42,6 +42,12 @@ test2: build/tegfs
 test3: build/tegfs
 	TEGFS_ROOT=$(TEST_ROOT) build/tegfs categorize
 
+test4: build/tegfs
+	printf '(user (pass "' > $(TEST_ROOT)/auth.tegfs.lisp
+	printf '%s' pass1 | sha256sum | cut '-d ' -f 1 | tr -d '\n' >> $(TEST_ROOT)/auth.tegfs.lisp
+	printf '"))\n' >> $(TEST_ROOT)/auth.tegfs.lisp
+	TEGFS_ROOT=$(TEST_ROOT) build/tegfs serve
+
 build/tegfs: src/*.scm build $(SUBMODULES)
 	czempak install src/tegfs.scm "$@"
 

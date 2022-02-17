@@ -31,6 +31,7 @@
 %use (tegfs-add/parse) "./add.scm"
 %use (tegfs-save/parse) "./save.scm"
 %use (tegfs-categorize/parse) "./categorize.scm"
+%use (tegfs-serve/parse) "./server.scm"
 %use (fatal) "./fatal.scm"
 %use (root/p) "./root-p.scm"
 
@@ -46,6 +47,7 @@
       /      save
       /      categorize
       /      status
+      /      serve
       ADDOPT : --target <add-target>
       /        --title <title>
       /        --tag <tag...>
@@ -73,6 +75,7 @@
               <registry-file> <date>))
         (save (tegfs-save/parse))
         (categorize (tegfs-categorize/parse))
+        (serve (tegfs-serve/parse))
         (status
          (display "NOT IMPLEMENTED YET") (newline)
          (exit 1))
