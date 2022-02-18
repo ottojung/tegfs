@@ -119,6 +119,7 @@
 
 ;; returns either `(ok ,list-of-chosen-tags)
 ;;             or `(error ,list-of-ambiguous-tags-with-parents)
+;;             or `(duplicates)
 (define (process-categorization-text text)
   (define lines (string->lines text))
   (define stripped (map string-strip lines))
@@ -151,66 +152,65 @@
   (define starred/unstarred
     (map unstar-symbol starred))
 
-  (define _1
-    (unless (= (length (list-deduplicate starred/unstarred))
-               (length starred/unstarred))
-      (raisu 'you-chose-some-tags-twice,dont-do-that starred)))
+  (if (not (= (length (list-deduplicate starred/unstarred))
+              (length starred/unstarred)))
+      (cons 'duplicates 'chose-some-tags-twice)
+      (let ()
+        (define starred-productions
+          (filter starred-symbol? (map car ast)))
 
-  (define starred-productions
-    (filter starred-symbol? (map car ast)))
+        (define starred-non-productions
+          (apply
+           append
+           (map (lambda (production)
+                  (filter starred-symbol? (cdr production)))
+                ast/flatten)))
 
-  (define starred-non-productions
-    (apply
-     append
-     (map (lambda (production)
-            (filter starred-symbol? (cdr production)))
-          ast/flatten)))
+        (define ast/flatten/unstarred
+          (map (lambda (production)
+                 (cons
+                  (unstar-symbol (car production))
+                  (list-deduplicate
+                   (map unstar-symbol (cdr production)))))
+               ast/flatten))
 
-  (define ast/flatten/unstarred
-    (map (lambda (production)
-           (cons
-            (unstar-symbol (car production))
-            (list-deduplicate
-             (map unstar-symbol (cdr production)))))
-         ast/flatten))
+        (define main-production
+          (car (car ast/flatten)))
 
-  (define main-production
-    (car (car ast/flatten)))
+        (define (closure closed tag/starred)
+          (get-parents/transitive/reflexive ast/flatten ast/flatten/unstarred closed tag/starred))
 
-  (define (closure closed tag/starred)
-    (get-parents/transitive/reflexive ast/flatten ast/flatten/unstarred closed tag/starred))
+        (define transitive-closures
+          (map (comp (closure '())) starred))
 
-  (define transitive-closures
-    (map (comp (closure '())) starred))
+        (define closed
+          (list-deduplicate
+           (map unstar-symbol
+                (apply append
+                       (filter
+                        (comp (member main-production))
+                        transitive-closures)))))
 
-  (define closed
-    (list-deduplicate
-     (map unstar-symbol
-          (apply append
-                 (filter
-                  (comp (member main-production))
-                  transitive-closures)))))
+        (define (ambiguous? tag/starred)
+          (define cl (closure closed tag/starred))
+          (not (member main-production cl)))
 
-  (define (ambiguous? tag/starred)
-    (define cl (closure closed tag/starred))
-    (not (member main-production cl)))
+        (define ambiguous
+          (filter ambiguous? starred))
 
-  (define ambiguous
-    (filter ambiguous? starred))
-
-  (if (null? ambiguous)
-      (cons 'ok
-            (filter
-             (negate type-symbol?)
-             (filter
-              (negate (comp (equal? main-production)))
-              (list-deduplicate
-               (map unstar-symbol (apply append transitive-closures))))))
-      (cons
-       'error
-       (map
-        (lambda (amb)
-          (define unstarred (unstar-symbol amb))
-          (cons unstarred
-                (map unstar-symbol (get-parents ast/flatten/unstarred unstarred))))
-        ambiguous))))
+        (if (null? ambiguous)
+            (cons 'ok
+                  (filter
+                   (negate type-symbol?)
+                   (filter
+                    (negate (comp (equal? main-production)))
+                    (list-deduplicate
+                     (map unstar-symbol (apply append transitive-closures))))))
+            (cons
+             'error
+             (map
+              (lambda (amb)
+                (define unstarred (unstar-symbol amb))
+                (cons unstarred
+                      (map unstar-symbol (get-parents ast/flatten/unstarred unstarred))))
+              ambiguous))))))

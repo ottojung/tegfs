@@ -70,20 +70,26 @@
 
   (let loop ()
     (define result (tegfs-edit-tags working-file))
-    (if (equal? 'ok (car result))
-        (begin
-          (if working-file-maybe
-              (copy-file working-file categorization-file)
-              (rename-file working-file categorization-file))
-          (system-fmt "sed -i 's/\\*//g ; s/\\w\\w*_\\(\\w\\w*\\)/_\\1/g ; s/\\(\\w\\w*\\)^\\w\\w*/\\1^/g' ~a"
-                      categorization-file)
-          result)
-        (begin
-          (dprintln "Error categorizing:")
-          (print-errors (cdr result))
-          (dprintln "Press enter to continue...")
-          (read-string-line)
-          (loop)))))
+    (case (car result)
+      ((ok)
+       (if working-file-maybe
+           (copy-file working-file categorization-file)
+           (rename-file working-file categorization-file))
+       (system-fmt "sed -i 's/\\*//g ; s/\\w\\w*_\\(\\w\\w*\\)/_\\1/g ; s/\\(\\w\\w*\\)^\\w\\w*/\\1^/g' ~a"
+                   categorization-file)
+       result)
+      ((error)
+       (dprintln "Error categorizing:")
+       (print-errors (cdr result))
+       (dprintln "Press enter to continue...")
+       (read-string-line)
+       (loop))
+      ((duplicates)
+       (dprintln "Error categorizing:")
+       (dprintln "Some tags were chosen twice")
+       (dprintln "Press enter to continue...")
+       (read-string-line)
+       (loop)))))
 
 (define (print-errors errors)
   (for-each
