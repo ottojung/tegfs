@@ -441,6 +441,7 @@ span.psw {
 
   (tegfs-add
    <target> title tags-list
+   #f ;; TODO: accept series? flag
    '() ;; TODO: accept key-value-pairs from the user
    upload-registry-filename #f
    #f ;; TODO: accept description

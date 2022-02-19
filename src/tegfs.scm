@@ -51,6 +51,8 @@
       ADDOPT : --target <add-target>
       /        --title <title>
       /        --tag <tag...>
+      /        --series
+      /        --no-series
       /        --key <key...> <value...>
       /        --registry-file <registry-file>
       /        --date <date>
@@ -58,6 +60,8 @@
       )
 
      :default (<root> (system-environment-get ROOT_VAR_NAME))
+     :default (--no-series #f)
+     :exclusive (--no-series --series)
 
      (when --help
        (define-cli:show-help))
@@ -71,7 +75,7 @@
      (parameterize ((root/p <root>))
        (cond
         (add (tegfs-add/parse
-              <add-target> <title> <tag...> <key...> <value...>
+              <add-target> <title> <tag...> --series <key...> <value...>
               <registry-file> <date>))
         (save (tegfs-save/parse))
         (categorize (tegfs-categorize/parse))

@@ -68,7 +68,7 @@
 
 (define (tegfs-add/parse
          <target> <title> <tag...>
-         <key...> <value...>
+         --series <key...> <value...>
          <registry-file> <date>)
 
   (define input
@@ -81,7 +81,7 @@
 
   (tegfs-add
    <target> <title> tags
-   key-value-pairs
+   --series key-value-pairs
    <registry-file> <date>
    input)
 
@@ -89,12 +89,18 @@
 
 (define (tegfs-add
          <target> <title> tags0
-         key-value-pairs0
+         series? key-value-pairs0
          <registry-file> <date>
          input)
 
   (define id
     (generate-random-id))
+
+  (define last-id-path
+    (append-posix-path (root/p) last-id-filename))
+
+  (define prev
+    (and series? (string-strip (read-string-file last-id-path))))
 
   (define tags
     (list-deduplicate (map ~a tags0)))
@@ -121,7 +127,7 @@
                   (a-weblink? <target>))
         (fatal "Target ~s does not exist. Note that filepath must be relative to the root" <target>))))
 
-  (write-string-file (append-posix-path (root/p) last-id-filename) id)
+  (write-string-file last-id-path id)
 
   (append-string-file
    registry-file
@@ -145,6 +151,11 @@
        (unless (null? tags)
          (display "  tags: ")
          (display (words->string tags))
+         (newline))
+
+       (when prev
+         (display "  prev: ")
+         (display prev)
          (newline))
 
        (unless (null? key-value-pairs)

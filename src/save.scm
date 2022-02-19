@@ -404,6 +404,15 @@
 (define (get-target-basename edit?)
   (read-answer "Enter target basename relative to the registry file: "))
 
+(define (get-series edit?)
+  (let loop ()
+    (case (string->symbol (read-answer "Is this item related to the one previously saved? (yes/no)"))
+      ((yes Yes YES) 'yes)
+      ((no No NO) 'no)
+      (else
+       (dprintln "Please answer \"yes\" or \"no\"")
+       (loop)))))
+
 (define (get-confirm edit?)
   (if edit? #f
       (begin
@@ -445,6 +454,7 @@
     (data-type . ,get-data-type)
     (target-extension . ,get-target-extension)
     (target-basename . ,get-target-basename)
+    (series . ,get-series)
     (confirm . ,get-confirm)
     (-temporary-file . #f)
     (-text-content . #f)
@@ -516,6 +526,7 @@
    set-selection-content-preference
    set-text-content-preference
    set-types-list-preference
+   (assoc-set-preference 'series 'no)
    (assoc-set-preference 'confirm 'no)
    (assoc-set-preference 'description '-none)
    set-download-preference
@@ -545,6 +556,8 @@
   (define data-type (cadr (assoc 'data-type state)))
   (define real-type (cadr (assoc 'real-type state)))
   (define description (cadr (assoc 'description state)))
+  (define series (cadr (assoc 'series state)))
+  (define series? (case series ((yes) #t) ((no) #f) (else (raisu 'bad-value-of-series series))))
   (define registry-file (cadr (assoc 'registry-file state)))
   (define -temporary-file (cadr (assoc '-temporary-file state)))
   (define -text-content (cadr (assoc '-text-content state)))
@@ -576,7 +589,7 @@
 
   (tegfs-add
    <target> title tags
-   key-value-pairs
+   series? key-value-pairs
    registry-file <date>
    <input>))
 
