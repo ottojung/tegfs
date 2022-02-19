@@ -557,7 +557,7 @@
   (define real-type (cadr (assoc 'real-type state)))
   (define description (cadr (assoc 'description state)))
   (define series (cadr (assoc 'series state)))
-  (define series? (case series ((yes) #t) ((no) #f) (else (raisu 'bad-value-of-series series))))
+  (define series? (case series ((yes) #t) ((no) #f) (else (fatal "Bad value for series ~s" series))))
   (define registry-file (cadr (assoc 'registry-file state)))
   (define -temporary-file (cadr (assoc '-temporary-file state)))
   (define -text-content (cadr (assoc '-text-content state)))

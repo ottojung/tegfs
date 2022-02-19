@@ -24,6 +24,7 @@
 %use (current-program-path/p) "./euphrates/current-program-path-p.scm"
 %use (file-or-directory-exists?) "./euphrates/file-or-directory-exists-q.scm"
 %use (write-string-file) "./euphrates/write-string-file.scm"
+%use (read-string-file) "./euphrates/read-string-file.scm"
 %use (append-string-file) "./euphrates/append-string-file.scm"
 %use (list-zip) "./euphrates/list-zip.scm"
 %use (system-re) "./euphrates/system-re.scm"
