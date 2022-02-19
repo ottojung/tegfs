@@ -33,6 +33,7 @@
 %use (words->string) "./euphrates/words-to-string.scm"
 %use (string->lines) "./euphrates/string-to-lines.scm"
 %use (list-deduplicate) "./euphrates/list-deduplicate.scm"
+%use (~a) "./euphrates/tilda-a.scm"
 
 %use (fatal) "./fatal.scm"
 %use (root/p) "./root-p.scm"
@@ -86,7 +87,7 @@
          input)
 
   (define tags
-    (list-deduplicate tags0))
+    (list-deduplicate (map ~a tags0)))
 
   (define date
     (or <date> (get-date)))
