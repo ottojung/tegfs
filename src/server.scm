@@ -54,6 +54,7 @@
 %use (alphanum-lowercase/alphabet) "./euphrates/alphanum-lowercase-alphabet.scm"
 %use (printf) "./euphrates/printf.scm"
 %use (path-extension) "./euphrates/path-extension.scm"
+%use (dprintln) "./euphrates/dprintln.scm"
 
 %use (root/p) "./root-p.scm"
 %use (categorization-filename) "./categorization-filename.scm"
@@ -475,6 +476,8 @@ span.psw {
   (define path-components
     (request-path-components request))
 
+  (dprintln "Got request: ~s" path-components)
+
   (if (null? (length path-components))
       (not-found)
       (case (string->symbol (car path-components))
@@ -695,12 +698,6 @@ span.psw {
   parsed-blocks)
 
 (define (tegfs-serve/parse)
-  ;; (debug "PARSING")
-  ;; (define testingdata
-  ;;   #vu8(45 45 45 45 45 45 87 101 98 75 105 116 70 111 114 109 66 111 117 110 100 97 114 121 76 70 52 54 117 66 66 108 116 106 68 82 65 98 48 66 13 10 67 111 110 116 101 110 116 45 68 105 115 112 111 115 105 116 105 111 110 58 32 102 111 114 109 45 100 97 116 97 59 32 110 97 109 101 61 34 116 105 116 108 101 34 13 10 13 10 107 32 49 32 50 32 51 13 10 45 45 45 45 45 45 87 101 98 75 105 116 70 111 114 109 66 111 117 110 100 97 114 121 76 70 52 54 117 66 66 108 116 106 68 82 65 98 48 66 13 10 67 111 110 116 101 110 116 45 68 105 115 112 111 115 105 116 105 111 110 58 32 102 111 114 109 45 100 97 116 97 59 32 110 97 109 101 61 34 102 105 108 101 34 59 32 102 105 108 101 110 97 109 101 61 34 104 101 108 108 111 46 116 120 116 34 13 10 67 111 110 116 101 110 116 45 84 121 112 101 58 32 116 101 120 116 47 112 108 97 105 110 13 10 13 10 104 101 108 108 111 32 116 104 101 114 101 10 13 10 45 45 45 45 45 45 87 101 98 75 105 116 70 111 114 109 66 111 117 110 100 97 114 121 76 70 52 54 117 66 66 108 116 106 68 82 65 98 48 66 13 10 67 111 110 116 101 110 116 45 68 105 115 112 111 115 105 116 105 111 110 58 32 102 111 114 109 45 100 97 116 97 59 32 110 97 109 101 61 34 116 97 103 115 34 13 10 13 10 97 98 99 32 100 13 10 45 45 45 45 45 45 87 101 98 75 105 116 70 111 114 109 66 111 117 110 100 97 114 121 76 70 52 54 117 66 66 108 116 106 68 82 65 98 48 66 45 45 13 10))
-  ;; (debugv (parse-multipart/from-data testingdata))
-  ;; (exit 0)
-
-  (debug "STARTING THE SERV!!")
+  (dprintln "Starting the server")
   (parameterize ((context/p (make-context)))
     (run-server (make-handler) 'http '(#:port 8081))))
