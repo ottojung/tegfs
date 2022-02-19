@@ -279,17 +279,11 @@ span.psw {
   (define body
     (bytevector->string body/bytes "utf-8"))
 
-  (debugv body)
-
   (define parts
     (string-split/simple body #\&))
 
-  (debugv parts)
-
   (define key-values
     (map (fn string-split/simple % #\=) parts))
-
-  (debugv key-values)
 
   (define _2
     (unless (list-singleton? key-values)
@@ -304,8 +298,6 @@ span.psw {
 
   (define passw
     (sha256sum value))
-
-  (debugv passw)
 
   (define ctx (context/p))
   (define passwords (context-passwords ctx))
@@ -480,8 +472,6 @@ span.psw {
   (values '((content-type . (text/plain))) "Hello hacker!"))
 
 (define (handler request body)
-  (debug "RECV: ~s" request)
-
   (define path-components
     (request-path-components request))
 
