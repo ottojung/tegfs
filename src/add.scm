@@ -100,7 +100,10 @@
     (append-posix-path (root/p) last-id-filename))
 
   (define prev
-    (and series? (string-strip (read-string-file last-id-path))))
+    (and series?
+         (or (file-or-directory-exists? last-id-path)
+             (fatal "Want series, but last-id file is not present"))
+         (string-strip (read-string-file last-id-path))))
 
   (define tags
     (list-deduplicate (map ~a tags0)))
