@@ -34,10 +34,17 @@
 %use (string->lines) "./euphrates/string-to-lines.scm"
 %use (list-deduplicate) "./euphrates/list-deduplicate.scm"
 %use (~a) "./euphrates/tilda-a.scm"
+%use (random-choice) "./euphrates/random-choice.scm"
+%use (alphanum-lowercase/alphabet) "./euphrates/alphanum-lowercase-alphabet.scm"
 
 %use (fatal) "./fatal.scm"
 %use (root/p) "./root-p.scm"
 %use (a-weblink?) "./a-weblink-q.scm"
+%use (last-id-filename) "./last-id-filename.scm"
+
+(define (generate-random-id)
+  (list->string
+   (random-choice 30 alphanum-lowercase/alphabet)))
 
 (define (get-date)
   (string-strip
@@ -86,6 +93,9 @@
          <registry-file> <date>
          input)
 
+  (define id
+    (generate-random-id))
+
   (define tags
     (list-deduplicate (map ~a tags0)))
 
@@ -111,13 +121,21 @@
                   (a-weblink? <target>))
         (fatal "Target ~s does not exist. Note that filepath must be relative to the root" <target>))))
 
+  (write-string-file (append-posix-path (root/p) last-id-filename) id)
+
   (append-string-file
    registry-file
    (with-output-to-string
      (lambda _
        (newline)
-       (display "- title: ")
-       (write (or <title> 'null)) (newline)
+       (display "- id: ")
+       (display id)
+       (newline)
+
+       (when <title>
+         (display "  title: ")
+         (write <title>)
+         (newline))
 
        (when date
          (display "  date: ")
