@@ -8,7 +8,7 @@ TEST_ROOT=build/testroot
 
 SUBMODULES = deps/euphrates/.git deps/czempak/.git
 
-CZEMPAK = CZEMPAK_ROOT=.czempak-root ./build/czempak
+CZEMPAK = CZEMPAK_ROOT=$(PWD)/.czempak-root ./build/czempak
 
 all: build/tegfs
 
