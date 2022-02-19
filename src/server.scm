@@ -53,9 +53,12 @@
 %use (random-choice) "./euphrates/random-choice.scm"
 %use (alphanum-lowercase/alphabet) "./euphrates/alphanum-lowercase-alphabet.scm"
 %use (printf) "./euphrates/printf.scm"
+%use (path-extension) "./euphrates/path-extension.scm"
 
 %use (root/p) "./root-p.scm"
 %use (categorization-filename) "./categorization-filename.scm"
+%use (tegfs-process-categorization-text) "./edit-tags.scm"
+%use (tegfs-add) "./add.scm"
 
 %use (debug) "./euphrates/debug.scm"
 %use (debugv) "./euphrates/debugv.scm"
@@ -351,14 +354,23 @@ span.psw {
   (define tokens (context-tokens ctx))
   (define existing (hashmap-ref tokens cookie-value #f))
 
-  ;; (unless existing ;; DEBUG
-  ;;   (permission-denied))
-
   (values))
 
 (define (get-random-basename)
   (list->string
    (random-choice 30 alphanum-lowercase/alphabet)))
+
+(define (error-tags-list tags)
+  (static-error-message 400 (string-append "Some tags are ambiguous: " (~a tags))))
+
+(define duplicates-tags-list
+  (static-error-message 400 "Tags contain duplicates"))
+
+(define (upload-success-page <target>)
+  (if <target>
+      (static-error-message
+       200 (string-append "Uploaded successfully to filename: " <target>))
+      (static-error-message 200 "Uploaded successfully")))
 
 (define (uploadcont)
   (define _42
@@ -400,17 +412,41 @@ span.psw {
   (define extension
     (path-extension filename))
 
+  (define <target>
+    (and (not (string-null? filename))
+         (append-posix-path (string-append (get-random-basename) extension))))
+
   (define full-filename
-    (append-posix-path "upload" (string-append (get-random-basename) extension)))
+    (and <target>
+         (append-posix-path (root/p)
+                            (dirname upload-registry-filename)
+                            <target>)))
 
-  (debugv full-filename)
+  (when full-filename
+    (make-directories (dirname full-filename))
+    (let ((port (open-file-port full-filename "w")))
+      (put-bytevector port file-content)
+      (close-port port)))
 
+  (define tags-list-result
+    (tegfs-process-categorization-text tags))
+
+  ;; TODO: edit the categorization file
   (define tags-list
-    (
+    (case (car tags-list-result)
+      ((ok) (cdr tags-list-result))
+      ((error) ((error-tags-list (cdr tags-list-result))))
+      ((duplicates) (duplicates-tags-list))
+      (else (raisu 'unknown-tags-list-result))))
 
-  (raisu 'TODO)
+  (tegfs-add
+   <target> title tags-list
+   '() ;; TODO: accept key-value-pairs from the user
+   upload-registry-filename #f
+   #f ;; TODO: accept description
+   )
 
-  )
+  ((upload-success-page <target>)))
 
 (define (make-upload-body)
   (define categorization-file (append-posix-path (root/p) categorization-filename))
