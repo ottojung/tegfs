@@ -6,7 +6,9 @@ BINARY_PATH=$(PREFIX_BIN)/tegfs
 
 TEST_ROOT=build/testroot
 
-SUBMODULES=deps/euphrates/src
+SUBMODULES = deps/euphrates/.git deps/czempak/.git
+
+CZEMPAK = CZEMPAK_ROOT=.czempak-root ./build/czempak
 
 all: build/tegfs
 
@@ -24,6 +26,23 @@ clean:
 	git submodule foreach --recursive 'git clean -dfx'
 	git clean -dfx
 
+build/czempak: $(SUBMODULES)
+	cd deps/czempak && $(MAKE) PREFIXBIN=$(PWD)/build
+
+deps/czempak/.git:
+	git submodule update --init
+
+deps/euphrates/.git:
+	git submodule update --init
+
+build/tegfs: src/*.scm build build/czempak $(SUBMODULES)
+	$(CZEMPAK) install src/tegfs.scm "$@"
+
+build:
+	mkdir -p "$@"
+
+.PHONY: test1 test2 test3 test4 all clean install reinstall
+
 test1: build/tegfs
 	touch $(TEST_ROOT)/hi.txt
 	echo hi | TEGFS_ROOT=$(TEST_ROOT) build/tegfs add \
@@ -32,9 +51,6 @@ test1: build/tegfs
 		--key a 1 \
 		--key b 2 \
 		--key SCHEDULED 3 \
-
-deps/euphrates/src:
-	git submodule update --init
 
 test2: build/tegfs
 	TEGFS_ROOT=$(TEST_ROOT) build/tegfs save
@@ -47,11 +63,3 @@ test4: build/tegfs
 	printf '%s' pass1 | sha256sum | cut '-d ' -f 1 | tr -d '\n' >> $(TEST_ROOT)/auth.tegfs.lisp
 	printf '"))\n' >> $(TEST_ROOT)/auth.tegfs.lisp
 	TEGFS_ROOT=$(TEST_ROOT) build/tegfs serve
-
-build/tegfs: src/*.scm build $(SUBMODULES)
-	czempak install src/tegfs.scm "$@"
-
-build:
-	mkdir -p "$@"
-
-.PHONY: test1 test2 all clean install reinstall
