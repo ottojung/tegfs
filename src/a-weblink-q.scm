@@ -17,5 +17,6 @@
 %var a-weblink?
 
 (define (a-weblink? string)
-  (or (string-prefix? "http://" string)
+  (or (string-prefix? "blob:http" string)
+      (string-prefix? "http://" string)
       (string-prefix? "https://" string)))
