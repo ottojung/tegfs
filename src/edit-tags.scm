@@ -125,9 +125,11 @@
   (define lines (string->lines text))
   (define stripped (map string-strip lines))
   (define noncommented (map (comp ((fn string-split/simple % #\#)) car) stripped))
-  (define-tuple (cfg-part rules-part)
+  (define split1
     (map lines->string
          (list-split-on (comp (string-prefix? "----")) noncommented)))
+  (define cfg-part (car split1))
+  (define rules-part (if (< 1 (length split1)) (cadr split1) ""))
 
   (define words
     (with-input-from-string cfg-part
