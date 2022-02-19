@@ -78,7 +78,7 @@
 
 (define (get-random-basename)
   (list->string
-   (random-choice 20 alphanum-lowercase/alphabet)))
+   (random-choice 30 alphanum-lowercase/alphabet)))
 
 (define (get-random-filename directory extension)
   (append-posix-path directory (string-append (get-random-basename) extension)))
