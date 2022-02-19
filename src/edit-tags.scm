@@ -15,6 +15,7 @@
 %run guile
 
 %var tegfs-edit-tags
+%var tegfs-process-categorization-text
 
 %use (make-temporary-filename) "./euphrates/make-temporary-filename.scm"
 %use (system-fmt) "./euphrates/system-fmt.scm"
@@ -48,7 +49,7 @@
     (raisu 'must-provide-working-file))
 
   (system-fmt "$EDITOR ~a" working-file)
-  (process-categorization-text (read-string-file working-file)))
+  (tegfs-process-categorization-text (read-string-file working-file)))
 
 (define unstar-symbol
   (comp symbol->string
@@ -120,7 +121,7 @@
 ;; returns either `(ok ,list-of-chosen-tags)
 ;;             or `(error ,list-of-ambiguous-tags-with-parents)
 ;;             or `(duplicates)
-(define (process-categorization-text text)
+(define (tegfs-process-categorization-text text)
   (define lines (string->lines text))
   (define stripped (map string-strip lines))
   (define noncommented (map (comp ((fn string-split/simple % #\#)) car) stripped))
