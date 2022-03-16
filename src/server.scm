@@ -437,7 +437,6 @@ span.psw {
    #f ;; TODO: accept series? flag
    '() ;; TODO: accept key-value-pairs from the user
    upload-registry-filename #f
-   #f ;; TODO: accept description
    )
 
   ((upload-success-page <target>)))

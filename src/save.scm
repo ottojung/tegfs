@@ -115,12 +115,6 @@
       (fatal "Could not dump"))
     target))
 
-(define (handle-description description)
-  (case description
-    ((-none) #f)
-    ((-selection) (car (system-re "xclip -selection primary -out")))
-    (else description)))
-
 (define (download-temp string)
   (dprintln "Downloading...")
   (let ((target (make-temporary-filename)))
@@ -262,12 +256,6 @@
      (else 'pasta)))
   (assoc-set-preference 'real-type value state))
 
-(define (get-description edit?)
-  (define answer (read-answer "Enter description: (-none/-selection/custom text)"))
-  (cond
-   ((member answer '("-none" "-selection")) (string->symbol answer))
-   (else answer)))
-
 (define (download-maybe state)
   (define download? (cadr (assoc 'download? state)))
   (define real-type (cadr (assoc 'real-type state)))
@@ -317,7 +305,13 @@
 
   (cond
    ((and (equal? 'pasta real-type))
-    (assoc-set-preference 'description -text-content state))
+    (let* ((temp-name (dump-xclip-temp data-type)))
+      (write-string-file temp-name -text-content)
+      (assoc-set-preference
+       'target-extension ".txt"
+       (assoc-set-preference
+        '-temporary-file temp-name
+        state))))
    (else state)))
 
 (define (set-data-type-preference state)
@@ -330,10 +324,12 @@
   (define download? (cadr (assoc 'download? state)))
 
   (cond
-   ((and (member real-type '(localfile pasta)))
+   ((and (equal? real-type 'localfile))
     (assoc-set-preference 'data-type 'ignore state))
    ((and (equal? 'link real-type) (a-weblink? text-content) (equal? 'no download?))
     (assoc-set-preference 'data-type 'ignore state))
+   ((and (equal? real-type 'pasta))
+    (assoc-set-preference 'data-type 'TEXT state))
    ((and -temporary-file (not data-type))
     (let ((mimetype (get-file-mimetype -temporary-file)))
       (if mimetype
@@ -356,7 +352,7 @@
    ((and (equal? 'localfile real-type))
     (assoc-set-preference 'target-extension (path-extension text-content) state))
    ((and (equal? 'pasta real-type))
-    (assoc-set-preference 'target-extension 'ignore state))
+    (assoc-set-preference 'target-extension ".txt" state))
    ((and (equal? 'link real-type) (a-weblink? text-content) (equal? 'no download?))
     (assoc-set-preference 'target-extension 'ignore state))
    ((and data-type)
@@ -373,8 +369,6 @@
   (define download? (cadr (assoc 'download? state)))
 
   (cond
-   ((and (equal? 'pasta real-type))
-    (assoc-set-preference 'target-basename 'ignore state))
    ((and (equal? 'localfile real-type))
     (let ((name (path-without-extension (path-get-basename text-content))))
       (assoc-set-preference 'target-basename name state)))
@@ -451,7 +445,6 @@
     (real-type . ,get-real-type)
     (download? . ,get-download-flag)
     (series . ,get-series)
-    (description . ,get-description)
     (data-type . ,get-data-type)
     (target-extension . ,get-target-extension)
     (target-basename . ,get-target-basename)
@@ -528,14 +521,13 @@
    set-types-list-preference
    (assoc-set-preference 'series 'no)
    (assoc-set-preference 'confirm 'no)
-   (assoc-set-preference 'description '-none)
    set-download-preference
    set-real-type-preference
    download-maybe
-   dump-xclip-data-maybe
    handle-localfile-maybe
-   handle-pasta-maybe
    set-data-type-preference
+   dump-xclip-data-maybe
+   handle-pasta-maybe
    set-target-extension-preference
    set-target-basename-preference
    ))
@@ -555,7 +547,6 @@
   (define types-list (cadr (assoc '-types-list state)))
   (define data-type (cadr (assoc 'data-type state)))
   (define real-type (cadr (assoc 'real-type state)))
-  (define description (cadr (assoc 'description state)))
   (define series (cadr (assoc 'series state)))
   (define series? (case series ((yes) #t) ((no) #f) (else (fatal "Bad value for series ~s" series))))
   (define registry-file (cadr (assoc 'registry-file state)))
@@ -564,7 +555,6 @@
   (define registry-dir (append-posix-path (root/p) (dirname registry-file)))
   (define source (and (a-weblink? -text-content) -temporary-file -text-content))
   (define key-value-pairs (if source (list (cons "source" source)) (list)))
-  (define <input> (handle-description description))
   (define <date> #f)
   (define <target>
     (cond
@@ -590,8 +580,7 @@
   (tegfs-add
    <target> title tags
    series? key-value-pairs
-   registry-file <date>
-   <input>))
+   registry-file <date>))
 
 (define (tegfs-save/parse)
   (define _

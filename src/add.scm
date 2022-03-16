@@ -71,10 +71,6 @@
          <target> <title> <tag...>
          --series <key...> <value...>
          <registry-file> <date>)
-
-  (define input
-    (read-all-port (current-input-port)))
-
   (define key-value-pairs
     (list-zip (or <key...> '()) (or <value...> '())))
 
@@ -83,16 +79,14 @@
   (tegfs-add
    <target> <title> tags
    --series key-value-pairs
-   <registry-file> <date>
-   input)
+   <registry-file> <date>)
 
   (display "Added!\n"))
 
 (define (tegfs-add
          <target> <title> tags0
          series? key-value-pairs0
-         <registry-file> <date>
-         input)
+         <registry-file> <date>)
 
   (define id
     (generate-random-id))
@@ -172,12 +166,4 @@
             (newline))
           key-value-pairs))
 
-       (unless (or (not input) (string-null? input))
-         (display "  description: |2") (newline)
-         (for-each
-          (lambda (line)
-            (display "    ")
-            (display line)
-            (newline))
-          (string->lines input)))
        (newline)))))
