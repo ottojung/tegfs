@@ -63,7 +63,7 @@
   (unless (file-or-directory-exists? categorization-file)
     (write-string-file
      categorization-file
-     "# This file is for categorization of the tags\n\n-----------\n\n"))
+     ";; This file is for categorization of the tags\n\n-----------\n\n"))
 
   (unless (file-or-directory-exists? working-file)
     (copy-file categorization-file working-file))

@@ -124,7 +124,7 @@
 (define (tegfs-process-categorization-text text)
   (define lines (string->lines text))
   (define stripped (map string-strip lines))
-  (define noncommented (map (comp ((fn string-split/simple % #\#)) car) stripped))
+  (define noncommented (map (comp ((fn string-split/simple % #\;)) car) stripped))
   (define split1
     (map lines->string
          (list-split-on (comp (string-prefix? "----")) noncommented)))
