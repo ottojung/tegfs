@@ -63,7 +63,7 @@
       (make-directories registry-dir))
     (write-string-file
      registry-file
-     "\n# This file was automatically created by tegfs-add\n\n\n"))
+     "\n;; This file was automatically created by tegfs-add\n\n\n"))
 
   registry-file)
 
