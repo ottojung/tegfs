@@ -16,4 +16,4 @@
 
 %var regfile-suffix
 
-(define regfile-suffix ".tegfs.yaml")
+(define regfile-suffix ".tegfs.reg.lisp")

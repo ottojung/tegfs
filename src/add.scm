@@ -132,38 +132,44 @@
    (with-output-to-string
      (lambda _
        (newline)
-       (display "- id: ")
+       (display "((id . \"")
        (display id)
-       (newline)
+       (display "\")")
 
        (when <title>
-         (display "  title: ")
+         (newline)
+         (display " (title . ")
          (write <title>)
-         (newline))
+         (display ")"))
 
        (when date
-         (display "  date: ")
-         (display date)
-         (newline))
+         (newline)
+         (display " (date . ")
+         (write date)
+         (display ")"))
 
        (unless (null? tags)
-         (display "  tags: ")
+         (newline)
+         (display " (tags ")
          (display (words->string tags))
-         (newline))
+         (display ")"))
 
        (when prev
-         (display "  prev: ")
-         (display prev)
-         (newline))
+         (newline)
+         (display " (prev . ")
+         (write prev)
+         (display ")"))
 
        (unless (null? key-value-pairs)
          (for-each
           (lambda (pair)
-            (display "  ")
+            (newline)
+            (display " (")
             (display (car pair))
-            (display ": ")
+            (display " . ")
             (write (cdr pair))
-            (newline))
+            (display ")"))
           key-value-pairs))
 
+       (display ")")
        (newline)))))
