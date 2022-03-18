@@ -63,3 +63,6 @@ test4: build/tegfs
 	printf '%s' pass1 | sha256sum | cut '-d ' -f 1 | tr -d '\n' >> $(TEST_ROOT)/auth.tegfs.lisp
 	printf '"))\n' >> $(TEST_ROOT)/auth.tegfs.lisp
 	TEGFS_ROOT=$(TEST_ROOT) build/tegfs serve
+
+test5: build/tegfs
+	TEGFS_ROOT=$(TEST_ROOT) build/tegfs prolog

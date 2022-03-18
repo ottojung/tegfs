@@ -32,6 +32,7 @@
 %use (tegfs-save/parse) "./save.scm"
 %use (tegfs-categorize/parse) "./categorize.scm"
 %use (tegfs-serve/parse) "./server.scm"
+%use (tegfs-prolog/parse) "./prolog.scm"
 %use (fatal) "./fatal.scm"
 %use (root/p) "./root-p.scm"
 
@@ -46,6 +47,7 @@
       FUNC : add ADDOPT+
       /      save
       /      categorize
+      /      prolog
       /      status
       /      serve
       ADDOPT : --target <add-target>
@@ -80,6 +82,7 @@
         (save (tegfs-save/parse))
         (categorize (tegfs-categorize/parse))
         (serve (tegfs-serve/parse))
+        (prolog (tegfs-prolog/parse))
         (status
          (display "NOT IMPLEMENTED YET") (newline)
          (exit 1))
