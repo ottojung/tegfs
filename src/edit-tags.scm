@@ -40,6 +40,7 @@
 %use (raisu) "./euphrates/raisu.scm"
 %use (file-delete) "./euphrates/file-delete.scm"
 %use (list-and-map) "./euphrates/list-and-map.scm"
+%use (list-or-map) "./euphrates/list-or-map.scm"
 %use (list-find-first) "./euphrates/list-find-first.scm"
 %use (compose-under) "./euphrates/compose-under.scm"
 %use (read-string-line) "./euphrates/read-string-line.scm"
@@ -64,7 +65,8 @@
         (string-suffix? ">")))
 
 (define starred-symbol?
-  (comp symbol->string string->list (member #\*)))
+  (comp symbol->string string->list
+        (list-or-map (lambda (c) (member c '(#\* #\=))))))
 
 ;; transitive over type-symbols, but not a general transitive closure
 (define (get-parents ast/flatten tag/starred)
