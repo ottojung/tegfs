@@ -50,11 +50,10 @@
 %use (categorization-filename) "./categorization-filename.scm"
 %use (root/p) "./root-p.scm"
 %use (tegfs-edit-tags) "./edit-tags.scm"
-
-%use (debugv) "./euphrates/debugv.scm"
+%use (get-registry-files) "./get-registry-files.scm"
 
 (define (tegfs-prolog/parse)
-  (tegfs-prolog "build/testroot/jaj-wwwad.tegfs.reg.lisp")
+  (tegfs-prolog)
   (dprintln "done(prolog)."))
 
 (define (yield-for-prolog thing)
@@ -112,23 +111,31 @@
 ;; p(1, id, "id").
 ;; p(1, target, "target").
 ;;
-(define (tegfs-prolog registry-path)
-  (define input-port (open-file-port registry-path "r"))
+(define (tegfs-prolog)
   (define output-path (string-append (make-temporary-filename) ".pl"))
   (define output-port (open-file-port output-path "w"))
-  (define counter
-    (let ((cnt 0))
-      (lambda _ (set! cnt (+ 1 cnt)) cnt)))
 
   (parameterize ((current-output-port output-port))
     (display ":-style_check(-discontiguous).")
     (newline)
-    (for-each (translate-entry yield-for-prolog counter)
-              (read-list input-port)))
+    (translate-registries yield-for-prolog))
 
   (close-port output-port)
 
   (system-fmt "prolog ~a" output-path))
+
+(define (translate-registries yield)
+  (define counter
+    (let ((cnt 0))
+      (lambda _ (set! cnt (+ 1 cnt)) cnt)))
+
+  (for-each
+   (lambda (registry-path0)
+     (define registry-path (append-posix-path (root/p) registry-path0))
+     (define input-port (open-file-port registry-path "r"))
+     (for-each (translate-entry yield counter registry-path)
+               (read-list input-port)))
+   (get-registry-files)))
 
 (define (handle-the-split yield cnt equal-split)
   (define pred-name (list->string (car equal-split)))
@@ -195,14 +202,14 @@
      (else
       (yield `(t ,cnt ,tag))))))
 
-(define (translate-property yield cnt)
+(define (translate-property yield cnt registry-path)
   (lambda (property)
     (define name (car property))
     (define value (cdr property))
     (unless (equal? 'tags name)
       (yield `(p ,cnt ,name ,value)))))
 
-(define (translate-entry yield counter)
+(define (translate-entry yield counter registry-path)
   (lambda (entry)
     (define cnt (counter))
 
@@ -215,7 +222,7 @@
                (raisu 'could-not-get-tags entry))))
 
     (for-each (translate-tag yield cnt) tags)
-    (for-each (translate-property yield cnt) entry)
+    (for-each (translate-property yield cnt registry-path) entry)
 
     ))
 
