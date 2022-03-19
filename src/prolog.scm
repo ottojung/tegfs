@@ -26,7 +26,6 @@
 %use (read-string-file) "./euphrates/read-string-file.scm"
 %use (comp) "./euphrates/comp.scm"
 %use (fn) "./euphrates/fn.scm"
-%use (curry-if) "./euphrates/curry-if.scm"
 %use (string->lines) "./euphrates/string-to-lines.scm"
 %use (string-strip) "./euphrates/string-strip.scm"
 %use (string-split/simple) "./euphrates/string-split-simple.scm"
@@ -54,8 +53,7 @@
 %use (root/p) "./root-p.scm"
 %use (tegfs-edit-tags) "./edit-tags.scm"
 %use (get-registry-files) "./get-registry-files.scm"
-
-%use (debugv) "./euphrates/debugv.scm"
+%use (parse-tag) "./parse-tag.scm"
 
 (define (tegfs-prolog/parse)
   (tegfs-prolog)
@@ -164,14 +162,11 @@
   (define output-path (string-append (make-temporary-filename) ".pl"))
   (define output-port (open-file-port output-path "w"))
 
-  ;; (parameterize ((current-output-port output-port))
-  (parameterize ((current-output-port (current-output-port))) ;; DEBUG
+  (parameterize ((current-output-port output-port))
     (display ":-style_check(-discontiguous).") (newline)
     (translate-registries yield-for-prolog)
     (display "what(X, Y) :- t(Y, X) ; t(K, Z), member(X, Z), Y = [K | Z].") (newline)
     )
-
-  (exit 1) ;; DEBUG
 
   (close-port output-port)
 
@@ -190,82 +185,12 @@
                (read-list input-port)))
    (get-registry-files)))
 
-(define (handle-the-split yield cnt equal-split)
-  (define pred-name (string->symbol (list->string (car equal-split))))
-
-  (define (handle-variable name)
-    (if (equal? "$" name)
-        cnt
-        (string->symbol (string-append "v" (number->string cnt) name))))
-
-  (define variable-list (cadr equal-split))
-  (define variables
-    (map (comp list->string handle-variable)
-         (list-split-on
-          (comp (equal? #\,))
-          variable-list)))
-
-  (yield `(t ,pred-name ,@variables)))
-
 (define (translate-tag yield counter cnt)
-  (lambda (chars)
-    (define equal-split (list-split-on (comp (equal? #\=)) chars))
-    (handle-the-split yield cnt equal-split)))
-
-;; returns list of characters!
-(define (desugar-tag counter)
+  (define parser (parse-tag counter cnt))
   (lambda (tag)
-    (define str (symbol->string tag))
-    (define chars (string->list str))
-
-    (define-values (span-^-pre span-^-post0)
-      (list-span-while
-       (negate (comp (equal? #\^)))
-       chars))
-    (define span-^-post
-      ((curry-if (negate null?) cdr) span-^-post0))
-    (define span-^? (not (null? span-^-post)))
-
-    (define-values (span-_-pre0 span-_-post0)
-      (list-span-while
-       (negate (comp (equal? #\_)))
-       (reverse chars)))
-
-    (define span-_-pre (reverse span-_-pre0))
-    (define span-_-post
-      (reverse ((curry-if (negate null?) cdr) span-_-post0)))
-    (define span-_? (not (null? span-_-post)))
-
-    (define equal-split
-      (list-split-on (comp (equal? #\=)) chars))
-    (define equal-split?
-      (not (null? (cdr equal-split))))
-
-    (define sum
-      (+ (if span-^? 1 0)
-         (if span-_? 1 0)
-         (if equal-split? 1 0)))
-
-    (unless (>= 1 sum)
-      (raisu 'used-conflicting-tag-syntaxes tag sum))
-
-    (define (handle-prefix-suffix pre post)
-      (let* ((arguments (list-split-on (comp (equal? #\,)) post))
-             (do (unless (member (length arguments) '(1 2))
-                   (raisu 'bad-number-of-arguments tag arguments)))
-             (first-arg (car arguments))
-             (second-arg (list-ref-or arguments 1 '(#\$)))
-             (num (counter))
-             (var (string->list (number->string num)))
-             (first (append pre '(#\=) var '(#\,) second-arg))
-             (second (append first-arg '(#\=) var)))
-        (list first second)))
-
-    (cond
-     (span-^? (handle-prefix-suffix span-^-pre span-^-post))
-     (span-_? (handle-prefix-suffix span-_-pre span-_-post))
-     (equal-split? (map (comp (append (car equal-split) '(#\=))) (cdr equal-split)))
-     (else (list (append chars '(#\=) '(#\$)))))))
+    (for-each
+     (lambda (t) (yield (cons 't t)))
+     (parser tag))))
 
 (define (translate-property yield cnt registry-path)
   (lambda (property)
@@ -285,9 +210,7 @@
       (cdr (or (assoc 'tags entry)
                (raisu 'could-not-get-tags entry))))
 
-    (define desugared (apply append (map (desugar-tag counter) tags)))
-
-    (for-each (translate-tag yield counter cnt) desugared)
+    (for-each (translate-tag yield counter cnt) tags)
     (for-each (translate-property yield cnt registry-path) entry)
 
     ))
