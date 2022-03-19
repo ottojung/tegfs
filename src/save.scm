@@ -57,6 +57,7 @@
 %use (a-weblink?) "./a-weblink-q.scm"
 %use (tegfs-add) "./add.scm"
 %use (tegfs-categorize) "./categorize.scm"
+%use (get-registry-files) "./get-registry-files.scm"
 
 %use (debug) "./euphrates/debug.scm"
 %use (debugv) "./euphrates/debugv.scm"
@@ -192,14 +193,7 @@
   (read-answer "Enter the title:"))
 
 (define (get-registry-file edit?)
-  (define registry-files
-    (map (lambda (path)
-           (remove-common-prefix path (string-append (root/p) "/")))
-         (map car
-              (directory-files-rec/filter
-               (lambda (fullname)
-                 (string-suffix? regfile-suffix (basename fullname)))
-               (root/p)))))
+  (define registry-files (get-registry-files))
 
   (case (length registry-files)
     ((0)
