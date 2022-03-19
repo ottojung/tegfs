@@ -31,6 +31,7 @@
 %use (string-strip) "./euphrates/string-strip.scm"
 %use (string-split/simple) "./euphrates/string-split-simple.scm"
 %use (list-split-on) "./euphrates/list-split-on.scm"
+%use (list-ref-or) "./euphrates/list-ref-or.scm"
 %use (define-tuple) "./euphrates/define-tuple.scm"
 %use (read-list) "./euphrates/read-list.scm"
 %use (lines->string) "./euphrates/lines-to-string.scm"
@@ -47,11 +48,14 @@
 %use (open-file-port) "./euphrates/open-file-port.scm"
 %use (list-span-while) "./euphrates/list-span-while.scm"
 %use (alphanum/alphabet/index) "./euphrates/alphanum-alphabet.scm"
+%use (~a) "./euphrates/tilda-a.scm"
 
 %use (categorization-filename) "./categorization-filename.scm"
 %use (root/p) "./root-p.scm"
 %use (tegfs-edit-tags) "./edit-tags.scm"
 %use (get-registry-files) "./get-registry-files.scm"
+
+%use (debugv) "./euphrates/debugv.scm"
 
 (define (tegfs-prolog/parse)
   (tegfs-prolog)
@@ -60,15 +64,16 @@
 (define (prolog-var-needs-quoting? var/chars)
   (define first (alphanum/alphabet/index (car var/chars)))
   (not
-   (and first
-        (> first 9)
-        (< first 36)
-        (list-and-map
-         (compose-under
-          or
-          (comp (equal? #\_))
-          alphanum/alphabet/index)
-         (cdr var/chars)))))
+   (or (equal? '(#\~) var/chars)
+       (and first
+            (> first 9)
+            (< first 36)
+            (list-and-map
+             (compose-under
+              or
+              (comp (equal? #\_))
+              alphanum/alphabet/index)
+             (cdr var/chars))))))
 
 (define (yield-for-prolog thing)
   (define type (car thing))
@@ -85,21 +90,32 @@
               (display "'"))
             (display str))))
      ((string? arg) (write arg))
+     ((integer? arg) (write arg))
      (else (raisu 'uknown-type arg))))
-  (define (comma-print arg)
-    (display ", ") (print arg))
+
+  (define (comma-print lst)
+    (let loop ((lst lst))
+      (unless (null? lst)
+        (print (car lst))
+        (unless (null? (cdr lst))
+          (display ", "))
+        (loop (cdr lst)))))
 
   (case type
     ((t)
      (display "t(")
-     (display (cadr thing))
-     (for-each comma-print (cddr thing))
+     (print (cadr thing))
+     (display ", ")
+     (unless (null? (cdr (cddr thing)))
+       (display "["))
+     (comma-print (cddr thing))
+     (unless (null? (cdr (cddr thing)))
+       (display "]"))
      (display ").")
      (newline))
     ((p)
      (display "p(")
-     (display (cadr thing))
-     (for-each comma-print (cddr thing))
+     (comma-print (cdr thing))
      (display ").")
      (newline))))
 
@@ -108,38 +124,54 @@
 ;;
 ;; input tags:
 ;;    educational video from^4chan
-;;      vs=X,Y woman=X man=Y black=Y
-;;      with=X,B=Y,C
+;;      vs=X,Y,$ woman=X man=Y black=Y
+;;      with=B,X=C,Y
 ;;      big=B beautiful=B
 ;;      big=C concentraition=C
+;;      from^futurama,X
+;;
+;; desugared:
+;;    educational=$ video=$ from=2,$ 4chan=2
+;;      vs=X,Y,$ woman=X man=Y black=Y
+;;      with=B,X with=C,Y
+;;      big=B beautiful=B
+;;      big=C concentraition=C
+;;      from=3,X futurama=3
 ;;
 ;; output:
 ;;
-;; t(1, educational).
-;; t(1, video).
-;; t(1, from, 4chan).
-;; t(1, vs, vX, vY).
-;; t(1, woman, vX).
-;; t(1, man, vY).
-;; t(1, black, vY).
-;; t(1, with, vX, vB).
-;; t(1, big, vB).
-;; t(1, beautiful, vB).
-;; t(1, with, vY, vC).
-;; t(1, big, vC).
-;; t(1, concentraition, vC).
+;; t(educational, 1).
+;; t(video, 1).
+;; t(from, [2, 1]).
+;; t('4chan', 2).
+;; t(vs, [v1X, v1Y, 1]).
+;; t(woman, v1X).
+;; t(man, v1Y).
+;; t(black, v1Y).
+;; t(with, [v1B, v1X]).
+;; t(big, v1B).
+;; t(beautiful, v1B).
+;; t(with, [v1Y, v1C]).
+;; t(big, v1C).
+;; t(concentraition, v1C).
+;; t(from, [3, v1X]).
+;; t(futurama, 3).
 ;;
-;; p(1, id, "id").
-;; p(1, target, "target").
+;; p(id, 1, "id").
+;; p(target, 1, "target").
 ;;
 (define (tegfs-prolog)
   (define output-path (string-append (make-temporary-filename) ".pl"))
   (define output-port (open-file-port output-path "w"))
 
-  (parameterize ((current-output-port output-port))
-    (display ":-style_check(-discontiguous).")
-    (newline)
-    (translate-registries yield-for-prolog))
+  ;; (parameterize ((current-output-port output-port))
+  (parameterize ((current-output-port (current-output-port))) ;; DEBUG
+    (display ":-style_check(-discontiguous).") (newline)
+    (translate-registries yield-for-prolog)
+    (display "what(X, Y) :- t(Y, X) ; t(K, Z), member(X, Z), Y = [K | Z].") (newline)
+    )
+
+  (exit 1) ;; DEBUG
 
   (close-port output-port)
 
@@ -161,19 +193,27 @@
 (define (handle-the-split yield cnt equal-split)
   (define pred-name (string->symbol (list->string (car equal-split))))
 
-  (define variable-lists (cdr equal-split))
-  (for-each
-   (lambda (var-list)
-     (define variables
-       (map (compose string->symbol list->string)
-            (list-split-on
-             (comp (equal? #\,))
-             var-list)))
+  (define (handle-variable name)
+    (if (equal? "$" name)
+        cnt
+        (string->symbol (string-append "v" (number->string cnt) name))))
 
-     (yield `(t ,cnt ,pred-name ,@variables)))
-   variable-lists))
+  (define variable-list (cadr equal-split))
+  (define variables
+    (map (comp list->string handle-variable)
+         (list-split-on
+          (comp (equal? #\,))
+          variable-list)))
 
-(define (translate-tag yield cnt)
+  (yield `(t ,pred-name ,@variables)))
+
+(define (translate-tag yield counter cnt)
+  (lambda (chars)
+    (define equal-split (list-split-on (comp (equal? #\=)) chars))
+    (handle-the-split yield cnt equal-split)))
+
+;; returns list of characters!
+(define (desugar-tag counter)
   (lambda (tag)
     (define str (symbol->string tag))
     (define chars (string->list str))
@@ -207,28 +247,31 @@
          (if equal-split? 1 0)))
 
     (unless (>= 1 sum)
-      (raisu 'used-too-much-properties tag sum))
+      (raisu 'used-conflicting-tag-syntaxes tag sum))
+
+    (define (handle-prefix-suffix pre post)
+      (let* ((arguments (list-split-on (comp (equal? #\,)) post))
+             (do (unless (member (length arguments) '(1 2))
+                   (raisu 'bad-number-of-arguments tag arguments)))
+             (first-arg (car arguments))
+             (second-arg (list-ref-or arguments 1 '(#\$)))
+             (num (counter))
+             (var (string->list (number->string num)))
+             (first (append pre '(#\=) var '(#\,) second-arg))
+             (second (append first-arg '(#\=) var)))
+        (list first second)))
 
     (cond
-     (span-^?
-      (yield
-       `(t ,cnt ,(string->symbol (list->string span-^-pre))
-           ,(string->symbol (list->string span-^-post)))))
-     (span-_?
-      (yield
-       `(t ,cnt ,(string->symbol (list->string span-_-pre))
-           ,(string->symbol (list->string span-_-post)))))
-     (equal-split?
-      (handle-the-split yield cnt equal-split))
-     (else
-      (yield `(t ,cnt ,tag))))))
+     (span-^? (handle-prefix-suffix span-^-pre span-^-post))
+     (span-_? (handle-prefix-suffix span-_-pre span-_-post))
+     (equal-split? (map (comp (append (car equal-split) '(#\=))) (cdr equal-split)))
+     (else (list (append chars '(#\=) '(#\$)))))))
 
 (define (translate-property yield cnt registry-path)
   (lambda (property)
     (define name (car property))
     (define value (cdr property))
-    (unless (equal? 'tags name)
-      (yield `(p ,cnt ,name ,value)))))
+    (yield `(p ,name ,cnt ,(~a value)))))
 
 (define (translate-entry yield counter registry-path)
   (lambda (entry)
@@ -242,7 +285,9 @@
       (cdr (or (assoc 'tags entry)
                (raisu 'could-not-get-tags entry))))
 
-    (for-each (translate-tag yield cnt) tags)
+    (define desugared (apply append (map (desugar-tag counter) tags)))
+
+    (for-each (translate-tag yield counter cnt) desugared)
     (for-each (translate-property yield cnt registry-path) entry)
 
     ))
