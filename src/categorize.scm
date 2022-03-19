@@ -75,7 +75,7 @@
        (if working-file-maybe
            (copy-file working-file categorization-file)
            (rename-file working-file categorization-file))
-       (system-fmt "sed -i 's/\\*//g ; s/\\w\\w*_\\(\\w\\w*\\)/_\\1/g ; s/\\(\\w\\w*\\)^\\w\\w*/\\1^/g ; s/\\(\\w\\w*\\)=\\w\\w*/\\1/g' ~a"
+       (system-fmt "sed -i 's/\\*//g ; s/\\w\\w*_\\(\\w\\w*\\)/_\\1/g ; s/\\(\\w\\w*\\)^\\w\\w*/\\1^/g ; s/\\(\\w\\w*\\)=\\w\\(\\w\\|,\\|=\\)*/\\1/g' ~a"
                    categorization-file)
        result)
       ((error)
