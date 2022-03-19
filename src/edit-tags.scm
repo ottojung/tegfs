@@ -45,6 +45,8 @@
 %use (compose-under) "./euphrates/compose-under.scm"
 %use (read-string-line) "./euphrates/read-string-line.scm"
 
+%use (categorization-split) "./categorization-split.scm"
+
 (define (tegfs-edit-tags working-file)
   (unless working-file
     (raisu 'must-provide-working-file))
@@ -124,14 +126,8 @@
 ;;             or `(error ,list-of-ambiguous-tags-with-parents)
 ;;             or `(duplicates)
 (define (tegfs-process-categorization-text text)
-  (define lines (string->lines text))
-  (define stripped (map string-strip lines))
-  (define noncommented (map (comp ((fn string-split/simple % #\;)) car) stripped))
-  (define split1
-    (map lines->string
-         (list-split-on (comp (string-prefix? "----")) noncommented)))
-  (define cfg-part (car split1))
-  (define rules-part (if (< 1 (length split1)) (cadr split1) ""))
+  (define-values (cfg-part rules-part)
+    (categorization-split text))
 
   (define words
     (with-input-from-string cfg-part
