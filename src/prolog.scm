@@ -50,8 +50,8 @@
 %use (~a) "./euphrates/tilda-a.scm"
 
 %use (categorization-filename) "./categorization-filename.scm"
+%use (tags-this-variable/string) "./tags-this-variable.scm"
 %use (root/p) "./root-p.scm"
-%use (tegfs-edit-tags) "./edit-tags.scm"
 %use (get-registry-files) "./get-registry-files.scm"
 %use (parse-tag) "./parse-tag.scm"
 
@@ -186,10 +186,16 @@
    (get-registry-files)))
 
 (define (translate-tag yield counter cnt)
-  (define parser (parse-tag counter cnt))
+  (define parser (parse-tag counter))
+  (define (handle-variable name)
+    (if (equal? name tags-this-variable/string)
+        cnt
+        (string->symbol (string-append "v" (number->string cnt) name))))
+
   (lambda (tag)
     (for-each
-     (lambda (t) (yield (cons 't t)))
+     (lambda (t)
+       (yield (cons 't (cons (car t) (map handle-variable (cdr t))))))
      (parser tag))))
 
 (define (translate-property yield cnt registry-path)

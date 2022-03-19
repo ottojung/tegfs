@@ -47,6 +47,8 @@
 
 %use (categorization-split) "./categorization-split.scm"
 
+%use (debugv) "./euphrates/debugv.scm"
+
 (define (tegfs-edit-tags working-file)
   (unless working-file
     (raisu 'must-provide-working-file))

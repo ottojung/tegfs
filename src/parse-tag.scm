@@ -15,6 +15,7 @@
 %run guile
 
 %var parse-tag
+%var parse-tag-structure
 
 %use (curry-if) "./euphrates/curry-if.scm"
 %use (list-span-while) "./euphrates/list-span-while.scm"
@@ -22,9 +23,13 @@
 %use (list-ref-or) "./euphrates/list-ref-or.scm"
 %use (comp) "./euphrates/comp.scm"
 %use (raisu) "./euphrates/raisu.scm"
+%use (list-intersperse) "./euphrates/list-intersperse.scm"
 
-;; returns list of characters!
-(define (desugar-tag counter)
+%use (tags-this-variable/char) "./tags-this-variable.scm"
+
+%use (debugv) "./euphrates/debugv.scm"
+
+(define (parse-tag-structure/chars counter)
   (lambda (tag)
     (define str (symbol->string tag))
     (define chars (string->list str))
@@ -60,40 +65,69 @@
     (unless (>= 1 sum)
       (raisu 'used-conflicting-tag-syntaxes tag sum))
 
+    (cond
+     (span-^? `(prefix-suffix (,span-^-pre ,span-^-post)))
+     (span-_? `(prefix-suffix (,span-_-pre ,span-_-post)))
+     (equal-split?
+      (let* ((head (car equal-split)))
+        (cons 'equality
+              (map (lambda (split)
+                     (cons head (list-split-on (comp (equal? #\,)) split)))
+                   (cdr equal-split)))))
+     (else `(single (,chars))))))
+
+;;
+;; example input:
+;;   with=X,Y,Z=A,B
+;;
+;; output:
+;;   (equality (with X Y Z) (with A B))
+;;
+(define (parse-tag-structure counter)
+  (define parser (parse-tag-structure/chars counter))
+  (lambda (tag)
+    (define structure/chars (parser tag))
+    (cons (car structure/chars)
+          (map (comp (map (compose string->symbol list->string)))
+               (cdr structure/chars)))))
+
+(define (desugar-tag/chars counter)
+  (define parser (parse-tag-structure/chars counter))
+  (lambda (tag)
+    (define structure/chars (parser tag))
+
     (define (handle-prefix-suffix pre post)
       (let* ((arguments (list-split-on (comp (equal? #\,)) post))
              (do (unless (member (length arguments) '(1 2))
                    (raisu 'bad-number-of-arguments tag arguments)))
              (first-arg (car arguments))
-             (second-arg (list-ref-or arguments 1 '(#\$)))
+             (second-arg (list-ref-or arguments 1 `(,tags-this-variable/char)))
              (num (counter))
              (var (string->list (number->string num)))
              (first (append pre '(#\=) var '(#\,) second-arg))
              (second (append first-arg '(#\=) var)))
         (list first second)))
 
-    (cond
-     (span-^? (handle-prefix-suffix span-^-pre span-^-post))
-     (span-_? (handle-prefix-suffix span-_-pre span-_-post))
-     (equal-split? (map (comp (append (car equal-split) '(#\=))) (cdr equal-split)))
-     (else (list (append chars '(#\=) '(#\$)))))))
+    (case (car structure/chars)
+      ((prefix-suffix) (apply handle-prefix-suffix (cadr structure/chars)))
+      ((equality)
+       (let* ((equal-split (cdr structure/chars)))
+         (map (lambda (x)
+                (apply append `(,(car x) (#\=) ,@(list-intersperse '(#\,) (cdr x)))))
+              equal-split)))
+      ((single) (list (append (car (cadr structure/chars)) '(#\=) `(,tags-this-variable/char)))))))
 
-(define (parse-tag counter entry-cnt)
+(define (parse-tag counter)
   (lambda (tag)
-    (define desugared ((desugar-tag counter) tag))
+    (define desugared ((desugar-tag/chars counter) tag))
     (map
      (lambda (chars)
        (define equal-split (list-split-on (comp (equal? #\=)) chars))
        (define pred-name (string->symbol (list->string (car equal-split))))
 
-       (define (handle-variable name)
-         (if (equal? "$" name)
-             entry-cnt
-             (string->symbol (string-append "v" (number->string entry-cnt) name))))
-
        (define variable-list (cadr equal-split))
        (define variables
-         (map (comp list->string handle-variable)
+         (map list->string
               (list-split-on
                (comp (equal? #\,))
                variable-list)))
