@@ -72,11 +72,10 @@
     (define result (tegfs-edit-tags working-file))
     (case (car result)
       ((ok)
-       (if working-file-maybe
-           (copy-file working-file categorization-file)
-           (rename-file working-file categorization-file))
-       (system-fmt "sed -i 's/\\*//g ; s/\\w\\w*_\\(\\w\\w*\\)/_\\1/g ; s/\\(\\w\\w*\\)^\\w\\w*/\\1^/g ; s/\\(\\w\\w*\\)=\\w\\(\\w\\|,\\|=\\)*/\\1/g' ~a"
-                   categorization-file)
+       (system-fmt "sed 's/\\*//g ; s/\\w\\w*_\\(\\w\\w*\\)/_\\1/g ; s/\\(\\w\\w*\\)^\\w\\w*/\\1^/g ; s/\\(\\w\\w*\\)=\\w\\(\\w\\|,\\|=\\)*/\\1/g' ~a > ~a"
+                   working-file categorization-file)
+       (unless working-file-maybe
+         (delete-file working-file))
        result)
       ((error)
        (dprintln "Error categorizing:")
