@@ -46,6 +46,7 @@
 %use (read-string-line) "./euphrates/read-string-line.scm"
 %use (open-file-port) "./euphrates/open-file-port.scm"
 %use (list-span-while) "./euphrates/list-span-while.scm"
+%use (alphanum/alphabet/index) "./euphrates/alphanum-alphabet.scm"
 
 %use (categorization-filename) "./categorization-filename.scm"
 %use (root/p) "./root-p.scm"
@@ -56,29 +57,49 @@
   (tegfs-prolog)
   (dprintln "done(prolog)."))
 
+(define (prolog-var-needs-quoting? var/chars)
+  (define first (alphanum/alphabet/index (car var/chars)))
+  (not
+   (and first
+        (> first 9)
+        (< first 36)
+        (list-and-map
+         (compose-under
+          or
+          (comp (equal? #\_))
+          alphanum/alphabet/index)
+         (cdr var/chars)))))
+
 (define (yield-for-prolog thing)
   (define type (car thing))
+
+  (define (print arg)
+    (cond
+     ((symbol? arg)
+      (let* ((str (symbol->string arg))
+             (chars (string->list str)))
+        (if (prolog-var-needs-quoting? chars)
+            (begin
+              (display "'")
+              (display str)
+              (display "'"))
+            (display str))))
+     ((string? arg) (write arg))
+     (else (raisu 'uknown-type arg))))
+  (define (comma-print arg)
+    (display ", ") (print arg))
+
   (case type
     ((t)
      (display "t(")
      (display (cadr thing))
-     (for-each
-      (lambda (arg)
-        (display ", v")
-        (display arg))
-      (cddr thing))
+     (for-each comma-print (cddr thing))
      (display ").")
      (newline))
     ((p)
      (display "p(")
      (display (cadr thing))
-     (for-each
-      (lambda (arg)
-        (display ", ")
-        (when (symbol? arg)
-          (display "v"))
-        (write arg))
-      (cddr thing))
+     (for-each comma-print (cddr thing))
      (display ").")
      (newline))))
 
@@ -138,13 +159,13 @@
    (get-registry-files)))
 
 (define (handle-the-split yield cnt equal-split)
-  (define pred-name (list->string (car equal-split)))
+  (define pred-name (string->symbol (list->string (car equal-split))))
 
   (define variable-lists (cdr equal-split))
   (for-each
    (lambda (var-list)
      (define variables
-       (map list->string
+       (map (compose string->symbol list->string)
             (list-split-on
              (comp (equal? #\,))
              var-list)))
@@ -191,12 +212,12 @@
     (cond
      (span-^?
       (yield
-       `(t ,cnt ,(list->string span-^-pre)
-           ,(list->string span-^-post))))
+       `(t ,cnt ,(string->symbol (list->string span-^-pre))
+           ,(string->symbol (list->string span-^-post)))))
      (span-_?
       (yield
-       `(t ,cnt ,(list->string span-_-pre)
-           ,(list->string span-_-post))))
+       `(t ,cnt ,(string->symbol (list->string span-_-pre))
+           ,(string->symbol (list->string span-_-post)))))
      (equal-split?
       (handle-the-split yield cnt equal-split))
      (else
