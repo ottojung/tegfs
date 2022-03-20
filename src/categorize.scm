@@ -79,8 +79,8 @@
     (hashset-add! (hashmap-ref state 'tags #f) tag))
 
   (define (handle-new-tag tag)
-    (define parsed ((compose cdr parser) tag))
-    (define variables (apply append (map cdr parsed)))
+    (define parsed (parser tag))
+    (define variables (apply append (map cddr parsed)))
     (add-tag tag)
     (for-each add-all-var variables))
 
@@ -90,8 +90,14 @@
   (define parser (parse-tag-structure counter))
 
   (define (add-current-to-tags tags)
-    (define parsed (apply append (map (compose cdr parser) tags)))
-    (define added (map (lambda (p) (append p `(,currently-handling-var))) parsed))
+    (define parsed (apply append (map parser tags)))
+    (define added
+      (map (lambda (p)
+             (if (and (equal? tags-this-variable currently-handling-var)
+                      (member (car p) '(single prefix-suffix)))
+                 (cdr p)
+                 (append (cdr p) `(,currently-handling-var))))
+           parsed))
     (define unparsed (map unparse-tag added))
     unparsed)
 

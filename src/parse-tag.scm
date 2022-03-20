@@ -66,30 +66,31 @@
       (raisu 'used-conflicting-tag-syntaxes tag sum))
 
     (cond
-     (span-^? `(prefix-suffix (,span-^-pre ,span-^-post)))
-     (span-_? `(prefix-suffix (,span-_-pre ,span-_-post)))
+     (span-^? `((prefix-suffix ,span-^-pre ,span-^-post)))
+     (span-_? `((prefix-suffix ,span-_-pre ,span-_-post)))
      (equal-split?
       (let* ((head (car equal-split)))
-        (cons 'equality
-              (map (lambda (split)
-                     (cons head (list-split-on (comp (equal? #\,)) split)))
-                   (cdr equal-split)))))
-     (else `(single (,chars))))))
+        (map (lambda (split)
+               (cons 'equality
+                     (cons head (list-split-on (comp (equal? #\,)) split))))
+             (cdr equal-split))))
+     (else `((single ,chars))))))
 
 ;;
 ;; example input:
 ;;   with=X,Y,Z=A,B
 ;;
 ;; output:
-;;   (equality (with X Y Z) (with A B))
+;;   ((equality with X Y Z) (equality with A B))
 ;;
 (define (parse-tag-structure counter)
   (define parser (parse-tag-structure/chars counter))
   (lambda (tag)
     (define structure/chars (parser tag))
-    (cons (car structure/chars)
-          (map (comp (map (compose string->symbol list->string)))
-               (cdr structure/chars)))))
+    (map (lambda (x)
+           (cons (car x)
+                 (map (compose string->symbol list->string) (cdr x))))
+         structure/chars)))
 
 (define (desugar-tag/chars counter)
   (define parser (parse-tag-structure/chars counter))
@@ -108,14 +109,19 @@
              (second (append first-arg '(#\=) var)))
         (list first second)))
 
-    (case (car structure/chars)
-      ((prefix-suffix) (apply handle-prefix-suffix (cadr structure/chars)))
-      ((equality)
-       (let* ((equal-split (cdr structure/chars)))
-         (map (lambda (x)
-                (apply append `(,(car x) (#\=) ,@(list-intersperse '(#\,) (cdr x)))))
-              equal-split)))
-      ((single) (list (append (car (cadr structure/chars)) '(#\=) `(,tags-this-variable/char)))))))
+    (apply
+     append
+     (map
+      (lambda (s)
+        (case (car s)
+          ((prefix-suffix) (apply handle-prefix-suffix (cdr s)))
+          ((equality)
+           (let* ((equal-split (cdr s)))
+             (list
+              (apply append `(,(car equal-split) (#\=)
+                              ,@(list-intersperse '(#\,) (cdr equal-split)))))))
+          ((single) (list (append (cadr s) '(#\=) `(,tags-this-variable/char))))))
+      structure/chars))))
 
 (define (parse-tag counter)
   (lambda (tag)

@@ -19,8 +19,10 @@
 %use (list-intersperse) "./euphrates/list-intersperse.scm"
 
 (define (unparse-tag parsed-tag)
-  (string->symbol
-   (apply
-    string-append
-    `(,(symbol->string (car parsed-tag)) "="
-      ,@(list-intersperse "," (map symbol->string (cdr parsed-tag)))))))
+  (if (null? (cdr parsed-tag))
+      (car parsed-tag)
+      (string->symbol
+       (apply
+        string-append
+        `(,(symbol->string (car parsed-tag)) "="
+          ,@(list-intersperse "," (map symbol->string (cdr parsed-tag))))))))
