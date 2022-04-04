@@ -111,11 +111,13 @@
        (display "]"))
      (display ").")
      (newline))
-    ((p)
-     (display "p(")
+    ((i)
+     (display "i(")
      (comma-print (cdr thing))
      (display ").")
-     (newline))))
+     (newline))
+    (else
+     (raisu 'bad-yield thing))))
 
 ;;
 ;; Example translation:
@@ -155,8 +157,7 @@
 ;; t(from, [3, v1X]).
 ;; t(futurama, 3).
 ;;
-;; p(id, 1, "id").
-;; p(target, 1, "target").
+;; i(1, "id").
 ;;
 (define (tegfs-prolog)
   (define output-path (string-append (make-temporary-filename) ".pl"))
@@ -165,7 +166,7 @@
   (parameterize ((current-output-port output-port))
     (display ":-style_check(-discontiguous).") (newline)
     (translate-registries yield-for-prolog)
-    (display "what(X, Y) :- t(Y, X) ; t(K, Z), member(X, Z), Y = [K | Z].") (newline)
+    ;; (display "what(X, Y) :- t(Y, X) ; t(K, Z), member(X, Z), Y = [K | Z].") (newline)
     )
 
   (close-port output-port)
@@ -198,12 +199,6 @@
        (yield (cons 't (cons (car t) (map handle-variable (cdr t))))))
      (parser tag))))
 
-(define (translate-property yield cnt registry-path)
-  (lambda (property)
-    (define name (car property))
-    (define value (cdr property))
-    (yield `(p ,name ,cnt ,(~a value)))))
-
 (define (translate-entry yield counter registry-path)
   (lambda (entry)
     (define cnt (counter))
@@ -217,7 +212,7 @@
                (raisu 'could-not-get-tags entry))))
 
     (for-each (translate-tag yield counter cnt) tags)
-    (for-each (translate-property yield cnt registry-path) entry)
+    (yield `(i ,cnt ,id))
 
     ))
 
