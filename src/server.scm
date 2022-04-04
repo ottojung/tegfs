@@ -110,8 +110,12 @@
 
   (cont (build-response
          #:code status
-         #:headers `((content-type
-                      . (,content-type ,@content-type-params))
+                     ;; most of these settings come from here: https://cheatsheetseries.owasp.org/cheatsheets/HTTP_Headers_Cheat_Sheet.html
+         #:headers `((referrer-policy . "strict-origin-when-cross-origin") ;; optional, ensures not to send too much user data.
+                     (x-frame-options . "DENY") ;; optional, bans embedding in <iframe> and such.
+                     (strict-transport-security . "max-age=63072000; includeSubDomains; preload") ;; something something security.
+                     ;; TODO: add more SECURITY!!!!
+                     (content-type . (,content-type ,@content-type-params))
                      ,@extra-headers))
         (lambda (port)
           (parameterize ((current-output-port port))
@@ -138,6 +142,7 @@
                          (uri->string (request-uri request)))))
 
 (define (set-cookie-header key value)
+  ;; TODO: make cookies expire!!!!!
   (cons 'set-cookie
         (string-append (~a key) "=" (~a value)
                        " ; HttpOnly ; Secure ; SameSite=Lax ;")))
