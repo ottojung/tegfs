@@ -33,6 +33,7 @@
 %use (tegfs-categorize/parse) "./categorize.scm"
 %use (tegfs-serve/parse) "./server.scm"
 %use (tegfs-prolog/parse) "./prolog.scm"
+%use (tegfs-query/parse) "./query.scm"
 %use (fatal) "./fatal.scm"
 %use (root/p) "./root-p.scm"
 
@@ -48,6 +49,7 @@
       /      save
       /      categorize
       /      prolog
+      /      query QUERYOPT+
       /      status
       /      serve
       ADDOPT : --target <add-target>
@@ -58,6 +60,7 @@
       /        --key <key...> <value...>
       /        --registry-file <registry-file>
       /        --date <date>
+      QUERYOPT : <query>
       ROOT : --root <root>
       )
 
@@ -83,6 +86,7 @@
         (categorize (tegfs-categorize/parse))
         (serve (tegfs-serve/parse))
         (prolog (tegfs-prolog/parse))
+        (query (tegfs-query/parse <query>))
         (status
          (display "NOT IMPLEMENTED YET") (newline)
          (exit 1))

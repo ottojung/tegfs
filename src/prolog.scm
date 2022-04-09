@@ -16,6 +16,7 @@
 
 %var tegfs-prolog/parse
 %var tegfs-prolog
+%var tegfs-dump-prolog-file
 
 %use (make-temporary-filename) "./euphrates/make-temporary-filename.scm"
 %use (system-fmt) "./euphrates/system-fmt.scm"
@@ -159,7 +160,7 @@
 ;;
 ;; i(1, "id").
 ;;
-(define (tegfs-prolog)
+(define (tegfs-dump-prolog-file)
   (define output-path (string-append (make-temporary-filename) ".pl"))
   (define output-port (open-file-port output-path "w"))
 
@@ -171,6 +172,10 @@
 
   (close-port output-port)
 
+  output-path)
+
+(define (tegfs-prolog)
+  (define output-path (tegfs-dump-prolog-file))
   (system-fmt "prolog ~a" output-path))
 
 (define (translate-registries yield)
