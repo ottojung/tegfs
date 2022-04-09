@@ -53,6 +53,7 @@
 %use (alphanum/alphabet/index) "./euphrates/alphanum-alphabet.scm"
 %use (~a) "./euphrates/tilda-a.scm"
 %use (list-intersperse) "./euphrates/list-intersperse.scm"
+%use (make-hashset hashset-ref) "./euphrates/ihashset.scm"
 
 %use (categorization-filename) "./categorization-filename.scm"
 %use (tags-this-variable/string) "./tags-this-variable.scm"
@@ -62,9 +63,8 @@
 %use (tegfs-dump-prolog) "./prolog.scm"
 %use (query-parse) "./query-parse.scm"
 %use (tag->prolog-term) "./tag-to-prolog-term.scm"
-
-%use (debug) "./euphrates/debug.scm"
-%use (debugv) "./euphrates/debugv.scm"
+%use (entries-for-each) "./entries-for-each.scm"
+%use (entry-print) "./entry-print.scm"
 
 (define (tovar x)
   (cons 'var
@@ -73,27 +73,18 @@
             x)))
 
 (define (tegfs-query/parse <query...>)
-  (define <query...> '("hi")) ;; DEBUG
-  (debug "Hello there ~s" <query...>)
-
   (define output-path (string-append (make-temporary-filename) ".pl"))
   (define output-port (open-file-port output-path "w"))
 
   (parameterize ((current-output-port output-port))
-  ;; (begin ;; DEBUG
     (display ":- initialization(main, main).") (newline)
     (tegfs-dump-prolog)
 
     (define parsed-query-0 (query-parse <query...>))
-    (debugv parsed-query-0)
     (define parsed-query-1 (map (fn-cons identity (comp (map tovar))) parsed-query-0))
-    (debugv parsed-query-1)
     (define parsed-query (map (comp (cons 't)) parsed-query-1))
-    (debugv parsed-query)
     (define prolog-query-0 (map tag->prolog-term parsed-query))
-    (debugv prolog-query-0)
     (define prolog-query (apply string-append (list-intersperse ", " prolog-query-0)))
-    (debugv prolog-query)
 
     (printf "thises(This) :- ~a, i(This, Id), writeln(Id).\n" prolog-query)
     (printf "main(_Argv) :- findall(This, thises(This), _).")
@@ -108,12 +99,22 @@
   (unless (equal? 0 code)
     (raisu 'prolog-execution-failed code ids/string))
 
-  (define ids
+  (define ids/list
     (appcomp ids/string
              string->lines
              (map string-strip)
              (filter (negate string-null?))))
 
-  (debugv ids)
+  (define ids
+    (make-hashset ids/list))
+
+  (when (null? ids/list)
+    (display "No matches." (current-error-port)))
+
+  (entries-for-each
+   (lambda (entry)
+     (define id (cdr (assoc 'id entry)))
+     (when (hashset-ref ids id)
+       (entry-print entry) (newline) (newline))))
 
   )
