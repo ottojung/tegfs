@@ -60,7 +60,7 @@
       /        --key <key...> <value...>
       /        --registry-file <registry-file>
       /        --date <date>
-      QUERYOPT : <query>
+      QUERYOPT : <query...>
       ROOT : --root <root>
       )
 
@@ -86,7 +86,7 @@
         (categorize (tegfs-categorize/parse))
         (serve (tegfs-serve/parse))
         (prolog (tegfs-prolog/parse))
-        (query (tegfs-query/parse <query>))
+        (query (tegfs-query/parse <query...>))
         (status
          (display "NOT IMPLEMENTED YET") (newline)
          (exit 1))

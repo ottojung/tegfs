@@ -14,28 +14,24 @@
 
 %run guile
 
-%var tegfs-query
-%var tegfs-query/parse
+%var query-parse
 
 %use (make-temporary-filename) "./euphrates/make-temporary-filename.scm"
 %use (system-fmt) "./euphrates/system-fmt.scm"
-%use (system-re) "./euphrates/system-re.scm"
 %use (append-posix-path) "./euphrates/append-posix-path.scm"
 %use (dprintln) "./euphrates/dprintln.scm"
 %use (printf) "./euphrates/printf.scm"
 %use (file-or-directory-exists?) "./euphrates/file-or-directory-exists-q.scm"
 %use (write-string-file) "./euphrates/write-string-file.scm"
 %use (read-string-file) "./euphrates/read-string-file.scm"
-%use (appcomp comp) "./euphrates/comp.scm"
+%use (comp) "./euphrates/comp.scm"
 %use (fn) "./euphrates/fn.scm"
-%use (fn-cons) "./euphrates/fn-cons.scm"
 %use (string->lines) "./euphrates/string-to-lines.scm"
 %use (string-strip) "./euphrates/string-strip.scm"
 %use (string-split/simple) "./euphrates/string-split-simple.scm"
 %use (list-split-on) "./euphrates/list-split-on.scm"
 %use (list-ref-or) "./euphrates/list-ref-or.scm"
 %use (define-tuple) "./euphrates/define-tuple.scm"
-%use (define-pair) "./euphrates/define-pair.scm"
 %use (read-list) "./euphrates/read-list.scm"
 %use (lines->string) "./euphrates/lines-to-string.scm"
 %use (list-map/flatten) "./euphrates/list-map-flatten.scm"
@@ -52,68 +48,14 @@
 %use (list-span-while) "./euphrates/list-span-while.scm"
 %use (alphanum/alphabet/index) "./euphrates/alphanum-alphabet.scm"
 %use (~a) "./euphrates/tilda-a.scm"
-%use (list-intersperse) "./euphrates/list-intersperse.scm"
 
 %use (categorization-filename) "./categorization-filename.scm"
 %use (tags-this-variable/string) "./tags-this-variable.scm"
 %use (root/p) "./root-p.scm"
 %use (get-registry-files) "./get-registry-files.scm"
 %use (parse-tag) "./parse-tag.scm"
-%use (tegfs-dump-prolog) "./prolog.scm"
-%use (query-parse) "./query-parse.scm"
-%use (tag->prolog-term) "./tag-to-prolog-term.scm"
 
-%use (debug) "./euphrates/debug.scm"
-%use (debugv) "./euphrates/debugv.scm"
-
-(define (tovar x)
-  (cons 'var
-        (if (equal? x tags-this-variable/string)
-            'This
-            x)))
-
-(define (tegfs-query/parse <query...>)
-  (define <query...> '("hi")) ;; DEBUG
-  (debug "Hello there ~s" <query...>)
-
-  (define output-path (string-append (make-temporary-filename) ".pl"))
-  (define output-port (open-file-port output-path "w"))
-
-  (parameterize ((current-output-port output-port))
-  ;; (begin ;; DEBUG
-    (display ":- initialization(main, main).") (newline)
-    (tegfs-dump-prolog)
-
-    (define parsed-query-0 (query-parse <query...>))
-    (debugv parsed-query-0)
-    (define parsed-query-1 (map (fn-cons identity (comp (map tovar))) parsed-query-0))
-    (debugv parsed-query-1)
-    (define parsed-query (map (comp (cons 't)) parsed-query-1))
-    (debugv parsed-query)
-    (define prolog-query-0 (map tag->prolog-term parsed-query))
-    (debugv prolog-query-0)
-    (define prolog-query (apply string-append (list-intersperse ", " prolog-query-0)))
-    (debugv prolog-query)
-
-    (printf "thises(This) :- ~a, i(This, Id), writeln(Id).\n" prolog-query)
-    (printf "main(_Argv) :- findall(This, thises(This), _).")
-    (newline) (newline)
-    )
-
-  (close-port output-port)
-
-  (define-pair (ids/string code)
-    (system-re "prolog -s ~a" output-path))
-
-  (unless (equal? 0 code)
-    (raisu 'prolog-execution-failed code ids/string))
-
-  (define ids
-    (appcomp ids/string
-             string->lines
-             (map string-strip)
-             (filter (negate string-null?))))
-
-  (debugv ids)
-
-  )
+(define (query-parse <query...>)
+  (apply
+   append
+   (map (comp string->symbol ((parse-tag tags-this-variable/string))) <query...>)))

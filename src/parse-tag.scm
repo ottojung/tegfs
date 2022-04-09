@@ -24,6 +24,7 @@
 %use (comp) "./euphrates/comp.scm"
 %use (raisu) "./euphrates/raisu.scm"
 %use (list-intersperse) "./euphrates/list-intersperse.scm"
+%use (~a) "./euphrates/tilda-a.scm"
 
 %use (tags-this-variable/char) "./tags-this-variable.scm"
 
@@ -104,7 +105,7 @@
              (first-arg (car arguments))
              (second-arg (list-ref-or arguments 1 `(,tags-this-variable/char)))
              (num (counter))
-             (var (string->list (number->string num)))
+             (var (string->list (~a num)))
              (first (append pre '(#\=) var '(#\,) second-arg))
              (second (append first-arg '(#\=) var)))
         (list first second)))

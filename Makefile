@@ -68,4 +68,4 @@ test5: build/tegfs
 	TEGFS_ROOT=$(TEST_ROOT) build/tegfs prolog
 
 test6: build/tegfs
-	TEGFS_ROOT=$(TEST_ROOT) build/tegfs query 'good (with X $) (red X)'
+	TEGFS_ROOT=$(TEST_ROOT) build/tegfs query good with=X,$$ red=X

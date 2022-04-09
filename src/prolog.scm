@@ -16,7 +16,7 @@
 
 %var tegfs-prolog/parse
 %var tegfs-prolog
-%var tegfs-dump-prolog-file
+%var tegfs-dump-prolog
 
 %use (make-temporary-filename) "./euphrates/make-temporary-filename.scm"
 %use (system-fmt) "./euphrates/system-fmt.scm"
@@ -55,70 +55,15 @@
 %use (root/p) "./root-p.scm"
 %use (get-registry-files) "./get-registry-files.scm"
 %use (parse-tag) "./parse-tag.scm"
+%use (print-tag-as-prolog-term) "./tag-to-prolog-term.scm"
 
 (define (tegfs-prolog/parse)
   (tegfs-prolog)
   (dprintln "done(prolog)."))
 
-(define (prolog-var-needs-quoting? var/chars)
-  (define first (alphanum/alphabet/index (car var/chars)))
-  (not
-   (or (equal? '(#\~) var/chars)
-       (and first
-            (> first 9)
-            (< first 36)
-            (list-and-map
-             (compose-under
-              or
-              (comp (equal? #\_))
-              alphanum/alphabet/index)
-             (cdr var/chars))))))
-
 (define (yield-for-prolog thing)
-  (define type (car thing))
-
-  (define (print arg)
-    (cond
-     ((symbol? arg)
-      (let* ((str (symbol->string arg))
-             (chars (string->list str)))
-        (if (prolog-var-needs-quoting? chars)
-            (begin
-              (display "'")
-              (display str)
-              (display "'"))
-            (display str))))
-     ((string? arg) (write arg))
-     ((integer? arg) (write arg))
-     (else (raisu 'uknown-type arg))))
-
-  (define (comma-print lst)
-    (let loop ((lst lst))
-      (unless (null? lst)
-        (print (car lst))
-        (unless (null? (cdr lst))
-          (display ", "))
-        (loop (cdr lst)))))
-
-  (case type
-    ((t)
-     (display "t(")
-     (print (cadr thing))
-     (display ", ")
-     (unless (null? (cdr (cddr thing)))
-       (display "["))
-     (comma-print (cddr thing))
-     (unless (null? (cdr (cddr thing)))
-       (display "]"))
-     (display ").")
-     (newline))
-    ((i)
-     (display "i(")
-     (comma-print (cdr thing))
-     (display ").")
-     (newline))
-    (else
-     (raisu 'bad-yield thing))))
+  (print-tag-as-prolog-term thing)
+  (display ".\n"))
 
 ;;
 ;; Example translation:
@@ -160,15 +105,18 @@
 ;;
 ;; i(1, "id").
 ;;
+(define (tegfs-dump-prolog)
+  (display ":-style_check(-discontiguous).") (newline)
+  (translate-registries yield-for-prolog)
+  ;; (display "what(X, Y) :- t(Y, X) ; t(K, Z), member(X, Z), Y = [K | Z].") (newline)
+  )
+
 (define (tegfs-dump-prolog-file)
   (define output-path (string-append (make-temporary-filename) ".pl"))
   (define output-port (open-file-port output-path "w"))
 
   (parameterize ((current-output-port output-port))
-    (display ":-style_check(-discontiguous).") (newline)
-    (translate-registries yield-for-prolog)
-    ;; (display "what(X, Y) :- t(Y, X) ; t(K, Z), member(X, Z), Y = [K | Z].") (newline)
-    )
+    (tegfs-dump-prolog))
 
   (close-port output-port)
 
