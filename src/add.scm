@@ -42,6 +42,7 @@
 %use (root/p) "./root-p.scm"
 %use (a-weblink?) "./a-weblink-q.scm"
 %use (last-id-filename) "./last-id-filename.scm"
+%use (id-name/string) "./id-name.scm"
 
 (define (generate-random-id)
   (list->string
@@ -132,7 +133,9 @@
    (with-output-to-string
      (lambda _
        (newline)
-       (display "((id . \"")
+       (display "((")
+       (display id-name/string)
+       (display ". \"")
        (display id)
        (display "\")")
 

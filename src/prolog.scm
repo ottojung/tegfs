@@ -57,6 +57,7 @@
 %use (parse-tag) "./parse-tag.scm"
 %use (print-tag-as-prolog-term) "./tag-to-prolog-term.scm"
 %use (entries-for-each) "./entries-for-each.scm"
+%use (id-name) "./id-name.scm"
 
 (define (tegfs-prolog/parse)
   (tegfs-prolog)
@@ -153,7 +154,7 @@
     (define cnt (counter))
 
     (define id
-      (cdr (or (assoc 'id entry)
+      (cdr (or (assoc id-name entry)
                (raisu 'could-not-get-an-id entry))))
 
     (define tags

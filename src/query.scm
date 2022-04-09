@@ -65,6 +65,7 @@
 %use (tag->prolog-term) "./tag-to-prolog-term.scm"
 %use (entries-for-each) "./entries-for-each.scm"
 %use (entry-print) "./entry-print.scm"
+%use (id-name) "./id-name.scm"
 
 (define (tovar x)
   (cons 'var
@@ -110,7 +111,7 @@
 
   (entries-for-each
    (lambda (entry)
-     (define id (cdr (assoc 'id entry)))
+     (define id (cdr (assoc id-name entry)))
      (when (hashset-ref ids id)
        (entry-print entry) (newline) (newline))))
 
