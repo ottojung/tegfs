@@ -16,11 +16,13 @@
 
 %var entry-print
 
-%for (COMPILER "guile")
-
-(use-modules (ice-9 pretty-print))
-
 (define (entry-print entry)
-  (pretty-print entry))
-
-%end
+  (display "(")
+  (write (car entry))
+  (for-each
+   (lambda (prop)
+     (newline)
+     (display " ")
+     (write prop))
+   (cdr entry))
+  (display ")"))
