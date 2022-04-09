@@ -56,6 +56,7 @@
 %use (get-registry-files) "./get-registry-files.scm"
 %use (parse-tag) "./parse-tag.scm"
 %use (print-tag-as-prolog-term) "./tag-to-prolog-term.scm"
+%use (entries-for-each) "./entries-for-each.scm"
 
 (define (tegfs-prolog/parse)
   (tegfs-prolog)
@@ -131,13 +132,8 @@
     (let ((cnt 0))
       (lambda _ (set! cnt (+ 1 cnt)) cnt)))
 
-  (for-each
-   (lambda (registry-path0)
-     (define registry-path (append-posix-path (root/p) registry-path0))
-     (define input-port (open-file-port registry-path "r"))
-     (for-each (translate-entry yield counter registry-path)
-               (read-list input-port)))
-   (get-registry-files)))
+  (entries-for-each
+   (translate-entry yield counter)))
 
 (define (translate-tag yield counter cnt)
   (define parser (parse-tag counter))
@@ -152,7 +148,7 @@
        (yield (cons 't (cons (car t) (map handle-variable (cdr t))))))
      (parser tag))))
 
-(define (translate-entry yield counter registry-path)
+(define (translate-entry yield counter)
   (lambda (entry)
     (define cnt (counter))
 
