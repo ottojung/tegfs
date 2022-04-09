@@ -108,13 +108,17 @@
   (define ids
     (make-hashset ids/list))
 
-  (when (null? ids/list)
-    (display "No matches." (current-error-port)))
-
   (entries-for-each
    (lambda (entry)
      (define id (cdr (assoc 'id entry)))
      (when (hashset-ref ids id)
        (entry-print entry) (newline) (newline))))
+
+  (parameterize ((current-output-port (current-error-port)))
+    (let ((len (length ids/list)))
+      (if (equal? 0 len)
+          (display "No matches.")
+          (printf "Total of ~a matches." len))
+      (newline)))
 
   )
