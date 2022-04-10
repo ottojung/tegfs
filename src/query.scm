@@ -53,7 +53,7 @@
 %use (alphanum/alphabet/index) "./euphrates/alphanum-alphabet.scm"
 %use (~a) "./euphrates/tilda-a.scm"
 %use (list-intersperse) "./euphrates/list-intersperse.scm"
-%use (make-hashset hashset-ref) "./euphrates/ihashset.scm"
+%use (make-hashset hashset-ref hashset-length) "./euphrates/ihashset.scm"
 
 %use (categorization-filename) "./categorization-filename.scm"
 %use (tags-this-variable/string) "./tags-this-variable.scm"
@@ -100,14 +100,12 @@
   (unless (equal? 0 code)
     (raisu 'prolog-execution-failed code ids/string))
 
-  (define ids/list
+  (define ids
     (appcomp ids/string
              string->lines
              (map string-strip)
-             (filter (negate string-null?))))
-
-  (define ids
-    (make-hashset ids/list))
+             (filter (negate string-null?))
+             make-hashset))
 
   (entries-for-each
    (lambda (entry)
@@ -116,7 +114,7 @@
        (entry-print entry) (newline) (newline))))
 
   (parameterize ((current-output-port (current-error-port)))
-    (let ((len (length ids/list)))
+    (let ((len (hashset-length ids)))
       (if (equal? 0 len)
           (display "No matches.")
           (printf "Total of ~a matches." len))
