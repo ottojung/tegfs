@@ -87,7 +87,8 @@
     (define prolog-query-0 (map tag->prolog-term parsed-query))
     (define prolog-query (apply string-append (list-intersperse ", " prolog-query-0)))
 
-    (printf "thises(This) :- ~a, i(This, Id), writeln(Id).\n" prolog-query)
+    (printf "single(This) :- ~a, !.\n" prolog-query)
+    (printf "thises(This) :- i(This, Id), single(This), writeln(Id).\n")
     (printf "main(_Argv) :- findall(This, thises(This), _).")
     (newline) (newline)
     )
