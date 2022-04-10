@@ -24,7 +24,7 @@
 %use (file-or-directory-exists?) "./euphrates/file-or-directory-exists-q.scm"
 %use (write-string-file) "./euphrates/write-string-file.scm"
 %use (read-string-file) "./euphrates/read-string-file.scm"
-%use (comp) "./euphrates/comp.scm"
+%use (appcomp comp) "./euphrates/comp.scm"
 %use (fn) "./euphrates/fn.scm"
 %use (string->lines) "./euphrates/string-to-lines.scm"
 %use (string-strip) "./euphrates/string-strip.scm"
@@ -44,6 +44,7 @@
 %use (list-find-first) "./euphrates/list-find-first.scm"
 %use (compose-under) "./euphrates/compose-under.scm"
 %use (read-string-line) "./euphrates/read-string-line.scm"
+%use (list-last) "./euphrates/list-last.scm"
 
 %use (categorization-split) "./categorization-split.scm"
 
@@ -70,7 +71,10 @@
 
 (define starred-symbol?
   (comp symbol->string string->list
-        (list-or-map (lambda (c) (member c '(#\* #\=))))))
+        ((compose-under
+          and
+          (comp (list-or-map (lambda (c) (member c '(#\* #\=)))))
+          (comp list-last (equal? #\=) not)))))
 
 ;; transitive over type-symbols, but not a general transitive closure
 (define (get-parents ast/flatten tag/starred)
