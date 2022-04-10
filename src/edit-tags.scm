@@ -132,6 +132,8 @@
 ;;             or `(error ,list-of-ambiguous-tags-with-parents)
 ;;             or `(duplicates)
 (define (tegfs-process-categorization-text text)
+  ;; FIXME: dont actually split - the rules are in a separate file
+  ;; TODO: allow to edit rules as well
   (define-values (cfg-part rules-part)
     (categorization-split text))
 
