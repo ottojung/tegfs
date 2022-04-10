@@ -86,8 +86,9 @@
     (define parsed-query-1 (map (fn-cons identity (comp (map tovar))) parsed-query-0))
     (define parsed-query (map (comp (cons 't)) parsed-query-1))
     (define variables
-      (list-deduplicate/reverse
-       (apply append (map cdr parsed-query-0))))
+      (filter (negate (comp ~a (equal? "This")))
+              (list-deduplicate/reverse
+               (apply append (map cdr parsed-query-0)))))
     (define initializations (map (lambda (v) (list 'v '(var . This) `(var . ,v))) variables))
     (define prolog-query-0 (map tag->prolog-term (append initializations parsed-query)))
     (define prolog-query (apply string-append (list-intersperse ", " prolog-query-0)))

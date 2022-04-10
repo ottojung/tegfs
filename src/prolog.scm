@@ -152,7 +152,8 @@
 (define (translate-variable-binding yield cnt)
   (define convert (alpha-convert-variable cnt))
   (lambda (name)
-    (yield (cons 'v (list cnt (convert name))))))
+    (unless (equal? (~a name) tags-this-variable/string)
+      (yield (cons 'v (list cnt (convert name)))))))
 
 (define (translate-entry yield counter)
   (lambda (entry)
