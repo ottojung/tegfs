@@ -54,6 +54,7 @@
 %use (~a) "./euphrates/tilda-a.scm"
 %use (list-intersperse) "./euphrates/list-intersperse.scm"
 %use (make-hashset hashset-ref hashset-length) "./euphrates/ihashset.scm"
+%use (list-deduplicate/reverse) "./euphrates/list-deduplicate.scm"
 
 %use (categorization-filename) "./categorization-filename.scm"
 %use (tags-this-variable/string) "./tags-this-variable.scm"
@@ -84,7 +85,11 @@
     (define parsed-query-0 (query-parse <query...>))
     (define parsed-query-1 (map (fn-cons identity (comp (map tovar))) parsed-query-0))
     (define parsed-query (map (comp (cons 't)) parsed-query-1))
-    (define prolog-query-0 (map tag->prolog-term parsed-query))
+    (define variables
+      (list-deduplicate/reverse
+       (apply append (map cdr parsed-query-0))))
+    (define initializations (map (lambda (v) (list 'v '(var . This) `(var . ,v))) variables))
+    (define prolog-query-0 (map tag->prolog-term (append initializations parsed-query)))
     (define prolog-query (apply string-append (list-intersperse ", " prolog-query-0)))
 
     (printf "single(This) :- ~a, !.\n" prolog-query)

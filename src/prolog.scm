@@ -49,6 +49,7 @@
 %use (list-span-while) "./euphrates/list-span-while.scm"
 %use (alphanum/alphabet/index) "./euphrates/alphanum-alphabet.scm"
 %use (~a) "./euphrates/tilda-a.scm"
+%use (list-deduplicate/reverse) "./euphrates/list-deduplicate.scm"
 
 %use (categorization-filename) "./categorization-filename.scm"
 %use (tags-this-variable/string) "./tags-this-variable.scm"
@@ -110,7 +111,7 @@
 (define (tegfs-dump-prolog)
   (display ":-style_check(-discontiguous).\n")
   (translate-registries yield-for-prolog)
-  (display "t('%diff', [X, Y]) :- X =\\= Y.\n")
+  (display "t('%diff', [X, Y]) :- X \\= Y.\n")
   ;; (display "what(X, Y) :- t(Y, X) ; t(K, Z), member(X, Z), Y = [K | Z].") (newline)
   )
 
@@ -137,18 +138,21 @@
   (entries-for-each
    (translate-entry yield counter)))
 
-(define (translate-tag yield counter cnt)
-  (define parser (parse-tag counter))
-  (define (handle-variable name)
+(define (alpha-convert-variable cnt)
+  (lambda (name)
     (if (equal? name tags-this-variable/string)
         cnt
-        (string->symbol (string-append "v" (number->string cnt) name))))
+        (string->symbol (string-append "v" (number->string cnt) name)))))
 
-  (lambda (tag)
-    (for-each
-     (lambda (t)
-       (yield (cons 't (cons (car t) (map handle-variable (cdr t))))))
-     (parser tag))))
+(define (translate-parsed-tag yield cnt)
+  (define convert (alpha-convert-variable cnt))
+  (lambda (t)
+    (yield (cons 't (cons (car t) (map convert (cdr t)))))))
+
+(define (translate-variable-binding yield cnt)
+  (define convert (alpha-convert-variable cnt))
+  (lambda (name)
+    (yield (cons 'v (list cnt (convert name))))))
 
 (define (translate-entry yield counter)
   (lambda (entry)
@@ -162,7 +166,14 @@
       (cdr (or (assoc 'tags entry)
                (raisu 'could-not-get-tags entry))))
 
-    (for-each (translate-tag yield counter cnt) tags)
+    (define parser (parse-tag counter))
+    (define parsed-tags (apply append (map parser tags)))
+    (define variables
+      (list-deduplicate/reverse
+       (apply append (map cdr parsed-tags))))
+
+    (for-each (translate-parsed-tag yield cnt) parsed-tags)
+    (for-each (translate-variable-binding yield cnt) variables)
     (yield `(i ,cnt ,id))
 
     ))

@@ -104,8 +104,9 @@
      (unless (null? (cdr (cddr thing)))
        (display "]"))
      (display ")"))
-    ((i)
-     (display "i(")
+    ((i v)
+     (display type)
+     (display "(")
      (comma-print (cdr thing))
      (display ")"))
     (else
