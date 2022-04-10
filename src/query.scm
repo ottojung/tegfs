@@ -112,7 +112,7 @@
    (lambda (entry)
      (define id (cdr (assoc id-name entry)))
      (when (hashset-ref ids id)
-       (entry-print entry) (newline) (newline))))
+       (entry-print entry) (display "\n\n"))))
 
   (parameterize ((current-output-port (current-error-port)))
     (let ((len (hashset-length ids)))

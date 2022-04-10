@@ -21,8 +21,7 @@
   (write (car entry))
   (for-each
    (lambda (prop)
-     (newline)
-     (display " ")
+     (display "\n ")
      (write prop))
    (cdr entry))
   (display ")"))
