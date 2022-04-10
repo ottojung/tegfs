@@ -85,8 +85,9 @@
     (define parsed-query-0 (query-parse <query...>))
     (define parsed-query-1 (map (fn-cons identity (comp (map tovar))) parsed-query-0))
     (define parsed-query (map (comp (cons 't)) parsed-query-1))
+    (define this-strings `(,tags-this-variable/string "This"))
     (define variables
-      (filter (negate (comp ~a (equal? "This")))
+      (filter (lambda (v) (not (member (~a v) this-strings)))
               (list-deduplicate/reverse
                (apply append (map cdr parsed-query-0)))))
     (define initializations (map (lambda (v) (list 'v '(var . This) `(var . ,v))) variables))
