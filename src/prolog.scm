@@ -108,8 +108,9 @@
 ;; i(1, "id").
 ;;
 (define (tegfs-dump-prolog)
-  (display ":-style_check(-discontiguous).") (newline)
+  (display ":-style_check(-discontiguous).\n")
   (translate-registries yield-for-prolog)
+  (display "t('%diff', [X, Y]) :- X =\\= Y.\n")
   ;; (display "what(X, Y) :- t(Y, X) ; t(K, Z), member(X, Z), Y = [K | Z].") (newline)
   )
 
