@@ -112,11 +112,7 @@
 (define (tegfs-dump-prolog)
   (display ":-style_check(-discontiguous).\n")
   (translate-registries yield-for-prolog)
-
-  (parameterize ((current-output-port (current-error-port))) ;; DEBUG
-    (dump-rules)
-    )
-
+  (dump-rules)
   (display "t('%diff', [X, Y]) :- X \\= Y.\n")
   ;; (display "what(X, Y) :- t(Y, X) ; t(K, Z), member(X, Z), Y = [K | Z].") (newline)
   )

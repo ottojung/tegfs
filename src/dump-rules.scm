@@ -63,8 +63,6 @@
 %use (id-name) "./id-name.scm"
 %use (query-parse) "./query-parse.scm"
 
-%use (debugv) "./euphrates/debugv.scm"
-
 ;; TODO: better errors
 
 (define (print-inference antecedents consequents)
