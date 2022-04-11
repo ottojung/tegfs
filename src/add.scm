@@ -135,7 +135,7 @@
        (newline)
        (display "((")
        (display id-name/string)
-       (display ". \"")
+       (display " . \"")
        (display id)
        (display "\")")
 
