@@ -68,12 +68,6 @@
 %use (entry-print) "./entry-print.scm"
 %use (id-name) "./id-name.scm"
 
-(define (tovar x)
-  (cons 'var
-        (if (equal? x tags-this-variable/string)
-            'This
-            x)))
-
 (define (tegfs-query/parse <query...>)
   (define output-path (string-append (make-temporary-filename) ".pl"))
   (define output-port (open-file-port output-path "w"))
@@ -82,14 +76,7 @@
     (display ":- initialization(main, main).") (newline)
     (tegfs-dump-prolog)
 
-    (define parsed-query-0 (query-parse <query...>))
-    (define parsed-query-1 (map (fn-cons identity (comp (map tovar))) parsed-query-0))
-    (define parsed-query (map (comp (cons 't)) parsed-query-1))
-    (define this-strings `(,tags-this-variable/string "This"))
-    (define variables
-      (filter (lambda (v) (not (member (~a v) this-strings)))
-              (list-deduplicate/reverse
-               (apply append (map cdr parsed-query-0)))))
+    (define-values (parsed-query variables) (query-parse <query...>))
     (define initializations (map (lambda (v) (list 'v '(var . This) `(var . ,v))) variables))
     (define prolog-query-0 (map tag->prolog-term (append initializations parsed-query)))
     (define prolog-query (apply string-append (list-intersperse ", " prolog-query-0)))

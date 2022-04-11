@@ -48,6 +48,8 @@
 %use (list-span-while) "./euphrates/list-span-while.scm"
 %use (alphanum/alphabet/index) "./euphrates/alphanum-alphabet.scm"
 %use (~a) "./euphrates/tilda-a.scm"
+%use (fn-cons) "./euphrates/fn-cons.scm"
+%use (list-deduplicate/reverse) "./euphrates/list-deduplicate.scm"
 
 %use (categorization-filename) "./categorization-filename.scm"
 %use (tags-this-variable/string) "./tags-this-variable.scm"
@@ -56,6 +58,22 @@
 %use (parse-tag) "./parse-tag.scm"
 
 (define (query-parse <query...>)
-  (apply
-   append
-   (map (comp string->symbol ((parse-tag tags-this-variable/string))) <query...>)))
+  (define (tovar x)
+    (cons 'var
+          (if (equal? x tags-this-variable/string)
+              'This
+              x)))
+
+  (define parsed-query-0
+    (apply
+     append
+     (map (comp string->symbol ((parse-tag tags-this-variable/string))) <query...>)))
+  (define parsed-query-1 (map (fn-cons identity (comp (map tovar))) parsed-query-0))
+  (define parsed-query (map (comp (cons 't)) parsed-query-1))
+  (define this-strings `(,tags-this-variable/string "This"))
+  (define variables
+    (filter (lambda (v) (not (member (~a v) this-strings)))
+            (list-deduplicate/reverse
+             (apply append (map cdr parsed-query-0)))))
+  (values parsed-query variables))
+

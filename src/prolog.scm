@@ -59,6 +59,7 @@
 %use (print-tag-as-prolog-term) "./tag-to-prolog-term.scm"
 %use (entries-for-each) "./entries-for-each.scm"
 %use (id-name) "./id-name.scm"
+%use (dump-rules) "./dump-rules.scm"
 
 (define (tegfs-prolog/parse)
   (tegfs-prolog)
@@ -111,6 +112,11 @@
 (define (tegfs-dump-prolog)
   (display ":-style_check(-discontiguous).\n")
   (translate-registries yield-for-prolog)
+
+  (parameterize ((current-output-port (current-error-port))) ;; DEBUG
+    (dump-rules)
+    )
+
   (display "t('%diff', [X, Y]) :- X \\= Y.\n")
   ;; (display "what(X, Y) :- t(Y, X) ; t(K, Z), member(X, Z), Y = [K | Z].") (newline)
   )
