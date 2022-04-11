@@ -109,7 +109,7 @@
     (raisu 'bad-symmetric-length len args))
 
   (define name (car args))
-  (define parsed ((parse-tag tags-this-variable/string) (string->symbol name)))
+  (define parsed ((parse-tag tags-this-variable/string) name))
   (define parsed-length (length parsed))
   (unless (equal? 1 parsed-length)
     (raisu 'bad-symmetric-parsed-length parsed-length args))

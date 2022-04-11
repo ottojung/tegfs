@@ -32,7 +32,7 @@
 
 (define (parse-tag-structure/chars counter)
   (lambda (tag)
-    (define str (symbol->string tag))
+    (define str (~a tag))
     (define chars (string->list str))
 
     (define-values (span-^-pre span-^-post0)
