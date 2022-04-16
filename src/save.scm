@@ -49,6 +49,7 @@
 %use (make-directories) "./euphrates/make-directories.scm"
 %use (list-take-n) "./euphrates/list-take-n.scm"
 %use (print-in-frame) "./euphrates/print-in-frame.scm"
+%use (string-split/simple) "./euphrates/string-split-simple.scm"
 
 %use (fatal) "./fatal.scm"
 %use (regfile-suffix) "./regfile-suffix.scm"
@@ -116,11 +117,22 @@
       (fatal "Could not dump"))
     target))
 
-(define (download-temp string)
+(define (url-get-domain-name url)
+  (define split (string-split/simple url #\/))
+  (let loop ((i 0) (split split))
+    (cond
+     ((null? split) "")
+     ((> i 2) "")
+     (else
+      (string-append (car split) "/" (loop (+ 1 i) (cdr split)))))))
+
+(define (download-temp url)
   (dprintln "Downloading...")
-  (let ((target (make-temporary-filename)))
-    (unless (= 0 (system-fmt "curl ~a --output ~a" string target))
-      (fatal "Could not download ~s" string))
+  (let* ((target (make-temporary-filename))
+         ;; NOTE: some websites (looking at you 8chan) require referer to be set to its domain name, which is silly!! and which is stupid >:
+         (domain-name (url-get-domain-name url)))
+    (unless (= 0 (system-fmt "curl -H 'referer: ~a' ~a --output ~a" domain-name url target))
+      (fatal "Could not download ~s" url))
     target))
 
 (define (get-file-mimetype target)
