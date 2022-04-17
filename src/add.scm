@@ -43,7 +43,7 @@
 %use (root/p) "./root-p.scm"
 %use (a-weblink?) "./a-weblink-q.scm"
 %use (last-id-filename) "./last-id-filename.scm"
-%use (id-name/string) "./id-name.scm"
+%use (id-name) "./id-name.scm"
 %use (entry-print) "./entry-print.scm"
 
 (define (generate-random-id)
@@ -114,7 +114,7 @@
   (define key-value-pairs
     (if <target>
         (cons
-         (cons "target" <target>)
+         (cons 'target <target>)
          key-value-pairs0)
         key-value-pairs0))
 
@@ -126,7 +126,7 @@
 
   (define entry
     (append
-     (list (cons id-name/string id))
+     (list (cons id-name id))
      (if <title>
          (list (cons 'title <title>))
          (list))
