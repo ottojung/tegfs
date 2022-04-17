@@ -69,3 +69,7 @@ test5: build/tegfs
 
 test6: build/tegfs
 	TEGFS_ROOT=$(TEST_ROOT) build/tegfs query hi
+
+test7: build/tegfs
+	TEGFS_ROOT=$(TEST_ROOT) build/tegfs get "non-existent-id"
+	TEGFS_ROOT=$(TEST_ROOT) build/tegfs get "$(shell cat $(TEST_ROOT)/lastid.tegfs.txt)"

@@ -34,6 +34,7 @@
 %use (tegfs-serve/parse) "./server.scm"
 %use (tegfs-prolog/parse) "./prolog.scm"
 %use (tegfs-query/parse) "./query.scm"
+%use (tegfs-get/parse) "./get.scm"
 %use (fatal) "./fatal.scm"
 %use (root/p) "./root-p.scm"
 
@@ -50,6 +51,7 @@
       /      categorize
       /      prolog
       /      query QUERYOPT+
+      /      get GETOPT+
       /      status
       /      serve
       ADDOPT : --target <add-target>
@@ -61,6 +63,7 @@
       /        --registry-file <registry-file>
       /        --date <date>
       QUERYOPT : <query...>
+      GETOPT : <getid>
       ROOT : --root <root>
       )
 
@@ -87,6 +90,7 @@
         (serve (tegfs-serve/parse))
         (prolog (tegfs-prolog/parse))
         (query (tegfs-query/parse <query...>))
+        (get (tegfs-get/parse <getid>))
         (status
          (display "NOT IMPLEMENTED YET") (newline)
          (exit 1))
