@@ -84,7 +84,7 @@
    --series key-value-pairs
    <registry-file> <date>)
 
-  (display "Added!\n" (current-error-port)))
+  (display "Added!\n"))
 
 (define (tegfs-add
          <target> <title> tags0
@@ -145,19 +145,12 @@
                   (a-weblink? <target>))
         (fatal "Target ~s does not exist. Note that filepath must be relative to the root" <target>))))
 
+  (write-string-file last-id-path id)
+
   (append-string-file
    registry-file
    (with-output-to-string
      (lambda _
        (newline)
        (entry-print entry)
-       (newline))))
-
-  (write-string-file last-id-path id)
-
-  (entry-print
-   (cons (cons 'registry-file registry-file)
-         entry))
-  (newline))
-
-
+       (newline)))))
