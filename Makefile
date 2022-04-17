@@ -47,7 +47,7 @@ test1: build/tegfs
 	touch $(TEST_ROOT)/hi.txt
 	echo hi | TEGFS_ROOT=$(TEST_ROOT) build/tegfs add \
 		--target hi.txt \
-		--registry-file testreg.tegfs.org \
+		--registry-file testreg.tegfs.reg.lisp \
 		--key a 1 \
 		--key b 2 \
 		--key SCHEDULED 3 \
