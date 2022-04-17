@@ -37,12 +37,14 @@
 %use (~a) "./euphrates/tilda-a.scm"
 %use (random-choice) "./euphrates/random-choice.scm"
 %use (alphanum-lowercase/alphabet) "./euphrates/alphanum-lowercase-alphabet.scm"
+%use (conss) "./euphrates/conss.scm"
 
 %use (fatal) "./fatal.scm"
 %use (root/p) "./root-p.scm"
 %use (a-weblink?) "./a-weblink-q.scm"
 %use (last-id-filename) "./last-id-filename.scm"
 %use (id-name/string) "./id-name.scm"
+%use (entry-print) "./entry-print.scm"
 
 (define (generate-random-id)
   (list->string
@@ -102,7 +104,9 @@
          (string-strip (read-string-file last-id-path))))
 
   (define tags
-    (list-deduplicate (map ~a tags0)))
+    (list-deduplicate
+     (map (lambda (x) (if (string? x) (string->symbol x) x))
+          tags0)))
 
   (define date
     (or <date> (get-date)))
@@ -120,6 +124,21 @@
   (define registry-dir
     (dirname registry-file))
 
+  (define entry
+    (append
+     (list (cons id-name/string id))
+     (if <title>
+         (list (cons 'title <title>))
+         (list))
+     (list (cons 'date date))
+     (if (null? tags)
+         (list)
+         (list (cons 'tags tags)))
+     (if prev
+         (list (cons 'prev prev))
+         (list))
+     key-value-pairs))
+
   (when <target>
     (let ((target-full (append-posix-path registry-dir <target>)))
       (unless (or (file-or-directory-exists? target-full)
@@ -133,46 +152,5 @@
    (with-output-to-string
      (lambda _
        (newline)
-       (display "((")
-       (display id-name/string)
-       (display " . \"")
-       (display id)
-       (display "\")")
-
-       (when <title>
-         (newline)
-         (display " (title . ")
-         (write <title>)
-         (display ")"))
-
-       (when date
-         (newline)
-         (display " (date . ")
-         (write date)
-         (display ")"))
-
-       (unless (null? tags)
-         (newline)
-         (display " (tags ")
-         (display (words->string tags))
-         (display ")"))
-
-       (when prev
-         (newline)
-         (display " (prev . ")
-         (write prev)
-         (display ")"))
-
-       (unless (null? key-value-pairs)
-         (for-each
-          (lambda (pair)
-            (newline)
-            (display " (")
-            (display (car pair))
-            (display " . ")
-            (write (cdr pair))
-            (display ")"))
-          key-value-pairs))
-
-       (display ")")
+       (entry-print entry)
        (newline)))))
