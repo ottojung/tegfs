@@ -38,6 +38,7 @@
 %use (random-choice) "./euphrates/random-choice.scm"
 %use (alphanum-lowercase/alphabet) "./euphrates/alphanum-lowercase-alphabet.scm"
 %use (conss) "./euphrates/conss.scm"
+%use (fn-cons) "./euphrates/fn-cons.scm"
 
 %use (fatal) "./fatal.scm"
 %use (root/p) "./root-p.scm"
@@ -86,6 +87,11 @@
 
   (display "Added!\n"))
 
+(define (tosymbol x)
+  (cond
+   ((symbol? x) x)
+   (else (string->symbol (~a x)))))
+
 (define (tegfs-add
          <target> <title> tags0
          series? key-value-pairs0
@@ -105,18 +111,18 @@
 
   (define tags
     (list-deduplicate
-     (map (lambda (x) (if (string? x) (string->symbol x) x))
-          tags0)))
+     (map tosymbol tags0)))
 
   (define date
     (or <date> (get-date)))
 
   (define key-value-pairs
-    (if <target>
-        (cons
-         (cons 'target <target>)
-         key-value-pairs0)
-        key-value-pairs0))
+    (map (fn-cons tosymbol identity)
+         (if <target>
+             (cons
+              (cons 'target <target>)
+              key-value-pairs0)
+             key-value-pairs0)))
 
   (define registry-file
     (init-registry-file <registry-file>))
