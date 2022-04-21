@@ -50,6 +50,7 @@
 %use (alphanum/alphabet/index) "./euphrates/alphanum-alphabet.scm"
 %use (~a) "./euphrates/tilda-a.scm"
 %use (list-deduplicate/reverse) "./euphrates/list-deduplicate.scm"
+%use (make-hashset hashset-add! hashset->list) "./euphrates/ihashset.scm"
 
 %use (categorization-filename) "./categorization-filename.scm"
 %use (tags-this-variable/string) "./tags-this-variable.scm"
@@ -137,8 +138,19 @@
     (let ((cnt 0))
       (lambda _ (set! cnt (+ 1 cnt)) cnt)))
 
-  (entries-for-each
-   (translate-entry yield counter)))
+  (define tags-set (make-hashset))
+  (define yield*
+    (lambda (thing)
+      (case (car thing)
+        ((t) (hashset-add! tags-set (car (cdr thing)))))
+      (yield thing)))
+
+  (entries-for-each (translate-entry yield* counter))
+
+  (for-each
+   (lambda (tag)
+     (yield `(tag ,tag)))
+   (hashset->list tags-set)))
 
 (define (alpha-convert-variable cnt)
   (lambda (name)
