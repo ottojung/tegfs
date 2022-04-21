@@ -92,7 +92,7 @@
 (define (print-tag-as-prolog-term thing)
   (cond
    ((pair? thing)
-    (display (car thing))
+    (print-prolog-symbol (car thing))
     (unless (null? (cdr thing))
       (display "(")
       (comma-translate (cdr thing))
