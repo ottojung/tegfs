@@ -78,7 +78,7 @@
      (print-tag-as-prolog-term (car consequent-parts))
      (display " :- ")
      (display RHS)
-     (display ".\n"))
+     (display ", !.\n"))
    consequents))
 
 (define (parse-inference args)
