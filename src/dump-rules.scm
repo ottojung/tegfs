@@ -73,7 +73,8 @@
     (raisu 'bad-inference-length len args))
 
   (define-tuple (antecedents consequents) split)
-  (print-prolog-inference antecedents consequents))
+  (for-each (lambda (c) (print-prolog-inference antecedents c))
+            consequents))
 
 (define (parse-synonyms args)
   (define len (length args))
@@ -85,7 +86,7 @@
   (for-each
    (lambda (synonym)
      (print-prolog-inference (list main) (list synonym))
-     (print-prolog-inference (list synonym) (list main)))
+     (print-prolog-inference synonym (list main)))
    rest))
 
 (define (parse-symmetric args)
@@ -99,7 +100,7 @@
   (unless (equal? 1 parsed-length)
     (raisu 'bad-symmetric-parsed-length parsed-length args))
   (print-prolog-inference (list (string-append name "=X,Y"))
-                          (list (string-append name "=Y,X"))))
+                          (string-append name "=Y,X")))
 
 (define (parse-rule words)
   (define command (string->symbol (car words)))
