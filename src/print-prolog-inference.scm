@@ -14,7 +14,7 @@
 
 %run guile
 
-%var dump-rules
+%var print-prolog-inference
 
 %use (make-temporary-filename) "./euphrates/make-temporary-filename.scm"
 %use (system-fmt) "./euphrates/system-fmt.scm"
@@ -61,73 +61,18 @@
 %use (entries-for-each) "./entries-for-each.scm"
 %use (id-name) "./id-name.scm"
 %use (query-parse) "./query-parse.scm"
-%use (print-prolog-inference) "./print-prolog-inference.scm"
 
-;; TODO: better errors
-
-(define (parse-inference args)
-  (define split (list-split-on (comp (equal? "=>")) args))
-  (define len (length split))
-
-  (unless (equal? 2 len)
-    (raisu 'bad-inference-length len args))
-
-  (define-tuple (antecedents consequents) split)
-  (print-prolog-inference antecedents consequents))
-
-(define (parse-synonyms args)
-  (define len (length args))
-  (unless (< 1 len)
-    (raisu 'bad-synonym-length len args))
-
-  (define main (car args))
-  (define rest (cdr args))
+(define (print-prolog-inference antecedents consequents)
   (for-each
-   (lambda (synonym)
-     (print-prolog-inference (list main) (list synonym))
-     (print-prolog-inference (list synonym) (list main)))
-   rest))
-
-(define (parse-symmetric args)
-  (define len (length args))
-  (unless (equal? 1 len)
-    (raisu 'bad-symmetric-length len args))
-
-  (define name (car args))
-  (define parsed ((parse-tag tags-this-variable/string) name))
-  (define parsed-length (length parsed))
-  (unless (equal? 1 parsed-length)
-    (raisu 'bad-symmetric-parsed-length parsed-length args))
-  (print-prolog-inference (list (string-append name "=X,Y"))
-                          (list (string-append name "=Y,X"))))
-
-(define (parse-rule words)
-  (define command (string->symbol (car words)))
-  (define args (cdr words))
-  (case command
-    ((rule) (parse-inference args))
-    ((synonyms) (parse-synonyms args))
-    ((symmetric) (parse-symmetric args))
-    (else (raisu 'unknown-command words command))))
-
-(define (dump-rules)
-  (define rules-file (append-posix-path (root/p) rules-filename))
-  (define rules-port
-    (begin
-      (unless (file-or-directory-exists? rules-file)
-        (write-string-file
-         rules-file
-         ";; This file is for logical rules for tags\n"))
-      (open-file-port rules-file "r")))
-  (define rules-commands
-    (let loop ((buf '()))
-      (define line (read-string-line rules-port))
-      (if (eof-object? line)
-          (reverse buf)
-          (let* ((uncommented (car (string-split/simple line #\;)))
-                 (words (string->words uncommented)))
-            (if (null? words)
-                (loop buf)
-                (loop (cons words buf)))))))
-
-  (for-each parse-rule rules-commands))
+   (lambda (consequent)
+     (define-values (RHS-parts RHS-variables)
+       (query-parse antecedents))
+     (define RHS
+       (apply string-append (list-intersperse ", " (map tag->prolog-term RHS-parts))))
+     (define-values (consequent-parts consequent-variables)
+       (query-parse (list consequent)))
+     (print-tag-as-prolog-term (car consequent-parts))
+     (display " :- ")
+     (display RHS)
+     (display ", !.\n"))
+   consequents))
