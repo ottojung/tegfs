@@ -49,6 +49,8 @@
 %use (alphanum/alphabet/index) "./euphrates/alphanum-alphabet.scm"
 %use (~a) "./euphrates/tilda-a.scm"
 
+%use (prolog-var? prolog-var-name) "./prolog-var.scm"
+
 (define (prolog-var-needs-quoting? var/chars)
   (define first (alphanum/alphabet/index (car var/chars)))
   (not
@@ -63,54 +65,44 @@
               alphanum/alphabet/index)
              (cdr var/chars))))))
 
+(define (print-prolog-symbol arg)
+  (cond
+   ((symbol? arg)
+    (let* ((str (symbol->string arg))
+           (chars (string->list str)))
+      (if (prolog-var-needs-quoting? chars)
+          (begin
+            (display "'")
+            (display str)
+            (display "'"))
+          (display str))))
+   ((string? arg) (write arg))
+   ((integer? arg) (write arg))
+   ((prolog-var? arg) (display (prolog-var-name arg)))
+   (else (raisu 'uknown-type arg))))
+
+(define (comma-translate lst)
+  (let loop ((lst lst))
+    (unless (null? lst)
+      (print-tag-as-prolog-term (car lst))
+      (unless (null? (cdr lst))
+        (display ", "))
+      (loop (cdr lst)))))
+
 (define (print-tag-as-prolog-term thing)
-  (define type (car thing))
-
-  (define (print arg)
-    (cond
-     ((symbol? arg)
-      (let* ((str (symbol->string arg))
-             (chars (string->list str)))
-        (if (prolog-var-needs-quoting? chars)
-            (begin
-              (display "'")
-              (display str)
-              (display "'"))
-            (display str))))
-     ((string? arg) (write arg))
-     ((integer? arg) (write arg))
-     ((pair? arg)
-      (case (car arg)
-        ((var) (display (cdr arg)))
-        (else 'bad-pair arg)))
-     (else (raisu 'uknown-type arg))))
-
-  (define (comma-print lst)
-    (let loop ((lst lst))
-      (unless (null? lst)
-        (print (car lst))
-        (unless (null? (cdr lst))
-          (display ", "))
-        (loop (cdr lst)))))
-
-  (case type
-    ((t)
-     (display "t(")
-     (print (cadr thing))
-     (display ", ")
-     (unless (null? (cdr (cddr thing)))
-       (display "["))
-     (comma-print (cddr thing))
-     (unless (null? (cdr (cddr thing)))
-       (display "]"))
-     (display ")"))
-    ((i v)
-     (display type)
-     (display "(")
-     (comma-print (cdr thing))
-     (display ")"))
-    (else
-     (raisu 'bad-thing thing))))
+  (cond
+   ((pair? thing)
+    (display (car thing))
+    (unless (null? (cdr thing))
+      (display "(")
+      (comma-translate (cdr thing))
+      (display ")")))
+   ((vector? thing)
+    (display "[")
+    (comma-translate (vector->list thing))
+    (display "]"))
+   (else
+    (print-prolog-symbol thing))))
 
 (define (tag->prolog-term thing)
   (with-output-to-string

@@ -67,6 +67,7 @@
 %use (entries-for-each) "./entries-for-each.scm"
 %use (entry-print) "./entry-print.scm"
 %use (id-name) "./id-name.scm"
+%use (make-prolog-var) "./prolog-var.scm"
 
 (define (tegfs-query/parse <query...>)
   (define output-path (string-append (make-temporary-filename) ".pl"))
@@ -77,7 +78,7 @@
     (tegfs-dump-prolog)
 
     (define-values (parsed-query variables) (query-parse <query...>))
-    (define initializations (map (lambda (v) (list 'v '(var . This) `(var . ,v))) variables))
+    (define initializations (map (lambda (v) `(v ,(make-prolog-var 'This) ,(make-prolog-var v))) variables))
     (define prolog-query-0 (map tag->prolog-term (append initializations parsed-query)))
     (define prolog-query (apply string-append (list-intersperse ", " prolog-query-0)))
 

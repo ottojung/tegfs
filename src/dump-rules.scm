@@ -65,6 +65,7 @@
 
 ;; TODO: better errors
 
+;; TODO: move to another file
 (define (print-inference antecedents consequents)
   (for-each
    (lambda (consequent)
@@ -127,7 +128,13 @@
 
 (define (dump-rules)
   (define rules-file (append-posix-path (root/p) rules-filename))
-  (define rules-port (open-file-port rules-file "r"))
+  (define rules-port
+    (begin
+      (unless (file-or-directory-exists? rules-file)
+        (write-string-file
+         rules-file
+         ";; This file is for logical rules for tags\n"))
+      (open-file-port rules-file "r")))
   (define rules-commands
     (let loop ((buf '()))
       (define line (read-string-line rules-port))

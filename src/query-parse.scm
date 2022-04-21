@@ -56,19 +56,26 @@
 %use (root/p) "./root-p.scm"
 %use (get-registry-files) "./get-registry-files.scm"
 %use (parse-tag) "./parse-tag.scm"
+%use (make-prolog-var) "./prolog-var.scm"
 
 (define (query-parse <query...>)
   (define (tovar x)
-    (cons 'var
-          (if (equal? x tags-this-variable/string)
-              'This
-              x)))
+    (make-prolog-var
+     (if (equal? x tags-this-variable/string)
+         'This
+         x)))
 
   (define parsed-query-0
     (apply
      append
      (map (comp string->symbol ((parse-tag tags-this-variable/string))) <query...>)))
-  (define parsed-query-1 (map (fn-cons identity (comp (map tovar))) parsed-query-0))
+  (define (convert-arguments args)
+    (define mapped (map tovar args))
+    (list
+     (if (null? (cdr mapped))
+         (car mapped)
+         (list->vector mapped))))
+  (define parsed-query-1 (map (fn-cons identity convert-arguments) parsed-query-0))
   (define parsed-query (map (comp (cons 't)) parsed-query-1))
   (define this-strings `(,tags-this-variable/string "This"))
   (define variables

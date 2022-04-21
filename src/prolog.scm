@@ -149,13 +149,17 @@
 (define (translate-parsed-tag yield cnt)
   (define convert (alpha-convert-variable cnt))
   (lambda (t)
-    (yield (cons 't (cons (car t) (map convert (cdr t)))))))
+    (define converted (map convert (cdr t)))
+    (define arg (if (null? (cdr converted))
+                    (car converted)
+                    (list->vector converted)))
+    (yield `(t ,(car t) ,arg))))
 
 (define (translate-variable-binding yield cnt)
   (define convert (alpha-convert-variable cnt))
   (lambda (name)
     (unless (equal? (~a name) tags-this-variable/string)
-      (yield (cons 'v (list cnt (convert name)))))))
+      (yield `(v ,cnt ,(convert name))))))
 
 (define (translate-entry yield counter)
   (lambda (entry)
@@ -167,7 +171,7 @@
 
     (define tags
       (cdr (or (assoc 'tags entry)
-               (raisu 'could-not-get-tags entry))))
+               (cons 'tags '()))))
 
     (define parser (parse-tag counter))
     (define parsed-tags (apply append (map parser tags)))
