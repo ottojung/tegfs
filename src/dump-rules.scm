@@ -62,6 +62,7 @@
 %use (id-name) "./id-name.scm"
 %use (query-parse) "./query-parse.scm"
 %use (print-prolog-inference) "./print-prolog-inference.scm"
+%use (fatal) "./fatal.scm"
 
 ;; TODO: better errors
 
@@ -70,7 +71,7 @@
   (define len (length split))
 
   (unless (equal? 2 len)
-    (raisu 'bad-inference-length len args))
+    (fatal "Inference ~s should have had precisely one => arrow, but it has ~s of them" args (- len 1)))
 
   (define-tuple (antecedents consequents) split)
   (for-each (lambda (c) (print-prolog-inference antecedents c))
@@ -79,7 +80,7 @@
 (define (parse-synonyms args)
   (define len (length args))
   (unless (< 1 len)
-    (raisu 'bad-synonym-length len args))
+    (fatal "Found an empty synonym"))
 
   (define main (car args))
   (define rest (cdr args))
@@ -92,13 +93,14 @@
 (define (parse-symmetric args)
   (define len (length args))
   (unless (equal? 1 len)
-    (raisu 'bad-symmetric-length len args))
+    (fatal "Symmetric rule ~s should have had exactly one argument, but it has ~s" args len))
 
   (define name (car args))
   (define parsed ((parse-tag tags-this-variable/string) name))
   (define parsed-length (length parsed))
   (unless (equal? 1 parsed-length)
-    (raisu 'bad-symmetric-parsed-length parsed-length args))
+    (fatal "Parsed symmetric relation ~s should be simple (without args), but it has ~s arguments"
+           args (- parsed-length 1)))
   (print-prolog-inference (list (string-append name "=X,Y"))
                           (string-append name "=Y,X")))
 

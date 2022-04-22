@@ -68,6 +68,7 @@
 %use (entry-print) "./entry-print.scm"
 %use (id-name) "./id-name.scm"
 %use (make-prolog-var) "./prolog-var.scm"
+%use (fatal) "./fatal.scm"
 
 (define (tegfs-query/parse <query...>)
   (define output-path (string-append (make-temporary-filename) ".pl"))
@@ -94,7 +95,7 @@
     (system-re "prolog -s ~a" output-path))
 
   (unless (equal? 0 code)
-    (raisu 'prolog-execution-failed code ids/string))
+    (fatal "Prolog execution failed with code ~s and contents:\n~a" code ids/string))
 
   (define ids
     (appcomp ids/string
