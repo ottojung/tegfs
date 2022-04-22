@@ -64,8 +64,6 @@
 %use (print-prolog-inference) "./print-prolog-inference.scm"
 %use (fatal) "./fatal.scm"
 
-;; TODO: better errors
-
 (define (parse-inference args)
   (define split (list-split-on (comp (equal? "=>")) args))
   (define len (length split))
