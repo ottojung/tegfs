@@ -79,7 +79,7 @@
     (tegfs-dump-prolog)
 
     (define-values (parsed-query variables) (query-parse <query...>))
-    (define initializations (map (lambda (v) `(v ,(make-prolog-var 'This) ,(make-prolog-var v))) variables))
+    (define initializations (map (lambda (v) `(vandthis ,(make-prolog-var 'This) ,(make-prolog-var v))) variables))
     (define prolog-query-0 (map tag->prolog-term (append initializations parsed-query)))
     (define prolog-query (apply string-append (list-intersperse ", " prolog-query-0)))
 

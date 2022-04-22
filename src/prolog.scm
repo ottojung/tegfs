@@ -115,6 +115,7 @@
   (translate-registries yield-for-prolog)
   (dump-rules)
   (display "t('%diff', [X, Y]) :- X \\= Y.\n")
+  (display "vandthis(This, X) :- X = This ; v(This, X).\n")
   ;; (display "what(X, Y) :- t(Y, X) ; t(K, Z), member(X, Z), Y = [K | Z].") (newline)
   )
 
