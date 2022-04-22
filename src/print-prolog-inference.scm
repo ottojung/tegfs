@@ -72,6 +72,5 @@
   (print-tag-as-prolog-term (car consequent-parts))
   (unless (null? RHS-parts)
     (display " :- ")
-    (display RHS)
-    (display ", !"))
+    (display RHS))
   (display ".\n"))

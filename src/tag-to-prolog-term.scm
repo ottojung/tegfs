@@ -50,6 +50,7 @@
 %use (~a) "./euphrates/tilda-a.scm"
 
 %use (prolog-var? prolog-var-name) "./prolog-var.scm"
+%use (prolog-cut-symbol?) "./prolog-cut-symbol.scm"
 
 (define (prolog-var-needs-quoting? var/chars)
   (define first (alphanum/alphabet/index (car var/chars)))
@@ -79,6 +80,7 @@
    ((string? arg) (write arg))
    ((integer? arg) (write arg))
    ((prolog-var? arg) (display (prolog-var-name arg)))
+   ((prolog-cut-symbol? arg) (display "!"))
    (else (raisu 'uknown-type arg))))
 
 (define (comma-translate lst)

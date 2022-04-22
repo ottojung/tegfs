@@ -50,6 +50,7 @@
 %use (~a) "./euphrates/tilda-a.scm"
 %use (fn-cons) "./euphrates/fn-cons.scm"
 %use (list-deduplicate/reverse) "./euphrates/list-deduplicate.scm"
+%use (curry-if) "./euphrates/curry-if.scm"
 
 %use (categorization-filename) "./categorization-filename.scm"
 %use (tags-this-variable/string) "./tags-this-variable.scm"
@@ -61,26 +62,34 @@
 (define (query-parse <query...>)
   (define (tovar x)
     (make-prolog-var
-     (if (equal? x tags-this-variable/string)
-         'This
-         x)))
+     ((curry-if (comp (equal? tags-this-variable/string)) (const 'This)) x)))
+
+  (define parser (parse-tag tags-this-variable/string))
+  (define (maybe-parse tag)
+    (if (or (string? tag) (symbol? tag) (number? tag))
+        (parser tag)
+        (list tag)))
 
   (define parsed-query-0
     (apply
      append
-     (map (comp string->symbol ((parse-tag tags-this-variable/string))) <query...>)))
+     (map maybe-parse <query...>)))
   (define (convert-arguments args)
     (define mapped (map tovar args))
     (list
      (if (null? (cdr mapped))
          (car mapped)
          (list->vector mapped))))
-  (define parsed-query-1 (map (fn-cons identity convert-arguments) parsed-query-0))
-  (define parsed-query (map (comp (cons 't)) parsed-query-1))
+
+  (define parsed-query-1 (map (curry-if pair? (fn-cons identity convert-arguments)) parsed-query-0))
+  (define parsed-query (map (curry-if pair? (comp (cons 't))) parsed-query-1))
   (define this-strings `(,tags-this-variable/string "This"))
+  (define (get-args term)
+    (if (pair? term) (cdr term) '()))
+
   (define variables
     (filter (lambda (v) (not (member (~a v) this-strings)))
             (list-deduplicate/reverse
-             (apply append (map cdr parsed-query-0)))))
+             (apply append (map get-args parsed-query-0)))))
   (values parsed-query variables))
 

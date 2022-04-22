@@ -63,6 +63,7 @@
 %use (query-parse) "./query-parse.scm"
 %use (print-prolog-inference) "./print-prolog-inference.scm"
 %use (fatal) "./fatal.scm"
+%use (make-prolog-cut-symbol) "./prolog-cut-symbol.scm"
 
 (define (parse-inference args)
   (define split (list-split-on (comp (equal? "=>")) args))
@@ -85,7 +86,7 @@
   (for-each
    (lambda (synonym)
      (print-prolog-inference (list main) (list synonym))
-     (print-prolog-inference synonym (list main)))
+     (print-prolog-inference (list synonym) (list main)))
    rest))
 
 (define (parse-symmetric args)
@@ -99,7 +100,7 @@
   (unless (equal? 1 parsed-length)
     (fatal "Parsed symmetric relation ~s should be simple (without args), but it has ~s arguments"
            args (- parsed-length 1)))
-  (print-prolog-inference (list (string-append name "=X,Y"))
+  (print-prolog-inference (list (string-append name "=X,Y") (make-prolog-cut-symbol))
                           (string-append name "=Y,X")))
 
 (define (parse-rule words)
