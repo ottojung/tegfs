@@ -20,6 +20,7 @@
 
 (define (fatal fmt . args)
   (parameterize ((current-output-port (current-error-port)))
+    (display "ERROR: ")
     (apply dprintln (cons fmt args)))
   (exit 1))
 
