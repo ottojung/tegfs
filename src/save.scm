@@ -50,6 +50,7 @@
 %use (list-take-n) "./euphrates/list-take-n.scm"
 %use (print-in-frame) "./euphrates/print-in-frame.scm"
 %use (string-split/simple) "./euphrates/string-split-simple.scm"
+%use (~s) "./euphrates/tilda-s.scm"
 
 %use (fatal) "./fatal.scm"
 %use (regfile-suffix) "./regfile-suffix.scm"
@@ -130,8 +131,9 @@
   (dprintln "Downloading...")
   (let* ((target (make-temporary-filename))
          ;; NOTE: some websites (looking at you 8chan) require referer to be set to its domain name, which is silly!! and which is stupid >:
-         (domain-name (url-get-domain-name url)))
-    (unless (= 0 (system-fmt "curl -H 'referer: ~a' ~a --output ~a" domain-name url target))
+         (domain-name (url-get-domain-name url))
+         (headers (string-append 'referer: ' (~s domain-name))))
+    (unless (= 0 (system-fmt "curl -H ~a ~a --output ~a" headers url target))
       (fatal "Could not download ~s" url))
     target))
 
