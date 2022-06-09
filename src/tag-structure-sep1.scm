@@ -16,4 +16,4 @@
 
 %var tag-structure-sep1
 
-(define tag-structure-sep1 #\=)
+(define tag-structure-sep1 #\:)
