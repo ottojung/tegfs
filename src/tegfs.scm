@@ -31,7 +31,7 @@
 %use (tegfs-add/parse) "./add.scm"
 %use (tegfs-save/parse) "./save.scm"
 %use (tegfs-categorize/parse) "./categorize.scm"
-%use (tegfs-serve/parse) "./server.scm"
+%use (tegfs-serve/parse) "./web-server.scm"
 %use (tegfs-prolog/parse) "./prolog.scm"
 %use (tegfs-query/parse) "./query.scm"
 %use (tegfs-get/parse) "./get.scm"
