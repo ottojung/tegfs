@@ -43,6 +43,9 @@ build:
 
 .PHONY: test1 test2 test3 test4 all clean install reinstall
 
+$(TEST_ROOT):
+	mkdir -p $@
+
 test1: build/tegfs
 	touch $(TEST_ROOT)/hi.txt
 	echo hi | TEGFS_ROOT=$(TEST_ROOT) build/tegfs add \
@@ -58,7 +61,7 @@ test2: build/tegfs
 test3: build/tegfs
 	TEGFS_ROOT=$(TEST_ROOT) build/tegfs categorize
 
-test4: build/tegfs
+test4: build/tegfs $(TEST_ROOT)
 	printf '(user (pass "' > $(TEST_ROOT)/auth.tegfs.lisp
 	printf '%s' pass1 | sha256sum | cut '-d ' -f 1 | tr -d '\n' >> $(TEST_ROOT)/auth.tegfs.lisp
 	printf '"))\n' >> $(TEST_ROOT)/auth.tegfs.lisp
