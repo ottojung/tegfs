@@ -5,6 +5,7 @@ PREFIX_BIN=$(PREFIX)/bin
 BINARY_PATH=$(PREFIX_BIN)/tegfs
 
 TEST_ROOT=build/testroot
+TEST_FILES=$(TEST_ROOT) $(TEST_ROOT)/categorization.tegfs.txt
 
 SUBMODULES = deps/euphrates/.git deps/czempak/.git
 
@@ -46,7 +47,10 @@ build:
 $(TEST_ROOT):
 	mkdir -p $@
 
-test1: build/tegfs
+$(TEST_ROOT)/categorization.tegfs.txt:
+	TEST_ROOT=$(TEST_ROOT) sh test/make-example-categorization.sh
+
+test1: build/tegfs $(TEST_FILES)
 	touch $(TEST_ROOT)/hi.txt
 	echo hi | TEGFS_ROOT=$(TEST_ROOT) build/tegfs add \
 		--target hi.txt \
@@ -55,21 +59,21 @@ test1: build/tegfs
 		--key b 2 \
 		--key SCHEDULED 3 \
 
-test2: build/tegfs
+test2: build/tegfs $(TEST_FILES)
 	TEGFS_ROOT=$(TEST_ROOT) build/tegfs save
 
-test3: build/tegfs
+test3: build/tegfs $(TEST_FILES)
 	TEGFS_ROOT=$(TEST_ROOT) build/tegfs categorize
 
-test4: build/tegfs $(TEST_ROOT)
+test4: build/tegfs $(TEST_FILES)
 	TEST_ROOT=$(TEST_ROOT) sh test/test-serve.sh
 
-test5: build/tegfs
+test5: build/tegfs $(TEST_FILES)
 	TEGFS_ROOT=$(TEST_ROOT) build/tegfs prolog
 
-test6: build/tegfs
+test6: build/tegfs $(TEST_FILES)
 	TEGFS_ROOT=$(TEST_ROOT) build/tegfs query hi
 
-test7: build/tegfs
+test7: build/tegfs $(TEST_FILES)
 	TEGFS_ROOT=$(TEST_ROOT) build/tegfs get "non-existent-id"
 	TEGFS_ROOT=$(TEST_ROOT) build/tegfs get "$(shell cat $(TEST_ROOT)/lastid.tegfs.txt)"
