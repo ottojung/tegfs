@@ -60,6 +60,7 @@
 %use (categorization-filename) "./categorization-filename.scm"
 %use (tegfs-process-categorization-text) "./edit-tags.scm"
 %use (tegfs-add) "./add.scm"
+%use (sha256sum) "./sha256sum.scm"
 
 %use (debug) "./euphrates/debug.scm"
 %use (debugv) "./euphrates/debugv.scm"
@@ -259,15 +260,6 @@ span.psw {
 (define (list-singleton? lst)
   (and (not (null? lst))
        (null? (cdr lst))))
-
-(define (sha256sum text)
-  (define-pair (output exit-code)
-    (system-re "printf '%s' ~a | sha256sum" text))
-
-  (unless (equal? 0 exit-code)
-    (raisu 'could-not-get-a-hash exit-code))
-
-  (appcomp output string->lines car string->words car))
 
 (define (generate-access-token)
   (list->string (random-choice 60 alphanum-lowercase/alphabet)))
