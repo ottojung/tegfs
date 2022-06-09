@@ -65,6 +65,7 @@
 %use (parse-multipart-as-hashmap) "./web-parse-multipart.scm"
 %use (web-make-response) "./web-make-response.scm"
 %use (get-random-basename) "./get-random-basename.scm"
+%use (web-set-cookie-header) "./web-set-cookie-header.scm"
 
 %use (debug) "./euphrates/debug.scm"
 %use (debugv) "./euphrates/debugv.scm"
@@ -114,12 +115,6 @@
    (string-append "Resource not found: "
                   (uri->string (request-uri request)))
    #:status 404))
-
-(define (set-cookie-header key value)
-  ;; TODO: make cookies expire!!!!!
-  (cons 'set-cookie
-        (string-append (~a key) "=" (~a value)
-                       " ; HttpOnly ; Secure ; SameSite=Lax ;")))
 
 (define login-style
   "<style>
@@ -278,7 +273,7 @@ span.psw {
   (if registered?
       (respond login-success-body
                #:extra-heads `(,login-style)
-               #:extra-headers (list (set-cookie-header "access" access-token))
+               #:extra-headers (list (web-set-cookie-header "access" access-token))
                )
       (respond login-failed-body #:extra-heads `(,login-style))))
 
@@ -440,7 +435,7 @@ span.psw {
   (respond
    `(p (b "Hi!") (br) "there. Your headers are the following:"
        ,(~s (request-headers request)))
-   #:extra-headers `(,(set-cookie-header "hi" "there"))))
+   #:extra-headers `(,(web-set-cookie-header "hi" "there"))))
 
 (define (hacker)
   (values '((content-type . (text/plain))) "Hello hacker!"))
