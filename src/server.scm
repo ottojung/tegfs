@@ -95,7 +95,7 @@
   (body callcontext-body) ;; client body
   )
 
-(define upload-registry-filename "upload/upload.tegfs.yaml")
+(define upload-registry-filename "upload/upload.tegfs.reg.lisp")
 
 (define (request-path-components request)
   (split-and-decode-uri-path (uri-path (request-uri request))))
