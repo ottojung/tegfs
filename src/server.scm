@@ -63,6 +63,7 @@
 %use (tegfs-add) "./add.scm"
 %use (sha256sum) "./sha256sum.scm"
 %use (parse-multipart-as-hashmap) "./web-parse-multipart.scm"
+%use (web-make-response) "./web-make-response.scm"
 
 %use (debug) "./euphrates/debug.scm"
 %use (debugv) "./euphrates/debugv.scm"
@@ -100,43 +101,11 @@
 (define (request-path-components request)
   (split-and-decode-uri-path (uri-path (request-uri request))))
 
-(define* (respond #:optional body #:key
-                  (status 200)
-                  (title #f)
-                  (extra-heads '())
-                  (doctype "<!DOCTYPE html>\n")
-                  (content-type-params '((charset . "utf-8")))
-                  (content-type 'text/html)
-                  (extra-headers '()))
+(define* (respond . args)
   (define callctx (callcontext/p))
   (define cont (callcontext-break callctx))
-
-  (cont (build-response
-         #:code status
-                     ;; most of these settings come from here: https://cheatsheetseries.owasp.org/cheatsheets/HTTP_Headers_Cheat_Sheet.html
-         #:headers `((referrer-policy . "strict-origin-when-cross-origin") ;; optional, ensures not to send too much user data.
-                     (x-frame-options . "DENY") ;; optional, bans embedding in <iframe> and such.
-                     (strict-transport-security . "max-age=63072000; includeSubDomains; preload") ;; something something security.
-                     ;; TODO: add more SECURITY!!!!
-                     (content-type . (,content-type ,@content-type-params))
-                     ,@extra-headers))
-        (lambda (port)
-          (parameterize ((current-output-port port))
-            (when doctype (display doctype))
-            (display "<html>\n")
-            (display "<head>\n")
-            (when title
-              (display "  <title>")
-              (display title)
-              (display "</title>\n"))
-            (for-each display extra-heads)
-            (display "</head>\n")
-            (display "<body>\n")
-            (if (string? body)
-                (display body)
-                (sxml->xml body port))
-            (display "\n</body>\n")
-            (display "</html>\n")))))
+  (define-values (a b) (apply web-make-response args))
+  (cont a b))
 
 (define (not-found)
   (define request (callcontext-request (callcontext/p)))
