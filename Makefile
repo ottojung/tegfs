@@ -9,14 +9,16 @@ TEST_FILES=$(TEST_ROOT) $(TEST_ROOT)/categorization.tegfs.txt
 
 SUBMODULES = deps/euphrates/.git deps/czempak/.git
 
-CZEMPAK = CZEMPAK_ROOT=$(PWD)/.czempak-root ./dist/czempak
+CZEMPAK = CZEMPAK_ROOT=.czempak-root ./dist/czempak
 
 all: dist/tegfs
+
+build: dist/tegfs
 
 install: $(BINARY_PATH)
 
 $(BINARY_PATH): dist/tegfs $(PREFIX_BIN)
-	cp $(PWD)/dist/tegfs $(PREFIX_BIN)
+	cp dist/tegfs $(PREFIX_BIN)
 
 $(PREFIX_BIN):
 	mkdir -p "$@"
