@@ -28,8 +28,6 @@
 %use (string-strip) "./euphrates/string-strip.scm"
 %use (read-string-line) "./euphrates/read-string-line.scm"
 %use (list-or-map) "./euphrates/list-or-map.scm"
-%use (random-choice) "./euphrates/random-choice.scm"
-%use (alphanum-lowercase/alphabet) "./euphrates/alphanum-lowercase-alphabet.scm"
 %use (append-posix-path) "./euphrates/append-posix-path.scm"
 %use (make-temporary-filename) "./euphrates/make-temporary-filename.scm"
 %use (mimetype/extensions) "./euphrates/mimetype-extensions.scm"
@@ -60,6 +58,7 @@
 %use (tegfs-add) "./add.scm"
 %use (tegfs-categorize) "./categorize.scm"
 %use (get-registry-files) "./get-registry-files.scm"
+%use (get-random-basename) "./get-random-basename.scm"
 
 %use (debug) "./euphrates/debug.scm"
 %use (debugv) "./euphrates/debugv.scm"
@@ -78,10 +77,6 @@
 (define (string-type? s)
   (or (member s '("STRING" "UTF8_STRING" "TEXT" "COMPOUND_TEXT"))
       (string-prefix? "text/" s)))
-
-(define (get-random-basename)
-  (list->string
-   (random-choice 30 alphanum-lowercase/alphabet)))
 
 (define (get-random-filename directory extension)
   (append-posix-path directory (string-append (get-random-basename) extension)))

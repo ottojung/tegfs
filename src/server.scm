@@ -64,6 +64,7 @@
 %use (sha256sum) "./sha256sum.scm"
 %use (parse-multipart-as-hashmap) "./web-parse-multipart.scm"
 %use (web-make-response) "./web-make-response.scm"
+%use (get-random-basename) "./get-random-basename.scm"
 
 %use (debug) "./euphrates/debug.scm"
 %use (debugv) "./euphrates/debugv.scm"
@@ -326,10 +327,6 @@ span.psw {
     (permission-denied))
 
   (values))
-
-(define (get-random-basename)
-  (list->string
-   (random-choice 30 alphanum-lowercase/alphabet)))
 
 (define (error-tags-list tags)
   (static-error-message 400 (string-append "Some tags are ambiguous: " (~a tags))))
