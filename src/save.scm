@@ -132,7 +132,7 @@
   (let* ((target (make-temporary-filename))
          ;; NOTE: some websites (looking at you 8chan) require referer to be set to its domain name, which is silly!! and which is stupid >:
          (domain-name (url-get-domain-name url))
-         (headers (string-append 'referer: ' (~s domain-name))))
+         (headers (string-append "referer: " (~s domain-name))))
     (unless (= 0 (system-fmt "curl -H ~a ~a --output ~a" headers url target))
       (fatal "Could not download ~s" url))
     target))
