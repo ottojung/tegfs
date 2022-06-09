@@ -109,9 +109,10 @@
 
 (define (not-found)
   (define request (callcontext-request (callcontext/p)))
-  (values (build-response #:code 404)
-          (string-append "Resource not found: "
-                         (uri->string (request-uri request)))))
+  (respond
+   (string-append "Resource not found: "
+                  (uri->string (request-uri request)))
+   #:status 404))
 
 (define (set-cookie-header key value)
   ;; TODO: make cookies expire!!!!!
