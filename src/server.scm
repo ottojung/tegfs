@@ -55,6 +55,7 @@
 %use (printf) "./euphrates/printf.scm"
 %use (path-extension) "./euphrates/path-extension.scm"
 %use (dprintln) "./euphrates/dprintln.scm"
+%use (list-singleton?) "./euphrates/list-singleton-q.scm"
 
 %use (root/p) "./root-p.scm"
 %use (categorization-filename) "./categorization-filename.scm"
@@ -257,10 +258,6 @@ span.psw {
   (define body login-body)
 
   (respond body #:extra-heads `(,head-style)))
-
-(define (list-singleton? lst)
-  (and (not (null? lst))
-       (null? (cdr lst))))
 
 (define (generate-access-token)
   (list->string (random-choice 60 alphanum-lowercase/alphabet)))
