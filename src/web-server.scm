@@ -68,6 +68,7 @@
 %use (web-set-cookie-header) "./web-set-cookie-header.scm"
 %use (web-basic-headers) "./web-basic-headers.scm"
 %use (web-style) "./web-style.scm"
+%use (web-form-template) "./web-form-template.scm"
 
 %use (debug) "./euphrates/debug.scm"
 %use (debugv) "./euphrates/debugv.scm"
@@ -131,21 +132,8 @@
               (Cache-Control . "max-age=3600, public, private"))))
    web-style))
 
-;; <label for='uname'><b>Username</b></label>
-;; <input type='text' placeholder='Enter Username' name='uname' required autofocus>
-
-(define (form-template form-params insides)
-  (string-append
-   "<div class='root1'><div class='subc'><form "
-   (or form-params "")
-   " method='post'>
-     <div class='container'>"
-   insides
-   "  </div>
-    </form></div></div>"))
-
 (define login-body
-  (form-template "action='logincont' enctype='application/x-www-form-urlencoded'" "
+  (web-form-template "action='logincont' enctype='application/x-www-form-urlencoded'" "
     <input type='password' placeholder='Enter Password' name='psw' required autofocus>
     <button type='submit'>Login</button>"))
 
@@ -154,7 +142,7 @@
     (with-output-to-string
       (lambda _
         (sxml->xml `(label (b ,message))))))
-  (form-template #f xml))
+  (web-form-template #f xml))
 
 (define (static-message message)
   (define xml (message-template message))
@@ -166,13 +154,13 @@
     (respond xml #:status status)))
 
 (define login-failed-body
-  (form-template #f "
+  (web-form-template #f "
        <label><b>You are a failure</b></label>
        <input type='password' placeholder='Enter Password' name='psw' required autofocus>
        <button type='submit'>Login</button>"))
 
 (define login-success-body
-  (form-template #f "<label><b>Loged in just fine</b></label>"))
+  (web-form-template #f "<label><b>Loged in just fine</b></label>"))
 
 (define (login)
   (respond login-body))
@@ -375,7 +363,7 @@
     <button type='submit'>Upload</button>"
                 tags-value))))
 
-  (form-template "action='uploadcont' enctype='multipart/form-data'" inner))
+  (web-form-template "action='uploadcont' enctype='multipart/form-data'" inner))
 
 (define (upload)
   (check-permissions)
