@@ -316,33 +316,43 @@ span.psw {
 (define permission-denied
   (static-error-message 401 "Permission denied"))
 
+(define (parse-cookies-string cookies/string)
+  (unless (string? cookies/string)
+    (raisu 'bad-cookies-cdr cookies/string))
+
+  (define cookie-split-semicolon
+    (string-split/simple cookies/string #\;))
+
+  (define cookie-split
+    (map
+     (lambda (c)
+       (define-values (key eq val) (string-split-3 #\= c))
+       (unless eq
+         (raisu 'bad-cookie-split cookies/string))
+       (cons key val))
+     cookie-split-semicolon))
+
+  cookie-split)
+
 (define (check-permissions)
   (define callctx (callcontext/p))
   (define request (callcontext-request callctx))
   (define headers (request-headers request))
-  (define cookies (assoc 'cookie headers))
+  (define cookies-p (assoc 'cookie headers))
 
-  (unless (pair? cookies)
+  (unless (pair? cookies-p)
     (permission-denied))
 
-  (unless (string? (cdr cookies))
-    (raisu 'bad-cookies-cdr cookies))
+  (define cookies/string (cdr cookies-p))
+  (define cookies (parse-cookies-string cookies/string))
 
-  (define cookie-split
-    (string-split/simple (cdr cookies) #\=))
-
-  (unless (= 2 (length cookie-split))
-    (raisu 'bad-cookie-split cookie-split cookies))
-
-  (define cookie-type (car cookie-split))
-  (define cookie-value (cadr cookie-split))
-
-  (unless (equal? "access" cookie-type)
-    (raisu 'bad-cookie-type cookie-type cookies))
+  (define access-cookie
+    (let ((got (assoc "access" cookies)))
+      (and got (cdr got))))
 
   (define ctx (context/p))
   (define tokens (context-tokens ctx))
-  (define existing (hashmap-ref tokens cookie-value #f))
+  (define existing (hashmap-ref tokens access-cookie #f))
 
   (values))
 
