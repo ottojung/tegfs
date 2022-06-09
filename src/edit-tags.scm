@@ -47,6 +47,7 @@
 %use (list-last) "./euphrates/list-last.scm"
 
 %use (categorization-split) "./categorization-split.scm"
+%use (tag-structure-sep1) "./tag-structure-sep1.scm"
 
 %use (debugv) "./euphrates/debugv.scm"
 
@@ -73,8 +74,8 @@
   (comp symbol->string string->list
         ((compose-under
           and
-          (comp (list-or-map (lambda (c) (member c '(#\* #\=)))))
-          (comp list-last (equal? #\=) not)))))
+          (comp (list-or-map (lambda (c) (member c `(,#\* ,tag-structure-sep1)))))
+          (comp list-last (equal? tag-structure-sep1) not)))))
 
 ;; transitive over type-symbols, but not a general transitive closure
 (define (get-parents ast/flatten tag/starred)

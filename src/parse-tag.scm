@@ -27,6 +27,8 @@
 %use (~a) "./euphrates/tilda-a.scm"
 
 %use (tags-this-variable/char) "./tags-this-variable.scm"
+%use (tag-structure-sep1) "./tag-structure-sep1.scm"
+%use (tag-structure-sep2) "./tag-structure-sep2.scm"
 
 %use (debugv) "./euphrates/debugv.scm"
 
@@ -54,7 +56,7 @@
     (define span-_? (not (null? span-_-post)))
 
     (define equal-split
-      (list-split-on (comp (equal? #\=)) chars))
+      (list-split-on (comp (equal? tag-structure-sep1)) chars))
     (define equal-split?
       (not (null? (cdr equal-split))))
 
@@ -73,7 +75,7 @@
       (let* ((head (car equal-split)))
         (map (lambda (split)
                (cons 'equality
-                     (cons head (list-split-on (comp (equal? #\,)) split))))
+                     (cons head (list-split-on (comp (equal? tag-structure-sep2)) split))))
              (cdr equal-split))))
      (else `((single ,chars))))))
 
@@ -99,15 +101,15 @@
     (define structure/chars (parser tag))
 
     (define (handle-prefix-suffix pre post)
-      (let* ((arguments (list-split-on (comp (equal? #\,)) post))
+      (let* ((arguments (list-split-on (comp (equal? tag-structure-sep2)) post))
              (do (unless (member (length arguments) '(1 2))
                    (raisu 'bad-number-of-arguments tag arguments)))
              (first-arg (car arguments))
              (second-arg (list-ref-or arguments 1 `(,tags-this-variable/char)))
              (num (counter))
              (var (string->list (~a num)))
-             (first (append pre '(#\=) var '(#\,) second-arg))
-             (second (append first-arg '(#\=) var)))
+             (first (append pre `(,tag-structure-sep1) var `(,tag-structure-sep2) second-arg))
+             (second (append first-arg `(,tag-structure-sep1) var)))
         (list first second)))
 
     (apply
@@ -119,9 +121,9 @@
           ((equality)
            (let* ((equal-split (cdr s)))
              (list
-              (apply append `(,(car equal-split) (#\=)
-                              ,@(list-intersperse '(#\,) (cdr equal-split)))))))
-          ((single) (list (append (cadr s) '(#\=) `(,tags-this-variable/char))))))
+              (apply append `(,(car equal-split) (,tag-structure-sep1)
+                              ,@(list-intersperse `(,tag-structure-sep2) (cdr equal-split)))))))
+          ((single) (list (append (cadr s) `(,tag-structure-sep1) `(,tags-this-variable/char))))))
       structure/chars))))
 
 (define (parse-tag counter)
@@ -129,14 +131,14 @@
     (define desugared ((desugar-tag/chars counter) tag))
     (map
      (lambda (chars)
-       (define equal-split (list-split-on (comp (equal? #\=)) chars))
+       (define equal-split (list-split-on (comp (equal? tag-structure-sep1)) chars))
        (define pred-name (string->symbol (list->string (car equal-split))))
 
        (define variable-list (cadr equal-split))
        (define variables
          (map list->string
               (list-split-on
-               (comp (equal? #\,))
+               (comp (equal? tag-structure-sep2))
                variable-list)))
 
        (cons pred-name variables))
