@@ -329,7 +329,7 @@ span.psw {
        (define-values (key eq val) (string-split-3 #\= c))
        (unless eq
          (raisu 'bad-cookie-split cookies/string))
-       (cons key val))
+       (cons (string-strip key) val))
      cookie-split-semicolon))
 
   cookie-split)
@@ -353,6 +353,9 @@ span.psw {
   (define ctx (context/p))
   (define tokens (context-tokens ctx))
   (define existing (hashmap-ref tokens access-cookie #f))
+
+  (unless existing
+    (permission-denied))
 
   (values))
 
