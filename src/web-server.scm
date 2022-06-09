@@ -67,6 +67,7 @@
 %use (get-random-basename) "./get-random-basename.scm"
 %use (web-set-cookie-header) "./web-set-cookie-header.scm"
 %use (web-basic-headers) "./web-basic-headers.scm"
+%use (web-style) "./web-style.scm"
 
 %use (debug) "./euphrates/debug.scm"
 %use (debugv) "./euphrates/debugv.scm"
@@ -120,69 +121,12 @@
                   (uri->string (request-uri request)))
    #:status 404))
 
-
-(define login-style
-  "<link rel='stylesheet' href='main.css'>")
-
-(define login-style%
-  "
-.subc {
-  position: absolute;
-  top: 30%;
-  left: 50%;
-  transform: translateY(-50%);
-  transform: translateX(-50%);
-}
-
-form {
-  border: 3px solid #f1f1f1;
-}
-
-input[type=text], input[type=password] {
-  width: 100%;
-  padding: 12px 20px;
-  margin: 8px 0;
-  display: inline-block;
-  border: 1px solid #ccc;
-  box-sizing: border-box;
-}
-
-button {
-  background-color: #04AA6D;
-  color: white;
-  padding: 14px 20px;
-  margin: 8px 0;
-  border: none;
-  cursor: pointer;
-  width: 100%;
-}
-
-button:hover {
-  opacity: 0.8;
-}
-
-.imgcontainer {
-  text-align: center;
-  margin: 24px 0 12px 0;
-}
-
-/* Add padding to containers */
-.container {
-  padding: 16px;
-}
-
-span.psw {
-  float: right;
-  padding-top: 16px;
-}
-")
-
 (define (main.css)
   (return!
    (build-response
     #:code 200
     #:headers (append web-basic-headers `((content-type . (text/css)))))
-   login-style%))
+   web-style))
 
 ;; <label for='uname'><b>Username</b></label>
 ;; <input type='text' placeholder='Enter Username' name='uname' required autofocus>
@@ -211,13 +155,12 @@ span.psw {
 
 (define (static-message message)
   (define xml (message-template message))
-  (lambda _
-    (respond xml #:extra-heads (list login-style))))
+  (lambda _ (respond xml)))
 
 (define (static-error-message status message)
   (define xml (message-template message))
   (lambda _
-    (respond xml #:status status #:extra-heads (list login-style))))
+    (respond xml #:status status)))
 
 (define login-failed-body
   (form-template #f "
@@ -229,11 +172,7 @@ span.psw {
   (form-template #f "<label><b>Loged in just fine</b></label>"))
 
 (define (login)
-  (define head-style login-style)
-
-  (define body login-body)
-
-  (respond body #:extra-heads `(,head-style)))
+  (respond login-body))
 
 (define (generate-access-token)
   (list->string (random-choice 60 alphanum-lowercase/alphabet)))
@@ -282,10 +221,9 @@ span.psw {
 
   (if registered?
       (respond login-success-body
-               #:extra-heads `(,login-style)
                #:extra-headers (list (web-set-cookie-header "access" access-token))
                )
-      (respond login-failed-body #:extra-heads `(,login-style))))
+      (respond login-failed-body)))
 
 (define permission-denied
   (static-error-message 401 "Permission denied"))
@@ -438,7 +376,7 @@ span.psw {
 
 (define (upload)
   (check-permissions)
-  (respond (make-upload-body) #:extra-heads (list login-style)))
+  (respond (make-upload-body)))
 
 (define (cookie1)
   (define request (callcontext-request (callcontext/p)))
