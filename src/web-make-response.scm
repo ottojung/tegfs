@@ -16,6 +16,8 @@
 
 %var web-make-response
 
+%use (web-basic-headers) "./web-basic-headers.scm"
+
 %for (COMPILER "guile")
 
 (use-modules (web response)
@@ -24,23 +26,21 @@
 %end
 
 (define* (web-make-response #:optional body #:key
-                        (status 200)
-                        (title #f)
-                        (extra-heads '())
-                        (doctype "<!DOCTYPE html>\n")
-                        (content-type-params '((charset . "utf-8")))
-                        (content-type 'text/html)
-                        (extra-headers '()))
+                            (status 200)
+                            (title #f)
+                            (extra-heads '())
+                            (doctype "<!DOCTYPE html>\n")
+                            (content-type-params '((charset . "utf-8")))
+                            (content-type 'text/html)
+                            (extra-headers '()))
   (values
    (build-response
     #:code status
     ;; most of these settings come from here: https://cheatsheetseries.owasp.org/cheatsheets/HTTP_Headers_Cheat_Sheet.html
-    #:headers `((referrer-policy . "strict-origin-when-cross-origin") ;; optional, ensures not to send too much user data.
-                (x-frame-options . "DENY") ;; optional, bans embedding in <iframe> and such.
-                (strict-transport-security . "max-age=63072000; includeSubDomains; preload") ;; something something security.
-                ;; TODO: add more SECURITY!!!!
-                (content-type . (,content-type ,@content-type-params))
-                ,@extra-headers))
+    #:headers
+    (append web-basic-headers
+            `((content-type . (,content-type ,@content-type-params))
+              ,@extra-headers)))
    (lambda (port)
      (parameterize ((current-output-port port))
        (when doctype (display doctype))

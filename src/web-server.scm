@@ -66,6 +66,7 @@
 %use (web-make-response) "./web-make-response.scm"
 %use (get-random-basename) "./get-random-basename.scm"
 %use (web-set-cookie-header) "./web-set-cookie-header.scm"
+%use (web-basic-headers) "./web-basic-headers.scm"
 
 %use (debug) "./euphrates/debug.scm"
 %use (debugv) "./euphrates/debugv.scm"
@@ -103,11 +104,14 @@
 (define (request-path-components request)
   (split-and-decode-uri-path (uri-path (request-uri request))))
 
-(define* (respond . args)
+(define (return! stats body)
   (define callctx (callcontext/p))
   (define cont (callcontext-break callctx))
-  (define-values (a b) (apply web-make-response args))
-  (cont a b))
+  (cont stats body))
+
+(define* (respond . args)
+  (define-values (stats body) (apply web-make-response args))
+  (return! stats body))
 
 (define (not-found)
   (define request (callcontext-request (callcontext/p)))
@@ -116,9 +120,12 @@
                   (uri->string (request-uri request)))
    #:status 404))
 
-(define login-style
-  "<style>
 
+(define login-style
+  "<link rel='stylesheet' href='main.css'>")
+
+(define login-style%
+  "
 .subc {
   position: absolute;
   top: 30%;
@@ -140,7 +147,6 @@ input[type=text], input[type=password] {
   box-sizing: border-box;
 }
 
-/* Set a style for all buttons */
 button {
   background-color: #04AA6D;
   color: white;
@@ -151,12 +157,10 @@ button {
   width: 100%;
 }
 
-/* Add a hover effect for buttons */
 button:hover {
   opacity: 0.8;
 }
 
-/* Center the avatar image inside this container */
 .imgcontainer {
   text-align: center;
   margin: 24px 0 12px 0;
@@ -171,8 +175,14 @@ span.psw {
   float: right;
   padding-top: 16px;
 }
+")
 
-</style>")
+(define (main.css)
+  (return!
+   (build-response
+    #:code 200
+    #:headers (append web-basic-headers `((content-type . (text/css)))))
+   login-style%))
 
 ;; <label for='uname'><b>Username</b></label>
 ;; <input type='text' placeholder='Enter Username' name='uname' required autofocus>
@@ -449,6 +459,7 @@ span.psw {
   (if (null? path-components)
       (not-found)
       (case (string->symbol (car path-components))
+        ((main.css) (main.css))
         ((login) (login))
         ((logincont) (logincont))
         ((upload) (upload))
