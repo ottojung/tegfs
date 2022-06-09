@@ -474,7 +474,7 @@ span.psw {
 
   (dprintln "Got request: ~s" path-components)
 
-  (if (null? (length path-components))
+  (if (null? path-components)
       (not-found)
       (case (string->symbol (car path-components))
         ((login) (login))
