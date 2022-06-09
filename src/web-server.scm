@@ -125,7 +125,10 @@
   (return!
    (build-response
     #:code 200
-    #:headers (append web-basic-headers `((content-type . (text/css)))))
+    #:headers
+    (append web-basic-headers
+            `((content-type . (text/css))
+              (Cache-Control . "max-age=3600, public, private"))))
    web-style))
 
 ;; <label for='uname'><b>Username</b></label>
