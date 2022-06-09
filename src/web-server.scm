@@ -68,7 +68,11 @@
 %use (web-set-cookie-header) "./web-set-cookie-header.scm"
 %use (web-basic-headers) "./web-basic-headers.scm"
 %use (web-style) "./web-style.scm"
-%use (web-form-template) "./web-form-template.scm"
+%use (web-login-body) "./web-login-body.scm"
+%use (web-login-failed-body) "./web-login-failed-body.scm"
+%use (web-login-success-body) "./web-login-success-body.scm"
+%use (web-message-template) "./web-message-template.scm"
+%use (web-make-upload-body) "./web-make-upload-body.scm"
 
 %use (debug) "./euphrates/debug.scm"
 %use (debugv) "./euphrates/debugv.scm"
@@ -132,38 +136,17 @@
               (Cache-Control . "max-age=3600, public, private"))))
    web-style))
 
-(define login-body
-  (web-form-template "action='logincont' enctype='application/x-www-form-urlencoded'" "
-    <input type='password' placeholder='Enter Password' name='psw' required autofocus>
-    <button type='submit'>Login</button>"))
-
-(define (message-template message)
-  (define xml
-    (with-output-to-string
-      (lambda _
-        (sxml->xml `(label (b ,message))))))
-  (web-form-template #f xml))
-
 (define (static-message message)
-  (define xml (message-template message))
+  (define xml (web-message-template message))
   (lambda _ (respond xml)))
 
 (define (static-error-message status message)
-  (define xml (message-template message))
+  (define xml (web-message-template message))
   (lambda _
     (respond xml #:status status)))
 
-(define login-failed-body
-  (web-form-template #f "
-       <label><b>You are a failure</b></label>
-       <input type='password' placeholder='Enter Password' name='psw' required autofocus>
-       <button type='submit'>Login</button>"))
-
-(define login-success-body
-  (web-form-template #f "<label><b>Loged in just fine</b></label>"))
-
 (define (login)
-  (respond login-body))
+  (respond web-login-body))
 
 (define (generate-access-token)
   (list->string (random-choice 60 alphanum-lowercase/alphabet)))
@@ -211,10 +194,10 @@
     (hashmap-set! tokens access-token #t))
 
   (if registered?
-      (respond login-success-body
+      (respond web-login-success-body
                #:extra-headers (list (web-set-cookie-header "access" access-token))
                )
-      (respond login-failed-body)))
+      (respond web-login-failed-body)))
 
 (define permission-denied
   (static-error-message 401 "Permission denied"))
@@ -349,25 +332,9 @@
 
   ((upload-success-page <target>)))
 
-(define (make-upload-body)
-  (define categorization-file (append-posix-path (root/p) categorization-filename))
-  (define tags-value (read-string-file categorization-file))
-
-  (define inner
-    (with-output-to-string
-      (lambda _
-        (printf "
-    <input type='text' placeholder='Enter title' name='title' >
-    <input type='file' name='file' >
-    <textarea rows='10' cols='120' name='tags'>~a</textarea>
-    <button type='submit'>Upload</button>"
-                tags-value))))
-
-  (web-form-template "action='uploadcont' enctype='multipart/form-data'" inner))
-
 (define (upload)
   (check-permissions)
-  (respond (make-upload-body)))
+  (respond (web-make-upload-body)))
 
 (define (cookie1)
   (define request (callcontext-request (callcontext/p)))
