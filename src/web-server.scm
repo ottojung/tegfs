@@ -387,21 +387,22 @@
   (define preview-fullpath
     (get-preview-by-id target-id))
 
-  ;; TODO: check exit code
-  (system-fmt
-   (string-append
-    "convert "
-    " ~a "
-    " -thumbnail ~a@ "
-    " -gravity center "
-    " -background transparent "
-    " -extent ~ax~a "
-    " ~a "
-    )
-   target-fullpath
-   (* web-preview-width web-preview-height)
-   web-preview-width web-preview-height
-   preview-fullpath)
+  (unless (file-or-directory-exists? preview-fullpath)
+    ;; TODO: check exit code
+    (system-fmt
+     (string-append
+      "convert "
+      " ~a "
+      " -thumbnail ~a@ "
+      " -gravity center "
+      " -background transparent "
+      " -extent ~ax~a "
+      " ~a "
+      )
+     target-fullpath
+     (* web-preview-width web-preview-height)
+     web-preview-width web-preview-height
+     preview-fullpath))
 
   preview-fullpath)
 
