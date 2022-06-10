@@ -55,6 +55,7 @@
 %use (list-intersperse) "./euphrates/list-intersperse.scm"
 %use (make-hashset hashset-ref hashset-length) "./euphrates/ihashset.scm"
 %use (list-deduplicate/reverse) "./euphrates/list-deduplicate.scm"
+%use (cons!) "./euphrates/cons-bang.scm"
 
 %use (categorization-filename) "./categorization-filename.scm"
 %use (tags-this-variable/string) "./tags-this-variable.scm"
@@ -71,31 +72,52 @@
 %use (fatal) "./fatal.scm"
 
 (define (tegfs-query/parse <query...>)
+  (define entries
+    (tegfs-query <query...>))
+
+  (for-each
+   (lambda (entry)
+     (entry-print entry) (display "\n\n"))
+   entries)
+
+  (parameterize ((current-output-port (current-error-port)))
+    (let ((len (length entries)))
+      (if (equal? 0 len)
+          (display "No matches.")
+          (printf "Total of ~a matches." len))
+      (newline)))
+
+  )
+
+(define (tegfs-query <query...>)
   (define output-path (string-append (make-temporary-filename) ".pl"))
   (define output-port (open-file-port output-path "w"))
 
-  (parameterize ((current-output-port output-port))
-    (display ":- initialization(main, main).") (newline)
-    (tegfs-dump-prolog)
+  (define _333
+    (parameterize ((current-output-port output-port))
+      (display ":- initialization(main, main).") (newline)
+      (tegfs-dump-prolog)
 
-    (define-values (parsed-query variables) (query-parse <query...>))
-    (define initializations (map (lambda (v) `(vandthis ,(make-prolog-var 'This) ,(make-prolog-var v))) variables))
-    (define prolog-query-0 (map tag->prolog-term (append initializations parsed-query)))
-    (define prolog-query (apply string-append (list-intersperse ", " prolog-query-0)))
+      (define-values (parsed-query variables) (query-parse <query...>))
+      (define initializations (map (lambda (v) `(vandthis ,(make-prolog-var 'This) ,(make-prolog-var v))) variables))
+      (define prolog-query-0 (map tag->prolog-term (append initializations parsed-query)))
+      (define prolog-query (apply string-append (list-intersperse ", " prolog-query-0)))
 
-    (printf "single(This) :- ~a.\n" prolog-query)
-    (printf "thises(This) :- i(This, Id), single(This), writeln(Id).\n")
-    (printf "main(_Argv) :- findall(This, thises(This), _).")
-    (newline) (newline)
-    )
+      (printf "single(This) :- ~a.\n" prolog-query)
+      (printf "thises(This) :- i(This, Id), single(This), writeln(Id).\n")
+      (printf "main(_Argv) :- findall(This, thises(This), _).")
+      (newline) (newline)
+      ))
 
-  (close-port output-port)
+  (define _222
+    (close-port output-port))
 
   (define-pair (ids/string code)
     (system-re "prolog -s ~a" output-path))
 
-  (unless (equal? 0 code)
-    (fatal "Prolog execution failed with code ~s and contents:\n~a" code ids/string))
+  (define _111
+    (unless (equal? 0 code)
+      (fatal "Prolog execution failed with code ~s and contents:\n~a" code ids/string)))
 
   (define ids
     (appcomp ids/string
@@ -104,17 +126,12 @@
              (filter (negate string-null?))
              make-hashset))
 
+  (define ret '())
+
   (entries-for-each
    (lambda (entry)
      (define id (cdr (assoc id-name entry)))
      (when (hashset-ref ids id)
-       (entry-print entry) (display "\n\n"))))
+       (cons! entry ret))))
 
-  (parameterize ((current-output-port (current-error-port)))
-    (let ((len (hashset-length ids)))
-      (if (equal? 0 len)
-          (display "No matches.")
-          (printf "Total of ~a matches." len))
-      (newline)))
-
-  )
+  ret)
