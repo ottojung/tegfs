@@ -383,6 +383,7 @@
     (case command
       ((login) (login))
       ((logincont) (logincont))
+      ((main.css) (main.css))
       ((cookie1) (cookie1))
       ((hacker) (hacker))
       (else
@@ -391,7 +392,6 @@
          ((upload) (upload))
          ((uploadcont) (uploadcont))
          ((entry) (entry))
-         ((main.css) (main.css))
          (else (not-found)))))))
 
 (define context/p
