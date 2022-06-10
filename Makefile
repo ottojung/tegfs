@@ -9,7 +9,7 @@ TEST_FILES=$(TEST_ROOT) $(TEST_ROOT)/categorization.tegfs.txt
 
 SUBMODULES = deps/euphrates/.git deps/czempak/.git
 
-CZEMPAK = CZEMPAK_ROOT=.czempak-root ./dist/czempak
+CZEMPAK = CZEMPAK_ROOT=$(PWD)/.czempak-root ./dist/czempak
 
 all: dist/tegfs
 
