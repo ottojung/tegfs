@@ -228,23 +228,24 @@
   (define headers (request-headers request))
   (define cookies-p (assoc 'cookie headers))
 
-  (define _33
-    (unless (pair? cookies-p)
-      (permission-denied)))
+  ;; DEBUG: disabled authorization for some time
+  ;; (define _33
+  ;;   (unless (pair? cookies-p)
+  ;;     (permission-denied)))
 
-  (define cookies/string (cdr cookies-p))
-  (define cookies (parse-cookies-string cookies/string))
+  ;; (define cookies/string (cdr cookies-p))
+  ;; (define cookies (parse-cookies-string cookies/string))
 
-  (define access-cookie
-    (let ((got (assoc "access" cookies)))
-      (and got (cdr got))))
+  ;; (define access-cookie
+  ;;   (let ((got (assoc "access" cookies)))
+  ;;     (and got (cdr got))))
 
-  (define ctx (context/p))
-  (define tokens (context-tokens ctx))
-  (define existing (hashmap-ref tokens access-cookie #f))
+  ;; (define ctx (context/p))
+  ;; (define tokens (context-tokens ctx))
+  ;; (define existing (hashmap-ref tokens access-cookie #f))
 
-  (unless existing
-    (permission-denied))
+  ;; (unless existing
+  ;;   (permission-denied))
 
   (values))
 
