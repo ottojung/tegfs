@@ -362,7 +362,7 @@
    (~s entry)))
 
 (define (display-entry entry)
-  (display "<div class='grid-item'>")
+  (display "<div class='card'>")
   (display (~a (assoc 'id entry)))
   (display "</div>")
   )
@@ -385,7 +385,7 @@
   (define str
     (with-output-to-string
       (lambda _
-        (display "<div class='grid-container'>")
+        (display "<div class='cards'>")
         (for-each display-entry entries) ;; DEBUG: remove bottom once
         (for-each display-entry entries)
         (for-each display-entry entries)

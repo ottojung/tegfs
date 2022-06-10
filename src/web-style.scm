@@ -72,20 +72,19 @@ span.psw {
  * Grid styles *
  ***************/
 
-.grid-container {
-  display: grid;
-  grid-template-columns: auto auto auto auto;
-  background-color: #2196F3;
-  padding: 10px;
+.card {
+  background-color: dodgerblue;
+  color: white;
+  padding: 1rem;
+  min-height: 4rem;
 }
 
-.grid-item {
-  background-color: rgba(255, 255, 255, 0.8);
-  border: 1px solid rgba(0, 0, 0, 0.8);
-  padding: 20px;
-  text-align: center;
-  min-width: 200px;
-  display: inline-grid;
+.cards {
+  max-width: 90%;
+  margin: 0 auto;
+  display: grid;
+  gap: 1rem;
+  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
 }
 
 ")
