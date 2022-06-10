@@ -40,6 +40,7 @@
     #:headers
     (append web-basic-headers
             `((content-type . (,content-type ,@content-type-params))
+              (Cache-Control . "no-cache")
               ,@extra-headers)))
    (lambda (port)
      (parameterize ((current-output-port port))
