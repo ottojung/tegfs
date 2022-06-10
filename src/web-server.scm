@@ -403,12 +403,12 @@
    web-preview-width web-preview-height
    preview-fullpath)
 
-  (generate-preview-internet-path target-id))
+  preview-fullpath)
 
 (define (web-make-preview target-id target-fullpath)
   (cond
    ((file-is-image? target-fullpath)
-    (web-make-image-preview target-id target-fullpath))
+    (generate-preview-internet-path target-id))
    (else
     'TODO)))
 
@@ -487,8 +487,19 @@
 
   (define target-id (cadr path))
 
+  (define entry (tegfs-get target-id))
+  (define target-p (assoc 'target entry))
+  (define target-fullpath
+    (and target-p
+         (let* ((registry-dir (dirname (cdr (assoc 'registry-path entry)))))
+           (append-posix-path registry-dir (cdr target-p)))))
+
   (define preview-fullpath
-    (get-preview-by-id target-id))
+    (cond
+     ((file-is-image? target-fullpath)
+      (web-make-image-preview target-id target-fullpath))
+     (else
+      'TODO)))
 
   (web-sendfile return! 'image/jpeg preview-fullpath))
 
