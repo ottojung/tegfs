@@ -109,11 +109,13 @@
 ;; t(futurama, 3).
 ;;
 ;; i(1, "id").
+;; v(X, Y) :- false.
 ;;
 (define (tegfs-dump-prolog)
   (display ":-style_check(-discontiguous).\n")
   (translate-registries yield-for-prolog)
   (dump-rules)
+  (display "v(X, Y) :- false.\n")
   (display "t('%diff', [X, Y]) :- X \\= Y.\n")
   (display "vandthis(This, X) :- X = This ; v(This, X).\n")
   ;; (display "what(X, Y) :- t(Y, X) ; t(K, Z), member(X, Z), Y = [K | Z].") (newline)
