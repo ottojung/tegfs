@@ -30,7 +30,7 @@ form {
   border: 3px solid #f1f1f1;
 }
 
-input[type=text], input[type=password] {
+.subc input[type=text], .subc input[type=password] {
   width: 100%;
   padding: 12px 20px;
   margin: 8px 0;
@@ -39,7 +39,7 @@ input[type=text], input[type=password] {
   box-sizing: border-box;
 }
 
-button {
+.subc button {
   background-color: #04AA6D;
   color: white;
   padding: 14px 20px;
@@ -49,7 +49,7 @@ button {
   width: 100%;
 }
 
-button:hover {
+.subc button:hover {
   opacity: 0.8;
 }
 
@@ -58,7 +58,6 @@ button:hover {
   margin: 24px 0 12px 0;
 }
 
-/* Add padding to containers */
 .container {
   padding: 16px;
 }
@@ -77,6 +76,7 @@ span.psw {
   color: white;
   padding: 1rem;
   min-height: 4rem;
+  text-align: center;
 }
 
 .cards {
@@ -85,6 +85,10 @@ span.psw {
   display: grid;
   gap: 1rem;
   grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+}
+
+.card img {
+  width: 100%;
 }
 
 ")

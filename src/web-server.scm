@@ -406,7 +406,7 @@
 
   preview-fullpath)
 
-(define (web-make-preview target-id target-fullpath)
+(define (web-generate-preview target-id target-fullpath)
   (cond
    ((file-is-image? target-fullpath)
     (generate-preview-internet-path target-id))
@@ -426,9 +426,13 @@
            (target-fullpath (append-posix-path registry-dir (cdr target-p)))
            (target-id (cdr (assoc 'id entry))))
       (display-preview
-       (web-make-preview target-id target-fullpath)))))
+       (web-generate-preview target-id target-fullpath)))))
 
 (define (display-title entry)
+  (display "<a href='/info/")
+  (display (cdr (assoc 'id entry)))
+  (display "'>")
+  (display "<button>")
   (cond
    ((and (assoc 'title entry)
          (not (string-null? (cdr (assoc 'title entry)))))
@@ -437,12 +441,19 @@
          (not (string-null? (cdr (assoc 'target entry)))))
     (display (cdr (assoc 'target entry))))
    (else
-    (display (cdr (assoc 'id entry))))))
+    (display (cdr (assoc 'id entry)))))
+  (display "</button>")
+  (display "</a>")
+  )
 
 (define (display-entry entry)
   (display "<div class='card'>")
+  (display "<div>")
   (maybe-display-preview entry)
+  (display "</div>")
+  (display "<div>")
   (display-title entry)
+  (display "</div>")
   (display "</div>")
   )
 
