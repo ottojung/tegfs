@@ -45,6 +45,8 @@
 %use (compose-under) "./euphrates/compose-under.scm"
 %use (read-string-line) "./euphrates/read-string-line.scm"
 %use (list-last) "./euphrates/list-last.scm"
+%use (cons!) "./euphrates/cons-bang.scm"
+%use (multiset->list list->multiset multiset-filter) "./euphrates/imultiset.scm"
 
 %use (categorization-split) "./categorization-split.scm"
 %use (tag-structure-sep1) "./tag-structure-sep1.scm"
@@ -129,9 +131,10 @@
      (get tag/starred)))
   (cons tag/starred ret))
 
-;; returns either `(ok ,list-of-chosen-tags)
-;;             or `(error ,list-of-ambiguous-tags-with-parents)
-;;             or `(duplicates)
+;; Returns `((ok ,list-of-chosen-tags)
+;;           (ambiguous ,list-of-ambiguous-tags-with-parents)
+;;           (duplicates ,list-of-duplicates))
+;; But ambiguous or duplicates may not be present.
 (define (tegfs-process-categorization-text text)
   ;; FIXME: dont actually split - the rules are in a separate file
   ;; TODO: allow to edit rules as well
@@ -162,65 +165,78 @@
   (define starred/unstarred
     (map unstar-symbol starred))
 
-  (if (not (= (length (list-deduplicate starred/unstarred))
-              (length starred/unstarred)))
-      (cons 'duplicates 'chose-some-tags-twice)
-      (let ()
-        (define starred-productions
-          (filter starred-symbol? (map car ast)))
+  (define starred-productions
+    (filter starred-symbol? (map car ast)))
 
-        (define starred-non-productions
-          (apply
-           append
-           (map (lambda (production)
-                  (filter starred-symbol? (cdr production)))
-                ast/flatten)))
+  (define starred-non-productions
+    (apply
+     append
+     (map (lambda (production)
+            (filter starred-symbol? (cdr production)))
+          ast/flatten)))
 
-        (define ast/flatten/unstarred
-          (map (lambda (production)
-                 (cons
-                  (unstar-symbol (car production))
-                  (list-deduplicate
-                   (map unstar-symbol (cdr production)))))
-               ast/flatten))
+  (define ast/flatten/unstarred
+    (map (lambda (production)
+           (cons
+            (unstar-symbol (car production))
+            (list-deduplicate
+             (map unstar-symbol (cdr production)))))
+         ast/flatten))
 
-        (define main-production
-          (car (car ast/flatten)))
+  (define main-production
+    (car (car ast/flatten)))
 
-        (define (closure closed tag/starred)
-          (get-parents/transitive/reflexive ast/flatten ast/flatten/unstarred closed tag/starred))
+  (define (closure closed tag/starred)
+    (get-parents/transitive/reflexive ast/flatten ast/flatten/unstarred closed tag/starred))
 
-        (define transitive-closures
-          (map (comp (closure '())) starred))
+  (define transitive-closures
+    (map (comp (closure '())) starred))
 
-        (define closed
-          (list-deduplicate
-           (map unstar-symbol
-                (apply append
-                       (filter
-                        (comp (member main-production))
-                        transitive-closures)))))
+  (define closed
+    (list-deduplicate
+     (map unstar-symbol
+          (apply append
+                 (filter
+                  (comp (member main-production))
+                  transitive-closures)))))
 
-        (define (ambiguous? tag/starred)
-          (define cl (closure closed tag/starred))
-          (not (member main-production cl)))
+  (define (ambiguous? tag/starred)
+    (define cl (closure closed tag/starred))
+    (not (member main-production cl)))
 
-        (define ambiguous
-          (filter ambiguous? starred))
+  (define ambiguous
+    (filter ambiguous? starred))
 
-        (if (null? ambiguous)
-            (cons 'ok
-                  (filter
-                   (negate type-symbol?)
-                   (filter
-                    (negate (comp (equal? main-production)))
-                    (list-deduplicate
-                     (map unstar-symbol (apply append transitive-closures))))))
-            (cons
-             'error
-             (map
-              (lambda (amb)
-                (define unstarred (unstar-symbol amb))
-                (cons unstarred
-                      (map unstar-symbol (get-parents ast/flatten/unstarred unstarred))))
-              ambiguous))))))
+  (define ok-tags
+    (filter
+     (negate type-symbol?)
+     (filter
+      (negate (comp (equal? main-production)))
+      (list-deduplicate
+       (map unstar-symbol (apply append transitive-closures))))))
+
+  (define ambiguous-tags
+    (and (not (null? ambiguous))
+         (map
+          (lambda (amb)
+            (define unstarred (unstar-symbol amb))
+            (cons unstarred
+                  (map unstar-symbol (get-parents ast/flatten/unstarred unstarred))))
+          ambiguous)))
+
+  (define duplicates
+    (let* ((S (list->multiset starred/unstarred))
+           (S* (multiset-filter
+                S (lambda (key value) (> value 1))))
+           (L (multiset->list S*)))
+      (and (not (null? L))
+           L)))
+
+  (append
+   `((ok . ,ok-tags))
+   (if ambiguous-tags
+       (list (cons 'ambiguous ambiguous-tags))
+       (list))
+   (if duplicates
+       (list (cons 'duplicates duplicates))
+       (list))))

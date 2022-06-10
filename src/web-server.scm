@@ -315,13 +315,15 @@
   (define tags-list-result
     (tegfs-process-categorization-text tags))
 
+  (debugv tags-list-result)
+
   ;; TODO: edit the categorization file
   (define tags-list
-    (case (car tags-list-result)
-      ((ok) (cdr tags-list-result))
-      ((error) ((error-tags-list (cdr tags-list-result))))
-      ((duplicates) (duplicates-tags-list))
-      (else (raisu 'unknown-tags-list-result))))
+    (cond
+     ((assoc 'ambiguous tags-list-result)
+      (error-tags-list (cdr (assoc 'ambiguous tags-list-result))))
+     (else
+      (cdr (assoc 'ok tags-list-result)))))
 
   (tegfs-add
    <target> title tags-list
