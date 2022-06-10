@@ -61,6 +61,7 @@
 %use (categorization-filename) "./categorization-filename.scm"
 %use (tegfs-process-categorization-text) "./edit-tags.scm"
 %use (tegfs-add) "./add.scm"
+%use (tegfs-get) "./get.scm"
 %use (sha256sum) "./sha256sum.scm"
 %use (parse-multipart-as-hashmap) "./web-parse-multipart.scm"
 %use (web-make-response) "./web-make-response.scm"
@@ -339,10 +340,23 @@
   (define request (callcontext-request callctx))
   (define path (request-path-components request))
 
-  (unless (= 2 (length path))
-    (not-found))
+  (define _11
+    (unless (= 2 (length path))
+      (not-found)))
 
-  (respond "kek"))
+  (define id (cadr path))
+
+  (define entry
+    (tegfs-get id))
+
+  (return!
+   (build-response
+    #:code 200
+    #:headers
+    (append web-basic-headers
+            `((content-type . (text/plain))
+              (Cache-Control . "no-cache"))))
+   (~s entry)))
 
 (define (cookie1)
   (define request (callcontext-request (callcontext/p)))
@@ -363,22 +377,21 @@
   (when (null? path-components)
     (not-found))
 
-  (define command
-    (string->symbol (car path-components)))
-
-  (case command
-    ((login) (login))
-    ((logincont) (logincont))
-    ((cookie1) (cookie1))
-    ((hacker) (hacker))
-    (else
-     (check-permissions)
-     (case command
-       ((upload) (upload))
-       ((uploadcont) (uploadcont))
-       ((entry) (entry))
-       ((main.css) (main.css))
-       (else (not-found))))))
+  (let ((command
+         (string->symbol (car path-components))))
+    (case command
+      ((login) (login))
+      ((logincont) (logincont))
+      ((cookie1) (cookie1))
+      ((hacker) (hacker))
+      (else
+       (check-permissions)
+       (case command
+         ((upload) (upload))
+         ((uploadcont) (uploadcont))
+         ((entry) (entry))
+         ((main.css) (main.css))
+         (else (not-found)))))))
 
 (define context/p
   (make-parameter #f))
