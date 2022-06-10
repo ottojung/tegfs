@@ -27,6 +27,7 @@
 %use (append-string-file) "./euphrates/append-string-file.scm"
 %use (list-zip) "./euphrates/list-zip.scm"
 %use (system-re) "./euphrates/system-re.scm"
+%use (system-fmt) "./euphrates/system-fmt.scm"
 %use (string-strip) "./euphrates/string-strip.scm"
 %use (list-intersperse) "./euphrates/list-intersperse.scm"
 %use (append-posix-path) "./euphrates/append-posix-path.scm"
@@ -75,6 +76,8 @@
 %use (web-login-success-body) "./web-login-success-body.scm"
 %use (web-message-template) "./web-message-template.scm"
 %use (web-make-upload-body) "./web-make-upload-body.scm"
+%use (file-is-image?) "./file-is-image-q.scm"
+%use (web-sendfile) "./web-sendfile.scm"
 
 %use (debug) "./euphrates/debug.scm"
 %use (debugv) "./euphrates/debugv.scm"
@@ -361,9 +364,84 @@
               (Cache-Control . "no-cache"))))
    (~s entry)))
 
+(define web-preview-width 224)
+(define web-preview-height 126)
+
+(define (get-preview-by-id target-id)
+  (define preview-directory
+    (append-posix-path (root/p) "cache" "preview"))
+  (define preview-name
+    (string-append target-id ".jpeg"))
+  (define preview-fullpath
+    (append-posix-path preview-directory preview-name))
+
+  (unless (file-or-directory-exists? preview-directory)
+    (make-directories preview-directory))
+
+  preview-fullpath)
+
+(define (generate-preview-internet-path target-id)
+  (string-append "/preview/" target-id))
+
+(define (web-make-image-preview target-id target-fullpath)
+  (define preview-fullpath
+    (get-preview-by-id target-id))
+
+  ;; TODO: check exit code
+  (system-fmt
+   (string-append
+    "convert "
+    " ~a "
+    " -thumbnail ~a@ "
+    " -gravity center "
+    " -background transparent "
+    " -extent ~ax~a "
+    " ~a "
+    )
+   target-fullpath
+   (* web-preview-width web-preview-height)
+   web-preview-width web-preview-height
+   preview-fullpath)
+
+  (generate-preview-internet-path target-id))
+
+(define (web-make-preview target-id target-fullpath)
+  (cond
+   ((file-is-image? target-fullpath)
+    (web-make-image-preview target-id target-fullpath))
+   (else
+    'TODO)))
+
+(define (display-preview preview-fullpath)
+  (display "<img src=")
+  (write preview-fullpath)
+  (display "/>")
+  )
+
+(define (maybe-display-preview entry)
+  (define target-p (assoc 'target entry))
+  (when target-p
+    (let* ((registry-dir (dirname (cdr (assoc 'registry-path entry))))
+           (target-fullpath (append-posix-path registry-dir (cdr target-p)))
+           (target-id (cdr (assoc 'id entry))))
+      (display-preview
+       (web-make-preview target-id target-fullpath)))))
+
+(define (display-title entry)
+  (cond
+   ((and (assoc 'title entry)
+         (not (string-null? (cdr (assoc 'title entry)))))
+    (display (cdr (assoc 'title entry))))
+   ((and (assoc 'target entry)
+         (not (string-null? (cdr (assoc 'target entry)))))
+    (display (cdr (assoc 'target entry))))
+   (else
+    (display (cdr (assoc 'id entry))))))
+
 (define (display-entry entry)
   (display "<div class='card'>")
-  (display (~a (assoc 'id entry)))
+  (maybe-display-preview entry)
+  (display-title entry)
   (display "</div>")
   )
 
@@ -397,6 +475,22 @@
         )))
 
   (respond str))
+
+(define (preview)
+  (define callctx (callcontext/p))
+  (define request (callcontext-request callctx))
+  (define path (request-path-components request))
+
+  (define _11
+    (unless (= 2 (length path))
+      (not-found)))
+
+  (define target-id (cadr path))
+
+  (define preview-fullpath
+    (get-preview-by-id target-id))
+
+  (web-sendfile return! 'image/jpeg preview-fullpath))
 
 (define (cookie1)
   (define request (callcontext-request (callcontext/p)))
@@ -432,6 +526,7 @@
          ((uploadcont) (uploadcont))
          ((entry) (entry))
          ((query) (query))
+         ((preview) (preview))
          (else (not-found)))))))
 
 (define context/p
