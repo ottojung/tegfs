@@ -204,8 +204,9 @@
   (static-error-message 401 "Permission denied"))
 
 (define (parse-cookies-string cookies/string)
-  (unless (string? cookies/string)
-    (raisu 'bad-cookies-cdr cookies/string))
+  (define _aa
+    (unless (string? cookies/string)
+      (raisu 'bad-cookies-cdr cookies/string)))
 
   (define cookie-split-semicolon
     (string-split/simple cookies/string #\;))
@@ -227,8 +228,9 @@
   (define headers (request-headers request))
   (define cookies-p (assoc 'cookie headers))
 
-  (unless (pair? cookies-p)
-    (permission-denied))
+  (define _33
+    (unless (pair? cookies-p)
+      (permission-denied)))
 
   (define cookies/string (cdr cookies-p))
   (define cookies (parse-cookies-string cookies/string))
@@ -304,16 +306,15 @@
                             (dirname upload-registry-filename)
                             <target>)))
 
-  (when full-filename
-    (make-directories (dirname full-filename))
-    (let ((port (open-file-port full-filename "w")))
-      (put-bytevector port file-content)
-      (close-port port)))
+  (define _44
+    (when full-filename
+      (make-directories (dirname full-filename))
+      (let ((port (open-file-port full-filename "w")))
+        (put-bytevector port file-content)
+        (close-port port))))
 
   (define tags-list-result
     (tegfs-process-categorization-text tags))
-
-  (debugv tags-list-result)
 
   ;; TODO: edit the categorization file
   (define tags-list
