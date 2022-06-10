@@ -62,6 +62,7 @@
 %use (tegfs-process-categorization-text) "./edit-tags.scm"
 %use (tegfs-add) "./add.scm"
 %use (tegfs-get) "./get.scm"
+%use (tegfs-query) "./query.scm"
 %use (sha256sum) "./sha256sum.scm"
 %use (parse-multipart-as-hashmap) "./web-parse-multipart.scm"
 %use (web-make-response) "./web-make-response.scm"
@@ -360,6 +361,43 @@
               (Cache-Control . "no-cache"))))
    (~s entry)))
 
+(define (display-entry entry)
+  (display "<div class='grid-item'>")
+  (display (~a (assoc 'id entry)))
+  (display "</div>")
+  )
+
+(define (query)
+  (define callctx (callcontext/p))
+  (define request (callcontext-request callctx))
+  (define path (request-path-components request))
+
+  (define _11
+    (unless (= 1 (length path))
+      (not-found)))
+
+  (define uri (request-uri request))
+  (define query/encoded (uri-query uri))
+  (define query (uri-decode query/encoded))
+  (define query/split (string->words query))
+  (define entries (tegfs-query query/split))
+
+  (define str
+    (with-output-to-string
+      (lambda _
+        (display "<div class='grid-container'>")
+        (for-each display-entry entries) ;; DEBUG: remove bottom once
+        (for-each display-entry entries)
+        (for-each display-entry entries)
+        (for-each display-entry entries)
+        (for-each display-entry entries)
+        (for-each display-entry entries)
+        (for-each display-entry entries)
+        (display "</div>")
+        )))
+
+  (respond str))
+
 (define (cookie1)
   (define request (callcontext-request (callcontext/p)))
   (respond
@@ -393,6 +431,7 @@
          ((upload) (upload))
          ((uploadcont) (uploadcont))
          ((entry) (entry))
+         ((query) (query))
          (else (not-found)))))))
 
 (define context/p
