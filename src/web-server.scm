@@ -258,9 +258,6 @@
       (static-error-message 200 "Uploaded successfully")))
 
 (define (uploadcont)
-  (define _42
-    (check-permissions))
-
   (define callctx (callcontext/p))
   (define request (callcontext-request callctx))
   (define headers (request-headers request))
@@ -335,8 +332,17 @@
   ((upload-success-page <target>)))
 
 (define (upload)
-  (check-permissions)
   (respond (web-make-upload-body)))
+
+(define (entry)
+  (define callctx (callcontext/p))
+  (define request (callcontext-request callctx))
+  (define path (request-path-components request))
+
+  (unless (= 2 (length path))
+    (not-found))
+
+  (respond "kek"))
 
 (define (cookie1)
   (define request (callcontext-request (callcontext/p)))
@@ -354,17 +360,25 @@
 
   (dprintln "Got request: ~s" path-components)
 
-  (if (null? path-components)
-      (not-found)
-      (case (string->symbol (car path-components))
-        ((main.css) (main.css))
-        ((login) (login))
-        ((logincont) (logincont))
-        ((upload) (upload))
-        ((uploadcont) (uploadcont))
-        ((cookie1) (cookie1))
-        ((hacker) (hacker))
-        (else (not-found)))))
+  (when (null? path-components)
+    (not-found))
+
+  (define command
+    (string->symbol (car path-components)))
+
+  (case command
+    ((login) (login))
+    ((logincont) (logincont))
+    ((cookie1) (cookie1))
+    ((hacker) (hacker))
+    (else
+     (check-permissions)
+     (case command
+       ((upload) (upload))
+       ((uploadcont) (uploadcont))
+       ((entry) (entry))
+       ((main.css) (main.css))
+       (else (not-found))))))
 
 (define context/p
   (make-parameter #f))
