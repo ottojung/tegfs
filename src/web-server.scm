@@ -477,12 +477,10 @@
   (define path (request-path-components request))
 
   (define _11
-    (unless (= 1 (length path))
+    (unless (= 2 (length path))
       (not-found)))
 
-  (define uri (request-uri request))
-  (define query/encoded (uri-query uri))
-  (define query (uri-decode query/encoded))
+  (define query (cadr path))
   (define query/split (string->words query))
   (define entries (tegfs-query query/split))
 
