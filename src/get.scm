@@ -16,10 +16,13 @@
 
 %var tegfs-get
 %var tegfs-get/parse
+%var tegfs-get/cached
 
 %use (dprintln) "./euphrates/dprintln.scm"
+%use (make-hashmap hashmap-ref hashmap-clear!) "./euphrates/ihashmap.scm"
 
 %use (entries-for-each) "./entries-for-each.scm"
+%use (entries->hashmap) "./entries-to-hashmap.scm"
 %use (entry-print) "./entry-print.scm"
 
 (define (tegfs-get/parse <showid>)
@@ -41,3 +44,12 @@
             (parameterize ((current-output-port (current-error-port)))
               (dprintln "Entry does not have an id: ~s" entry)))))
      #f)))
+
+(define tegfs-get/cached
+  (let ((H (make-hashmap)))
+    (lambda (<showid>)
+      (or (hashmap-ref H <showid> #f)
+          (begin
+            (hashmap-clear! H)
+            (entries->hashmap H)
+            (hashmap-ref H <showid> #f))))))
