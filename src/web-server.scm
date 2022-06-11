@@ -427,7 +427,7 @@
   preview-fullpath)
 
 (define (generate-preview-internet-path target-id)
-  (string-append "/preview/" target-id))
+  (string-append "/preview?t=" target-id))
 
 (define (web-make-image-preview target-id target-fullpath)
   (define preview-fullpath
@@ -527,14 +527,10 @@
 (define (preview)
   (define callctx (callcontext/p))
   (define request (callcontext-request callctx))
+  (define ctxq (callcontext-query callctx))
   (define path (request-path-components request))
 
-  (define _11
-    (unless (= 2 (length path))
-      (not-found)))
-
-  (define target-id (cadr path))
-
+  (define target-id (hashmap-ref ctxq 't #f))
   (define entry (tegfs-get target-id))
   (define target-p (assoc 'target entry))
   (define target-fullpath
