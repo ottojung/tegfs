@@ -364,8 +364,8 @@
               (Cache-Control . "no-cache"))))
    (~s entry)))
 
-(define web-preview-width 224)
-(define web-preview-height 126)
+(define web-preview-width 160)
+(define web-preview-height 90)
 
 (define (get-preview-by-id target-id)
   (define preview-directory
