@@ -48,7 +48,8 @@
 %use (string-split/simple) "./euphrates/string-split-simple.scm"
 %use (string-split-3) "./euphrates/string-split-3.scm"
 %use (define-type9) "./euphrates/define-type9.scm"
-%use (make-hashmap hashmap-ref hashmap-set! hashmap->alist) "./euphrates/ihashmap.scm"
+%use (make-hashmap hashmap-ref hashmap-set! hashmap->alist alist->hashmap) "./euphrates/ihashmap.scm"
+%use (list->hashset hashset-ref) "./euphrates/ihashset.scm"
 %use (define-pair) "./euphrates/define-pair.scm"
 %use (define-tuple) "./euphrates/define-tuple.scm"
 %use (random-choice) "./euphrates/random-choice.scm"
@@ -520,6 +521,32 @@
 (define (hacker)
   (values '((content-type . (text/plain))) "Hello hacker!"))
 
+(define handlers-config
+  `((login ,login public)
+    (logincont ,logincont public)
+    (main.css ,main.css public)
+    (hacker ,hacker public)
+    (upload ,upload)
+    (uploadcont ,uploadcont)
+    (entry ,entry)
+    (query ,query)
+    (preview ,preview)))
+
+(define handlers-funcmap
+  (alist->hashmap
+   (map
+    (lambda (p) (cons (~a (car p)) (cadr p)))
+    handlers-config)))
+
+(define handlers-publicset
+  (list->hashset
+   (map
+    (comp car ~a)
+    (filter
+     (lambda (l) (and (= 3 (length l))
+                      (equal? 'public (caddr l))))
+     handlers-config))))
+
 (define (handler request body)
   (define path-components
     (request-path-components request))
@@ -529,23 +556,12 @@
   (when (null? path-components)
     (not-found))
 
-  (let ((command
-         (string->symbol (car path-components))))
-    (case command
-      ((login) (login))
-      ((logincont) (logincont))
-      ((main.css) (main.css))
-      ((cookie1) (cookie1))
-      ((hacker) (hacker))
-      (else
-       (check-permissions)
-       (case command
-         ((upload) (upload))
-         ((uploadcont) (uploadcont))
-         ((entry) (entry))
-         ((query) (query))
-         ((preview) (preview))
-         (else (not-found)))))))
+  (let* ((root (car path-components))
+         (func (hashmap-ref handlers-funcmap root #f))
+         (public? (hashset-ref handlers-publicset root)))
+    (unless func (not-found))
+    (unless public? (check-permissions))
+    (func)))
 
 (define context/p
   (make-parameter #f))
