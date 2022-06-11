@@ -105,10 +105,11 @@
   )
 
 (define-type9 <callcontext>
-  (callcontext-ctr break request body) callcontext?
+  (callcontext-ctr break request body atoken) callcontext?
   (break callcontext-break) ;; break handler
   (request callcontext-request) ;; client request
   (body callcontext-body) ;; client body
+  (atoken callcontext-atoken set-callcontext-atoken!) ;; access token to-set to
   )
 
 (define upload-registry-filename "upload/upload.tegfs.reg.lisp")
@@ -121,9 +122,48 @@
   (define cont (callcontext-break callctx))
   (cont stats body))
 
-(define* (respond . args)
-  (define-values (stats body) (apply web-make-response args))
-  (return! stats body))
+(define* (respond #:optional body #:key
+                            (status 200)
+                            (title #f)
+                            (extra-heads '())
+                            (doctype "<!DOCTYPE html>\n")
+                            (content-type-params '((charset . "utf-8")))
+                            (content-type 'text/html)
+                            (extra-headers '()))
+  (define callctx (callcontext/p))
+  (define cont (callcontext-break callctx))
+  (define atoken (callcontext-atoken callctx))
+  (define atoken-headers
+    (if atoken (list (web-set-cookie-header "atoken" atoken)) '()))
+
+  (cont
+   (build-response
+    #:code status
+    ;; most of these settings come from here: https://cheatsheetseries.owasp.org/cheatsheets/HTTP_Headers_Cheat_Sheet.html
+    #:headers
+    (append web-basic-headers
+            `((content-type . (,content-type ,@content-type-params))
+              (Cache-Control . "no-cache")
+              ,@atoken-headers
+              ,@extra-headers)))
+   (lambda (port)
+     (parameterize ((current-output-port port))
+       (when doctype (display doctype))
+       (display "<html>\n")
+       (display "<head>\n")
+       (when title
+         (display "  <title>")
+         (display title)
+         (display "</title>\n"))
+       (display "  <link rel='stylesheet' href='/main.css'>")
+       (for-each display extra-heads)
+       (display "</head>\n")
+       (display "<body>\n")
+       (if (string? body)
+           (display body)
+           (sxml->xml body port))
+       (display "\n</body>\n")
+       (display "</html>\n")))))
 
 (define (not-found)
   (define request (callcontext-request (callcontext/p)))
@@ -159,6 +199,9 @@
 
 (define body-not-found
   (static-error-message 417 "Send user body"))
+
+(define (login-user! atoken)
+  (set-callcontext-atoken! (callcontext/p) atoken))
 
 (define (logincont)
   (define body/bytes (callcontext-body (callcontext/p)))
@@ -199,10 +242,10 @@
   (when registered?
     (hashmap-set! tokens atoken #t))
 
+  (login-user! atoken)
+
   (if registered?
-      (respond web-login-success-body
-               #:extra-headers (list (web-set-cookie-header "atoken" atoken))
-               )
+      (respond web-login-success-body)
       (respond web-login-failed-body)))
 
 (define permission-denied
@@ -245,9 +288,11 @@
   (define atoken
     (or
      (let* ((uri (request-uri request))
-            (query/encoded (uri-query uri)))
-       (and query/encoded
-            (web-query-get-by-key "key" query/encoded)))
+            (query/encoded (uri-query uri))
+            (ret (and query/encoded
+                      (web-query-get-by-key "key" query/encoded))))
+       (when ret (login-user! ret))
+       ret)
      (let* ((headers (request-headers request))
             (cookies-p (assoc 'cookie headers))
             (do (unless (pair? cookies-p)
@@ -605,7 +650,7 @@
   (make-parameter #f))
 
 (define (make-callcontext break request body)
-  (callcontext-ctr break request body))
+  (callcontext-ctr break request body #f))
 
 (define (make-handler)
   (lambda (request body)
