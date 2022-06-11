@@ -192,7 +192,7 @@
 (define (login)
   (respond web-login-body))
 
-(define (generate-atoken)
+(define (generate-pwdtoken)
   (list->string (random-choice 60 alphanum-lowercase/alphabet)))
 
 (define body-not-found
@@ -235,15 +235,15 @@
   (define passwords (context-passwords ctx))
   (define tokens (context-tokens ctx))
   (define registered? (hashmap-ref passwords passw #f))
-  (define atoken (and registered? (generate-atoken)))
+  (define pwdtoken (and registered? (generate-pwdtoken)))
 
   (when registered?
-    (hashmap-set! tokens atoken #t))
+    (hashmap-set! tokens pwdtoken #t))
 
   (if registered?
       (respond
        web-login-success-body
-       #:extra-headers (list (web-set-cookie-header "atoken" atoken)))
+       #:extra-headers (list (web-set-cookie-header "pwdtoken" pwdtoken)))
       (respond web-login-failed-body)))
 
 (define permission-denied
@@ -276,19 +276,19 @@
          (got (and cookies (assoc name cookies))))
     (and got (cdr got))))
 
-(define (check-permissions)
+(define (get-access-token)
   (define callctx (callcontext/p))
-  (define request (callcontext-request callctx))
-  (define qH (callcontext-query callctx))
+  (or
+   (let* ((qH (callcontext-query callctx))
+          (ret (hashmap-ref qH 'key #f)))
+     (when ret (set-user-key! ret))
+     ret)
+   (let ((request (callcontext-request callctx)))
+     (or (get-cookie "key" request)
+         (get-cookie "pwdtoken" request)))))
 
-  (define token
-    (or
-     (let* ((ret (hashmap-ref qH 'key #f)))
-       (when ret (set-user-key! ret))
-       ret)
-     (get-cookie "key" request)
-     (get-cookie "atoken" request)))
-
+(define (check-permissions)
+  (define token (get-access-token))
   (define ctx (context/p))
   (define tokens (context-tokens ctx))
   (define existing (hashmap-ref tokens token #f))
