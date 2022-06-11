@@ -115,9 +115,6 @@
 
 (define upload-registry-filename "upload/upload.tegfs.reg.lisp")
 
-(define (request-path-components request)
-  (split-and-decode-uri-path (uri-path (request-uri request))))
-
 (define (return! stats body)
   (define callctx (callcontext/p))
   (define cont (callcontext-break callctx))
@@ -392,13 +389,9 @@
 (define (entry)
   (define callctx (callcontext/p))
   (define request (callcontext-request callctx))
-  (define path (request-path-components request))
+  (define qH (callcontext-query callctx))
 
-  (define _11
-    (unless (= 2 (length path))
-      (not-found)))
-
-  (define id (cadr path))
+  (define id (hashmap-ref qH 'id #f))
 
   (define entry
     (tegfs-get id))
@@ -510,7 +503,6 @@
   (define callctx (callcontext/p))
   (define request (callcontext-request callctx))
   (define ctxq (callcontext-query callctx))
-  (define path (request-path-components request))
 
   (define query (hashmap-ref ctxq 'q ""))
   (define query/split (string->words query))
@@ -530,7 +522,6 @@
   (define callctx (callcontext/p))
   (define request (callcontext-request callctx))
   (define ctxq (callcontext-query callctx))
-  (define path (request-path-components request))
 
   (define target-id (hashmap-ref ctxq 't #f))
   (define entry (tegfs-get target-id))
@@ -550,14 +541,14 @@
   (web-sendfile return! 'image/jpeg preview-fullpath))
 
 (define handlers-config
-  `((login ,login public)
-    (logincont ,logincont public)
-    (main.css ,main.css public)
-    (upload ,upload)
-    (uploadcont ,uploadcont)
-    (entry ,entry)
-    (query ,query)
-    (preview ,preview)))
+  `((/login ,login public)
+    (/logincont ,logincont public)
+    (/main.css ,main.css public)
+    (/upload ,upload)
+    (/uploadcont ,uploadcont)
+    (/entry ,entry)
+    (/query ,query)
+    (/preview ,preview)))
 
 (define handlers-funcmap
   (alist->hashmap
@@ -574,18 +565,19 @@
                       (equal? 'public (caddr l))))
      handlers-config))))
 
+(define (log-request path request)
+  (display "Got request: ") (display path)
+  (display "\n")
+  )
+
 (define (handler request body)
-  (define path-components
-    (request-path-components request))
+  (define path (uri-path (request-uri request)))
 
-  (dprintln "Got request: ~s" path-components)
+  (log-request path request)
 
-  (unless (list-singleton? path-components)
-    (not-found))
-
-  (let* ((root (car path-components))
-         (func (hashmap-ref handlers-funcmap root #f))
-         (public? (hashset-ref handlers-publicset root)))
+  (let* ((target path)
+         (func (hashmap-ref handlers-funcmap target #f))
+         (public? (hashset-ref handlers-publicset target)))
     (unless func (not-found))
     (unless public? (check-permissions))
     (func)))
