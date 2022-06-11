@@ -154,7 +154,7 @@
 (define (login)
   (respond web-login-body))
 
-(define (generate-access-token)
+(define (generate-atoken)
   (list->string (random-choice 60 alphanum-lowercase/alphabet)))
 
 (define body-not-found
@@ -194,14 +194,14 @@
   (define passwords (context-passwords ctx))
   (define tokens (context-tokens ctx))
   (define registered? (hashmap-ref passwords passw #f))
-  (define access-token (and registered? (generate-access-token)))
+  (define atoken (and registered? (generate-atoken)))
 
   (when registered?
-    (hashmap-set! tokens access-token #t))
+    (hashmap-set! tokens atoken #t))
 
   (if registered?
       (respond web-login-success-body
-               #:extra-headers (list (web-set-cookie-header "access" access-token))
+               #:extra-headers (list (web-set-cookie-header "access" atoken))
                )
       (respond web-login-failed-body)))
 
@@ -242,7 +242,7 @@
   (define callctx (callcontext/p))
   (define request (callcontext-request callctx))
 
-  (define access-token
+  (define atoken
     (or
      (let* ((uri (request-uri request))
             (query/encoded (uri-query uri)))
@@ -259,7 +259,7 @@
 
   (define ctx (context/p))
   (define tokens (context-tokens ctx))
-  (define existing (hashmap-ref tokens access-token #f))
+  (define existing (hashmap-ref tokens atoken #f))
 
   (unless existing
     (permission-denied))
