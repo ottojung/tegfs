@@ -424,30 +424,6 @@
 (define (generate-preview-internet-path target-id)
   (string-append "/preview?t=" target-id))
 
-(define (web-make-image-preview target-id target-fullpath)
-  (define preview-fullpath
-    (get-preview-by-id target-id))
-
-  (unless (file-or-directory-exists? preview-fullpath)
-    ;; TODO: check exit code
-    (system-fmt
-     (string-append
-      "convert "
-      " ~a "
-      " -thumbnail ~a@ "
-      " -quality 10 "
-      " -gravity center "
-      " -background transparent "
-      " -extent ~ax~a "
-      " ~a "
-      )
-     target-fullpath
-     (* web-preview-width web-preview-height)
-     web-preview-width web-preview-height
-     preview-fullpath))
-
-  preview-fullpath)
-
 (define (web-generate-preview target-id target-fullpath)
   (cond
    ((file-is-image? target-fullpath)
@@ -532,6 +508,37 @@
 
   (respond str))
 
+(define (web-make-image-preview target-id target-fullpath)
+  (define preview-fullpath
+    (get-preview-by-id target-id))
+
+  (unless (file-or-directory-exists? preview-fullpath)
+    ;; TODO: check exit code
+    (system-fmt
+     (string-append
+      "convert "
+      " ~a "
+      " -thumbnail ~a@ "
+      " -quality 10 "
+      " -gravity center "
+      " -background transparent "
+      " -extent ~ax~a "
+      " ~a "
+      )
+     target-fullpath
+     (* web-preview-width web-preview-height)
+     web-preview-width web-preview-height
+     preview-fullpath))
+
+  preview-fullpath)
+
+(define (web-make-preview target-id target-fullpath entry)
+  (cond
+   ((file-is-image? target-fullpath)
+    (web-make-image-preview target-id target-fullpath))
+   (else
+    'TODO)))
+
 (define (preview)
   (define callctx (callcontext/p))
   (define request (callcontext-request callctx))
@@ -544,13 +551,8 @@
     (and target-p
          (let* ((registry-dir (dirname (cdr (assoc 'registry-path entry)))))
            (append-posix-path registry-dir (cdr target-p)))))
-
   (define preview-fullpath
-    (cond
-     ((file-is-image? target-fullpath)
-      (web-make-image-preview target-id target-fullpath))
-     (else
-      'TODO)))
+    (web-make-preview target-id target-fullpath entry))
 
   (web-sendfile return! 'image/jpeg preview-fullpath))
 
