@@ -105,12 +105,12 @@
   )
 
 (define-type9 <callcontext>
-  (callcontext-ctr break request query body atoken) callcontext?
+  (callcontext-ctr break request query body key) callcontext?
   (break callcontext-break) ;; break handler
   (request callcontext-request) ;; client request
   (query callcontext-query) ;; query hashmap
   (body callcontext-body) ;; client body
-  (atoken callcontext-atoken set-callcontext-atoken!) ;; access token to-set to
+  (key callcontext-key set-callcontext-key!) ;; access key to-set to
   )
 
 (define upload-registry-filename "upload/upload.tegfs.reg.lisp")
@@ -133,9 +133,9 @@
                             (extra-headers '()))
   (define callctx (callcontext/p))
   (define cont (callcontext-break callctx))
-  (define atoken (callcontext-atoken callctx))
-  (define atoken-headers
-    (if atoken (list (web-set-cookie-header "atoken" atoken)) '()))
+  (define key (callcontext-key callctx))
+  (define key-headers
+    (if key (list (web-set-cookie-header "key" key)) '()))
 
   (cont
    (build-response
@@ -145,7 +145,7 @@
     (append web-basic-headers
             `((content-type . (,content-type ,@content-type-params))
               (Cache-Control . "no-cache")
-              ,@atoken-headers
+              ,@key-headers
               ,@extra-headers)))
    (lambda (port)
      (parameterize ((current-output-port port))
@@ -201,8 +201,8 @@
 (define body-not-found
   (static-error-message 417 "Send user body"))
 
-(define (login-user! atoken)
-  (set-callcontext-atoken! (callcontext/p) atoken))
+(define (set-user-key! key)
+  (set-callcontext-key! (callcontext/p) key))
 
 (define (logincont)
   (define body/bytes (callcontext-body (callcontext/p)))
@@ -243,10 +243,10 @@
   (when registered?
     (hashmap-set! tokens atoken #t))
 
-  (login-user! atoken)
-
   (if registered?
-      (respond web-login-success-body)
+      (respond
+       web-login-success-body
+       #:extra-headers (list (web-set-cookie-header "atoken" atoken)))
       (respond web-login-failed-body)))
 
 (define permission-denied
@@ -271,28 +271,30 @@
 
   cookie-split)
 
+(define (get-cookie name request)
+  (let* ((headers (request-headers request))
+         (cookies-p (assoc 'cookie headers))
+         (cookies/string (and (pair? cookies-p) (cdr cookies-p)))
+         (cookies (and cookies/string (parse-cookies-string cookies/string)))
+         (got (and cookies (assoc name cookies))))
+    (and got (cdr got))))
+
 (define (check-permissions)
   (define callctx (callcontext/p))
   (define request (callcontext-request callctx))
   (define qH (callcontext-query callctx))
 
-  (define atoken
+  (define token
     (or
      (let* ((ret (hashmap-ref qH 'key #f)))
-       (when ret (login-user! ret))
+       (when ret (set-user-key! ret))
        ret)
-     (let* ((headers (request-headers request))
-            (cookies-p (assoc 'cookie headers))
-            (do (unless (pair? cookies-p)
-                  (permission-denied)))
-            (cookies/string (cdr cookies-p))
-            (cookies (parse-cookies-string cookies/string))
-            (got (assoc "atoken" cookies)))
-      (and got (cdr got)))))
+     (get-cookie "key" request)
+     (get-cookie "atoken" request)))
 
   (define ctx (context/p))
   (define tokens (context-tokens ctx))
-  (define existing (hashmap-ref tokens atoken #f))
+  (define existing (hashmap-ref tokens token #f))
 
   (unless existing
     (permission-denied))
