@@ -201,7 +201,7 @@
 
   (if registered?
       (respond web-login-success-body
-               #:extra-headers (list (web-set-cookie-header "access" atoken))
+               #:extra-headers (list (web-set-cookie-header "atoken" atoken))
                )
       (respond web-login-failed-body)))
 
@@ -254,7 +254,7 @@
                   (permission-denied)))
             (cookies/string (cdr cookies-p))
             (cookies (parse-cookies-string cookies/string))
-            (got (assoc "access" cookies)))
+            (got (assoc "atoken" cookies)))
       (and got (cdr got)))))
 
   (define ctx (context/p))
