@@ -497,12 +497,20 @@
   (display "</div>")
   )
 
+(define (decode-query query/encoded)
+  (appcomp query/encoded
+           string->list
+           (map (lambda (c) (if (equal? #\+ c) #\space c)))
+           (map (lambda (c) (if (equal? #\: c) #\= c)))
+           list->string))
+
 (define (query)
   (define callctx (callcontext/p))
   (define request (callcontext-request callctx))
   (define ctxq (callcontext-query callctx))
 
-  (define query (hashmap-ref ctxq 'q ""))
+  (define query/encoded (hashmap-ref ctxq 'q ""))
+  (define query (decode-query query/encoded))
   (define query/split (string->words query))
   (define entries (tegfs-query query/split))
 
