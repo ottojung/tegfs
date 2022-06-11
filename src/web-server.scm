@@ -461,14 +461,22 @@
   (display "/>")
   )
 
+(define (display-full-link entry target-fullpath)
+  (define id (cdr (assoc 'id entry)))
+  (define location (string-append "/full?id=" id))
+  (display location))
+
 (define (maybe-display-preview entry)
   (define target-p (assoc 'target entry))
   (when target-p
     (let* ((registry-dir (dirname (cdr (assoc 'registry-path entry))))
            (target-fullpath (append-posix-path registry-dir (cdr target-p)))
            (target-id (cdr (assoc 'id entry))))
+      (display "<a href='") (display-full-link entry target-fullpath) (display "'>")
       (display-preview
-       (web-generate-preview target-id target-fullpath)))))
+       (web-generate-preview target-id target-fullpath))
+      (display "</a>")
+      )))
 
 (define (display-title entry)
   (display "<a href='/info/")
@@ -546,6 +554,24 @@
 
   (web-sendfile return! 'image/jpeg preview-fullpath))
 
+(define (full)
+  (define callctx (callcontext/p))
+  (define request (callcontext-request callctx))
+  (define ctxq (callcontext-query callctx))
+  (define id (hashmap-ref ctxq 'id #f))
+  (define entry (tegfs-get/cached id))
+  (define target (cdr (assoc 'target entry)))
+  (define location (string-append "http://localhost:8080/" target))
+
+  (return!
+   (build-response
+    #:code 301
+    #:headers
+    (append web-basic-headers
+            `((Location . ,location)
+              (Cache-Control . "no-cache"))))
+   #f))
+
 (define handlers-config
   `((/login ,login public)
     (/logincont ,logincont public)
@@ -554,7 +580,9 @@
     (/uploadcont ,uploadcont)
     (/entry ,entry)
     (/query ,query)
-    (/preview ,preview)))
+    (/preview ,preview)
+    (/full ,full)
+    ))
 
 (define handlers-funcmap
   (alist->hashmap
