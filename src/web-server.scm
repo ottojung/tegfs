@@ -364,8 +364,8 @@
               (Cache-Control . "no-cache"))))
    (~s entry)))
 
-(define web-preview-width 160)
-(define web-preview-height 90)
+(define web-preview-width 400)
+(define web-preview-height 225)
 
 (define (get-preview-by-id target-id)
   (define preview-directory
@@ -394,7 +394,7 @@
       "convert "
       " ~a "
       " -thumbnail ~a@ "
-      " -quality 80 "
+      " -quality 10 "
       " -gravity center "
       " -background transparent "
       " -extent ~ax~a "
