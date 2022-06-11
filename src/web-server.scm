@@ -473,8 +473,7 @@
 (define (display-title entry)
   (display "<a href='/info/")
   (display (cdr (assoc 'id entry)))
-  (display "'>")
-  (display "<button>")
+  (display "' style='color: white'>")
   (cond
    ((and (assoc 'title entry)
          (not (string-null? (cdr (assoc 'title entry)))))
@@ -484,7 +483,6 @@
     (display (cdr (assoc 'target entry))))
    (else
     (display (cdr (assoc 'id entry)))))
-  (display "</button>")
   (display "</a>")
   )
 
