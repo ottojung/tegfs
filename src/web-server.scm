@@ -476,12 +476,6 @@
     (with-output-to-string
       (lambda _
         (display "<div class='cards'>")
-        (for-each display-entry entries) ;; DEBUG: remove bottom once
-        (for-each display-entry entries)
-        (for-each display-entry entries)
-        (for-each display-entry entries)
-        (for-each display-entry entries)
-        (for-each display-entry entries)
         (for-each display-entry entries)
         (display "</div>")
         )))
