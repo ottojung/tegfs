@@ -507,13 +507,10 @@
 (define (query)
   (define callctx (callcontext/p))
   (define request (callcontext-request callctx))
+  (define ctxq (callcontext-query callctx))
   (define path (request-path-components request))
 
-  (define _11
-    (unless (= 2 (length path))
-      (not-found)))
-
-  (define query (cadr path))
+  (define query (hashmap-ref ctxq 'q ""))
   (define query/split (string->words query))
   (define entries (tegfs-query query/split))
 
@@ -596,7 +593,7 @@
 
   (dprintln "Got request: ~s" path-components)
 
-  (when (null? path-components)
+  (unless (list-singleton? path-components)
     (not-found))
 
   (let* ((root (car path-components))
