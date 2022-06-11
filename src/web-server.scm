@@ -227,30 +227,42 @@
 
   cookie-split)
 
+(define (web-query-get-by-key key query)
+  (define split (string-split/simple query #\&))
+  (define key-values
+    (map (lambda (sp)
+           (define decoded (uri-decode sp))
+           (define-values (key eq val) (string-split-3 #\= decoded))
+           (cons key val))
+         split))
+  (define got (assoc key key-values))
+  (and got (cdr got)))
+
 (define (check-permissions)
   (define callctx (callcontext/p))
   (define request (callcontext-request callctx))
-  (define headers (request-headers request))
-  (define cookies-p (assoc 'cookie headers))
 
-  ;; DEBUG: disabled authorization for some time
-  ;; (define _33
-  ;;   (unless (pair? cookies-p)
-  ;;     (permission-denied)))
+  (define access-token
+    (or
+     (let* ((uri (request-uri request))
+            (query/encoded (uri-query uri)))
+       (and query/encoded
+            (web-query-get-by-key "key" query/encoded)))
+     (let* ((headers (request-headers request))
+            (cookies-p (assoc 'cookie headers))
+            (do (unless (pair? cookies-p)
+                  (permission-denied)))
+            (cookies/string (cdr cookies-p))
+            (cookies (parse-cookies-string cookies/string))
+            (got (assoc "access" cookies)))
+      (and got (cdr got)))))
 
-  ;; (define cookies/string (cdr cookies-p))
-  ;; (define cookies (parse-cookies-string cookies/string))
+  (define ctx (context/p))
+  (define tokens (context-tokens ctx))
+  (define existing (hashmap-ref tokens access-token #f))
 
-  ;; (define access-cookie
-  ;;   (let ((got (assoc "access" cookies)))
-  ;;     (and got (cdr got))))
-
-  ;; (define ctx (context/p))
-  ;; (define tokens (context-tokens ctx))
-  ;; (define existing (hashmap-ref tokens access-cookie #f))
-
-  ;; (unless existing
-  ;;   (permission-denied))
+  (unless existing
+    (permission-denied))
 
   (values))
 
