@@ -547,21 +547,10 @@
 
   (web-sendfile return! 'image/jpeg preview-fullpath))
 
-(define (cookie1)
-  (define request (callcontext-request (callcontext/p)))
-  (respond
-   `(p (b "Hi!") (br) "there. Your headers are the following:"
-       ,(~s (request-headers request)))
-   #:extra-headers `(,(web-set-cookie-header "hi" "there"))))
-
-(define (hacker)
-  (values '((content-type . (text/plain))) "Hello hacker!"))
-
 (define handlers-config
   `((login ,login public)
     (logincont ,logincont public)
     (main.css ,main.css public)
-    (hacker ,hacker public)
     (upload ,upload)
     (uploadcont ,uploadcont)
     (entry ,entry)
