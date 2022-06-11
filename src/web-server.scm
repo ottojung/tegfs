@@ -63,7 +63,7 @@
 %use (categorization-filename) "./categorization-filename.scm"
 %use (tegfs-process-categorization-text) "./edit-tags.scm"
 %use (tegfs-add) "./add.scm"
-%use (tegfs-get) "./get.scm"
+%use (tegfs-get/cached) "./get.scm"
 %use (tegfs-query) "./query.scm"
 %use (sha256sum) "./sha256sum.scm"
 %use (parse-multipart-as-hashmap) "./web-parse-multipart.scm"
@@ -394,7 +394,7 @@
   (define id (hashmap-ref qH 'id #f))
 
   (define entry
-    (tegfs-get id))
+    (tegfs-get/cached id))
 
   (return!
    (build-response
@@ -530,7 +530,7 @@
   (define ctxq (callcontext-query callctx))
 
   (define target-id (hashmap-ref ctxq 't #f))
-  (define entry (tegfs-get target-id))
+  (define entry (tegfs-get/cached target-id))
   (define target-p (assoc 'target entry))
   (define target-fullpath
     (and target-p
