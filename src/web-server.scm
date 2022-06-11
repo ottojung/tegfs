@@ -105,9 +105,10 @@
   )
 
 (define-type9 <callcontext>
-  (callcontext-ctr break request body atoken) callcontext?
+  (callcontext-ctr break request query body atoken) callcontext?
   (break callcontext-break) ;; break handler
   (request callcontext-request) ;; client request
+  (query callcontext-query) ;; query hashmap
   (body callcontext-body) ;; client body
   (atoken callcontext-atoken set-callcontext-atoken!) ;; access token to-set to
   )
@@ -270,27 +271,14 @@
 
   cookie-split)
 
-(define (web-query-get-by-key key query)
-  (define split (string-split/simple query #\&))
-  (define key-values
-    (map (lambda (sp)
-           (define decoded (uri-decode sp))
-           (define-values (key eq val) (string-split-3 #\= decoded))
-           (cons key val))
-         split))
-  (define got (assoc key key-values))
-  (and got (cdr got)))
-
 (define (check-permissions)
   (define callctx (callcontext/p))
   (define request (callcontext-request callctx))
+  (define qH (callcontext-query callctx))
 
   (define atoken
     (or
-     (let* ((uri (request-uri request))
-            (query/encoded (uri-query uri))
-            (ret (and query/encoded
-                      (web-query-get-by-key "key" query/encoded))))
+     (let* ((ret (hashmap-ref qH 'key #f)))
        (when ret (login-user! ret))
        ret)
      (let* ((headers (request-headers request))
@@ -649,8 +637,22 @@
 (define callcontext/p
   (make-parameter #f))
 
+(define (query->hashmap query)
+  (define split (string-split/simple query #\&))
+  (define key-values
+    (map (lambda (sp)
+           (define decoded (uri-decode sp))
+           (define-values (key eq val) (string-split-3 #\= decoded))
+           (when (string-null? eq) (raisu 'bad-query query))
+           (cons (string->symbol key) val))
+         split))
+  (alist->hashmap key-values))
+
 (define (make-callcontext break request body)
-  (callcontext-ctr break request body #f))
+  (define uri (request-uri request))
+  (define query/encoded (uri-query uri))
+  (define qH (if query/encoded (query->hashmap query/encoded) (make-hashmap)))
+  (callcontext-ctr break request qH body #f))
 
 (define (make-handler)
   (lambda (request body)
