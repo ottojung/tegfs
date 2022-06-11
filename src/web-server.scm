@@ -394,6 +394,7 @@
       "convert "
       " ~a "
       " -thumbnail ~a@ "
+      " -quality 80 "
       " -gravity center "
       " -background transparent "
       " -extent ~ax~a "
