@@ -313,7 +313,6 @@
 (define (uploadcont)
   (define callctx (callcontext/p))
   (define request (callcontext-request callctx))
-  (define headers (request-headers request))
   (define body/bytes (callcontext-body callctx))
   (define body/hash (parse-multipart-as-hashmap body/bytes))
 
