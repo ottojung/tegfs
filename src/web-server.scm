@@ -427,15 +427,9 @@
 (define (display-preview target-id target-fullpath)
   (define preview-fullpath (get-preview-internet-path target-id))
   (define file-type (get-file-type target-fullpath))
-  (case file-type
-    ((text)
-     (display
-      (sxml->xml
-       `(pre (code ,(read-file-head))))))
-    (else
-     (display "<img src=")
-     (write preview-fullpath)
-     (display "/>"))))
+  (display "<img src=")
+  (write preview-fullpath)
+  (display "/>"))
 
 (define (display-full-link entry target-fullpath)
   (define id (cdr (assoc 'id entry)))
