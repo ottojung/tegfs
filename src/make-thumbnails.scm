@@ -35,6 +35,10 @@
 %use (file-delete) "./euphrates/file-delete.scm"
 %use (dprintln) "./euphrates/dprintln.scm"
 %use (file-or-directory-exists?) "./euphrates/file-or-directory-exists-q.scm"
+%use (alist->hashmap hashmap->alist) "./euphrates/ihashmap.scm"
+%use (list->hashset hashset-ref) "./euphrates/ihashset.scm"
+%use (compose-under) "./euphrates/compose-under.scm"
+%use (file-size) "./euphrates/file-size.scm"
 
 %use (web-preview-width) "./web-preview-width.scm"
 %use (web-preview-height) "./web-preview-height.scm"
@@ -126,6 +130,14 @@
       (loop (cdr screenshots))))
 
   (let* ((created (filter file-or-directory-exists? screenshots))
+         (unique
+          (let ((S
+                 (list->hashset
+                  (map cdr
+                       (hashmap->alist
+                        (alist->hashmap
+                         (map (compose-under cons file-size identity) created)))))))
+            (filter (comp (hashset-ref S)) created)))
          (status
           (system-fmt
            (string-append
@@ -138,7 +150,7 @@
             " -gravity center "
             " -background transparent "
             " -extent ~ax~a "
-            (words->string (reverse created))
+            (words->string (reverse unique))
             " "
             <output>)
            web-preview-width web-preview-height
