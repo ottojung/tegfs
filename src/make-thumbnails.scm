@@ -82,6 +82,8 @@
 
 (define tegfs-n-thumbnails 20)
 
+;; TODO: Maybe do video previews that are videos
+;;       Take a look: https://stackoverflow.com/questions/42747935/cut-multiple-videos-and-merge-with-ffmpeg
 (define (tegfs-make-video-thumbnails <input> <output>)
   (define-pair (probe status) (system-re "ffprobe ~a 2>&1" <input>))
   (define _121312
