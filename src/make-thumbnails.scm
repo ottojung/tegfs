@@ -39,6 +39,7 @@
 %use (list->hashset hashset-ref) "./euphrates/ihashset.scm"
 %use (compose-under) "./euphrates/compose-under.scm"
 %use (file-size) "./euphrates/file-size.scm"
+%use (make-directories) "./euphrates/make-directories.scm"
 
 %use (web-preview-width) "./web-preview-width.scm"
 %use (web-preview-height) "./web-preview-height.scm"
@@ -80,8 +81,6 @@
    <output>)
   #t)
 
-(define tegfs-n-thumbnails 20)
-
 ;; TODO: Maybe do video previews that are videos
 ;;       Take a look: https://stackoverflow.com/questions/42747935/cut-multiple-videos-and-merge-with-ffmpeg
 (define (tegfs-make-video-thumbnails <input> <output>)
@@ -100,47 +99,23 @@
              ((lambda (s) (string-strip s ",")))
              string->seconds/columned))
 
-  (define screenshots
-    (map
-     (lambda _
-       (string-append (make-temporary-filename) ".png"))
-     (range tegfs-n-thumbnails)))
+  (define dir (make-temporary-filename))
+  (define _1231 (make-directories dir))
 
-  (let loop ((screenshots screenshots))
-    (define ss
-      (exact->inexact
-       (* (length screenshots)
-          (/ seconds (+ 1 tegfs-n-thumbnails)))))
+  (define n-thumbnails 20)
+  (define rate
+    (inexact->exact
+     (ceiling
+      (/ seconds n-thumbnails))))
 
-    (unless (null? screenshots)
-      (let* ((shot (car screenshots))
-             (status
-              (system-fmt
-               (string-append
-                "echo | "
-                " ffmpeg "
-                " -loglevel fatal "
-                " -ss ~a "
-                " -i ~a "
-                " -vf select='eq(pict_type\\,I)' "
-                " -vframes 1 "
-                " ~a "
-                )
-               ss <input> shot)))
-        (unless (= 0 status)
-          (raisu 'ffmpeg-failed status)))
-      (loop (cdr screenshots))))
+  (let* ((status
+          (system-fmt
+           (string-append "echo | ffmpeg -loglevel error -i ~a -vf fps=1/~a ~a/t%04d.png")
+           <input> rate dir)))
+    (unless (= 0 status)
+      (raisu 'ffmpeg-failed status)))
 
-  (let* ((created (filter file-or-directory-exists? screenshots))
-         (unique
-          (let ((S
-                 (list->hashset
-                  (map cdr
-                       (hashmap->alist
-                        (alist->hashmap
-                         (map (compose-under cons file-size identity) created)))))))
-            (filter (comp (hashset-ref S)) created)))
-         (status
+  (let* ((status
           (system-fmt
            (string-append
             "convert "
@@ -152,13 +127,15 @@
             " -gravity center "
             " -background transparent "
             " -extent ~ax~a "
-            (words->string (reverse unique))
-            " "
-            <output>)
+            " ~a/*.png"
+            " ~a "
+            " ; rm -rf ~a")
            web-preview-width web-preview-height
-           web-preview-width web-preview-height)))
+           web-preview-width web-preview-height
+           dir
+           <output>
+           dir)))
     (unless (= 0 status)
-      (raisu 'imagemagick-failed status))
-    (for-each file-delete created))
+      (raisu 'imagemagick-failed status)))
 
   #t)
