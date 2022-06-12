@@ -81,11 +81,11 @@
 %use (web-login-success-body) "./web-login-success-body.scm"
 %use (web-message-template) "./web-message-template.scm"
 %use (web-make-upload-body) "./web-make-upload-body.scm"
-%use (file-is-image?) "./file-is-image-q.scm"
 %use (web-sendfile) "./web-sendfile.scm"
 %use (entry-registry-path-key) "./entry-registry-path-key.scm"
 %use (web-preview-height) "./web-preview-height.scm"
 %use (web-preview-width) "./web-preview-width.scm"
+%use (tegfs-make-thumbnails) "./make-thumbnails.scm"
 
 %use (debug) "./euphrates/debug.scm"
 %use (debugv) "./euphrates/debugv.scm"
@@ -436,11 +436,7 @@
   (string-append "/preview?t=" target-id))
 
 (define (web-generate-preview target-id target-fullpath)
-  (cond
-   ((file-is-image? target-fullpath)
-    (generate-preview-internet-path target-id))
-   (else
-    (generate-preview-internet-path "unavailable"))))
+  (generate-preview-internet-path target-id))
 
 (define (display-preview preview-fullpath)
   (display "<img src=")
@@ -517,36 +513,13 @@
 
   (respond str))
 
-(define (web-make-image-preview target-id target-fullpath)
+(define (web-make-preview target-id target-fullpath entry)
   (define preview-fullpath
     (get-preview-by-id target-id))
 
-  (unless (file-or-directory-exists? preview-fullpath)
-    ;; TODO: check exit code
-    (system-fmt
-     (string-append
-      "convert "
-      " ~a "
-      " -thumbnail ~a@ "
-      " -quality 10 "
-      " -gravity center "
-      " -background transparent "
-      " -extent ~ax~a "
-      " ~a "
-      )
-     target-fullpath
-     (* web-preview-width web-preview-height)
-     web-preview-width web-preview-height
-     preview-fullpath))
-
-  preview-fullpath)
-
-(define (web-make-preview target-id target-fullpath entry)
-  (cond
-   ((file-is-image? target-fullpath)
-    (web-make-image-preview target-id target-fullpath))
-   (else
-    'TODO)))
+  (and (or (file-or-directory-exists? preview-fullpath)
+           (tegfs-make-thumbnails target-fullpath preview-fullpath))
+       preview-fullpath))
 
 (define (entry-target-fullpath entry)
   (define target-p (assoc 'target entry))
@@ -565,32 +538,30 @@
 (define unavailable-bytevector
   (string->utf8 unavailable-image-string))
 
+(define unavailable-response
+  (build-response
+   #:code 200
+   #:headers
+   (append web-basic-headers
+           `((content-type . (image/svg+xml))
+             (Cache-Control . "max-age=3600, public, private")))))
+
 (define (preview-unavailable)
-  (return!
-   (build-response
-    #:code 200
-    #:headers
-    (append web-basic-headers
-            `((content-type . (image/svg+xml))
-              (Cache-Control . "max-age=3600, public, private"))))
-   unavailable-bytevector))
-
-(define (preview-available target-id)
-  (define entry (tegfs-get/cached target-id))
-  (define target-fullpath (entry-target-fullpath entry))
-  (define preview-fullpath
-    (web-make-preview target-id target-fullpath entry))
-
-  (web-sendfile return! 'image/jpeg preview-fullpath))
+  (return! unavailable-response unavailable-bytevector))
 
 (define (preview)
   (define callctx (callcontext/p))
   (define request (callcontext-request callctx))
   (define ctxq (callcontext-query callctx))
   (define target-id (hashmap-ref ctxq 't #f))
-  (if (equal? target-id "unavailable")
-      (preview-unavailable)
-      (preview-available target-id)))
+  (define entry (tegfs-get/cached target-id))
+  (define target-fullpath (entry-target-fullpath entry))
+  (define preview-fullpath
+    (web-make-preview target-id target-fullpath entry))
+
+  (if preview-fullpath
+      (web-sendfile return! 'image/jpeg preview-fullpath)
+      (preview-unavailable)))
 
 (define (full)
   (define ctx (context/p))
