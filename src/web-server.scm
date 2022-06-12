@@ -98,11 +98,13 @@
 %end
 
 (define-type9 <context>
-  (context-ctr passwords database tokens fileserver) context?
+  (context-ctr passwords database tokens fileserver sharedir filemap) context?
   (passwords context-passwords) ;; user credentials passwords
   (database context-database) ;; tag database
   (tokens context-tokens) ;; temporary session tokens
   (fileserver context-fileserver) ;; full URI of the file server
+  (sharedir context-sharedir) ;; directory with shared wiles
+  (filemap context-filemap) ;; hashmap of type [: id -> shared filepath]
   )
 
 (define-type9 <callcontext>
@@ -559,6 +561,8 @@
 (define (full)
   (define ctx (context/p))
   (define fileserver (context-fileserver ctx))
+  (define sharedir (context-sharedir ctx))
+  (define filemap (context-filemap ctx))
   (define callctx (callcontext/p))
   (define request (callcontext-request callctx))
   (define ctxq (callcontext-query callctx))
@@ -631,6 +635,11 @@
   (define fileserver
     (or (system-environment-get "TEGFS_FILESERVER")
         (raisu 'no-fileserver "Variable $TEGFS_FILESERVER must be set when starting the server")))
+  (define sharedir
+    (or (system-environment-get "TEGFS_SHAREDIR")
+        (raisu 'no-fileserver "Variable $TEGFS_SHAREDIR must be set when starting the server")))
+  (define filemap
+    (make-hashmap))
   (define auth-file
     (append-posix-path (root/p) "auth.tegfs.lisp"))
   (define _1
@@ -642,6 +651,9 @@
              ((fn open-file-port % "r"))
              read-list))
 
+  (unless (file-or-directory-exists? sharedir)
+    (make-directories sharedir))
+
   (for-each
    (lambda (user)
      (define first (cadr user))
@@ -649,7 +661,7 @@
      (hashmap-set! passwords pass #t))
    auth-lines)
 
-  (context-ctr passwords database tokens fileserver))
+  (context-ctr passwords database tokens fileserver sharedir filemap))
 
 (define callcontext/p
   (make-parameter #f))
