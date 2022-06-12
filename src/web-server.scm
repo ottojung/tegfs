@@ -86,6 +86,8 @@
 %use (web-preview-height) "./web-preview-height.scm"
 %use (web-preview-width) "./web-preview-width.scm"
 %use (tegfs-make-thumbnails) "./make-thumbnails.scm"
+%use (file-is-image?) "./file-is-image-q.scm"
+%use (file-is-video?) "./file-is-video-q.scm"
 
 %use (debug) "./euphrates/debug.scm"
 %use (debugv) "./euphrates/debugv.scm"
@@ -419,11 +421,16 @@
               (Cache-Control . "no-cache"))))
    (~s entry)))
 
-(define (get-preview-by-id target-id)
+(define (get-preview-by-id target-id target-fullpath)
   (define preview-directory
     (append-posix-path (root/p) "cache" "preview"))
   (define preview-name
-    (string-append target-id ".jpeg"))
+    (string-append
+     target-id
+     (cond
+      ((file-is-image? target-fullpath) ".jpeg")
+      ((file-is-video? target-fullpath) ".gif")
+      (else "TODO???"))))
   (define preview-fullpath
     (append-posix-path preview-directory preview-name))
 
@@ -515,7 +522,7 @@
 
 (define (web-make-preview target-id target-fullpath entry)
   (define preview-fullpath
-    (get-preview-by-id target-id))
+    (get-preview-by-id target-id target-fullpath))
 
   (and (or (file-or-directory-exists? preview-fullpath)
            (tegfs-make-thumbnails target-fullpath preview-fullpath))
