@@ -104,7 +104,7 @@
     (define ss
       (exact->inexact
        (* (length screenshots)
-          (/ seconds tegfs-n-thumbnails))))
+          (/ seconds (+ 1 tegfs-n-thumbnails)))))
 
     (unless (null? screenshots)
       (let* ((shot (car screenshots))
