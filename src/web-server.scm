@@ -84,6 +84,8 @@
 %use (file-is-image?) "./file-is-image-q.scm"
 %use (web-sendfile) "./web-sendfile.scm"
 %use (entry-registry-path-key) "./entry-registry-path-key.scm"
+%use (web-preview-height) "./web-preview-height.scm"
+%use (web-preview-width) "./web-preview-width.scm"
 
 %use (debug) "./euphrates/debug.scm"
 %use (debugv) "./euphrates/debugv.scm"
@@ -416,9 +418,6 @@
             `((content-type . (text/plain))
               (Cache-Control . "no-cache"))))
    (~s entry)))
-
-(define web-preview-width 400)
-(define web-preview-height 225)
 
 (define (get-preview-by-id target-id)
   (define preview-directory
