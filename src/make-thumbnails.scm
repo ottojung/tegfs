@@ -134,12 +134,14 @@
             " -layers optimize "
             " -delay 100 "
             " -loop 0 "
+            " -thumbnail '~ax~a>' "
             " -gravity center "
             " -background transparent "
             " -extent ~ax~a "
             (words->string (reverse created))
             " "
             <output>)
+           web-preview-width web-preview-height
            web-preview-width web-preview-height)))
     (unless (= 0 status)
       (raisu 'imagemagick-failed status))
