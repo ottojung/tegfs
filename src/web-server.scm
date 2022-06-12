@@ -116,6 +116,11 @@
   (key callcontext-key set-callcontext-key!) ;; access key to-set to
   )
 
+(define-type9 <sharedinfo>
+  (sharedinfo-ctr name) sharedinfo?
+  (name sharedinfo-name) ;; mapped filename
+  )
+
 (define upload-registry-filename "upload/upload.tegfs.reg.lisp")
 
 (define (return! stats body)
@@ -541,6 +546,12 @@
    (else
     'TODO)))
 
+(define (entry-target-fullpath entry)
+  (define target-p (assoc 'target entry))
+  (and target-p
+       (let* ((registry-dir (dirname (cdr (assoc 'registry-path entry)))))
+         (append-posix-path registry-dir (cdr target-p)))))
+
 (define (preview)
   (define callctx (callcontext/p))
   (define request (callcontext-request callctx))
@@ -548,11 +559,7 @@
 
   (define target-id (hashmap-ref ctxq 't #f))
   (define entry (tegfs-get/cached target-id))
-  (define target-p (assoc 'target entry))
-  (define target-fullpath
-    (and target-p
-         (let* ((registry-dir (dirname (cdr (assoc 'registry-path entry)))))
-           (append-posix-path registry-dir (cdr target-p)))))
+  (define target-fullpath (entry-target-fullpath entry))
   (define preview-fullpath
     (web-make-preview target-id target-fullpath entry))
 
@@ -568,8 +575,14 @@
   (define ctxq (callcontext-query callctx))
   (define id (hashmap-ref ctxq 'id #f))
   (define entry (tegfs-get/cached id))
-  (define target (cdr (assoc 'target entry)))
-  (define location (string-append fileserver target))
+  (define target-fullpath (entry-target-fullpath entry))
+  (define shared-name (get-random-basename))
+  (define shared-fullpath (append-posix-path sharedir shared-name))
+  (define location (string-append fileserver shared-name))
+  (define info (sharedinfo-ctr shared-name))
+
+  (hashmap-set! filemap id info)
+  (symlink target-fullpath shared-fullpath)
 
   (return!
    (build-response
