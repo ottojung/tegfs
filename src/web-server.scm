@@ -98,10 +98,11 @@
 %end
 
 (define-type9 <context>
-  (context-ctr passwords database tokens) context?
+  (context-ctr passwords database tokens fileserver) context?
   (passwords context-passwords) ;; user credentials passwords
   (database context-database) ;; tag database
   (tokens context-tokens) ;; temporary session tokens
+  (fileserver context-fileserver) ;; full URI of the file server
   )
 
 (define-type9 <callcontext>
@@ -556,13 +557,15 @@
   (web-sendfile return! 'image/jpeg preview-fullpath))
 
 (define (full)
+  (define ctx (context/p))
+  (define fileserver (context-fileserver ctx))
   (define callctx (callcontext/p))
   (define request (callcontext-request callctx))
   (define ctxq (callcontext-query callctx))
   (define id (hashmap-ref ctxq 'id #f))
   (define entry (tegfs-get/cached id))
   (define target (cdr (assoc 'target entry)))
-  (define location (string-append "http://localhost:8080/" target))
+  (define location (string-append fileserver target))
 
   (return!
    (build-response
@@ -625,6 +628,9 @@
   (define database (make-hashmap))
   (define tokens (make-hashmap))
 
+  (define fileserver
+    (or (system-environment-get "TEGFS_FILESERVER")
+        (raisu 'no-fileserver "Variable $TEGFS_FILESERVER must be set when starting the server")))
   (define auth-file
     (append-posix-path (root/p) "auth.tegfs.lisp"))
   (define _1
@@ -643,7 +649,7 @@
      (hashmap-set! passwords pass #t))
    auth-lines)
 
-  (context-ctr passwords database tokens))
+  (context-ctr passwords database tokens fileserver))
 
 (define callcontext/p
   (make-parameter #f))
