@@ -27,8 +27,9 @@
 (define (entries-for-each fn)
   (for-each
    (lambda (registry-path0)
-     (define registry-path (append-posix-path (root/p) registry-path0))
-     (define input-port (open-file-port registry-path "r"))
+     (define registry-path (append-posix-path registry-path0))
+     (define registry-fullpath (append-posix-path (root/p) registry-path))
+     (define input-port (open-file-port registry-fullpath "r"))
      (for-each (lambda (x)
                  (fn (cons (cons entry-registry-path-key registry-path) x)))
                (read-list input-port)))
