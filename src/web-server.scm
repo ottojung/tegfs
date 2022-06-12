@@ -287,16 +287,16 @@
      (or (get-cookie "key" request)
          (get-cookie "pwdtoken" request)))))
 
-(define (check-permissions)
+(define (get-permissions)
   (define token (get-access-token))
   (define ctx (context/p))
   (define tokens (context-tokens ctx))
   (define existing (hashmap-ref tokens token #f))
+  existing)
 
-  (unless existing
-    (permission-denied))
-
-  (values))
+(define (check-permissions)
+  (unless (get-permissions)
+    (permission-denied)))
 
 (define (error-tags-list tags)
   (static-error-message 400 (string-append "Some tags are ambiguous: " (~a tags))))
