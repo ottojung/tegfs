@@ -34,6 +34,7 @@
 %use (make-temporary-filename) "./euphrates/make-temporary-filename.scm"
 %use (file-delete) "./euphrates/file-delete.scm"
 %use (dprintln) "./euphrates/dprintln.scm"
+%use (file-or-directory-exists?) "./euphrates/file-or-directory-exists-q.scm"
 
 %use (web-preview-width) "./web-preview-width.scm"
 %use (web-preview-height) "./web-preview-height.scm"
@@ -101,10 +102,9 @@
 
   (let loop ((screenshots screenshots))
     (define ss
-      (inexact->exact
-       (floor
-        (* (length screenshots)
-           (/ seconds tegfs-n-thumbnails)))))
+      (exact->inexact
+       (* (length screenshots)
+          (/ seconds tegfs-n-thumbnails))))
 
     (unless (null? screenshots)
       (let* ((shot (car screenshots))
@@ -125,24 +125,24 @@
           (raisu 'ffmpeg-failed status)))
       (loop (cdr screenshots))))
 
-  (let ((status
-         (system-fmt
-          (string-append
-           "convert "
-           " -coalesce +dither "
-           " -layers optimize "
-           " -delay 100 "
-           " -loop 0 "
-           " -gravity center "
-           " -background transparent "
-           " -extent ~ax~a "
-           (words->string (reverse screenshots))
-           " "
-           <output>)
-          web-preview-width web-preview-height)))
+  (let* ((created (filter file-or-directory-exists? screenshots))
+         (status
+          (system-fmt
+           (string-append
+            "convert "
+            " -coalesce +dither "
+            " -layers optimize "
+            " -delay 100 "
+            " -loop 0 "
+            " -gravity center "
+            " -background transparent "
+            " -extent ~ax~a "
+            (words->string (reverse created))
+            " "
+            <output>)
+           web-preview-width web-preview-height)))
     (unless (= 0 status)
-      (raisu 'imagemagick-failed status)))
-
-  (for-each file-delete screenshots)
+      (raisu 'imagemagick-failed status))
+    (for-each file-delete created))
 
   #t)
