@@ -86,8 +86,8 @@
 %use (web-preview-height) "./web-preview-height.scm"
 %use (web-preview-width) "./web-preview-width.scm"
 %use (tegfs-make-thumbnails) "./make-thumbnails.scm"
-%use (file-is-image?) "./file-is-image-q.scm"
-%use (file-is-video?) "./file-is-video-q.scm"
+%use (get-file-type) "./get-file-type.scm"
+%use (read-file-head) "./read-file-head.scm"
 
 %use (debug) "./euphrates/debug.scm"
 %use (debugv) "./euphrates/debugv.scm"
@@ -421,35 +421,21 @@
               (Cache-Control . "no-cache"))))
    (~s entry)))
 
-(define (get-preview-by-id target-id target-fullpath)
-  (define preview-directory
-    (append-posix-path (root/p) "cache" "preview"))
-  (define preview-name
-    (string-append
-     target-id
-     (cond
-      ((file-is-image? target-fullpath) ".jpeg")
-      ((file-is-video? target-fullpath) ".gif")
-      (else "TODO???"))))
-  (define preview-fullpath
-    (append-posix-path preview-directory preview-name))
-
-  (unless (file-or-directory-exists? preview-directory)
-    (make-directories preview-directory))
-
-  preview-fullpath)
-
-(define (generate-preview-internet-path target-id)
+(define (get-preview-internet-path target-id)
   (string-append "/preview?t=" target-id))
 
-(define (web-generate-preview target-id target-fullpath)
-  (generate-preview-internet-path target-id))
-
-(define (display-preview preview-fullpath)
-  (display "<img src=")
-  (write preview-fullpath)
-  (display "/>")
-  )
+(define (display-preview target-id target-fullpath)
+  (define preview-fullpath (get-preview-internet-path target-id))
+  (define file-type (get-file-type target-fullpath))
+  (case file-type
+    ((text)
+     (display
+      (sxml->xml
+       `(pre (code ,(read-file-head))))))
+    (else
+     (display "<img src=")
+     (write preview-fullpath)
+     (display "/>"))))
 
 (define (display-full-link entry target-fullpath)
   (define id (cdr (assoc 'id entry)))
@@ -461,8 +447,7 @@
   (when target-fullpath
     (let* ((target-id (cdr (assoc 'id entry))))
       (display "<a href='") (display-full-link entry target-fullpath) (display "'>")
-      (display-preview
-       (web-generate-preview target-id target-fullpath))
+      (display-preview target-id target-fullpath)
       (display "</a>")
       )))
 
@@ -519,6 +504,25 @@
         )))
 
   (respond str))
+
+(define (get-preview-by-id target-id target-fullpath)
+  (define preview-directory
+    (append-posix-path (root/p) "cache" "preview"))
+  (define file-type (get-file-type target-fullpath))
+  (define preview-name
+    (string-append
+     target-id
+     (case file-type
+      ((image) ".jpeg")
+      ((video) ".gif")
+      (else "TODO???"))))
+  (define preview-fullpath
+    (append-posix-path preview-directory preview-name))
+
+  (unless (file-or-directory-exists? preview-directory)
+    (make-directories preview-directory))
+
+  preview-fullpath)
 
 (define (web-make-preview target-id target-fullpath entry)
   (define preview-fullpath
