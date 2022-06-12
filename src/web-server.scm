@@ -58,6 +58,8 @@
 %use (path-extension) "./euphrates/path-extension.scm"
 %use (dprintln) "./euphrates/dprintln.scm"
 %use (list-singleton?) "./euphrates/list-singleton-q.scm"
+%use (absolute-posix-path?) "./euphrates/absolute-posix-path-q.scm"
+%use (get-current-directory) "./euphrates/get-current-directory.scm"
 
 %use (root/p) "./root-p.scm"
 %use (categorization-filename) "./categorization-filename.scm"
@@ -79,6 +81,7 @@
 %use (web-make-upload-body) "./web-make-upload-body.scm"
 %use (file-is-image?) "./file-is-image-q.scm"
 %use (web-sendfile) "./web-sendfile.scm"
+%use (entry-registry-path-key) "./entry-registry-path-key.scm"
 
 %use (debug) "./euphrates/debug.scm"
 %use (debugv) "./euphrates/debugv.scm"
@@ -450,11 +453,9 @@
   (display location))
 
 (define (maybe-display-preview entry)
-  (define target-p (assoc 'target entry))
-  (when target-p
-    (let* ((registry-dir (dirname (cdr (assoc 'registry-path entry))))
-           (target-fullpath (append-posix-path registry-dir (cdr target-p)))
-           (target-id (cdr (assoc 'id entry))))
+  (define target-fullpath (entry-target-fullpath entry))
+  (when target-fullpath
+    (let* ((target-id (cdr (assoc 'id entry))))
       (display "<a href='") (display-full-link entry target-fullpath) (display "'>")
       (display-preview
        (web-generate-preview target-id target-fullpath))
@@ -549,8 +550,8 @@
 (define (entry-target-fullpath entry)
   (define target-p (assoc 'target entry))
   (and target-p
-       (let* ((registry-dir (dirname (cdr (assoc 'registry-path entry)))))
-         (append-posix-path registry-dir (cdr target-p)))))
+       (let* ((registry-dir (dirname (cdr (assoc entry-registry-path-key entry)))))
+         (append-posix-path (root/p) registry-dir (cdr target-p)))))
 
 (define (preview)
   (define callctx (callcontext/p))
@@ -576,13 +577,16 @@
   (define id (hashmap-ref ctxq 'id #f))
   (define entry (tegfs-get/cached id))
   (define target-fullpath (entry-target-fullpath entry))
+  (define target-fullpath/abs
+    (if (absolute-posix-path? target-fullpath) target-fullpath
+        (append-posix-path (get-current-directory) target-fullpath)))
   (define shared-name (get-random-basename))
   (define shared-fullpath (append-posix-path sharedir shared-name))
   (define location (string-append fileserver shared-name))
   (define info (sharedinfo-ctr shared-name))
 
   (hashmap-set! filemap id info)
-  (symlink target-fullpath shared-fullpath)
+  (symlink target-fullpath/abs shared-fullpath)
 
   (return!
    (build-response
