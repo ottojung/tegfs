@@ -56,6 +56,7 @@
 %use (alphanum-lowercase/alphabet) "./euphrates/alphanum-lowercase-alphabet.scm"
 %use (printf) "./euphrates/printf.scm"
 %use (path-extension) "./euphrates/path-extension.scm"
+%use (path-extensions) "./euphrates/path-extensions.scm"
 %use (dprintln) "./euphrates/dprintln.scm"
 %use (list-singleton?) "./euphrates/list-singleton-q.scm"
 %use (absolute-posix-path?) "./euphrates/absolute-posix-path-q.scm"
@@ -580,7 +581,8 @@
   (define target-fullpath/abs
     (if (absolute-posix-path? target-fullpath) target-fullpath
         (append-posix-path (get-current-directory) target-fullpath)))
-  (define shared-name (get-random-basename))
+  (define shared-name
+    (string-append (get-random-basename) (path-extensions target-fullpath)))
   (define shared-fullpath (append-posix-path sharedir shared-name))
   (define location (string-append fileserver shared-name))
   (define info (sharedinfo-ctr shared-name))
