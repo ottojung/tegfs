@@ -128,8 +128,9 @@
          ;; NOTE: some websites (looking at you 8chan) require referer to be set to its domain name, which is silly!! and which is stupid >:
          (domain-name (url-get-domain-name url))
          (headers (string-append "referer: " (~s domain-name))))
-    (unless (= 0 (system-fmt "curl -H ~a ~a --output ~a" headers url target))
-      (fatal "Could not download ~s" url))
+    (unless (= 0 (system-fmt "curl --fail ~a --output ~a" url target))
+      (unless (= 0 (system-fmt "curl --fail -H ~a ~a --output ~a" headers url target))
+        (fatal "Could not download ~s" url)))
     target))
 
 (define (get-file-mimetype target)
