@@ -1,6 +1,6 @@
 [submodule "deps/euphrates"]
 	path = deps/euphrates
-	url = git://vauplace.xyz/euphrates.git
+	url = git://vau.place/euphrates.git
 [submodule "deps/czempak"]
 	path = deps/czempak
-	url = git://vauplace.xyz/czempak.git
+	url = git://vau.place/czempak.git
