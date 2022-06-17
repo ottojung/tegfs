@@ -36,6 +36,7 @@
 %use (tegfs-query/parse) "./query.scm"
 %use (tegfs-get/parse) "./get.scm"
 %use (tegfs-make-thumbnails/parse) "./make-thumbnails.scm"
+%use (tegfs-config/parse) "./config.scm"
 %use (fatal) "./fatal.scm"
 %use (root/p) "./root-p.scm"
 
@@ -52,10 +53,11 @@
       /      categorize
       /      prolog
       /      query QUERYOPT+
-      /      get GETOPT+
+      /      get GETOPT
       /      status
       /      serve
       /      make-thumbnails THUMBOPT
+      /      config CONFIGOPT
       ADDOPT : --target <add-target>
       /        --title <title>
       /        --tag <tag...>
@@ -67,6 +69,8 @@
       QUERYOPT : <query...>
       GETOPT : <getid>
       THUMBOPT : <target> <output>
+      CONFIGOPT : get <name>
+      /           set <name> <value>
       ROOT : --root <root>
       )
 
@@ -93,8 +97,9 @@
         (serve (tegfs-serve/parse))
         (prolog (tegfs-prolog/parse))
         (query (tegfs-query/parse <query...>))
-        (get (tegfs-get/parse <getid>))
+        ((and get <getid>) (tegfs-get/parse <getid>))
         (make-thumbnails (tegfs-make-thumbnails/parse <target> <output>))
+        (config (tegfs-config/parse get set <name> <value>))
         (status
          (display "NOT IMPLEMENTED YET") (newline)
          (exit 1))

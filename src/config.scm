@@ -1,0 +1,40 @@
+;;;; Copyright (C) 2022  Otto Jung
+;;;;
+;;;; This program is free software: you can redistribute it and/or modify
+;;;; it under the terms of the GNU General Public License as published by
+;;;; the Free Software Foundation; version 3 of the License.
+;;;;
+;;;; This program is distributed in the hope that it will be useful,
+;;;; but WITHOUT ANY WARRANTY; without even the implied warranty of
+;;;; MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+;;;; GNU General Public License for more details.
+;;;;
+;;;; You should have received a copy of the GNU General Public License
+;;;; along with this program.  If not, see <http://www.gnu.org/licenses/>.
+
+%run guile
+
+%var tegfs-config/parse
+
+%use (get-config) "./get-config.scm"
+%use (set-config) "./set-config.scm"
+%use (fatal) "./fatal.scm"
+
+%use (debugv) "./euphrates/debugv.scm"
+%use (debug) "./euphrates/debug.scm"
+
+(define (tegfs-config/parse get set <name> <value>)
+  (define config (get-config))
+
+  (unless config
+    (fatal "Could not parse the config"))
+
+  (cond
+   (get
+    (let ((p (assoc (string->symbol <name>) config)))
+      (if p
+          (display (cadr p))
+          (display "Not set\n" (current-error-port)))))
+   (set
+    (set-config (string->symbol <name>) (list <value>))
+    (display "Ok\n" (current-error-port)))))
