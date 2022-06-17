@@ -2,8 +2,11 @@
 
 set -x
 
-printf '(users (user ((pass "' > "$TEST_ROOT/config.tegfs.lisp"
-printf '%s' pass1 | sha256sum | cut '-d ' -f 1 | tr -d '\n' >> "$TEST_ROOT/config.tegfs.lisp"
-printf '"))))\n' >> "$TEST_ROOT/config.tegfs.lisp"
-TEGFS_FILESERVER="http://localhost:8082/" TEGFS_SHAREDIR="/tmp/tegfs-share" TEGFS_ROOT="$TEST_ROOT" \
-	dist/tegfs serve
+PASS="$(printf '%s' pass1 | sha256sum | cut '-d ' -f 1 | tr -d '\n')"
+
+printf > "$TEST_ROOT/config.tegfs.lisp"
+printf '(users (user ((pass "%s"))))\n' "$PASS" >> "$TEST_ROOT/config.tegfs.lisp"
+printf '(fileserver "http://localhost:8082/")\n' >> "$TEST_ROOT/config.tegfs.lisp"
+printf '(sharedir "/tmp/tegfs-share")\n' >> "$TEST_ROOT/config.tegfs.lisp"
+
+TEGFS_ROOT="$TEST_ROOT" dist/tegfs serve

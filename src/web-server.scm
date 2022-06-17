@@ -700,12 +700,6 @@
   (define database (make-hashmap))
   (define tokens (make-hashmap))
 
-  (define fileserver
-    (or (system-environment-get "TEGFS_FILESERVER")
-        (raisu 'no-fileserver "Variable $TEGFS_FILESERVER must be set when starting the server")))
-  (define sharedir
-    (or (system-environment-get "TEGFS_SHAREDIR")
-        (raisu 'no-fileserver "Variable $TEGFS_SHAREDIR must be set when starting the server")))
   (define filemap
     (make-hashmap))
   (define config
@@ -719,6 +713,14 @@
      (or (assoc 'users config)
          (raisu 'no-config-file
                 "Config file needs to be present when starting the server"))))
+  (define fileserver
+    (cadr
+     (or (assoc 'fileserver config)
+         (raisu 'no-fileserver "Variable 'fileserver is not set by the config"))))
+  (define sharedir
+    (cadr
+     (or (assoc 'sharedir config)
+         (raisu 'no-fileserver "Variable 'sharedir is not set by the config"))))
 
   (unless (file-or-directory-exists? sharedir)
     (make-directories sharedir))
@@ -735,6 +737,11 @@
        (raisu 'pass-is-no-string "User passord is not a string" pass))
      (hashmap-set! passwords pass #t))
    users)
+
+  (unless (string? fileserver)
+    (raisu 'fileserver-must-be-a-string fileserver))
+  (unless (string? sharedir)
+    (raisu 'sharedir-must-be-a-string sharedir))
 
   (context-ctr passwords database tokens fileserver sharedir filemap))
 
