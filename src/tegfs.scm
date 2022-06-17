@@ -46,7 +46,7 @@
   (parameterize ((current-program-path/p "tegfs"))
     (with-cli
      (MAIN
-      MAIN : ROOT* FUNC
+      MAIN : ROOT? FUNC
       /      --help
       FUNC : add ADDOPT+
       /      save
