@@ -62,6 +62,7 @@
 %use (absolute-posix-path?) "./euphrates/absolute-posix-path-q.scm"
 %use (get-current-directory) "./euphrates/get-current-directory.scm"
 %use (stringf) "./euphrates/stringf.scm"
+%use (string->seconds) "./euphrates/string-to-seconds.scm"
 
 %use (root/p) "./root-p.scm"
 %use (categorization-filename) "./categorization-filename.scm"
@@ -126,8 +127,10 @@
   )
 
 (define-type9 <sharedinfo>
-  (sharedinfo-ctr name) sharedinfo?
-  (name sharedinfo-name) ;; mapped filename
+  (sharedinfo-ctr id ctime stime) sharedinfo?
+  (id sharedinfo-id) ;; mapped file id
+  (ctime sharedinfo-ctime) ;; time in seconds for when this info was created
+  (stime sharedinfo-stime) ;; time in seconds for how long to share this file
   )
 
 (define upload-registry-filename "upload/upload.tegfs.reg.lisp")
@@ -568,6 +571,9 @@
       (web-sendfile return! 'image/jpeg preview-fullpath)
       (preview-unavailable)))
 
+(define default-sharing-time
+  (string->seconds "1h"))
+
 (define (full)
   (define ctx (context/p))
   (define fileserver (context-fileserver ctx))
@@ -586,9 +592,11 @@
     (string-append (get-random-basename) (path-extensions target-fullpath)))
   (define shared-fullpath (append-posix-path sharedir shared-name))
   (define location (string-append fileserver shared-name))
-  (define info (sharedinfo-ctr shared-name))
+  (define sharing-time default-sharing-time)
+  (define now (time-get-current-unixtime))
+  (define info (sharedinfo-ctr id now sharing-time))
 
-  (hashmap-set! filemap id info)
+  (hashmap-set! filemap shared-name info)
   (symlink target-fullpath/abs shared-fullpath)
 
   (return!
