@@ -37,6 +37,7 @@
 %use (tegfs-get/parse) "./get.scm"
 %use (tegfs-make-thumbnails/parse) "./make-thumbnails.scm"
 %use (tegfs-config/parse) "./config.scm"
+%use (tegfs-garbage-collector/parse) "./garbage-collector.scm"
 %use (fatal) "./fatal.scm"
 %use (root/p) "./root-p.scm"
 
@@ -58,6 +59,7 @@
       /      serve
       /      make-thumbnails THUMBOPT
       /      config CONFIGOPT
+      /      garbage-collector
       ADDOPT : --target <add-target>
       /        --title <title>
       /        --tag <tag...>
@@ -100,6 +102,7 @@
         ((and get <getid>) (tegfs-get/parse <getid>))
         (make-thumbnails (tegfs-make-thumbnails/parse <target> <output>))
         (config (tegfs-config/parse get set <name> <value>))
+        (garbage-collector (tegfs-garbage-collector/parse))
         (status
          (display "NOT IMPLEMENTED YET") (newline)
          (exit 1))
