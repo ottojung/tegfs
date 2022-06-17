@@ -722,10 +722,13 @@
     (cadr
      (or (assoc 'sharedir config)
          (raisu 'no-fileserver "Variable 'sharedir is not set by the config"))))
-  (define port
+  (define port/string
     (cadr
      (or (assoc 'port config)
          (raisu 'no-port "Variable 'port is not set by the config"))))
+  (define port
+    (or (string->number (~a port/string))
+        (raisu 'port-is-not-a-number "Variable 'port must be a number" port/string)))
 
   (unless (file-or-directory-exists? sharedir)
     (make-directories sharedir))
@@ -746,6 +749,8 @@
     (raisu 'fileserver-must-be-a-string fileserver))
   (unless (string? sharedir)
     (raisu 'sharedir-must-be-a-string sharedir))
+  (unless (and (integer? port) (exact? port) (> port 0))
+    (raisu 'port-must-be-a-natural-number port))
 
   (context-ctr passwords database tokens port fileserver sharedir filemap))
 
