@@ -112,10 +112,11 @@
 %end
 
 (define-type9 <context>
-  (context-ctr passwords database tokens fileserver sharedir filemap) context?
+  (context-ctr passwords database tokens port fileserver sharedir filemap) context?
   (passwords context-passwords) ;; user credentials passwords
   (database context-database) ;; tag database
   (tokens context-tokens) ;; temporary session tokens
+  (port context-port) ;; port to host the server on
   (fileserver context-fileserver) ;; full URI of the file server
   (sharedir context-sharedir) ;; directory with shared wiles
   (filemap context-filemap) ;; hashmap of type [: id -> shared filepath]
@@ -721,6 +722,10 @@
     (cadr
      (or (assoc 'sharedir config)
          (raisu 'no-fileserver "Variable 'sharedir is not set by the config"))))
+  (define port
+    (cadr
+     (or (assoc 'port config)
+         (raisu 'no-port "Variable 'port is not set by the config"))))
 
   (unless (file-or-directory-exists? sharedir)
     (make-directories sharedir))
@@ -742,7 +747,7 @@
   (unless (string? sharedir)
     (raisu 'sharedir-must-be-a-string sharedir))
 
-  (context-ctr passwords database tokens fileserver sharedir filemap))
+  (context-ctr passwords database tokens port fileserver sharedir filemap))
 
 (define callcontext/p
   (make-parameter #f))
@@ -774,4 +779,5 @@
 (define (tegfs-serve/parse)
   (dprintln "Starting the server")
   (parameterize ((context/p (make-context)))
-    (run-server (make-handler) 'http '(#:port 8081))))
+    (let ((port (context-port (context/p))))
+      (run-server (make-handler) 'http `(#:port ,port)))))
