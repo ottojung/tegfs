@@ -63,6 +63,9 @@
 %use (get-current-directory) "./euphrates/get-current-directory.scm"
 %use (stringf) "./euphrates/stringf.scm"
 %use (string->seconds) "./euphrates/string-to-seconds.scm"
+%use (directory-files) "./euphrates/directory-files.scm"
+%use (file-delete) "./euphrates/file-delete.scm"
+%use (time-get-current-unixtime) "./euphrates/time-get-current-unixtime.scm"
 
 %use (root/p) "./root-p.scm"
 %use (categorization-filename) "./categorization-filename.scm"
@@ -608,10 +611,46 @@
               (Cache-Control . "no-cache"))))
    #f))
 
+(define (collectgarbage)
+  (define ctx (context/p))
+  (define sharedir (context-sharedir ctx))
+  (define filemap (context-filemap ctx))
+  (define files (directory-files sharedir))
+  (define now (time-get-current-unixtime))
+
+  (for-each
+   (lambda (namepair)
+     (define full-name (car namepair))
+     (define shared-name (cadr namepair))
+     (define info (hashmap-ref filemap shared-name #f))
+     (if info
+         (let* ((end (+ (sharedinfo-ctime info)
+                        (sharedinfo-stime info))))
+           (unless (< now end)
+             (display "File share time ended: ")
+             (write shared-name)
+             (display " deleting...\n")
+             (file-delete full-name)))
+         (begin
+           (display "File not shared: ")
+           (write shared-name)
+           (display " deleting...\n")
+           (file-delete full-name))))
+   files)
+
+  (return!
+   (build-response
+    #:code 200
+    #:headers
+    (append web-basic-headers
+            `((Cache-Control . "no-cache"))))
+   "ok"))
+
 (define handlers-config
   `((/login ,login public)
     (/logincont ,logincont public)
     (/main.css ,main.css public)
+    (/collectgarbage ,collectgarbage public)
     (/upload ,upload)
     (/uploadcont ,uploadcont)
     (/entry ,entry)
