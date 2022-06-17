@@ -727,10 +727,9 @@
 
   (for-each
    (lambda (user)
-     (define body (cadr user))
      (define pass
        (cadr
-        (or (assoc 'pass body)
+        (or (assoc 'pass user)
             (raisu 'no-user-pass
                    "A user does not have a password"))))
      (unless (string? pass)
