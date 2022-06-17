@@ -92,6 +92,7 @@
 %use (tegfs-make-thumbnails) "./make-thumbnails.scm"
 %use (get-file-type) "./get-file-type.scm"
 %use (read-file-head) "./read-file-head.scm"
+%use (get-config) "./get-config.scm"
 
 %use (debug) "./euphrates/debug.scm"
 %use (debugv) "./euphrates/debugv.scm"
@@ -707,26 +708,33 @@
         (raisu 'no-fileserver "Variable $TEGFS_SHAREDIR must be set when starting the server")))
   (define filemap
     (make-hashmap))
-  (define auth-file
-    (append-posix-path (root/p) "auth.tegfs.lisp"))
+  (define config
+    (get-config))
   (define _1
-    (unless (file-or-directory-exists? auth-file)
-      (raisu 'no-auth-file
-             "Auth file needs to be present when starting the server")))
-  (define auth-lines
-    (appcomp auth-file
-             ((fn open-file-port % "r"))
-             read-list))
+    (unless config
+      (raisu 'no-config-file
+             "Config file needs to be present when starting the server")))
+  (define users
+    (cdr
+     (or (assoc 'users config)
+         (raisu 'no-config-file
+                "Config file needs to be present when starting the server"))))
 
   (unless (file-or-directory-exists? sharedir)
     (make-directories sharedir))
 
   (for-each
    (lambda (user)
-     (define first (cadr user))
-     (define pass (cadr first))
+     (define body (cadr user))
+     (define pass
+       (cadr
+        (or (assoc 'pass body)
+            (raisu 'no-user-pass
+                   "A user does not have a password"))))
+     (unless (string? pass)
+       (raisu 'pass-is-no-string "User passord is not a string" pass))
      (hashmap-set! passwords pass #t))
-   auth-lines)
+   users)
 
   (context-ctr passwords database tokens fileserver sharedir filemap))
 
