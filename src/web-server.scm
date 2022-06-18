@@ -681,9 +681,9 @@
          (let* ((end (+ (sharedinfo-ctime info)
                         (sharedinfo-stime info))))
            (unless (< now end)
-             (display "File share time ended: ")
-             (write shared-name)
-             (display " deleting...\n")
+             ;; (display "File share time ended: ")
+             ;; (write shared-name)
+             ;; (display " deleting...\n")
              (file-delete full-name)
              (hashmap-delete! filemap shared-name)))
          (begin
