@@ -48,7 +48,7 @@
 %use (string-split/simple) "./euphrates/string-split-simple.scm"
 %use (string-split-3) "./euphrates/string-split-3.scm"
 %use (define-type9) "./euphrates/define-type9.scm"
-%use (make-hashmap hashmap-ref hashmap-set! hashmap->alist alist->hashmap hashmap-delete!) "./euphrates/ihashmap.scm"
+%use (make-hashmap hashmap-ref hashmap-set! hashmap->alist alist->hashmap hashmap-delete! hashmap-foreach) "./euphrates/ihashmap.scm"
 %use (list->hashset hashset-ref make-hashset hashset-ref hashset-add! hashset-delete!) "./euphrates/ihashset.scm"
 %use (define-pair) "./euphrates/define-pair.scm"
 %use (define-tuple) "./euphrates/define-tuple.scm"
@@ -688,6 +688,22 @@
               (Cache-Control . "no-cache"))))
    #f))
 
+(define permission-still-valid?
+  (case-lambda
+   ((perm)
+    (permission-still-valid? perm (time-get-current-unixtime)))
+   ((perm current-time)
+    (define end (+ (permission-start perm)
+                   (permission-time perm)))
+    (< current-time end))))
+
+(define (invalidate-permission perm)
+  (define ctx (context/p))
+  (define tokens (context-tokens ctx))
+  (define token (permission-token perm))
+  (hashmap-delete! tokens token)
+  (values))
+
 (define (collectgarbage)
   (define ctx (context/p))
   (define sharedir (context-sharedir ctx))
@@ -713,6 +729,12 @@
            (display " deleting...\n")
            (file-delete full-name))))
    files)
+
+  (hashmap-foreach
+   (lambda (token perm)
+     (unless (permission-still-valid? perm)
+       (invalidate-permission perm)))
+   tokens)
 
   (return!
    (build-response
@@ -852,7 +874,12 @@
   (define ctx (context/p))
   (define tokens (context-tokens ctx))
   (define existing (hashmap-ref tokens token #f))
-  existing)
+
+  (and existing
+       (if (permission-still-valid? existing) existing
+           (begin
+             (invalidate-permission existing)
+             #f))))
 
 (define (get-permissions)
   (define callctx (callcontext/p))
