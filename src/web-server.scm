@@ -667,29 +667,21 @@
 (define (full)
   (define ctx (context/p))
   (define perm (get-permissions))
-  (define token (permission-token perm))
-  (define fileserver (context-fileserver ctx))
-  (define sharedir (context-sharedir ctx))
-  (define filemap (context-filemap ctx))
   (define callctx (callcontext/p))
-  (define request (callcontext-request callctx))
   (define ctxq (callcontext-query callctx))
   (define id (hashmap-ref ctxq 'id #f))
   (define entry (tegfs-get/cached id))
-  (define target-fullpath (entry-target-fullpath entry))
-  (define target-fullpath/abs
-    (if (absolute-posix-path? target-fullpath) target-fullpath
-        (append-posix-path (get-current-directory) target-fullpath)))
-  (define shared-name
-    (string-append (get-random-basename) (path-extensions target-fullpath)))
-  (define shared-fullpath (append-posix-path sharedir shared-name))
-  (define location (string-append fileserver shared-name))
-  (define sharing-time default-sharing-time)
-  (define now (time-get-current-unixtime))
-  (define info (sharedinfo-ctr token target-fullpath shared-fullpath now sharing-time))
 
-  (hashmap-set! filemap shared-name info)
-  (symlink target-fullpath/abs shared-fullpath)
+  (define _11
+    (unless (has-access-for-entry? perm entry)
+      (not-found)))
+
+  (define target-fullpath (entry-target-fullpath entry))
+  (define for-duration 30) ;; FIXME: calculate duration for the permission lifetime
+  (define info (share-file target-fullpath for-duration))
+  (define shared-name (sharedinfo-targetpath info))
+  (define fileserver (context-fileserver ctx))
+  (define location (string-append fileserver shared-name))
 
   (return!
    (build-response
