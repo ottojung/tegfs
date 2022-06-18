@@ -157,8 +157,9 @@
 
 (define default-sharing-time
   (string->seconds "1h"))
-
 (define default-preview-sharing-time
+  (string->seconds "30m"))
+(define default-full-sharing-time
   (string->seconds "30m"))
 
 (define upload-registry-filename "upload/upload.tegfs.reg.lisp")
@@ -465,18 +466,24 @@
        (let ((shared-name (sharedinfo-targetpath info)))
          (hashmap-ref filemap shared-name #f))))
 
-(define (share-file/new target-fullpath for-duration)
+(define (symlink-shared-file target-fullpath shared-name)
   (define ctx (context/p))
-  (define filemap (context-filemap ctx))
-  (define perm (get-permissions))
+  (define sharedir (context-sharedir ctx))
+  (define shared-fullpath (append-posix-path sharedir shared-name))
   (define target-fullpath/abs
     (if (absolute-posix-path? target-fullpath) target-fullpath
         (append-posix-path (get-current-directory) target-fullpath)))
-  (define sharedir (context-sharedir ctx))
+
+  (unless (file-or-directory-exists? shared-fullpath)
+    (symlink target-fullpath/abs shared-fullpath)))
+
+(define (share-file/new target-fullpath for-duration make-symlink?)
+  (define ctx (context/p))
+  (define filemap (context-filemap ctx))
+  (define perm (get-permissions))
   (define shared-name
     (string-append (get-random-basename)
                    (path-extensions target-fullpath)))
-  (define shared-fullpath (append-posix-path sharedir shared-name))
   (define now (time-get-current-unixtime))
   (define token (permission-token perm))
   (define info (sharedinfo-ctr token target-fullpath shared-name now for-duration))
@@ -484,17 +491,29 @@
 
   (hashmap-set! perm-filemap target-fullpath info)
   (hashmap-set! filemap shared-name info)
-  (symlink target-fullpath/abs shared-fullpath)
+
+  (when make-symlink?
+    (symlink-shared-file target-fullpath shared-name))
 
   info)
+
+(define (share-file/dont-link-yet target-fullpath for-duration)
+  (define ctx (context/p))
+  (define filemap (context-filemap ctx))
+  (define perm (get-permissions))
+  (define make-symlink? #f)
+  (or
+   (get-sharedinfo-for-perm perm target-fullpath)
+   (share-file/new target-fullpath for-duration make-symlink?)))
 
 (define (share-file target-fullpath for-duration)
   (define ctx (context/p))
   (define filemap (context-filemap ctx))
   (define perm (get-permissions))
+  (define make-symlink? #t)
   (or
    (get-sharedinfo-for-perm perm target-fullpath)
-   (share-file/new target-fullpath for-duration)))
+   (share-file/new target-fullpath for-duration make-symlink?)))
 
 (define (display-preview target-id target-fullpath)
   (define ctx (context/p))
@@ -518,6 +537,7 @@
 (define (display-full-link entry target-fullpath)
   (define id (cdr (assoc 'id entry)))
   (define location (string-append "/full?id=" id))
+  (share-file/dont-link-yet target-fullpath default-full-sharing-time)
   (display location))
 
 (define (maybe-display-preview entry)
@@ -658,11 +678,14 @@
       (not-found)))
 
   (define target-fullpath (entry-target-fullpath entry))
-  (define for-duration 30) ;; FIXME: calculate duration for the permission lifetime
-  (define info (share-file target-fullpath for-duration))
+  (define info
+    (or (get-sharedinfo-for-perm perm target-fullpath)
+        (not-found)))
   (define shared-name (sharedinfo-targetpath info))
   (define fileserver (context-fileserver ctx))
   (define location (string-append fileserver shared-name))
+
+  (symlink-shared-file target-fullpath shared-name)
 
   (return!
    (build-response
