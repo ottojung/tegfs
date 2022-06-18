@@ -597,7 +597,7 @@
   (define ctx (context/p))
   (define callctx (callcontext/p))
   (define request (callcontext-request callctx))
-  (define ctxq (callcontext-query callctx))
+  (define ctxq (get-query))
 
   (define query/encoded (hashmap-ref ctxq 'q ""))
   (define query (decode-query query/encoded))
@@ -650,9 +650,7 @@
   (return! unavailable-response unavailable-bytevector))
 
 (define (preview)
-  (define callctx (callcontext/p))
-  (define request (callcontext-request callctx))
-  (define ctxq (callcontext-query callctx))
+  (define ctxq (get-query))
   (define target-id (hashmap-ref ctxq 't #f))
   (define entry (tegfs-get/cached target-id))
   (define target-fullpath (entry-target-fullpath entry))
@@ -669,8 +667,7 @@
 (define (full)
   (define ctx (context/p))
   (define perm (get-permissions))
-  (define callctx (callcontext/p))
-  (define ctxq (callcontext-query callctx))
+  (define ctxq (get-query))
   (define id (hashmap-ref ctxq 'id #f))
   (define entry (tegfs-get/cached id))
 
@@ -755,9 +752,7 @@
 
 (define (share)
   (define ctx (context/p))
-  (define callctx (callcontext/p))
-  (define request (callcontext-request callctx))
-  (define ctxq (callcontext-query callctx))
+  (define ctxq (get-query))
 
   (define query/encoded (hashmap-ref ctxq 'q ""))
   (define query (decode-query query/encoded))
@@ -900,13 +895,13 @@
   (alist->hashmap key-values))
 
 (define (get-access-token)
-  (define callctx (callcontext/p))
   (or
-   (let* ((qH (callcontext-query callctx))
+   (let* ((qH (get-query))
           (ret (hashmap-ref qH 'key #f)))
      (when ret (set-user-key! ret))
      ret)
-   (let ((request (callcontext-request callctx)))
+   (let* ((callctx (callcontext/p))
+          (request (callcontext-request callctx)))
      (or (get-cookie "key" request)
          (get-cookie "pwdtoken" request)))))
 
@@ -927,10 +922,20 @@
   (define f (callcontext-permissions callctx))
   (f))
 
-(define (make-callcontext break request body)
+(define (get-query)
+  (define callctx (callcontext/p))
+  (define f (callcontext-query callctx))
+  (f))
+
+(define (initialize-query request)
   (define uri (request-uri request))
   (define query/encoded (uri-query uri))
-  (define qH (if query/encoded (query->hashmap query/encoded) (make-hashmap)))
+  (if query/encoded
+      (query->hashmap query/encoded)
+      (make-hashmap)))
+
+(define (make-callcontext break request body)
+  (define qH (memconst (initialize-query request)))
   (define perm (memconst (initialize-permissions)))
   (callcontext-ctr break request qH body #f perm))
 
