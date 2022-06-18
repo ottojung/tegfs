@@ -67,12 +67,13 @@
 %use (tag->prolog-term) "./tag-to-prolog-term.scm"
 %use (entries-for-each) "./entries-for-each.scm"
 %use (entry-print) "./entry-print.scm"
+%use (entry-print/formatted) "./entry-print-formatted.scm"
 %use (id-name) "./id-name.scm"
 %use (make-prolog-var) "./prolog-var.scm"
 %use (fatal) "./fatal.scm"
 %use (entry-registry-path-key) "./entry-registry-path-key.scm"
 
-(define (tegfs-query/parse --fullnames --entries <query...>)
+(define (tegfs-query/parse --entries <query-format> <query...>)
   (define entries
     (tegfs-query <query...>))
 
@@ -80,19 +81,14 @@
    (--entries
     (for-each
      (lambda (entry)
-       (entry-print entry) (display "\n\n"))
+       (entry-print entry)
+       (display "\n\n"))
      entries))
-   (--fullnames
+   (<query-format>
     (for-each
      (lambda (entry)
-       (define target/p (assoc 'target entry))
-       (when target/p
-         (let* ((target (cdr target/p))
-                (registry-path (cdr (assoc entry-registry-path-key entry)))
-                (target-fullpath
-                 (append-posix-path
-                  (root/p) (dirname registry-path) target)))
-           (display target-fullpath) (display "\n"))))
+       (entry-print/formatted <query-format> entry)
+       (display "\n"))
      entries)))
 
   (parameterize ((current-output-port (current-error-port)))
