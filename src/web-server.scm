@@ -66,6 +66,7 @@
 %use (directory-files) "./euphrates/directory-files.scm"
 %use (file-delete) "./euphrates/file-delete.scm"
 %use (time-get-current-unixtime) "./euphrates/time-get-current-unixtime.scm"
+%use (memconst) "./euphrates/memconst.scm"
 
 %use (root/p) "./root-p.scm"
 %use (categorization-filename) "./categorization-filename.scm"
@@ -123,12 +124,13 @@
   )
 
 (define-type9 <callcontext>
-  (callcontext-ctr break request query body key) callcontext?
+  (callcontext-ctr break request query body key permissions) callcontext?
   (break callcontext-break) ;; break handler
   (request callcontext-request) ;; client request
   (query callcontext-query) ;; query hashmap
   (body callcontext-body) ;; client body
   (key callcontext-key set-callcontext-key!) ;; access key to-set to
+  (permissions callcontext-permissions) ;; permissions associated with this call
   )
 
 (define-type9 <sharedinfo>
@@ -329,24 +331,6 @@
          (cookies (and cookies/string (parse-cookies-string cookies/string)))
          (got (and cookies (assoc name cookies))))
     (and got (cdr got))))
-
-(define (get-access-token)
-  (define callctx (callcontext/p))
-  (or
-   (let* ((qH (callcontext-query callctx))
-          (ret (hashmap-ref qH 'key #f)))
-     (when ret (set-user-key! ret))
-     ret)
-   (let ((request (callcontext-request callctx)))
-     (or (get-cookie "key" request)
-         (get-cookie "pwdtoken" request)))))
-
-(define (get-permissions)
-  (define token (get-access-token))
-  (define ctx (context/p))
-  (define tokens (context-tokens ctx))
-  (define existing (hashmap-ref tokens token #f))
-  existing)
 
 (define (check-permissions)
   (unless (get-permissions)
@@ -845,11 +829,35 @@
          split))
   (alist->hashmap key-values))
 
+(define (get-access-token)
+  (define callctx (callcontext/p))
+  (or
+   (let* ((qH (callcontext-query callctx))
+          (ret (hashmap-ref qH 'key #f)))
+     (when ret (set-user-key! ret))
+     ret)
+   (let ((request (callcontext-request callctx)))
+     (or (get-cookie "key" request)
+         (get-cookie "pwdtoken" request)))))
+
+(define (initialize-permissions)
+  (define token (get-access-token))
+  (define ctx (context/p))
+  (define tokens (context-tokens ctx))
+  (define existing (hashmap-ref tokens token #f))
+  existing)
+
+(define (get-permissions)
+  (define callctx (callcontext/p))
+  (define f (callcontext-permissions callctx))
+  (f))
+
 (define (make-callcontext break request body)
   (define uri (request-uri request))
   (define query/encoded (uri-query uri))
   (define qH (if query/encoded (query->hashmap query/encoded) (make-hashmap)))
-  (callcontext-ctr break request qH body #f))
+  (define perm (memconst (initialize-permissions)))
+  (callcontext-ctr break request qH body #f perm))
 
 (define (make-handler)
   (lambda (request body)
