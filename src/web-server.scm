@@ -142,10 +142,11 @@
   )
 
 (define-type9 <permission>
-  (permission-constructor token admin? filemap) permission?
+  (permission-constructor token admin? filemap idset) permission?
   (token permission-token) ;; token string
   (admin? permission-admin?) ;; true if user is an admin
   (filemap permission-filemap) ;; hashmap with `keys: target-fullpath`, `values: file info that is shared for this permissions`
+  (idset permission-idset) ;; hashset with `values: id of entry that is shared with this permission`
   )
 
 (define context/p
@@ -153,6 +154,12 @@
 
 (define callcontext/p
   (make-parameter #f))
+
+(define default-sharing-time
+  (string->seconds "1h"))
+
+(define default-preview-sharing-time
+  (string->seconds "30m"))
 
 (define upload-registry-filename "upload/upload.tegfs.reg.lisp")
 
@@ -281,7 +288,8 @@
   (define pwdtoken (and registered? (generate-pwdtoken)))
 
   (when registered?
-    (let ((perm (permission-constructor pwdtoken #t (make-hashmap))))
+    (let ((perm (permission-constructor
+                 pwdtoken #t (make-hashmap) (make-hashset))))
       (hashmap-set! tokens pwdtoken perm)))
 
   (if registered?
@@ -512,7 +520,7 @@
   (define fileserver (context-fileserver ctx))
   (define preview-fullpath (get-preview-by-id target-id target-fullpath))
   (define perm (get-permissions))
-  (define info (get-sharedinfo-for-perm perm target-fullpath))
+  (define info (share-file preview-fullpath default-preview-sharing-time))
 
   (display "<img src=")
   (if info
@@ -556,16 +564,24 @@
   (display "</a>")
   )
 
+(define (has-permissions-for-entry? perm entry)
+  (define id (cdr (assoc 'id entry)))
+  (define idset (permission-idset perm))
+  (or (permission-admin? perm)
+      (hashset-ref idset id)))
+
 (define (display-entry entry)
-  (display "<div class='card'>")
-  (display "<div>")
-  (maybe-display-preview entry)
-  (display "</div>")
-  (display "<div>")
-  (display-title entry)
-  (display "</div>")
-  (display "</div>")
-  )
+  (define perm (get-permissions))
+  (when (has-permissions-for-entry? perm entry)
+    (display "<div class='card'>")
+    (display "<div>")
+    (maybe-display-preview entry)
+    (display "</div>")
+    (display "<div>")
+    (display-title entry)
+    (display "</div>")
+    (display "</div>")
+    ))
 
 (define (decode-query query/encoded)
   (appcomp query/encoded
@@ -646,9 +662,6 @@
 
 (define (previewuknown)
   (preview-unavailable))
-
-(define default-sharing-time
-  (string->seconds "1h"))
 
 (define (full)
   (define ctx (context/p))
