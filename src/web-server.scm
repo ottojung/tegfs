@@ -142,10 +142,10 @@
   )
 
 (define-type9 <permission>
-  (permission-constructor token admin? fileset) permission?
+  (permission-constructor token admin? filemap) permission?
   (token permission-token) ;; token string
   (admin? permission-admin?) ;; true if user is an admin
-  (fileset permission-fileset) ;; hashset of files that are shared for this permissions
+  (filemap permission-filemap) ;; hashmap with `keys: target-fullpath`, `values: file info that is shared for this permissions`
   )
 
 (define context/p
@@ -281,7 +281,7 @@
   (define pwdtoken (and registered? (generate-pwdtoken)))
 
   (when registered?
-    (let ((perm (permission-constructor pwdtoken #t (make-hashset))))
+    (let ((perm (permission-constructor pwdtoken #t (make-hashmap))))
       (hashmap-set! tokens pwdtoken perm)))
 
   (if registered?
@@ -479,9 +479,9 @@
   (define now (time-get-current-unixtime))
   (define token (permission-token perm))
   (define info (sharedinfo-ctr token target-fullpath shared-name now for-duration))
-  (define perm-fileset (permission-fileset perm))
+  (define perm-filemap (permission-filemap perm))
 
-  (hashset-add! perm-fileset info)
+  (hashmap-set! perm-filemap target-fullpath info)
   (hashmap-set! filemap shared-name info)
   (symlink target-fullpath/abs shared-fullpath)
 
@@ -492,8 +492,8 @@
   (define filemap (context-filemap ctx))
   (define perm (get-permissions))
   (define token (permission-token perm))
-  (define hash-key (cons token target-fullpath))
-  (or (hashmap-ref filemap hash-key #f)
+  (define perm-filemap (permission-filemap perm))
+  (or (hashmap-ref perm-filemap target-fullpath #f)
       (share-file/new
        ctx filemap perm target-fullpath for-duration)))
 
@@ -678,6 +678,7 @@
   (define filemap (context-filemap ctx))
   (define files (directory-files sharedir))
   (define now (time-get-current-unixtime))
+  (define tokens (context-tokens ctx))
 
   (for-each
    (lambda (namepair)
@@ -689,15 +690,11 @@
                         (sharedinfo-stime info)))
                 (token (sharedinfo-token info))
                 (sourcepath (sharedinfo-sourcepath info))
-                (hash-key (cons token sourcepath))
-                (fileset
-                 (or (hashmap-ref filemap hash-key #f)
-                     (raisu 'hash-key-is-bad hash-key))))
-           (hashset-delete! fileset info)
+                (perm (hashmap-ref tokens token #f))
+                (perm-filemap (and perm (permission-filemap perm))))
+           (when perm-filemap
+             (hashmap-delete! perm-filemap sourcepath))
            (unless (< now end)
-             ;; (display "File share time ended: ")
-             ;; (write shared-name)
-             ;; (display " deleting...\n")
              (file-delete full-name)
              (hashmap-delete! filemap shared-name)))
          (begin
