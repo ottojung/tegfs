@@ -49,7 +49,7 @@
 %use (string-split-3) "./euphrates/string-split-3.scm"
 %use (define-type9) "./euphrates/define-type9.scm"
 %use (make-hashmap hashmap-ref hashmap-set! hashmap->alist alist->hashmap hashmap-delete! hashmap-foreach) "./euphrates/ihashmap.scm"
-%use (list->hashset hashset-ref make-hashset hashset-ref hashset-add! hashset-delete!) "./euphrates/ihashset.scm"
+%use (list->hashset hashset->list hashset-ref make-hashset hashset-ref hashset-add! hashset-delete!) "./euphrates/ihashset.scm"
 %use (define-pair) "./euphrates/define-pair.scm"
 %use (define-tuple) "./euphrates/define-tuple.scm"
 %use (random-choice) "./euphrates/random-choice.scm"
@@ -167,6 +167,8 @@
   (string->seconds "30m"))
 (define default-login-expiery-time
   (string->seconds "12h"))
+(define default-share-expiery-time
+  (string->seconds "1h"))
 
 (define upload-registry-filename "upload/upload.tegfs.reg.lisp")
 
@@ -250,7 +252,7 @@
 (define (login)
   (respond web-login-body))
 
-(define (generate-pwdtoken)
+(define (generate-token)
   (list->string (random-choice 60 alphanum-lowercase/alphabet)))
 
 (define body-not-found
@@ -258,6 +260,19 @@
 
 (define (set-user-key! key)
   (set-callcontext-key! (callcontext/p) key))
+
+(define (make-permission! expiery-time admin?)
+  (define ctx (context/p))
+  (define tokens (context-tokens ctx))
+  (define token (generate-token))
+  (define start (time-get-current-unixtime))
+  (define time expiery-time)
+  (define perm
+    (permission-constructor
+     token start time admin?
+     (make-hashmap) (make-hashset)))
+  (hashmap-set! tokens token perm)
+  perm)
 
 (define (logincont)
   (define body/bytes (callcontext-body (callcontext/p)))
@@ -291,22 +306,15 @@
 
   (define ctx (context/p))
   (define passwords (context-passwords ctx))
-  (define tokens (context-tokens ctx))
   (define registered? (hashmap-ref passwords passw #f))
-  (define pwdtoken (and registered? (generate-pwdtoken)))
-
-  (when registered?
-    (let* ((start (time-get-current-unixtime))
-           (time default-login-expiery-time)
-           (perm (permission-constructor
-                  pwdtoken start time
-                  #t (make-hashmap) (make-hashset))))
-      (hashmap-set! tokens pwdtoken perm)))
+  (define admin? #t) ;; TODO: read from the config
 
   (if registered?
-      (respond
-       web-login-success-body
-       #:extra-headers (list (web-set-cookie-header "pwdtoken" pwdtoken)))
+      (let* ((perm (make-permission! default-login-expiery-time admin?))
+             (token (permission-token perm)))
+        (respond
+         web-login-success-body
+         #:extra-headers (list (web-set-cookie-header "pwdtoken" token))))
       (respond web-login-failed-body)))
 
 (define permission-denied
@@ -744,6 +752,38 @@
             `((Cache-Control . "no-cache"))))
    "ok"))
 
+(define (share)
+  (define ctx (context/p))
+  (define callctx (callcontext/p))
+  (define request (callcontext-request callctx))
+  (define ctxq (callcontext-query callctx))
+
+  (define query/encoded (hashmap-ref ctxq 'q ""))
+  (define query (decode-query query/encoded))
+  (define query/split (string->words query))
+  (define entries (tegfs-query query/split))
+
+  (define admin? #f)
+  (define perm (make-permission! default-share-expiery-time admin?))
+  (define idset (permission-idset perm))
+  (define token (permission-token perm))
+  (define location (stringf "/query?q=~a&key=~a" query/encoded token))
+
+  (for-each
+   (lambda (entry)
+     (define id (cdr (assoc 'id entry)))
+     (hashset-add! idset id))
+   entries)
+
+  (return!
+   (build-response
+    #:code 301
+    #:headers
+    (append web-basic-headers
+            `((Location . ,location)
+              (Cache-Control . "no-cache"))))
+   #f))
+
 (define handlers-config
   `((/login ,login public)
     (/logincont ,logincont public)
@@ -755,6 +795,7 @@
     (/preview ,preview)
     (/previewuknown ,previewuknown)
     (/full ,full)
+    (/share ,share)
     ))
 
 (define handlers-funcmap
