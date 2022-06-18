@@ -686,7 +686,14 @@
      (define info (hashmap-ref filemap shared-name #f))
      (if info
          (let* ((end (+ (sharedinfo-ctime info)
-                        (sharedinfo-stime info))))
+                        (sharedinfo-stime info)))
+                (token (sharedinfo-token info))
+                (sourcepath (sharedinfo-sourcepath info))
+                (hash-key (cons token sourcepath))
+                (fileset
+                 (or (hashmap-ref filemap hash-key #f)
+                     (raisu 'hash-key-is-bad hash-key))))
+           (hashset-delete! fileset info)
            (unless (< now end)
              ;; (display "File share time ended: ")
              ;; (write shared-name)
