@@ -48,8 +48,8 @@
 %use (string-split/simple) "./euphrates/string-split-simple.scm"
 %use (string-split-3) "./euphrates/string-split-3.scm"
 %use (define-type9) "./euphrates/define-type9.scm"
-%use (make-hashmap hashmap-ref hashmap-set! hashmap->alist alist->hashmap) "./euphrates/ihashmap.scm"
-%use (list->hashset hashset-ref) "./euphrates/ihashset.scm"
+%use (make-hashmap hashmap-ref hashmap-set! hashmap->alist alist->hashmap hashmap-delete!) "./euphrates/ihashmap.scm"
+%use (list->hashset hashset-ref make-hashset hashset-ref hashset-add! hashset-delete!) "./euphrates/ihashset.scm"
 %use (define-pair) "./euphrates/define-pair.scm"
 %use (define-tuple) "./euphrates/define-tuple.scm"
 %use (random-choice) "./euphrates/random-choice.scm"
@@ -132,11 +132,25 @@
   )
 
 (define-type9 <sharedinfo>
-  (sharedinfo-ctr id ctime stime) sharedinfo?
+  (sharedinfo-ctr sourcepath targetpath ctime stime) sharedinfo?
+  (sourcepath sharedinfo-sourcepath) ;; the original file path
+  (targetpath sharedinfo-targetpath) ;; the linked file path suffix (without the sharedir)
   (id sharedinfo-id) ;; mapped file id
   (ctime sharedinfo-ctime) ;; time in seconds for when this info was created
   (stime sharedinfo-stime) ;; time in seconds for how long to share this file
   )
+
+(define-type9 <permission>
+  (permission-constructor token admin?) permission?
+  (token permission-token) ;; token string
+  (admin? permission-admin?) ;; true if user is an admin
+  )
+
+(define context/p
+  (make-parameter #f))
+
+(define callcontext/p
+  (make-parameter #f))
 
 (define upload-registry-filename "upload/upload.tegfs.reg.lisp")
 
@@ -265,7 +279,8 @@
   (define pwdtoken (and registered? (generate-pwdtoken)))
 
   (when registered?
-    (hashmap-set! tokens pwdtoken #t))
+    (let ((perm (permission-constructor pwdtoken #t)))
+      (hashmap-set! tokens pwdtoken perm)))
 
   (if registered?
       (respond
@@ -431,14 +446,65 @@
               (Cache-Control . "no-cache"))))
    (~s entry)))
 
-(define (get-preview-internet-path target-id)
-  (string-append "/preview?t=" target-id))
+(define (get-preview-by-id target-id target-fullpath)
+  (define preview-directory
+    (append-posix-path (root/p) "cache" "preview"))
+  (define file-type (get-file-type target-fullpath))
+  (define preview-name
+    (string-append
+     target-id
+     (case file-type
+      ((image) ".jpeg")
+      ((video) ".gif")
+      (else "TODO???"))))
+  (define preview-fullpath
+    (append-posix-path preview-directory preview-name))
+
+  (unless (file-or-directory-exists? preview-directory)
+    (make-directories preview-directory))
+
+  preview-fullpath)
+
+(define (share-file/new ctx filemap hash-key target-fullpath for-duration)
+  (define target-fullpath/abs
+    (if (absolute-posix-path? target-fullpath) target-fullpath
+        (append-posix-path (get-current-directory) target-fullpath)))
+  (define sharedir (context-sharedir ctx))
+  (define shared-name
+    (string-append (get-random-basename)
+                   (path-extensions target-fullpath)))
+  (define shared-fullpath (append-posix-path sharedir shared-name))
+  (define now (time-get-current-unixtime))
+  (define info (sharedinfo-ctr target-fullpath shared-name now for-duration))
+
+  (hashmap-set! filemap hash-key info)
+  (symlink target-fullpath/abs shared-fullpath)
+
+  info)
+
+(define (share-file target-fullpath for-duration)
+  (define ctx (context/p))
+  (define filemap (context-filemap ctx))
+  (define perm (get-permissions))
+  (define token (permission-token perm))
+  (define hash-key (cons token target-fullpath))
+  (or (hashmap-ref filemap hash-key #f)
+      (share-file/new
+       ctx filemap hash-key target-fullpath for-duration)))
 
 (define (display-preview target-id target-fullpath)
-  (define preview-fullpath (get-preview-internet-path target-id))
-  (define file-type (get-file-type target-fullpath))
+  (define ctx (context/p))
+  (define fileserver (context-fileserver ctx))
+  (define preview-fullpath (get-preview-by-id target-id target-fullpath))
+  (define info (share-file preview-fullpath default-sharing-time)) ;; TODO: share for a specified time
+  (define shared-name (sharedinfo-targetpath info))
+  (define sharedir (context-sharedir ctx))
+  (define shared-fullpath (append-posix-path sharedir shared-name))
+  (define location (string-append fileserver shared-name))
   (display "<img src=")
-  (write preview-fullpath)
+  (if (file-or-directory-exists? shared-fullpath)
+      (write location)
+      (write "/previewuknown"))
   (display "/>"))
 
 (define (display-full-link entry target-fullpath)
@@ -490,6 +556,7 @@
            list->string))
 
 (define (query)
+  (define ctx (context/p))
   (define callctx (callcontext/p))
   (define request (callcontext-request callctx))
   (define ctxq (callcontext-query callctx))
@@ -501,29 +568,12 @@
 
   (respond
    (lambda _
-     (display "<div class='cards'>")
-     (for-each display-entry entries)
-     (display "</div>")
-     )))
-
-(define (get-preview-by-id target-id target-fullpath)
-  (define preview-directory
-    (append-posix-path (root/p) "cache" "preview"))
-  (define file-type (get-file-type target-fullpath))
-  (define preview-name
-    (string-append
-     target-id
-     (case file-type
-      ((image) ".jpeg")
-      ((video) ".gif")
-      (else "TODO???"))))
-  (define preview-fullpath
-    (append-posix-path preview-directory preview-name))
-
-  (unless (file-or-directory-exists? preview-directory)
-    (make-directories preview-directory))
-
-  preview-fullpath)
+     (parameterize ((context/p ctx)
+                    (callcontext/p callctx))
+       (display "<div class='cards'>")
+       (for-each display-entry  entries)
+       (display "</div>")
+       ))))
 
 (define (web-make-preview target-id target-fullpath entry)
   (define preview-fullpath
@@ -575,6 +625,9 @@
       (web-sendfile return! 'image/jpeg preview-fullpath)
       (preview-unavailable)))
 
+(define (previewuknown)
+  (preview-unavailable))
+
 (define default-sharing-time
   (string->seconds "1h"))
 
@@ -598,7 +651,7 @@
   (define location (string-append fileserver shared-name))
   (define sharing-time default-sharing-time)
   (define now (time-get-current-unixtime))
-  (define info (sharedinfo-ctr id now sharing-time))
+  (define info (sharedinfo-ctr target-fullpath shared-fullpath now sharing-time))
 
   (hashmap-set! filemap shared-name info)
   (symlink target-fullpath/abs shared-fullpath)
@@ -631,7 +684,8 @@
              (display "File share time ended: ")
              (write shared-name)
              (display " deleting...\n")
-             (file-delete full-name)))
+             (file-delete full-name)
+             (hashmap-delete! filemap shared-name)))
          (begin
            (display "File not shared: ")
            (write shared-name)
@@ -657,6 +711,7 @@
     (/entry ,entry)
     (/query ,query)
     (/preview ,preview)
+    (/previewuknown ,previewuknown)
     (/full ,full)
     ))
 
@@ -691,9 +746,6 @@
     (unless func (not-found))
     (unless public? (check-permissions))
     (func)))
-
-(define context/p
-  (make-parameter #f))
 
 (define (make-context)
   (define passwords (make-hashmap))
@@ -752,9 +804,6 @@
     (raisu 'port-must-be-a-natural-number port))
 
   (context-ctr passwords database tokens port fileserver sharedir filemap))
-
-(define callcontext/p
-  (make-parameter #f))
 
 (define (query->hashmap query)
   (define split (string-split/simple query #\&))
