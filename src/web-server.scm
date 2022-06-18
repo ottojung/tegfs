@@ -132,7 +132,8 @@
   )
 
 (define-type9 <sharedinfo>
-  (sharedinfo-ctr sourcepath targetpath ctime stime) sharedinfo?
+  (sharedinfo-ctr token sourcepath targetpath ctime stime) sharedinfo?
+  (token sharedinfo-token) ;; token of the perms that shared this file
   (sourcepath sharedinfo-sourcepath) ;; the original file path
   (targetpath sharedinfo-targetpath) ;; the linked file path suffix (without the sharedir)
   (id sharedinfo-id) ;; mapped file id
@@ -476,7 +477,8 @@
                    (path-extensions target-fullpath)))
   (define shared-fullpath (append-posix-path sharedir shared-name))
   (define now (time-get-current-unixtime))
-  (define info (sharedinfo-ctr target-fullpath shared-name now for-duration))
+  (define token (permission-token perm))
+  (define info (sharedinfo-ctr token target-fullpath shared-name now for-duration))
   (define perm-fileset (permission-fileset perm))
 
   (hashset-add! perm-fileset info)
@@ -636,6 +638,8 @@
 
 (define (full)
   (define ctx (context/p))
+  (define perm (get-permissions))
+  (define token (permission-token perm))
   (define fileserver (context-fileserver ctx))
   (define sharedir (context-sharedir ctx))
   (define filemap (context-filemap ctx))
@@ -654,7 +658,7 @@
   (define location (string-append fileserver shared-name))
   (define sharing-time default-sharing-time)
   (define now (time-get-current-unixtime))
-  (define info (sharedinfo-ctr target-fullpath shared-fullpath now sharing-time))
+  (define info (sharedinfo-ctr token target-fullpath shared-fullpath now sharing-time))
 
   (hashmap-set! filemap shared-name info)
   (symlink target-fullpath/abs shared-fullpath)
