@@ -52,7 +52,7 @@
       /      save
       /      categorize
       /      prolog
-      /      query QUERYOPT+
+      /      query QUERYARGS
       /      get GETOPT
       /      status
       /      serve
@@ -66,7 +66,9 @@
       /        --key <key...> <value...>
       /        --registry-file <registry-file>
       /        --date <date>
-      QUERYOPT : <query...>
+      QUERYARGS : QUERYOPT* QUERYQ+
+      QUERYOPT : --fullnames / --entries
+      QUERYQ : <query...>
       GETOPT : <getid>
       THUMBOPT : <target> <output>
       CONFIGOPT : get <name>
@@ -77,6 +79,8 @@
      :default (<root> (system-environment-get ROOT_VAR_NAME))
      :default (--no-series #f)
      :exclusive (--no-series --series)
+     :default (--entries #t)
+     :exclusive (--entries --fullnames)
 
      (when --help
        (define-cli:show-help))
@@ -96,7 +100,7 @@
         (categorize (tegfs-categorize/parse))
         (serve (tegfs-serve/parse))
         (prolog (tegfs-prolog/parse))
-        (query (tegfs-query/parse <query...>))
+        (query (tegfs-query/parse --fullnames --entries <query...>))
         ((and get <getid>) (tegfs-get/parse <getid>))
         (make-thumbnails (tegfs-make-thumbnails/parse <target> <output>))
         (config (tegfs-config/parse get set <name> <value>))
