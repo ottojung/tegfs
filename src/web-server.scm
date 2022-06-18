@@ -467,7 +467,7 @@
 
   preview-fullpath)
 
-(define (file-shared-for-perm? perm target-fullpath)
+(define (get-sharedinfo-for-perm perm target-fullpath)
   (define ctx (context/p))
   (define filemap (context-filemap ctx))
   (define perm-filemap (permission-filemap perm))
@@ -504,21 +504,25 @@
   (define filemap (context-filemap ctx))
   (define perm (get-permissions))
   (or
-   (file-shared-for-perm? perm target-fullpath)
+   (get-sharedinfo-for-perm perm target-fullpath)
    (share-file/new target-fullpath for-duration)))
 
 (define (display-preview target-id target-fullpath)
   (define ctx (context/p))
   (define fileserver (context-fileserver ctx))
   (define preview-fullpath (get-preview-by-id target-id target-fullpath))
-  (define info (share-file preview-fullpath default-sharing-time)) ;; TODO: share for a specified time
-  (define shared-name (sharedinfo-targetpath info))
-  (define sharedir (context-sharedir ctx))
-  (define shared-fullpath (append-posix-path sharedir shared-name))
-  (define location (string-append fileserver shared-name))
+  (define perm (get-permissions))
+  (define info (get-sharedinfo-for-perm perm target-fullpath))
+
   (display "<img src=")
-  (if (file-or-directory-exists? shared-fullpath)
-      (write location)
+  (if info
+      (let* ((shared-name (sharedinfo-targetpath info))
+             (sharedir (context-sharedir ctx))
+             (shared-fullpath (append-posix-path sharedir shared-name))
+             (location (string-append fileserver shared-name)))
+        (if (file-or-directory-exists? shared-fullpath)
+            (write location)
+            (write "/previewuknown")))
       (write "/previewuknown"))
   (display "/>"))
 
