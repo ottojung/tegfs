@@ -587,6 +587,7 @@
 
 (define (decode-query query/encoded)
   (appcomp query/encoded
+           uri-decode
            string->list
            (map (lambda (c) (if (equal? #\+ c) #\space c)))
            (map (lambda (c) (if (equal? #\: c) #\= c)))
@@ -892,8 +893,7 @@
   (define split (string-split/simple query #\&))
   (define key-values
     (map (lambda (sp)
-           (define decoded (uri-decode sp))
-           (define-values (key eq val) (string-split-3 #\= decoded))
+           (define-values (key eq val) (string-split-3 #\= sp))
            (when (string-null? eq) (raisu 'bad-query query))
            (cons (string->symbol key) val))
          split))
