@@ -437,25 +437,6 @@
 (define (upload)
   (respond (web-make-upload-body)))
 
-(define (entry)
-  (define callctx (callcontext/p))
-  (define request (callcontext-request callctx))
-  (define qH (callcontext-query callctx))
-
-  (define id (hashmap-ref qH 'id #f))
-
-  (define entry
-    (tegfs-get/cached id))
-
-  (return!
-   (build-response
-    #:code 200
-    #:headers
-    (append web-basic-headers
-            `((content-type . (text/plain))
-              (Cache-Control . "no-cache"))))
-   (~s entry)))
-
 (define (get-preview-by-id target-id target-fullpath)
   (define preview-directory
     (append-posix-path (root/p) "cache" "preview"))
@@ -734,7 +715,6 @@
     (/query ,query public)
     (/upload ,upload)
     (/uploadcont ,uploadcont)
-    (/entry ,entry)
     (/preview ,preview)
     (/previewuknown ,previewuknown)
     (/full ,full)
