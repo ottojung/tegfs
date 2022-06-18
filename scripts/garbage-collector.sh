@@ -1,6 +1,7 @@
 #! /bin/sh
 
 PORT=$(tegfs config get port)
+SHAREDIR=$(tegfs config get sharedir)
 
 if test -z "$PORT"
 then
@@ -8,8 +9,16 @@ then
 	exit 1
 fi
 
+if test -z "$SHAREDIR"
+then
+	echo "Garbage collector could not get the sharedir... exiting now" 1>&2
+	exit 1
+fi
+
 while true
 do
-	curl --no-progress-meter "http://localhost:$PORT/collectgarbage"
+	if ! curl --fail --no-progress-meter "http://localhost:$PORT/collectgarbage"
+	then rm -rvf "$SHAREDIR"
+	fi
 	sleep 1800
 done
