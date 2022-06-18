@@ -467,7 +467,19 @@
 
   preview-fullpath)
 
-(define (share-file/new ctx filemap perm target-fullpath for-duration)
+(define (file-shared-for-perm? perm target-fullpath)
+  (define ctx (context/p))
+  (define filemap (context-filemap ctx))
+  (define perm-filemap (permission-filemap perm))
+  (define info (hashmap-ref perm-filemap target-fullpath #f))
+  (and info
+       (let ((shared-name (sharedinfo-targetpath info)))
+         (hashmap-ref filemap shared-name #f))))
+
+(define (share-file/new target-fullpath for-duration)
+  (define ctx (context/p))
+  (define filemap (context-filemap ctx))
+  (define perm (get-permissions))
   (define target-fullpath/abs
     (if (absolute-posix-path? target-fullpath) target-fullpath
         (append-posix-path (get-current-directory) target-fullpath)))
@@ -491,11 +503,9 @@
   (define ctx (context/p))
   (define filemap (context-filemap ctx))
   (define perm (get-permissions))
-  (define token (permission-token perm))
-  (define perm-filemap (permission-filemap perm))
-  (or (hashmap-ref perm-filemap target-fullpath #f)
-      (share-file/new
-       ctx filemap perm target-fullpath for-duration)))
+  (or
+   (file-shared-for-perm? perm target-fullpath)
+   (share-file/new target-fullpath for-duration)))
 
 (define (display-preview target-id target-fullpath)
   (define ctx (context/p))
@@ -687,13 +697,7 @@
      (define info (hashmap-ref filemap shared-name #f))
      (if info
          (let* ((end (+ (sharedinfo-ctime info)
-                        (sharedinfo-stime info)))
-                (token (sharedinfo-token info))
-                (sourcepath (sharedinfo-sourcepath info))
-                (perm (hashmap-ref tokens token #f))
-                (perm-filemap (and perm (permission-filemap perm))))
-           (when perm-filemap
-             (hashmap-delete! perm-filemap sourcepath))
+                        (sharedinfo-stime info))))
            (unless (< now end)
              (file-delete full-name)
              (hashmap-delete! filemap shared-name)))
