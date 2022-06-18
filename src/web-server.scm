@@ -798,31 +798,32 @@
   (define entry
     (or (tegfs-get/cached id)
         (not-found)))
+  (define table
+    (with-output-to-string
+      (lambda _
+        (display "<table class='styled-table subc'>\n")
+        (display "  <thead><tr><th>Prop</th><th>Value</th></tr></thead>\n")
+        (for-each
+         (lambda (row)
+           (define name (car row))
+           (define val (cdr row))
+           (display "  <tbody>\n")
+           (display "    <tr>\n")
+           (display "      <td>")
+           (display name)
+           (display "</td>\n")
+           (display "      <td>")
+           (display val)
+           (display "</td>\n")
+           (display "    </tr>\n")
+           (display "  </tbody>\n"))
+         entry)
+        (display "</table>\n"))))
 
   (unless (has-access-for-entry? perm entry)
     (not-found))
 
-  (respond
-   (lambda _
-     (display "<table class='styled-table'>\n")
-     (for-each
-      (lambda (row)
-        (define name (car row))
-        (define val (cdr row))
-        (display "  <tbody>\n")
-        (display "    <td>\n")
-        (display "      <th>")
-        (display name)
-        (display "</th>\n")
-        (display "    </td>\n")
-        (display "    <td>\n")
-        (display "      <th>")
-        (display val)
-        (display "</th>\n")
-        (display "    </td>\n")
-        (display "  </tbody>"))
-      entry)
-     (display "</table>\n"))))
+  (respond table))
 
 (define handlers-config
   `((/login ,login public)
