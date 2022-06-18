@@ -179,6 +179,7 @@
                             (extra-headers '()))
   (define callctx (callcontext/p))
   (define cont (callcontext-break callctx))
+  (define _perm (get-permissions))
   (define key (callcontext-key callctx))
   (define key-headers
     (if key (list (web-set-cookie-header "key" key)) '()))
