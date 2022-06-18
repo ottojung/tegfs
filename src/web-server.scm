@@ -144,8 +144,10 @@
   )
 
 (define-type9 <permission>
-  (permission-constructor token admin? filemap idset) permission?
+  (permission-constructor token start time admin? filemap idset) permission?
   (token permission-token) ;; token string
+  (start permission-start) ;; timestamp for when this token was created
+  (time permission-time) ;; duration in secods for how long this token is valid
   (admin? permission-admin?) ;; true if user is an admin
   (filemap permission-filemap) ;; hashmap with `keys: target-fullpath`, `values: file info that is shared for this permissions`
   (idset permission-idset) ;; hashset with `values: id of entry that is shared with this permission`
@@ -163,6 +165,8 @@
   (string->seconds "30m"))
 (define default-full-sharing-time
   (string->seconds "30m"))
+(define default-login-expiery-time
+  (string->seconds "12h"))
 
 (define upload-registry-filename "upload/upload.tegfs.reg.lisp")
 
@@ -292,8 +296,11 @@
   (define pwdtoken (and registered? (generate-pwdtoken)))
 
   (when registered?
-    (let ((perm (permission-constructor
-                 pwdtoken #t (make-hashmap) (make-hashset))))
+    (let* ((start (time-get-current-unixtime))
+           (time default-login-expiery-time)
+           (perm (permission-constructor
+                  pwdtoken start time
+                  #t (make-hashmap) (make-hashset))))
       (hashmap-set! tokens pwdtoken perm)))
 
   (if registered?
