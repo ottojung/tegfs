@@ -182,9 +182,11 @@
        (for-each display extra-heads)
        (display "</head>\n")
        (display "<body>\n")
-       (if (string? body)
-           (display body)
-           (sxml->xml body port))
+       (cond
+        ((string? body) (display body))
+        ((pair? body) (sxml->xml body port))
+        ((procedure? body) (body))
+        (else (raisu 'unknown-body-type body)))
        (display "\n</body>\n")
        (display "</html>\n")))))
 
@@ -497,15 +499,12 @@
   (define query/split (string->words query))
   (define entries (tegfs-query query/split))
 
-  (define str
-    (with-output-to-string
-      (lambda _
-        (display "<div class='cards'>")
-        (for-each display-entry entries)
-        (display "</div>")
-        )))
-
-  (respond str))
+  (respond
+   (lambda _
+     (display "<div class='cards'>")
+     (for-each display-entry entries)
+     (display "</div>")
+     )))
 
 (define (get-preview-by-id target-id target-fullpath)
   (define preview-directory
