@@ -141,9 +141,10 @@
   )
 
 (define-type9 <permission>
-  (permission-constructor token admin?) permission?
+  (permission-constructor token admin? fileset) permission?
   (token permission-token) ;; token string
   (admin? permission-admin?) ;; true if user is an admin
+  (fileset permission-fileset) ;; hashset of files that are shared for this permissions
   )
 
 (define context/p
@@ -279,7 +280,7 @@
   (define pwdtoken (and registered? (generate-pwdtoken)))
 
   (when registered?
-    (let ((perm (permission-constructor pwdtoken #t)))
+    (let ((perm (permission-constructor pwdtoken #t (make-hashset))))
       (hashmap-set! tokens pwdtoken perm)))
 
   (if registered?
@@ -465,7 +466,7 @@
 
   preview-fullpath)
 
-(define (share-file/new ctx filemap hash-key target-fullpath for-duration)
+(define (share-file/new ctx filemap perm target-fullpath for-duration)
   (define target-fullpath/abs
     (if (absolute-posix-path? target-fullpath) target-fullpath
         (append-posix-path (get-current-directory) target-fullpath)))
@@ -476,8 +477,10 @@
   (define shared-fullpath (append-posix-path sharedir shared-name))
   (define now (time-get-current-unixtime))
   (define info (sharedinfo-ctr target-fullpath shared-name now for-duration))
+  (define perm-fileset (permission-fileset perm))
 
-  (hashmap-set! filemap hash-key info)
+  (hashset-add! perm-fileset info)
+  (hashmap-set! filemap shared-name info)
   (symlink target-fullpath/abs shared-fullpath)
 
   info)
@@ -490,7 +493,7 @@
   (define hash-key (cons token target-fullpath))
   (or (hashmap-ref filemap hash-key #f)
       (share-file/new
-       ctx filemap hash-key target-fullpath for-duration)))
+       ctx filemap perm target-fullpath for-duration)))
 
 (define (display-preview target-id target-fullpath)
   (define ctx (context/p))
