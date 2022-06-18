@@ -67,6 +67,7 @@
 %use (file-delete) "./euphrates/file-delete.scm"
 %use (time-get-current-unixtime) "./euphrates/time-get-current-unixtime.scm"
 %use (memconst) "./euphrates/memconst.scm"
+%use (catch-any) "./euphrates/catch-any.scm"
 
 %use (root/p) "./root-p.scm"
 %use (categorization-filename) "./categorization-filename.scm"
@@ -185,6 +186,7 @@
                             (content-type-params '((charset . "utf-8")))
                             (content-type 'text/html)
                             (extra-headers '()))
+  (define ctx (context/p))
   (define callctx (callcontext/p))
   (define cont (callcontext-break callctx))
   (define _perm (get-permissions))
@@ -218,7 +220,10 @@
        (cond
         ((string? body) (display body))
         ((pair? body) (sxml->xml body port))
-        ((procedure? body) (body))
+        ((procedure? body)
+         (parameterize ((callcontext/p callctx)
+                        (context/p ctx))
+           (body)))
         (else (raisu 'unknown-body-type body)))
        (display "\n</body>\n")
        (display "</html>\n")))))
@@ -475,7 +480,13 @@
         (append-posix-path (get-current-directory) target-fullpath)))
 
   (unless (file-or-directory-exists? shared-fullpath)
-    (symlink target-fullpath/abs shared-fullpath)))
+    (catch-any
+     (lambda _
+       (symlink target-fullpath/abs shared-fullpath))
+     (lambda errors
+       (display "Error symlinking: ")
+       (write errors)
+       (newline)))))
 
 (define (share-file/new target-fullpath for-duration make-symlink?)
   (define ctx (context/p))
@@ -550,7 +561,7 @@
       )))
 
 (define (display-title entry)
-  (display "<a href='/info/")
+  (display "<a href='/details?id=")
   (display (cdr (assoc 'id entry)))
   (display "' style='color: white'>")
   (cond
@@ -606,12 +617,9 @@
 
   (respond
    (lambda _
-     (parameterize ((context/p ctx)
-                    (callcontext/p callctx))
-       (display "<div class='cards'>")
-       (for-each display-entry  entries)
-       (display "</div>")
-       ))))
+     (display "<div class='cards'>")
+     (for-each display-entry  entries)
+     (display "</div>"))))
 
 (define (web-make-preview target-id target-fullpath entry)
   (define preview-fullpath
@@ -652,7 +660,9 @@
 (define (preview)
   (define ctxq (get-query))
   (define target-id (hashmap-ref ctxq 't #f))
-  (define entry (tegfs-get/cached target-id))
+  (define entry
+    (or (tegfs-get/cached target-id)
+        (not-found)))
   (define target-fullpath (entry-target-fullpath entry))
   (define preview-fullpath
     (web-make-preview target-id target-fullpath entry))
@@ -780,12 +790,47 @@
               (Cache-Control . "no-cache"))))
    #f))
 
+(define (details)
+  (define ctx (context/p))
+  (define ctxq (get-query))
+  (define id (hashmap-ref ctxq 'id #f))
+  (define perm (get-permissions))
+  (define entry
+    (or (tegfs-get/cached id)
+        (not-found)))
+
+  (unless (has-access-for-entry? perm entry)
+    (not-found))
+
+  (respond
+   (lambda _
+     (display "<table class='styled-table'>\n")
+     (for-each
+      (lambda (row)
+        (define name (car row))
+        (define val (cdr row))
+        (display "  <tbody>\n")
+        (display "    <td>\n")
+        (display "      <th>")
+        (display name)
+        (display "</th>\n")
+        (display "    </td>\n")
+        (display "    <td>\n")
+        (display "      <th>")
+        (display val)
+        (display "</th>\n")
+        (display "    </td>\n")
+        (display "  </tbody>"))
+      entry)
+     (display "</table>\n"))))
+
 (define handlers-config
   `((/login ,login public)
     (/logincont ,logincont public)
     (/main.css ,main.css public)
     (/collectgarbage ,collectgarbage public)
     (/query ,query public)
+    (/details ,details public)
     (/upload ,upload)
     (/uploadcont ,uploadcont)
     (/preview ,preview)
