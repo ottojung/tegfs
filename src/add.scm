@@ -39,6 +39,7 @@
 %use (alphanum-lowercase/alphabet) "./euphrates/alphanum-lowercase-alphabet.scm"
 %use (conss) "./euphrates/conss.scm"
 %use (fn-cons) "./euphrates/fn-cons.scm"
+%use (absolute-posix-path?) "./euphrates/absolute-posix-path-q.scm"
 
 %use (fatal) "./fatal.scm"
 %use (root/p) "./root-p.scm"
