@@ -16,6 +16,7 @@
 
 %var tegfs-dump-clipboard
 %var tegfs-dump-clipboard/parse
+%var tegfs-dump-clipboard/pasta
 
 %use (system-fmt) "./euphrates/system-fmt.scm"
 %use (system-re) "./euphrates/system-re.scm"
@@ -56,6 +57,13 @@
 %use (fatal) "./fatal.scm"
 %use (classify-clipboard-text-content dump-clipboard-to-temporary dump-clipboard-to-file get-clipboard-data-types get-clipboard-text-content get-clipboard-type-extension choose-clipboard-data-type) "./clipboard.scm"
 
+(define (tegfs-dump-clipboard/pasta text)
+  (let* ((pref (make-temporary-filename))
+         (extension ".txt")
+         (target (string-append pref extension)))
+    (write-string-file target text)
+    target))
+
 (define (tegfs-dump-clipboard)
   (define text
     (or (get-clipboard-text-content)
@@ -75,11 +83,7 @@
          (fatal "Could not dump clipboard content"))
        target))
     ((pasta)
-     (let* ((pref (make-temporary-filename))
-            (extension ".txt")
-            (target (string-append pref extension)))
-       (write-string-file target text)
-       target))
+     (tegfs-dump-clipboard/pasta text))
     ((link localfile)
      text)
     (else

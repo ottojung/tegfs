@@ -61,7 +61,7 @@
 %use (get-registry-files) "./get-registry-files.scm"
 %use (get-random-basename) "./get-random-basename.scm"
 %use (classify-clipboard-text-content dump-clipboard-to-temporary dump-clipboard-to-file get-clipboard-data-types get-clipboard-text-content get-clipboard-type-extension choose-clipboard-data-type) "./clipboard.scm"
-%use (tegfs-dump-clipboard) "./dump-clipboard.scm"
+%use (tegfs-dump-clipboard tegfs-dump-clipboard/pasta) "./dump-clipboard.scm"
 
 %use (debug) "./euphrates/debug.scm"
 %use (debugv) "./euphrates/debugv.scm"
@@ -557,23 +557,30 @@
   (dprintln "Saved!"))
 
 (define (tegfs-save/parse/remote <remote> <savetext>)
-  (define working-file
-    (or <savetext>
+  (define savetext
+    (and <savetext>
+         (case (classify-clipboard-text-content <savetext>)
+           ((data) (raisu 'savetext-cannot-be-data <savetext>))
+           ((link localfile) <savetext>)
+           ((pasta) (tegfs-dump-clipboard/pasta <savetext>))
+           (else (raisu 'unexpected-real-type <savetext>)))))
+  (define working-text
+    (or savetext
         (tegfs-dump-clipboard)))
 
-  (define real-type (classify-clipboard-text-content working-file))
+  (define real-type (classify-clipboard-text-content working-text))
 
   (case real-type
     ((localfile)
-     (unless (file-or-directory-exists? working-file)
-       (raisu 'file-must-have-been-created working-file))
-     (unless (= 0 (system-fmt "rsync --info=progress2 --partial ~a ~a:" working-file <remote>))
+     (unless (file-or-directory-exists? working-text)
+       (raisu 'file-must-have-been-created working-text))
+     (unless (= 0 (system-fmt "rsync --info=progress2 --partial ~a ~a:" working-text <remote>))
        (fatal "Syncing to remote failed")))
     ((link) 'do-nothing)
-    ((data pasta) (raisu 'impossible-real-type real-type working-file))
-    (else (raisu 'unhandled-real-type real-type working-file)))
+    ((data pasta) (raisu 'impossible-real-type real-type working-text))
+    (else (raisu 'unhandled-real-type real-type working-text)))
 
-  (unless (= 0 (system-fmt "exec ssh -t ~a \"exec /bin/sh -l -c \\\"exec tegfs save ~a\\\"\"" <remote> working-file))
+  (unless (= 0 (system-fmt "exec ssh -t ~a \"exec /bin/sh -l -c \\\"exec tegfs save ~a\\\"\"" <remote> working-text))
     (fatal "Something went wrong on the other side"))
 
   (dprintln "Saved!"))
