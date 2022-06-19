@@ -141,26 +141,6 @@
         (string-strip mimetype)
         #f)))
 
-(define (a-media-mimetype? mimetype)
-  (or (string-prefix? "video/" mimetype)
-      (string-prefix? "audio/" mimetype)
-      (string-prefix? "image/" mimetype)))
-
-(define (download directory string target-maybe)
-  (let* ((temp-name (download-temp string))
-         (mimetype (get-file-mimetype temp-name)))
-    (if (a-media-mimetype? mimetype)
-        (let* ((ext (get-mime-extension mimetype))
-               (new-name (or target-maybe
-                             (get-random-filename directory ext))))
-          (rename-file temp-name new-name)
-          (dprintln "Downloaded a media file")
-          (cons new-name mimetype))
-        (begin
-          (dprintln "Downloaded some garbage, not media...")
-          (file-delete temp-name)
-          #f))))
-
 (define (a-real-filepath? string)
   (file-or-directory-exists? string))
 
@@ -586,9 +566,9 @@
    series? key-value-pairs
    registry-file <date>))
 
-(define (tegfs-save/parse)
+(define (tegfs-save/parse <savefile>)
   (define _
-    (begin
+    (unless <savefile>
       (unless (= 0 (system-fmt "command -v xclip 1>/dev/null 2>/dev/null"))
         (fatal "Save requires 'xclip' program, but it is not available"))
       (unless (= 0 (system-fmt "command -v xdg-mime 1>/dev/null 2>/dev/null"))

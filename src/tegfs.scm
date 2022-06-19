@@ -49,7 +49,7 @@
       MAIN : ROOT? FUNC
       /      --help
       FUNC : add ADDOPT+
-      /      save
+      /      save SAVEOPT?
       /      categorize
       /      prolog
       /      query QUERYARGS
@@ -66,6 +66,7 @@
       /        --key <key...> <value...>
       /        --registry-file <registry-file>
       /        --date <date>
+      SAVEOPT : <savefile>
       QUERYARGS : QUERYOPT? QUERYQ+
       QUERYOPT : --format <query-format> / --entries
       QUERYQ : <query...>
@@ -96,7 +97,7 @@
         (add (tegfs-add/parse
               <add-target> <title> <tag...> --series <key...> <value...>
               <registry-file> <date>))
-        (save (tegfs-save/parse))
+        (save (tegfs-save/parse <savefile>))
         (categorize (tegfs-categorize/parse))
         (serve (tegfs-serve/parse))
         (prolog (tegfs-prolog/parse))
