@@ -1,6 +1,6 @@
 #! /bin/sh
 
-tegfs query --format '%F "#" %P' image | grep -v '//NA//' | sort --reverse | while IFS= read -r FILE
+tegfs query --format '%F "#" %P' %any | grep -v '//NA//' | sort --reverse | while IFS= read -r FILE
 do
 	TARGET="$(echo "$FILE" | awk -F '#' '{ print $1 }')"
 	test -f "$TARGET" || continue
