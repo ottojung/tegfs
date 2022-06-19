@@ -50,7 +50,7 @@
       MAIN : ROOT? FUNC
       /      --help
       FUNC : add ADDOPT+
-      /      save SAVEARGS?
+      /      save SAVEARGS
       /      categorize
       /      prolog
       /      query QUERYARGS
@@ -68,8 +68,9 @@
       /        --key <key...> <value...>
       /        --registry-file <registry-file>
       /        --date <date>
-      SAVEARGS : SAVEOPT? <savefile>
+      SAVEARGS : SAVEOPT? SAVETARGET?
       SAVEOPT : --remote <remote>
+      SAVETARGET : <savefile>
       QUERYARGS : QUERYOPT? QUERYQ+
       QUERYOPT : --format <query-format> / --entries
       QUERYQ : <query...>

@@ -567,7 +567,7 @@
     ((localfile)
      (unless (file-or-directory-exists? working-file)
        (raisu 'file-must-have-been-created working-file))
-     (unless (= 0 (system-fmt "rsync --info=status2 --partial ~a:~a" <remote> working-file))
+     (unless (= 0 (system-fmt "rsync --info=progress2 --partial ~a:~a" <remote> working-file))
        (fatal "Syncing to remote failed")))
     ((link) 'do-nothing)
     ((data pasta) (raisu 'impossible-real-type real-type working-file))
