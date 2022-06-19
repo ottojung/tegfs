@@ -58,8 +58,10 @@
   (define text
     (or (get-clipboard-text-content)
         (fatal "Could not get clipboard text")))
+  (define real-type
+    (classify-clipboard-text-content text))
 
-  (case (classify-clipboard-text-content text)
+  (case real-type
     ((data)
      (let* ((data-type
              (or (choose-clipboard-data-type)
@@ -76,5 +78,7 @@
             (target (string-append pref extension)))
        (write-string-file target text)
        (display target)))
+    ((link localfile)
+     (display text))
     (else
-     (display text))))
+     (raisu 'unexpected-real-type real-type))))
