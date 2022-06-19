@@ -66,7 +66,7 @@
       /        --key <key...> <value...>
       /        --registry-file <registry-file>
       /        --date <date>
-      QUERYARGS : QUERYOPT QUERYQ+
+      QUERYARGS : QUERYOPT? QUERYQ+
       QUERYOPT : --format <query-format> / --entries
       QUERYQ : <query...>
       GETOPT : <getid>
