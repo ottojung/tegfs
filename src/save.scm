@@ -573,7 +573,7 @@
     ((data pasta) (raisu 'impossible-real-type real-type working-file))
     (else (raisu 'unhandled-real-type real-type working-file)))
 
-  (unless (system-fmt "exec ssh -t ~a \"exec /bin/sh -l -c \\\"exec tegfs save ~a\\\"\"" <remote> working-file)
+  (unless (= 0 (system-fmt "exec ssh -t ~a \"exec /bin/sh -l -c \\\"exec tegfs save ~a\\\"\"" <remote> working-file))
     (fatal "Something went wrong on the other side"))
 
   (dprintln "Saved!"))
