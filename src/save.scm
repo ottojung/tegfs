@@ -157,15 +157,7 @@
          '-types-list '("TEXT")
          (assoc-set-preference
           '-text-content <savefile>
-          (assoc-set-preference
-           '-selection-content 'SKIP
-           state))))))
-
-(define (set-selection-content-preference state)
-  (if (assoc '-selection-content state) state
-      (let ((selection-content
-             (car (system-re "xclip -selection primary -out"))))
-        (assoc-set-preference '-selection-content selection-content state))))
+          state)))))
 
 (define (set-text-content-preference state)
   (if (cadr (assoc '-text-content state)) state
@@ -447,7 +439,6 @@
     (confirm . ,get-confirm)
     (-temporary-file . #f)
     (-text-content . #f)
-    (-selection-content . #f)
     (-types-list . #f)))
 
 (define (get-setter state-key)
@@ -513,7 +504,6 @@
 (define (state-set-generic-preferences <savefile>)
   (comp
    (set-savefile-preference <savefile>)
-   set-selection-content-preference
    set-text-content-preference
    set-types-list-preference
    (assoc-set-preference 'series 'no)
