@@ -16,6 +16,7 @@ This program also provides a web-based file-browser
   - `curl` for saving stuff from the internet
   - `xclip` for dumping clipboard content
   - `xdg-mime` for determining file types
+  - `fzf` for making choices during `tegfs save`
   - `prolog` for query capabilities (TODO: REMOVE THIS DEPENDENCY)
 - Web server
   - `ffmpeg` for video previews production
