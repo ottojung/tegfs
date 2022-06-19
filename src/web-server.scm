@@ -95,6 +95,7 @@
 %use (read-file-head) "./read-file-head.scm"
 %use (get-config) "./get-config.scm"
 %use (get-preview-path) "./get-preview-path.scm"
+%use (entry-target-fullpath) "./entry-target-fullpath.scm"
 
 %use (debug) "./euphrates/debug.scm"
 %use (debugv) "./euphrates/debugv.scm"
@@ -609,12 +610,6 @@
   (and (or (file-or-directory-exists? preview-fullpath)
            (tegfs-make-thumbnails target-fullpath preview-fullpath))
        preview-fullpath))
-
-(define (entry-target-fullpath entry)
-  (define target-p (assoc 'target entry))
-  (and target-p
-       (let* ((registry-dir (dirname (cdr (assoc entry-registry-path-key entry)))))
-         (append-posix-path (root/p) registry-dir (cdr target-p)))))
 
 (define unavailable-image-string
   (stringf
