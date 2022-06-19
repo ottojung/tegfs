@@ -512,12 +512,11 @@
   (define ctx (context/p))
   (define fileserver (context-fileserver ctx))
   (define preview-fullpath (get-preview-path target-id target-fullpath))
-  (define perm (get-permissions))
-  (define info (share-file preview-fullpath default-preview-sharing-time))
 
   (display "<img src=")
-  (if info
-      (let* ((shared-name (sharedinfo-targetpath info))
+  (if preview-fullpath
+      (let* ((info (share-file preview-fullpath default-preview-sharing-time))
+             (shared-name (sharedinfo-targetpath info))
              (sharedir (context-sharedir ctx))
              (shared-fullpath (append-posix-path sharedir shared-name))
              (location (string-append fileserver shared-name)))
