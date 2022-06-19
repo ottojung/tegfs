@@ -146,10 +146,12 @@
      key-value-pairs))
 
   (when <target>
+    (when (absolute-posix-path? <target>)
+      (fatal "Target ~s must be a path relative to the registry file, not an absolute path" <target>))
     (let ((target-full (append-posix-path registry-dir <target>)))
       (unless (or (file-or-directory-exists? target-full)
                   (a-weblink? <target>))
-        (fatal "Target ~s does not exist. Note that filepath must be relative to the root" <target>))))
+        (fatal "Target ~s does not exist. Note that filepath must be relative to the registry file" <target>))))
 
   (write-string-file last-id-path id)
 
