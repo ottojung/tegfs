@@ -15,6 +15,7 @@ This program also provides a web-based file-browser
   - `GNU guile` version >1.8 for running the main program
   - `curl` for saving stuff from the internet
   - `xclip` for dumping clipboard content
+  - `xdg-mime` for determining file types
   - `prolog` for query capabilities (TODO: REMOVE THIS DEPENDENCY)
 - Web server
   - `ffmpeg` for video previews production
