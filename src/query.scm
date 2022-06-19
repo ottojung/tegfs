@@ -107,17 +107,20 @@
   (define _333
     (parameterize ((current-output-port output-port))
       (display ":- initialization(main, main).") (newline)
-      (tegfs-dump-prolog)
+      (if (tegfs-dump-prolog)
+          (let ()
+            (define-values (parsed-query variables) (query-parse <query...>))
+            (define initializations (map (lambda (v) `(vandthis ,(make-prolog-var 'This) ,(make-prolog-var v))) variables))
+            (define prolog-query-0 (map tag->prolog-term (append initializations parsed-query)))
+            (define prolog-query (apply string-append (list-intersperse ", " prolog-query-0)))
 
-      (define-values (parsed-query variables) (query-parse <query...>))
-      (define initializations (map (lambda (v) `(vandthis ,(make-prolog-var 'This) ,(make-prolog-var v))) variables))
-      (define prolog-query-0 (map tag->prolog-term (append initializations parsed-query)))
-      (define prolog-query (apply string-append (list-intersperse ", " prolog-query-0)))
-
-      (printf "single(This) :- ~a.\n" prolog-query)
-      (printf "thises(This) :- i(This, Id), single(This), writeln(Id).\n")
-      (printf "main(_Argv) :- findall(This, thises(This), _).")
-      (newline) (newline)
+            (printf "single(This) :- ~a.\n" prolog-query)
+            (printf "thises(This) :- i(This, Id), single(This), writeln(Id).\n")
+            (printf "main(_Argv) :- findall(This, thises(This), _).")
+            (newline) (newline))
+          (let ()
+            (printf "main(_Argv) :- true.")
+            (newline) (newline)))
       ))
 
   (define _222
