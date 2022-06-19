@@ -70,7 +70,7 @@
       /        --date <date>
       SAVEARGS : SAVEOPT? SAVETARGET?
       SAVEOPT : --remote <remote>
-      SAVETARGET : <savefile>
+      SAVETARGET : <savetext>
       QUERYARGS : QUERYOPT? QUERYQ+
       QUERYOPT : --format <query-format> / --entries
       QUERYQ : <query...>
@@ -102,7 +102,7 @@
         (add (tegfs-add/parse
               <add-target> <title> <tag...> --series <key...> <value...>
               <registry-file> <date>))
-        (save (tegfs-save/parse <remote> <savefile>))
+        (save (tegfs-save/parse <remote> <savetext>))
         (categorize (tegfs-categorize/parse))
         (serve (tegfs-serve/parse))
         (prolog (tegfs-prolog/parse))

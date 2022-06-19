@@ -142,11 +142,11 @@
      (list (car p) #f #f))
    property-table))
 
-(define (set-savefile-preference <savefile> state)
-  (if (not <savefile>) state
+(define (set-savefile-preference <savetext> state)
+  (if (not <savetext>) state
       (let* ()
         (assoc-set-preference
-         '-text-content <savefile>
+         '-text-content <savetext>
          state))))
 
 (define (set-text-content-preference state)
@@ -473,9 +473,9 @@
            (next (eval-state-next state)))
       (if next (loop next) state))))
 
-(define (state-set-generic-preferences <savefile>)
+(define (state-set-generic-preferences <savetext>)
   (comp
-   (set-savefile-preference <savefile>)
+   (set-savefile-preference <savetext>)
    set-text-content-preference
    (assoc-set-preference 'series 'no)
    (assoc-set-preference 'confirm 'no)
@@ -539,11 +539,11 @@
    series? key-value-pairs
    registry-file <date>))
 
-(define (tegfs-save/parse/no-remote <savefile>)
+(define (tegfs-save/parse/no-remote <savetext>)
   (define preferences-code
     (get-custom-prefernences-code))
   (define generic-preferences
-    (state-set-generic-preferences <savefile>))
+    (state-set-generic-preferences <savetext>))
   (define custom-preferences
     (comp (state-set-custom-preferences preferences-code)))
   (define set-preferences
@@ -556,9 +556,9 @@
 
   (dprintln "Saved!"))
 
-(define (tegfs-save/parse/remote <remote> <savefile>)
+(define (tegfs-save/parse/remote <remote> <savetext>)
   (define working-file
-    (or <savefile>
+    (or <savetext>
         (tegfs-dump-clipboard)))
 
   (define real-type (classify-clipboard-text-content working-file))
@@ -578,10 +578,10 @@
 
   (dprintln "Saved!"))
 
-(define (tegfs-save/parse <remote> <savefile>)
+(define (tegfs-save/parse <remote> <savetext>)
   (if <remote>
-      (tegfs-save/parse/remote <remote> <savefile>)
-      (tegfs-save/parse/no-remote <savefile>)))
+      (tegfs-save/parse/remote <remote> <savetext>)
+      (tegfs-save/parse/no-remote <savetext>)))
 
 
 
