@@ -150,6 +150,17 @@
      (list (car p) #f #f))
    property-table))
 
+(define (set-savefile-preference <savefile> state)
+  (if (not <savefile>) state
+      (let* ()
+        (assoc-set-preference
+         '-types-list '("TEXT")
+         (assoc-set-preference
+          '-text-content <savefile>
+          (assoc-set-preference
+           '-selection-content 'SKIP
+           state))))))
+
 (define (set-selection-content-preference state)
   (if (assoc '-selection-content state) state
       (let ((selection-content
@@ -501,6 +512,7 @@
 
 (define (state-set-generic-preferences <savefile>)
   (comp
+   (set-savefile-preference <savefile>)
    set-selection-content-preference
    set-text-content-preference
    set-types-list-preference
