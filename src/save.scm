@@ -151,15 +151,15 @@
    property-table))
 
 (define (set-selection-content-preference state)
-  (define selection-content
-    (car (system-re "xclip -selection primary -out")))
-  (assoc-set-preference '-selection-content selection-content state))
+  (if (assoc '-selection-content state) state
+      (let ((selection-content
+             (car (system-re "xclip -selection primary -out"))))
+        (assoc-set-preference '-selection-content selection-content state))))
 
 (define (set-text-content-preference state)
-  (define text-content
-    (car (system-re "xclip -selection clipboard -out")))
   (if (cadr (assoc '-text-content state)) state
-      (begin
+      (let ((text-content
+             (car (system-re "xclip -selection clipboard -out"))))
         (newline)
         (print-in-frame #t #f 3 35 0 #\space "    Clipboard text content")
         (newline)
@@ -168,11 +168,12 @@
         (assoc-set-preference '-text-content text-content state))))
 
 (define (set-types-list-preference state)
-  (define types-list/str
-    (car (system-re "xclip -o -target TARGETS -selection clipboard")))
-  (define types-list
-    (string->lines types-list/str))
-  (assoc-set-preference '-types-list types-list state))
+  (if (assoc '-types-list state) state
+      (let* ((types-list/str
+              (car (system-re "xclip -o -target TARGETS -selection clipboard")))
+             (types-list
+              (string->lines types-list/str)))
+        (assoc-set-preference '-types-list types-list state))))
 
 (define (state-set-custom-preferences preferences-code state)
   (if preferences-code
@@ -498,7 +499,7 @@
            (next (eval-state-next state)))
       (if next (loop next) state))))
 
-(define state-set-generic-preferences
+(define (state-set-generic-preferences <savefile>)
   (comp
    set-selection-content-preference
    set-text-content-preference
@@ -574,10 +575,14 @@
       (unless (= 0 (system-fmt "command -v xdg-mime 1>/dev/null 2>/dev/null"))
         (fatal "Save requires 'xdg-mime' program, but it is not available"))))
 
-  (define preferences-code (get-custom-prefernences-code))
+  (define preferences-code
+    (get-custom-prefernences-code))
+  (define generic-preferences
+    (state-set-generic-preferences <savefile>))
+  (define custom-preferences
+    (comp (state-set-custom-preferences preferences-code)))
   (define set-preferences
-    (comp state-set-generic-preferences
-          (state-set-custom-preferences preferences-code)))
+    (compose generic-preferences custom-preferences))
 
   (define state
     (loop-state set-preferences (initialize-state)))

@@ -64,6 +64,10 @@ test1: dist/tegfs $(TEST_FILES)
 test2: dist/tegfs $(TEST_FILES)
 	TEGFS_ROOT=$(TEST_ROOT) dist/tegfs save
 
+test2-m: dist/tegfs $(TEST_FILES)
+	cp COPYING dist/
+	TEGFS_ROOT=$(TEST_ROOT) dist/tegfs save dist/COPYING
+
 test3: dist/tegfs $(TEST_FILES)
 	TEGFS_ROOT=$(TEST_ROOT) dist/tegfs categorize
 
