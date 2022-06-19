@@ -17,10 +17,9 @@
 %var entry-print/formatted
 
 %use (read-list) "./euphrates/read-list.scm"
-%use (append-posix-path) "./euphrates/append-posix-path.scm"
 
-%use (root/p) "./root-p.scm"
-%use (entry-registry-path-key) "./entry-registry-path-key.scm"
+%use (entry-target-fullpath) "./entry-target-fullpath.scm"
+%use (get-preview-path) "./get-preview-path.scm"
 
 (define (entry-print/formatted <query-format> entry)
   (define format-elements
@@ -31,15 +30,14 @@
   (for-each
    (lambda (element)
      (cond
-      ((equal? '%F element)
-       (let ((target/p (assoc 'target entry)))
-         (if target/p
-             (let* ((target (cdr target/p))
-                    (registry-path (cdr (assoc entry-registry-path-key entry)))
-                    (target-fullpath
-                     (append-posix-path
-                      (root/p) (dirname registry-path) target)))
-               (display target-fullpath))
+      ((equal? '%F element) ;; target-fullpath
+       (let ((fullpath (entry-target-fullpath entry)))
+         (display (or fullpath "//NA//"))))
+      ((equal? '%P element) ;; preview-fullpath
+       (let ((target-fullpath (entry-target-fullpath entry))
+             (id/p (assoc 'id entry)))
+         (if (and id/p target-fullpath)
+             (display (get-preview-path (cdr id/p) target-fullpath))
              (display "//NA//"))))
       ((symbol? element)
        (let ((p (assoc element entry)))
