@@ -59,6 +59,7 @@
 %use (tegfs-categorize) "./categorize.scm"
 %use (get-registry-files) "./get-registry-files.scm"
 %use (get-random-basename) "./get-random-basename.scm"
+%use (dump-clipboard-to-temporary dump-clipboard-to-file get-clipboard-data-types get-clipboard-text-content get-clipboard-type-extension choose-clipboard-data-type) "./clipboard.scm"
 
 %use (debug) "./euphrates/debug.scm"
 %use (debugv) "./euphrates/debugv.scm"
@@ -74,44 +75,33 @@
       state
       (assoc-set-value key (list value set-by-user?) state)))
 
-(define (string-type? s)
-  (or (member s '("STRING" "UTF8_STRING" "TEXT" "COMPOUND_TEXT"))
-      (string-prefix? "text/" s)))
-
 (define (get-random-filename directory extension)
   (append-posix-path directory (string-append (get-random-basename) extension)))
 
-(define (get-mime-extension mimetype)
-  (let ((ext (assoc mimetype mimetype/extensions)))
-    (and ext (string-append "." (car (cdr ext))))))
-
 (define (get-chosen-type-extension chosen-type)
-  (cond
-   ((string-type? chosen-type) ".txt")
-   (else
-    (or (get-mime-extension chosen-type)
-        (begin
-          (dprintln "Cannot deduce file extension for %s, provide it below please:" chosen-type)
-          (read-string-line))))))
+  (or (get-clipboard-type-extension chosen-type)
+      (begin
+        (dprintln "Cannot deduce file extension for %s, provide it below please:" chosen-type)
+        (read-string-line))))
 
 (define (get-clipboard-content real-type chosen-type target-directory)
   (cond
    ((equal? real-type "text")
-    (car (system-re "xclip -selection clipboard -out")))
+    (or (get-clipboard-text-content)
+        (fatal "Could not get clipboard text content")))
    (else
     (let* ((extension (get-chosen-type-extension chosen-type))
            (target (get-random-filename target-directory extension)))
-      (system-fmt "xclip -selection clipboard -target ~a -out > ~a"
-                  chosen-type target)
+      (or (dump-clipboard-to-file chosen-type target)
+          (fatal "Could not dump clipboard data"))
       target))))
 
-(define (dump-xclip-temp data-type)
-  (dprintln "Dumping xclip...")
-  (let ((target (make-temporary-filename)))
-    (unless (= 0 (system-fmt "xclip -selection clipboard -target ~a -out > ~a"
-                             data-type target))
+(define (dump-clipboard-temp data-type)
+  (dprintln "Dumping clipboard...")
+  (let ((result (dump-clipboard-to-temporary data-type)))
+    (unless result
       (fatal "Could not dump"))
-    target))
+    result))
 
 (define (url-get-domain-name url)
   (define split (string-split/simple url #\/))
@@ -154,29 +144,19 @@
   (if (not <savefile>) state
       (let* ()
         (assoc-set-preference
-         '-types-list '("TEXT")
-         (assoc-set-preference
-          '-text-content <savefile>
-          state)))))
+         '-text-content <savefile>
+         state))))
 
 (define (set-text-content-preference state)
   (if (cadr (assoc '-text-content state)) state
-      (let ((text-content
-             (car (system-re "xclip -selection clipboard -out"))))
+      (let ((text-content (or (get-clipboard-text-content)
+                              (fatal "Could not get cliboard text"))))
         (newline)
         (print-in-frame #t #f 3 35 0 #\space "    Clipboard text content")
         (newline)
         (print-in-frame #t #t 3 60 0 #\space text-content)
         (newline)
         (assoc-set-preference '-text-content text-content state))))
-
-(define (set-types-list-preference state)
-  (if (assoc '-types-list state) state
-      (let* ((types-list/str
-              (car (system-re "xclip -o -target TARGETS -selection clipboard")))
-             (types-list
-              (string->lines types-list/str)))
-        (assoc-set-preference '-types-list types-list state))))
 
 (define (state-set-custom-preferences preferences-code state)
   (if preferences-code
@@ -259,7 +239,7 @@
       (assoc-set-preference '-temporary-file temp-name state)))
    (else state)))
 
-(define (dump-xclip-data-maybe state)
+(define (dump-clipboard-data-maybe state)
   (define download? (cadr (assoc 'download? state)))
   (define data-type (cadr (assoc 'data-type state)))
   (define real-type (cadr (assoc 'real-type state)))
@@ -269,7 +249,7 @@
    ((and data-type
          (equal? 'data real-type)
          (not -temporary-file))
-    (let* ((temp-name (dump-xclip-temp data-type)))
+    (let* ((temp-name (dump-clipboard-temp data-type)))
       (assoc-set-preference '-temporary-file temp-name state)))
    (else state)))
 
@@ -293,7 +273,7 @@
 
   (cond
    ((and (equal? 'pasta real-type))
-    (let* ((temp-name (dump-xclip-temp data-type)))
+    (let* ((temp-name (dump-clipboard-temp data-type)))
       (write-string-file temp-name -text-content)
       (assoc-set-preference
        'target-extension ".txt"
@@ -344,7 +324,7 @@
    ((and (equal? 'link real-type) (a-weblink? text-content) (equal? 'no download?))
     (assoc-set-preference 'target-extension 'ignore state))
    ((and data-type)
-    (assoc-set-preference 'target-extension (get-mime-extension data-type) state))
+    (assoc-set-preference 'target-extension (get-clipboard-type-extension data-type) state))
    (else state)))
 
 (define (set-target-basename-preference state)
@@ -365,18 +345,14 @@
 
 (define (get-data-type edit?)
   (define state (state/p))
-  (define types-list (cadr (assoc '-types-list state)))
-  (define types-list/str (lines->string types-list))
   (define -text-content (cadr (assoc '-text-content state)))
 
   (if (a-weblink? -text-content)
       (read-answer "Enter mimetype: ")
-      (let* ((ret (system-re "echo ~a | fzf" types-list/str))
-             (chosen (car ret))
-             (code (cdr ret)))
-        (unless (= 0 code)
+      (let* ((chosen (choose-clipboard-data-type)))
+        (unless chosen
           (fatal "Cancelled"))
-        (string-strip chosen))))
+        chosen)))
 
 (define (get-target-extension edit?)
   (define input (read-answer "Enter target extension: "))
@@ -438,8 +414,7 @@
     (target-basename . ,get-target-basename)
     (confirm . ,get-confirm)
     (-temporary-file . #f)
-    (-text-content . #f)
-    (-types-list . #f)))
+    (-text-content . #f)))
 
 (define (get-setter state-key)
   (define got (assoc state-key property-table))
@@ -505,7 +480,6 @@
   (comp
    (set-savefile-preference <savefile>)
    set-text-content-preference
-   set-types-list-preference
    (assoc-set-preference 'series 'no)
    (assoc-set-preference 'confirm 'no)
    set-download-preference
@@ -513,7 +487,7 @@
    download-maybe
    handle-localfile-maybe
    set-data-type-preference
-   dump-xclip-data-maybe
+   dump-clipboard-data-maybe
    handle-pasta-maybe
    set-target-extension-preference
    set-target-basename-preference
@@ -531,7 +505,6 @@
   (define tags (cadr (assoc 'tags state)))
   (define target-extension (cadr (assoc 'target-extension state)))
   (define target-basename (cadr (assoc 'target-basename state)))
-  (define types-list (cadr (assoc '-types-list state)))
   (define data-type (cadr (assoc 'data-type state)))
   (define real-type (cadr (assoc 'real-type state)))
   (define series (cadr (assoc 'series state)))
@@ -570,13 +543,6 @@
    registry-file <date>))
 
 (define (tegfs-save/parse <savefile>)
-  (define _
-    (unless <savefile>
-      (unless (= 0 (system-fmt "command -v xclip 1>/dev/null 2>/dev/null"))
-        (fatal "Save requires 'xclip' program, but it is not available"))
-      (unless (= 0 (system-fmt "command -v xdg-mime 1>/dev/null 2>/dev/null"))
-        (fatal "Save requires 'xdg-mime' program, but it is not available"))))
-
   (define preferences-code
     (get-custom-prefernences-code))
   (define generic-preferences
