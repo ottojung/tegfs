@@ -70,5 +70,11 @@
        (unless (dump-clipboard-to-file data-type target)
          (fatal "Could not dump clipboard content"))
        (display target)))
+    ((pasta)
+     (let* ((pref (make-temporary-filename))
+            (extension ".txt")
+            (target (string-append pref extension)))
+       (write-string-file target text)
+       (display target)))
     (else
      (display text))))
