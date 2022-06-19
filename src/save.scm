@@ -543,24 +543,24 @@
   (define source (and (a-weblink? -text-content) -temporary-file -text-content))
   (define key-value-pairs (if source (list (cons "source" source)) (list)))
   (define <date> #f)
+  (define _11
+    (unless (file-or-directory-exists? registry-dir)
+      (make-directories registry-dir)))
   (define <target>
     (cond
      (-temporary-file
-      (string-append target-basename target-extension))
+      (let* ((target-name0 (string-append target-basename target-extension))
+             (target-name (if (file-or-directory-exists?
+                                (append-posix-path registry-dir target-name0))
+                               (string-append (get-random-basename) target-name0)
+                               target-name0))
+             (target-fullname (append-posix-path registry-dir target-name)))
+        (debugv -temporary-file)
+        (debugv target-fullname)
+        (rename-file -temporary-file target-fullname)
+        target-name))
      ((equal? real-type 'pasta) #f)
      (else -text-content)))
-
-  (unless (file-or-directory-exists? registry-dir)
-    (make-directories registry-dir))
-
-  (when -temporary-file
-    (let* ((new-name0 (append-posix-path registry-dir <target>))
-           (new-name (if (file-or-directory-exists? new-name0)
-                         (append-posix-path
-                          registry-dir
-                          (string-append (get-random-basename) <target>))
-                         new-name0)))
-      (rename-file -temporary-file new-name)))
 
   (file-delete working-file)
 
