@@ -526,17 +526,18 @@
       (write "/previewuknown"))
   (display "/>"))
 
-(define (display-full-link entry target-fullpath)
+(define (get-full-link entry target-fullpath)
   (define id (cdr (assoc 'id entry)))
   (define location (string-append "/full?id=" id))
   (share-file/dont-link-yet target-fullpath default-full-sharing-time)
-  (display location))
+  location)
 
 (define (maybe-display-preview entry)
   (define target-fullpath (entry-target-fullpath entry))
   (when target-fullpath
-    (let* ((target-id (cdr (assoc 'id entry))))
-      (display "<a href='") (display-full-link entry target-fullpath) (display "'>")
+    (let* ((target-id (cdr (assoc 'id entry)))
+           (full-link (get-full-link entry target-fullpath)))
+      (display "<a href=") (write full-link) (display ">")
       (display-preview target-id target-fullpath)
       (display "</a>")
       )))
