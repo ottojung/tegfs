@@ -34,11 +34,11 @@
        (let ((fullpath (entry-target-fullpath entry)))
          (display (or fullpath "//NA//"))))
       ((equal? '%P element) ;; preview-fullpath
-       (let ((target-fullpath (entry-target-fullpath entry))
-             (id/p (assoc 'id entry)))
-         (if (and id/p target-fullpath)
-             (display (get-preview-path (cdr id/p) target-fullpath))
-             (display "//NA//"))))
+       (let* ((target-fullpath (entry-target-fullpath entry))
+              (id/p (assoc 'id entry))
+              (preview (and id/p target-fullpath
+                            (get-preview-path (cdr id/p) target-fullpath))))
+         (display (or preview "//NA//"))))
       ((symbol? element)
        (let ((p (assoc element entry)))
          (if p

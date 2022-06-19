@@ -25,14 +25,13 @@
   (define preview-directory
     (append-posix-path (root/p) "cache" "preview"))
   (define file-type (get-file-type target-fullpath))
-  (define preview-name
-    (string-append
-     target-id
-     (case file-type
+  (define preview-extension
+    (case file-type
       ((image) ".jpeg")
       ((video) ".gif")
-      (else "TODO???"))))
-  (define preview-fullpath
-    (append-posix-path preview-directory preview-name))
+      (else #f)))
 
-  preview-fullpath)
+  (and preview-extension
+       (let ((preview-name
+              (string-append target-id preview-extension)))
+         (append-posix-path preview-directory preview-name))))
