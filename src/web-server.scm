@@ -92,9 +92,9 @@
 %use (web-preview-height) "./web-preview-height.scm"
 %use (web-preview-width) "./web-preview-width.scm"
 %use (tegfs-make-thumbnails) "./make-thumbnails.scm"
-%use (get-file-type) "./get-file-type.scm"
 %use (read-file-head) "./read-file-head.scm"
 %use (get-config) "./get-config.scm"
+%use (get-preview-path) "./get-preview-path.scm"
 
 %use (debug) "./euphrates/debug.scm"
 %use (debugv) "./euphrates/debugv.scm"
@@ -443,25 +443,6 @@
 (define (upload)
   (respond (web-make-upload-body)))
 
-(define (get-preview-by-id target-id target-fullpath)
-  (define preview-directory
-    (append-posix-path (root/p) "cache" "preview"))
-  (define file-type (get-file-type target-fullpath))
-  (define preview-name
-    (string-append
-     target-id
-     (case file-type
-      ((image) ".jpeg")
-      ((video) ".gif")
-      (else "TODO???"))))
-  (define preview-fullpath
-    (append-posix-path preview-directory preview-name))
-
-  (unless (file-or-directory-exists? preview-directory)
-    (make-directories preview-directory))
-
-  preview-fullpath)
-
 (define (get-sharedinfo-for-perm perm target-fullpath)
   (define ctx (context/p))
   (define filemap (context-filemap ctx))
@@ -529,7 +510,7 @@
 (define (display-preview target-id target-fullpath)
   (define ctx (context/p))
   (define fileserver (context-fileserver ctx))
-  (define preview-fullpath (get-preview-by-id target-id target-fullpath))
+  (define preview-fullpath (get-preview-path target-id target-fullpath))
   (define perm (get-permissions))
   (define info (share-file preview-fullpath default-preview-sharing-time))
 
@@ -623,7 +604,7 @@
 
 (define (web-make-preview target-id target-fullpath entry)
   (define preview-fullpath
-    (get-preview-by-id target-id target-fullpath))
+    (get-preview-path target-id target-fullpath))
 
   (and (or (file-or-directory-exists? preview-fullpath)
            (tegfs-make-thumbnails target-fullpath preview-fullpath))
