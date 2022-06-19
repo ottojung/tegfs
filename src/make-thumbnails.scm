@@ -64,6 +64,10 @@
    (else #f)))
 
 (define (tegfs-make-image-thumbnails <input> <output>)
+  (let ((dir (dirname <output>)))
+    (unless (file-or-directory-exists? dir)
+      (make-directories dir)))
+
   (system-fmt
    (string-append
     "convert "
@@ -114,6 +118,10 @@
            <input> rate dir)))
     (unless (= 0 status)
       (raisu 'ffmpeg-failed status)))
+
+  (let ((dir (dirname <output>)))
+    (unless (file-or-directory-exists? dir)
+      (make-directories dir)))
 
   (let* ((status
           (system-fmt
