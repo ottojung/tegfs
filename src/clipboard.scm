@@ -18,6 +18,7 @@
 %var dump-clipboard-to-file
 %var get-clipboard-data-types
 %var get-clipboard-text-content
+%var classify-clipboard-text-content
 %var get-clipboard-type-extension
 %var choose-clipboard-data-type
 
@@ -56,7 +57,15 @@
 %use (~s) "./euphrates/tilda-s.scm"
 %use (define-pair) "./euphrates/define-pair.scm"
 
+%use (a-weblink?) "./a-weblink-q.scm"
 %use (fatal) "./fatal.scm"
+
+(define (classify-clipboard-text-content text-content)
+  (cond
+   ((string-null? text-content) 'data)
+   ((a-weblink? text-content) 'link)
+   ((file-or-directory-exists? text-content) 'localfile)
+   (else 'pasta)))
 
 (define (dump-clipboard-to-file data-type target)
   (= 0 (system-fmt "xclip -selection clipboard -target ~a -out > ~a"

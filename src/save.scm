@@ -49,6 +49,7 @@
 %use (print-in-frame) "./euphrates/print-in-frame.scm"
 %use (string-split/simple) "./euphrates/string-split-simple.scm"
 %use (~s) "./euphrates/tilda-s.scm"
+%use (raisu) "./euphrates/raisu.scm"
 
 %use (fatal) "./fatal.scm"
 %use (regfile-suffix) "./regfile-suffix.scm"
@@ -59,7 +60,8 @@
 %use (tegfs-categorize) "./categorize.scm"
 %use (get-registry-files) "./get-registry-files.scm"
 %use (get-random-basename) "./get-random-basename.scm"
-%use (dump-clipboard-to-temporary dump-clipboard-to-file get-clipboard-data-types get-clipboard-text-content get-clipboard-type-extension choose-clipboard-data-type) "./clipboard.scm"
+%use (classify-clipboard-text-content dump-clipboard-to-temporary dump-clipboard-to-file get-clipboard-data-types get-clipboard-text-content get-clipboard-type-extension choose-clipboard-data-type) "./clipboard.scm"
+%use (tegfs-dump-clipboard/parse) "./dump-clipboard.scm"
 
 %use (debug) "./euphrates/debug.scm"
 %use (debugv) "./euphrates/debugv.scm"
@@ -150,7 +152,7 @@
 (define (set-text-content-preference state)
   (if (cadr (assoc '-text-content state)) state
       (let ((text-content (or (get-clipboard-text-content)
-                              (fatal "Could not get cliboard text"))))
+                              (fatal "Could not get clipboard text"))))
         (newline)
         (print-in-frame #t #f 3 35 0 #\space "    Clipboard text content")
         (newline)
@@ -216,12 +218,7 @@
 
 (define (set-real-type-preference state)
   (define text-content (cadr (assoc '-text-content state)))
-  (define value
-    (cond
-     ((string-null? text-content) 'data)
-     ((a-weblink? text-content) 'link)
-     ((file-or-directory-exists? text-content) 'localfile)
-     (else 'pasta)))
+  (define value (classify-clipboard-text-content text-content))
   (assoc-set-preference 'real-type value state))
 
 (define (download-maybe state)
@@ -542,7 +539,7 @@
    series? key-value-pairs
    registry-file <date>))
 
-(define (tegfs-save/parse <savefile>)
+(define (tegfs-save/parse/no-remote <savefile>)
   (define preferences-code
     (get-custom-prefernences-code))
   (define generic-preferences
@@ -558,6 +555,33 @@
   (send-state state)
 
   (dprintln "Saved!"))
+
+(define (tegfs-save/parse/remote <remote> <savefile>)
+  (define working-file
+    (or <savefile>
+        (tegfs-dump-clipboard/parse)))
+
+  (define real-type (classify-clipboard-text-content working-file))
+
+  (case real-type
+    ((localfile)
+     (unless (file-or-directory-exists? working-file)
+       (raisu 'file-must-have-been-created working-file))
+     (unless (= 0 (system-fmt "rsync --info=status2 --partial ~a:~a" <remote> working-file))
+       (fatal "Syncing to remote failed")))
+    ((link) 'do-nothing)
+    ((data pasta) (raisu 'impossible-real-type real-type working-file))
+    (else (raisu 'unhandled-real-type real-type working-file)))
+
+  (unless (system-fmt "exec ssh -t ~a \"exec /bin/sh -l -c \\\"exec tegfs save ~a\\\"\"" <remote> working-file)
+    (fatal "Something went wrong on the other side"))
+
+  (dprintln "Saved!"))
+
+(define (tegfs-save/parse <remote> <savefile>)
+  (if <remote>
+      (tegfs-save/parse/remote <remote> <savefile>)
+      (tegfs-save/parse/no-remote <savefile>)))
 
 
 

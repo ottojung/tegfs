@@ -14,7 +14,7 @@
 
 %run guile
 
-%var tegfs-dump-cliboard/parse
+%var tegfs-dump-clipboard/parse
 
 %use (system-fmt) "./euphrates/system-fmt.scm"
 %use (system-re) "./euphrates/system-re.scm"
@@ -52,22 +52,23 @@
 %use (define-pair) "./euphrates/define-pair.scm"
 
 %use (fatal) "./fatal.scm"
-%use (dump-clipboard-to-temporary dump-clipboard-to-file get-clipboard-data-types get-clipboard-text-content get-clipboard-type-extension choose-clipboard-data-type) "./clipboard.scm"
-
-%var tegfs-dump-clipboard/parse
+%use (classify-clipboard-text-content dump-clipboard-to-temporary dump-clipboard-to-file get-clipboard-data-types get-clipboard-text-content get-clipboard-type-extension choose-clipboard-data-type) "./clipboard.scm"
 
 (define (tegfs-dump-clipboard/parse)
-  (define text (get-clipboard-text-content))
-  (unless text
-    (fatal "Could not get clipboard text"))
+  (define text
+    (or (get-clipboard-text-content)
+        (fatal "Could not get clipboard text")))
 
-  (if (not (string-null? text))
-      (display text)
-      (let* ((data-type (choose-clipboard-data-type))
-             (do (unless data-type (fatal "Could not get clipboard data type")))
-             (extension (get-clipboard-type-extension data-type))
-             (pref (make-temporary-filename))
-             (target (string-append pref extension)))
-        (unless (dump-clipboard-to-file data-type target)
-          (fatal "Could not dump clipboard content"))
-        (display target))))
+  (case (classify-clipboard-text-content text)
+    ((data)
+     (let* ((data-type
+             (or (choose-clipboard-data-type)
+                 (fatal "Could not get clipboard data type")))
+            (extension (get-clipboard-type-extension data-type))
+            (pref (make-temporary-filename))
+            (target (string-append pref extension)))
+       (unless (dump-clipboard-to-file data-type target)
+         (fatal "Could not dump clipboard content"))
+       (display target)))
+    (else
+     (display text))))

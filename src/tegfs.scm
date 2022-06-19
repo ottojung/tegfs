@@ -50,7 +50,7 @@
       MAIN : ROOT? FUNC
       /      --help
       FUNC : add ADDOPT+
-      /      save SAVEOPT?
+      /      save SAVEARGS?
       /      categorize
       /      prolog
       /      query QUERYARGS
@@ -68,7 +68,8 @@
       /        --key <key...> <value...>
       /        --registry-file <registry-file>
       /        --date <date>
-      SAVEOPT : <savefile>
+      SAVEARGS : SAVEOPT? <savefile>
+      SAVEOPT : --remote <remote>
       QUERYARGS : QUERYOPT? QUERYQ+
       QUERYOPT : --format <query-format> / --entries
       QUERYQ : <query...>
@@ -84,6 +85,7 @@
      :exclusive (--no-series --series)
      :default (--entries #t)
      :exclusive (--entries --format)
+     :help (<remote> "A remote address like 'user1@example.com'")
 
      (when --help
        (define-cli:show-help))
@@ -99,7 +101,7 @@
         (add (tegfs-add/parse
               <add-target> <title> <tag...> --series <key...> <value...>
               <registry-file> <date>))
-        (save (tegfs-save/parse <savefile>))
+        (save (tegfs-save/parse <remote> <savefile>))
         (categorize (tegfs-categorize/parse))
         (serve (tegfs-serve/parse))
         (prolog (tegfs-prolog/parse))
