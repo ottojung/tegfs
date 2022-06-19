@@ -61,7 +61,7 @@
 %use (get-registry-files) "./get-registry-files.scm"
 %use (get-random-basename) "./get-random-basename.scm"
 %use (classify-clipboard-text-content dump-clipboard-to-temporary dump-clipboard-to-file get-clipboard-data-types get-clipboard-text-content get-clipboard-type-extension choose-clipboard-data-type) "./clipboard.scm"
-%use (tegfs-dump-clipboard/parse) "./dump-clipboard.scm"
+%use (tegfs-dump-clipboard) "./dump-clipboard.scm"
 
 %use (debug) "./euphrates/debug.scm"
 %use (debugv) "./euphrates/debugv.scm"
@@ -559,7 +559,7 @@
 (define (tegfs-save/parse/remote <remote> <savefile>)
   (define working-file
     (or <savefile>
-        (tegfs-dump-clipboard/parse)))
+        (tegfs-dump-clipboard)))
 
   (define real-type (classify-clipboard-text-content working-file))
 

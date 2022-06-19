@@ -14,6 +14,7 @@
 
 %run guile
 
+%var tegfs-dump-clipboard
 %var tegfs-dump-clipboard/parse
 
 %use (system-fmt) "./euphrates/system-fmt.scm"
@@ -54,7 +55,7 @@
 %use (fatal) "./fatal.scm"
 %use (classify-clipboard-text-content dump-clipboard-to-temporary dump-clipboard-to-file get-clipboard-data-types get-clipboard-text-content get-clipboard-type-extension choose-clipboard-data-type) "./clipboard.scm"
 
-(define (tegfs-dump-clipboard/parse)
+(define (tegfs-dump-clipboard)
   (define text
     (or (get-clipboard-text-content)
         (fatal "Could not get clipboard text")))
@@ -71,14 +72,17 @@
             (target (string-append pref extension)))
        (unless (dump-clipboard-to-file data-type target)
          (fatal "Could not dump clipboard content"))
-       (display target)))
+       target))
     ((pasta)
      (let* ((pref (make-temporary-filename))
             (extension ".txt")
             (target (string-append pref extension)))
        (write-string-file target text)
-       (display target)))
+       target))
     ((link localfile)
-     (display text))
+     text)
     (else
      (raisu 'unexpected-real-type real-type))))
+
+(define (tegfs-dump-clipboard/parse)
+  (display (tegfs-dump-clipboard)))
