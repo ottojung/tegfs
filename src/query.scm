@@ -73,8 +73,10 @@
 %use (entry-registry-path-key) "./entry-registry-path-key.scm"
 
 (define (tegfs-query/parse --entries <query-format> <query...>)
+  (define append-registry-file?
+    (if <query-format> #t #f))
   (define entries
-    (tegfs-query #f <query...>))
+    (tegfs-query append-registry-file? <query...>))
 
   (cond
    (--entries
