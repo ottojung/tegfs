@@ -719,33 +719,37 @@
   (define ctx (context/p))
   (define sharedir (context-sharedir ctx))
   (define filemap (context-filemap ctx))
-  (define files (directory-files sharedir))
   (define now (time-get-current-unixtime))
   (define tokens (context-tokens ctx))
+
+  (hashmap-foreach
+   (lambda (shared-name info)
+     (define end (+ (sharedinfo-ctime info)
+                    (sharedinfo-stime info)))
+     (define full-name
+       (append-posix-path sharedir (sharedinfo-targetpath info)))
+     (unless (< now end)
+       (file-delete full-name)
+       (hashmap-delete! filemap shared-name)))
+   filemap)
+
+  (hashmap-foreach
+   (lambda (token perm)
+     (unless (permission-still-valid? perm now)
+       (invalidate-permission perm)))
+   tokens)
 
   (for-each
    (lambda (namepair)
      (define full-name (car namepair))
      (define shared-name (cadr namepair))
      (define info (hashmap-ref filemap shared-name #f))
-     (if info
-         (let* ((end (+ (sharedinfo-ctime info)
-                        (sharedinfo-stime info))))
-           (unless (< now end)
-             (file-delete full-name)
-             (hashmap-delete! filemap shared-name)))
-         (begin
-           (display "File not shared: ")
-           (write shared-name)
-           (display " deleting...\n")
-           (file-delete full-name))))
-   files)
-
-  (hashmap-foreach
-   (lambda (token perm)
-     (unless (permission-still-valid? perm)
-       (invalidate-permission perm)))
-   tokens)
+     (unless info
+       (display "File not shared: ")
+       (write shared-name)
+       (display " deleting...\n")
+       (file-delete full-name)))
+   (directory-files sharedir))
 
   (return!
    (build-response
@@ -753,7 +757,7 @@
     #:headers
     (append web-basic-headers
             `((Cache-Control . "no-cache"))))
-   "ok"))
+   "ok\n"))
 
 (define (share)
   (define ctx (context/p))
