@@ -132,7 +132,7 @@
 
   (define _111
     (unless (equal? 0 code)
-      (fatal "Prolog execution failed with code ~s and contents:\n~a" code ids/string)))
+      (raisu 'prolog-execution-failed code ids/string)))
 
   (define ids
     (appcomp ids/string
