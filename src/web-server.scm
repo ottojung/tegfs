@@ -97,6 +97,7 @@
 %use (get-preview-path) "./get-preview-path.scm"
 %use (entry-target-fullpath) "./entry-target-fullpath.scm"
 %use (a-weblink?) "./a-weblink-q.scm"
+%use (web-url-icon/svg) "./web-url-icon-svg.scm"
 
 %use (debug) "./euphrates/debug.scm"
 %use (debugv) "./euphrates/debugv.scm"
@@ -514,7 +515,7 @@
   (define fileserver (context-fileserver ctx))
   (define preview-fullpath (get-preview-path target-id target-fullpath))
   (define default-preview
-    (if (a-weblink? target-fullpath) "/previewuknownurl" "/previewuknown"))
+    (if (a-weblink? target-fullpath) "/previewunknownurl" "/previewunknown"))
 
   (display "<img src=")
   (if preview-fullpath
@@ -634,8 +635,25 @@
            `((content-type . (image/svg+xml))
              (Cache-Control . "max-age=3600, public, private")))))
 
-(define (preview-unavailable)
+(define (previewunknown)
   (return! unavailable-response unavailable-bytevector))
+
+(define (preview-unknownurl)
+  (return! unknownurl-response unknownurl-bytevector))
+
+(define unknownurl-bytevector
+  (string->utf8 web-url-icon/svg))
+
+(define unknownurl-response
+  (build-response
+   #:code 200
+   #:headers
+   (append web-basic-headers
+           `((content-type . (image/svg+xml))
+             (Cache-Control . "max-age=3600, public, private")))))
+
+(define (previewunknownurl)
+  (return! unknownurl-response unknownurl-bytevector))
 
 (define (preview)
   (define ctxq (get-query))
@@ -649,10 +667,7 @@
 
   (if preview-fullpath
       (web-sendfile return! 'image/jpeg preview-fullpath)
-      (preview-unavailable)))
-
-(define (previewuknown)
-  (preview-unavailable))
+      (previewunknown)))
 
 (define (full)
   (define ctx (context/p))
@@ -815,7 +830,8 @@
     (/upload ,upload)
     (/uploadcont ,uploadcont)
     (/preview ,preview)
-    (/previewuknown ,previewuknown)
+    (/previewunknown ,previewunknown)
+    (/previewunknownurl ,previewunknownurl)
     (/full ,full)
     (/share ,share)
     ))
