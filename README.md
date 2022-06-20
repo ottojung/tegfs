@@ -25,6 +25,21 @@ This program also provides a web-based file-browser
   - `entr` for checking if new previews need to be made
   - third-party file server, such as `Nginx`
 
+# Note on query
+
+Along with usual tags,
+ query provides special tags that are auto generated.
+The tags are:
+
+- `%any` - true for all arguments (arity = 1)
+- `%diff` - true if two objects are different (arity = 2)
+- `%remote` - true if target is a web link (arity = 1)
+- `%local` - true if target is not a web link (arity = 1)
+- `%notarget` - true if the object has no target (arity = 1)
+
+So, for example, doing `tegfs query %any` will return
+ every object there is in the database.
+
 # TODO
 
 - [ ] remove prolog dependency
