@@ -15,7 +15,7 @@ This program also provides a web-based file-browser
   - `GNU guile` version >1.8 for running the main program
   - `curl` for saving stuff from the internet
   - `xclip` for dumping clipboard content
-  - `xdg-mime` for determining file types
+  - `file` for determining file types
   - `fzf` for making choices during `tegfs save`
   - `rsync` for sending files to remote servers if using `tegfs save` with `--remote`
   - `prolog` for query capabilities (TODO: REMOVE THIS DEPENDENCY)

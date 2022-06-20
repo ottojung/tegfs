@@ -126,7 +126,7 @@
     target))
 
 (define (get-file-mimetype target)
-  (let* ((ret (system-re "xdg-mime query filetype ~a" target))
+  (let* ((ret (system-re "file --brief --mime-type ~a" target))
          (mimetype (car ret))
          (code (cdr ret)))
     (if (= 0 code)
