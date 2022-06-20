@@ -209,11 +209,10 @@
   (if (a-weblink? text-content) state
       (assoc-set-preference 'download? 'no state)))
 
-(define working-file
-  (make-temporary-filename/local))
+(define working-file/p (make-parameter #f))
 
 (define (get-tags edit?)
-  (define result (cdr (tegfs-categorize working-file)))
+  (define result (cdr (tegfs-categorize (working-file/p))))
   (map symbol->string result))
 
 (define (set-real-type-preference state)
@@ -530,7 +529,7 @@
      ((equal? real-type 'pasta) #f)
      (else -text-content)))
 
-  (file-delete working-file)
+  (file-delete (working-file/p))
 
   (tegfs-add
    <target> title tags
@@ -547,10 +546,10 @@
   (define set-preferences
     (compose generic-preferences custom-preferences))
 
-  (define state
-    (loop-state set-preferences (initialize-state)))
-
-  (send-state state)
+  (parameterize ((working-file/p (make-temporary-filename/local)))
+    (let ((state
+           (loop-state set-preferences (initialize-state))))
+      (send-state state)))
 
   (dprintln "Saved!"))
 
