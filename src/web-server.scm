@@ -831,12 +831,12 @@
     (/collectgarbage ,collectgarbage public)
     (/query ,query public)
     (/details ,details public)
+    (/full ,full public)
     (/upload ,upload)
     (/uploadcont ,uploadcont)
     (/preview ,preview)
     (/previewunknown ,previewunknown)
     (/previewunknownurl ,previewunknownurl)
-    (/full ,full)
     (/share ,share)
     ))
 
