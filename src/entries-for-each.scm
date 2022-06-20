@@ -15,6 +15,8 @@
 %run guile
 
 %var entries-for-each
+%var entries-for-each*
+%var entries-for-each/no-registry-file
 
 %use (append-posix-path) "./euphrates/append-posix-path.scm"
 %use (open-file-port) "./euphrates/open-file-port.scm"
@@ -24,7 +26,7 @@
 %use (get-registry-files) "./get-registry-files.scm"
 %use (entry-registry-path-key) "./entry-registry-path-key.scm"
 
-(define (entries-for-each fn)
+(define (entries-for-each* append-registry-file? fn)
   (for-each
    (lambda (registry-path0)
      (define registry-path (append-posix-path registry-path0))
@@ -33,6 +35,14 @@
      (let loop ()
        (define x (read input-port))
        (unless (eof-object? x)
-         (fn (cons (cons entry-registry-path-key registry-path) x))
+         (if append-registry-file?
+             (fn (cons (cons entry-registry-path-key registry-path) x))
+             (fn x))
          (loop))))
    (get-registry-files)))
+
+(define (entries-for-each fn)
+  (entries-for-each* #t fn))
+
+(define (entries-for-each/no-registry-file fn)
+  (entries-for-each* #f fn))

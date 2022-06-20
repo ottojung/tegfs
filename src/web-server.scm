@@ -595,7 +595,7 @@
   (define query/encoded (hashmap-ref ctxq 'q ""))
   (define query (decode-query query/encoded))
   (define query/split (string->words query))
-  (define entries (tegfs-query query/split))
+  (define entries (tegfs-query #t query/split))
 
   (respond
    (lambda _
@@ -743,7 +743,7 @@
   (define query/encoded (hashmap-ref ctxq 'q ""))
   (define query (decode-query query/encoded))
   (define query/split (string->words query))
-  (define entries (tegfs-query query/split))
+  (define entries (tegfs-query #t query/split))
 
   (define admin? #f)
   (define perm (make-permission! default-share-expiery-time admin?))

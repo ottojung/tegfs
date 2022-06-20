@@ -64,7 +64,7 @@
 %use (tegfs-dump-prolog) "./prolog.scm"
 %use (query-parse) "./query-parse.scm"
 %use (tag->prolog-term) "./tag-to-prolog-term.scm"
-%use (entries-for-each) "./entries-for-each.scm"
+%use (entries-for-each*) "./entries-for-each.scm"
 %use (entry-print) "./entry-print.scm"
 %use (entry-print/formatted) "./entry-print-formatted.scm"
 %use (id-name) "./id-name.scm"
@@ -74,7 +74,7 @@
 
 (define (tegfs-query/parse --entries <query-format> <query...>)
   (define entries
-    (tegfs-query <query...>))
+    (tegfs-query #f <query...>))
 
   (cond
    (--entries
@@ -99,7 +99,7 @@
 
   )
 
-(define (tegfs-query <query...>)
+(define (tegfs-query append-registry-file? <query...>)
   (define output-path (string-append (make-temporary-filename/local) ".pl"))
   (define output-port (open-file-port output-path "w"))
 
@@ -127,7 +127,7 @@
   (define-pair (ids/string code)
     (system-re "prolog -s ~a" output-path))
 
-  (define _333
+  (define _444
     (file-delete output-path))
 
   (define _111
@@ -143,7 +143,8 @@
 
   (define ret '())
 
-  (entries-for-each
+  (entries-for-each*
+   append-registry-file?
    (lambda (entry)
      (define id (cdr (assoc id-name entry)))
      (when (hashset-ref ids id)
