@@ -90,8 +90,9 @@
      (when --help
        (define-cli:show-help))
 
-     (unless (file-or-directory-exists? <root>)
-       (make-directories <root>))
+     (when <root>
+       (unless (file-or-directory-exists? <root>)
+         (make-directories <root>)))
 
      (parameterize ((root/p <root>))
        (cond
