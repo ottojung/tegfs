@@ -525,8 +525,6 @@
                                (string-append (get-random-basename) target-name0)
                                target-name0))
              (target-fullname (append-posix-path registry-dir target-name)))
-        (debugv -temporary-file)
-        (debugv target-fullname)
         (rename-file -temporary-file target-fullname)
         target-name))
      ((equal? real-type 'pasta) #f)
