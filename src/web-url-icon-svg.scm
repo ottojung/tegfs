@@ -16,10 +16,12 @@
 
 %var web-url-icon/svg
 
-(define web-url-icon/svg
+%use (stringf) "./euphrates/stringf.scm"
+
+(define web-url-icon/svg/template
   "<?xml version='1.0' encoding='UTF-8' standalone='no'?>
    <!--part of the matt icon theme by sixsixfive released under CC0 (https://creativecommons.org/publicdomain/zero/1.0/) on openclipart-->
-   <svg xmlns='http://www.w3.org/2000/svg' xmlns:xlink='http://www.w3.org/1999/xlink' viewBox='0 0 128 128'>
+   <svg width='~apx' height='~apx' xmlns='http://www.w3.org/2000/svg' xmlns:xlink='http://www.w3.org/1999/xlink' viewBox='0 0 128 128'>
     <defs id='0'>
      <linearGradient id='2'>
       <stop id='H' stop-color='#efefef'/>
@@ -57,3 +59,6 @@
      </g>
     </g>
    </svg>")
+
+(define (web-url-icon/svg width height)
+  (stringf web-url-icon/svg/template width height))

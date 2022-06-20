@@ -642,7 +642,7 @@
   (return! unknownurl-response unknownurl-bytevector))
 
 (define unknownurl-bytevector
-  (string->utf8 web-url-icon/svg))
+  (string->utf8 (web-url-icon/svg web-preview-width web-preview-height)))
 
 (define unknownurl-response
   (build-response
