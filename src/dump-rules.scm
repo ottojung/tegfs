@@ -16,7 +16,6 @@
 
 %var dump-rules
 
-%use (make-temporary-filename) "./euphrates/make-temporary-filename.scm"
 %use (system-fmt) "./euphrates/system-fmt.scm"
 %use (append-posix-path) "./euphrates/append-posix-path.scm"
 %use (dprintln) "./euphrates/dprintln.scm"
@@ -51,6 +50,7 @@
 %use (string->words) "./euphrates/string-to-words.scm"
 %use (list-intersperse) "./euphrates/list-intersperse.scm"
 
+%use (make-temporary-filename/local) "./make-temporary-filename-local.scm"
 %use (categorization-filename) "./categorization-filename.scm"
 %use (rules-filename) "./rules-filename.scm"
 %use (tags-this-variable/string) "./tags-this-variable.scm"

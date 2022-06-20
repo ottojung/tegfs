@@ -17,7 +17,6 @@
 %var tegfs-categorize/parse
 %var tegfs-categorize
 
-%use (make-temporary-filename) "./euphrates/make-temporary-filename.scm"
 %use (system-fmt) "./euphrates/system-fmt.scm"
 %use (append-posix-path) "./euphrates/append-posix-path.scm"
 %use (dprintln) "./euphrates/dprintln.scm"
@@ -47,6 +46,7 @@
 %use (make-hashset hashset-add! hashset-ref hashset-difference hashset->list) "./euphrates/ihashset.scm"
 %use (~a) "./euphrates/tilda-a.scm"
 
+%use (make-temporary-filename/local) "./make-temporary-filename-local.scm"
 %use (categorization-filename) "./categorization-filename.scm"
 %use (categorization-split) "./categorization-split.scm"
 %use (get-root) "./get-root.scm"
@@ -65,7 +65,7 @@
   (define categorization-file (append-posix-path (get-root) categorization-filename))
   (define working-file0
     (or working-file-maybe
-        (make-temporary-filename)))
+        (make-temporary-filename/local)))
   (define working-file working-file0)
   (define cfg-part #f)
   (define state (make-hashmap))
@@ -157,7 +157,7 @@
                                 cfg-part))
 
                (set! currently-handling-var new-var)
-               (set! working-file (make-temporary-filename))
+               (set! working-file (make-temporary-filename/local))
                (write-string-file working-file temp-content)
 
                (loop)))))

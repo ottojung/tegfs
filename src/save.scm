@@ -29,7 +29,6 @@
 %use (read-string-line) "./euphrates/read-string-line.scm"
 %use (list-or-map) "./euphrates/list-or-map.scm"
 %use (append-posix-path) "./euphrates/append-posix-path.scm"
-%use (make-temporary-filename) "./euphrates/make-temporary-filename.scm"
 %use (mimetype/extensions) "./euphrates/mimetype-extensions.scm"
 %use (file-delete) "./euphrates/file-delete.scm"
 %use (file-or-directory-exists?) "./euphrates/file-or-directory-exists-q.scm"
@@ -51,6 +50,7 @@
 %use (~s) "./euphrates/tilda-s.scm"
 %use (raisu) "./euphrates/raisu.scm"
 
+%use (make-temporary-filename/local) "./make-temporary-filename-local.scm"
 %use (fatal) "./fatal.scm"
 %use (regfile-suffix) "./regfile-suffix.scm"
 %use (get-root) "./get-root.scm"
@@ -116,7 +116,7 @@
 
 (define (download-temp url)
   (dprintln "Downloading...")
-  (let* ((target (make-temporary-filename))
+  (let* ((target (make-temporary-filename/local))
          ;; NOTE: some websites (looking at you 8chan) require referer to be set to its domain name, which is silly!! and which is stupid >:
          (domain-name (url-get-domain-name url))
          (headers (string-append "referer: " (~s domain-name))))
@@ -210,7 +210,7 @@
       (assoc-set-preference 'download? 'no state)))
 
 (define working-file
-  (make-temporary-filename))
+  (make-temporary-filename/local))
 
 (define (get-tags edit?)
   (define result (cdr (tegfs-categorize working-file)))

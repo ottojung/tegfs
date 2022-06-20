@@ -17,7 +17,6 @@
 %var tegfs-edit-tags
 %var tegfs-process-categorization-text
 
-%use (make-temporary-filename) "./euphrates/make-temporary-filename.scm"
 %use (system-fmt) "./euphrates/system-fmt.scm"
 %use (append-posix-path) "./euphrates/append-posix-path.scm"
 %use (dprintln) "./euphrates/dprintln.scm"
@@ -48,6 +47,7 @@
 %use (cons!) "./euphrates/cons-bang.scm"
 %use (multiset->list list->multiset multiset-filter) "./euphrates/imultiset.scm"
 
+%use (make-temporary-filename/local) "./make-temporary-filename-local.scm"
 %use (categorization-split) "./categorization-split.scm"
 %use (tag-structure-sep1) "./tag-structure-sep1.scm"
 

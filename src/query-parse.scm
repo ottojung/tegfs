@@ -16,7 +16,6 @@
 
 %var query-parse
 
-%use (make-temporary-filename) "./euphrates/make-temporary-filename.scm"
 %use (system-fmt) "./euphrates/system-fmt.scm"
 %use (append-posix-path) "./euphrates/append-posix-path.scm"
 %use (dprintln) "./euphrates/dprintln.scm"
@@ -52,6 +51,7 @@
 %use (list-deduplicate/reverse) "./euphrates/list-deduplicate.scm"
 %use (curry-if) "./euphrates/curry-if.scm"
 
+%use (make-temporary-filename/local) "./make-temporary-filename-local.scm"
 %use (categorization-filename) "./categorization-filename.scm"
 %use (tags-this-variable/string) "./tags-this-variable.scm"
 %use (get-registry-files) "./get-registry-files.scm"

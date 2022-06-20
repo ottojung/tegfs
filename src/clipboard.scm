@@ -35,7 +35,6 @@
 %use (read-string-line) "./euphrates/read-string-line.scm"
 %use (list-or-map) "./euphrates/list-or-map.scm"
 %use (append-posix-path) "./euphrates/append-posix-path.scm"
-%use (make-temporary-filename) "./euphrates/make-temporary-filename.scm"
 %use (mimetype/extensions) "./euphrates/mimetype-extensions.scm"
 %use (file-delete) "./euphrates/file-delete.scm"
 %use (file-or-directory-exists?) "./euphrates/file-or-directory-exists-q.scm"
@@ -57,6 +56,7 @@
 %use (~s) "./euphrates/tilda-s.scm"
 %use (define-pair) "./euphrates/define-pair.scm"
 
+%use (make-temporary-filename/local) "./make-temporary-filename-local.scm"
 %use (a-weblink?) "./a-weblink-q.scm"
 %use (fatal) "./fatal.scm"
 
@@ -72,7 +72,7 @@
                    data-type target)))
 
 (define (dump-clipboard-to-temporary data-type)
-  (define target (make-temporary-filename))
+  (define target (make-temporary-filename/local))
   (and (dump-clipboard-to-file data-type target)
        target))
 

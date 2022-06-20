@@ -17,7 +17,6 @@
 %var tag->prolog-term
 %var print-tag-as-prolog-term
 
-%use (make-temporary-filename) "./euphrates/make-temporary-filename.scm"
 %use (system-fmt) "./euphrates/system-fmt.scm"
 %use (append-posix-path) "./euphrates/append-posix-path.scm"
 %use (dprintln) "./euphrates/dprintln.scm"
@@ -49,6 +48,7 @@
 %use (alphanum/alphabet/index) "./euphrates/alphanum-alphabet.scm"
 %use (~a) "./euphrates/tilda-a.scm"
 
+%use (make-temporary-filename/local) "./make-temporary-filename-local.scm"
 %use (prolog-var? prolog-var-name) "./prolog-var.scm"
 %use (prolog-cut-symbol?) "./prolog-cut-symbol.scm"
 

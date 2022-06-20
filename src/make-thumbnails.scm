@@ -31,7 +31,6 @@
 %use (range) "./euphrates/range.scm"
 %use (string-strip) "./euphrates/string-strip.scm"
 %use (~a) "./euphrates/tilda-a.scm"
-%use (make-temporary-filename) "./euphrates/make-temporary-filename.scm"
 %use (file-delete) "./euphrates/file-delete.scm"
 %use (dprintln) "./euphrates/dprintln.scm"
 %use (file-or-directory-exists?) "./euphrates/file-or-directory-exists-q.scm"
@@ -41,6 +40,7 @@
 %use (file-size) "./euphrates/file-size.scm"
 %use (make-directories) "./euphrates/make-directories.scm"
 
+%use (make-temporary-filename/local) "./make-temporary-filename-local.scm"
 %use (web-preview-width) "./web-preview-width.scm"
 %use (web-preview-height) "./web-preview-height.scm"
 %use (file-is-image?) "./file-is-image-q.scm"
@@ -103,7 +103,7 @@
              ((lambda (s) (string-strip s ",")))
              string->seconds/columned))
 
-  (define dir (make-temporary-filename))
+  (define dir (make-temporary-filename/local))
   (define _1231 (make-directories dir))
 
   (define n-thumbnails 20)

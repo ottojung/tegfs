@@ -31,7 +31,6 @@
 %use (read-string-line) "./euphrates/read-string-line.scm"
 %use (list-or-map) "./euphrates/list-or-map.scm"
 %use (append-posix-path) "./euphrates/append-posix-path.scm"
-%use (make-temporary-filename) "./euphrates/make-temporary-filename.scm"
 %use (mimetype/extensions) "./euphrates/mimetype-extensions.scm"
 %use (file-delete) "./euphrates/file-delete.scm"
 %use (file-or-directory-exists?) "./euphrates/file-or-directory-exists-q.scm"
@@ -54,11 +53,12 @@
 %use (define-pair) "./euphrates/define-pair.scm"
 %use (raisu) "./euphrates/raisu.scm"
 
+%use (make-temporary-filename/local) "./make-temporary-filename-local.scm"
 %use (fatal) "./fatal.scm"
 %use (classify-clipboard-text-content dump-clipboard-to-temporary dump-clipboard-to-file get-clipboard-data-types get-clipboard-text-content get-clipboard-type-extension choose-clipboard-data-type) "./clipboard.scm"
 
 (define (tegfs-dump-clipboard/pasta text)
-  (let* ((pref (make-temporary-filename))
+  (let* ((pref (make-temporary-filename/local))
          (extension ".txt")
          (target (string-append pref extension)))
     (write-string-file target text)
@@ -77,7 +77,7 @@
              (or (choose-clipboard-data-type)
                  (fatal "Could not get clipboard data type")))
             (extension (get-clipboard-type-extension data-type))
-            (pref (make-temporary-filename))
+            (pref (make-temporary-filename/local))
             (target (string-append pref extension)))
        (unless (dump-clipboard-to-file data-type target)
          (fatal "Could not dump clipboard content"))
