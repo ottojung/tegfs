@@ -96,6 +96,7 @@
 %use (get-config) "./get-config.scm"
 %use (get-preview-path) "./get-preview-path.scm"
 %use (entry-target-fullpath) "./entry-target-fullpath.scm"
+%use (a-weblink?) "./a-weblink-q.scm"
 
 %use (debug) "./euphrates/debug.scm"
 %use (debugv) "./euphrates/debugv.scm"
@@ -512,6 +513,8 @@
   (define ctx (context/p))
   (define fileserver (context-fileserver ctx))
   (define preview-fullpath (get-preview-path target-id target-fullpath))
+  (define default-preview
+    (if (a-weblink? target-fullpath) "/previewuknownurl" "/previewuknown"))
 
   (display "<img src=")
   (if preview-fullpath
@@ -522,15 +525,16 @@
              (location (string-append fileserver shared-name)))
         (if (file-or-directory-exists? shared-fullpath)
             (write location)
-            (write "/previewuknown")))
-      (write "/previewuknown"))
+            (write default-preview)))
+      (write default-preview))
   (display "/>"))
 
 (define (get-full-link entry target-fullpath)
-  (define id (cdr (assoc 'id entry)))
-  (define location (string-append "/full?id=" id))
-  (share-file/dont-link-yet target-fullpath default-full-sharing-time)
-  location)
+  (if (a-weblink? target-fullpath) target-fullpath
+      (let* ((id (cdr (assoc 'id entry)))
+             (location (string-append "/full?id=" id)))
+        (share-file/dont-link-yet target-fullpath default-full-sharing-time)
+        location)))
 
 (define (maybe-display-preview entry)
   (define target-fullpath (entry-target-fullpath entry))
