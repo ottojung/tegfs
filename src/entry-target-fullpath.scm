@@ -20,9 +20,12 @@
 
 %use (get-root) "./get-root.scm"
 %use (entry-registry-path-key) "./entry-registry-path-key.scm"
+%use (a-weblink?) "./a-weblink-q.scm"
 
 (define (entry-target-fullpath entry)
   (define target-p (assoc 'target entry))
   (and target-p
-       (let* ((registry-dir (dirname (cdr (assoc entry-registry-path-key entry)))))
-         (append-posix-path (get-root) registry-dir (cdr target-p)))))
+       (let ((target (cdr target-p)))
+         (if (a-weblink? target) target
+             (let* ((registry-dir (dirname (cdr (assoc entry-registry-path-key entry)))))
+               (append-posix-path (get-root) registry-dir target))))))
