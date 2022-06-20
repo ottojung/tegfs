@@ -21,14 +21,14 @@
 %use (printf) "./euphrates/printf.scm"
 %use (read-string-file) "./euphrates/read-string-file.scm"
 
-%use (root/p) "./root-p.scm"
+%use (get-root) "./get-root.scm"
 %use (web-form-template) "./web-form-template.scm"
 %use (categorization-filename) "./categorization-filename.scm"
 
 (define web-make-upload-body
   (memconst
    (let ()
-     (define categorization-file (append-posix-path (root/p) categorization-filename))
+     (define categorization-file (append-posix-path (get-root) categorization-filename))
      (define tags-value (read-string-file categorization-file))
 
      (define inner

@@ -54,7 +54,6 @@
 %use (categorization-filename) "./categorization-filename.scm"
 %use (rules-filename) "./rules-filename.scm"
 %use (tags-this-variable/string) "./tags-this-variable.scm"
-%use (root/p) "./root-p.scm"
 %use (get-registry-files) "./get-registry-files.scm"
 %use (parse-tag) "./parse-tag.scm"
 %use (tag->prolog-term print-tag-as-prolog-term) "./tag-to-prolog-term.scm"

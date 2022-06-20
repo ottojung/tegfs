@@ -54,7 +54,7 @@
 %use (categorization-filename) "./categorization-filename.scm"
 %use (rules-filename) "./rules-filename.scm"
 %use (tags-this-variable/string) "./tags-this-variable.scm"
-%use (root/p) "./root-p.scm"
+%use (get-root) "./get-root.scm"
 %use (get-registry-files) "./get-registry-files.scm"
 %use (parse-tag) "./parse-tag.scm"
 %use (tag->prolog-term print-tag-as-prolog-term) "./tag-to-prolog-term.scm"
@@ -113,7 +113,7 @@
     (else (raisu 'unknown-command words command))))
 
 (define (dump-rules)
-  (define rules-file (append-posix-path (root/p) rules-filename))
+  (define rules-file (append-posix-path (get-root) rules-filename))
   (define rules-port
     (begin
       (unless (file-or-directory-exists? rules-file)

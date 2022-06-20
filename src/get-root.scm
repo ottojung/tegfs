@@ -14,24 +14,17 @@
 
 %run guile
 
-%var get-preview-path
+%var get-root
+%var ROOT_VAR_NAME
 
-%use (append-posix-path) "./euphrates/append-posix-path.scm"
+%use (raisu) "./euphrates/raisu.scm"
 
-%use (get-file-type) "./get-file-type.scm"
-%use (get-root) "./get-root.scm"
+%use (root/p) "./root-p.scm"
 
-(define (get-preview-path target-id target-fullpath)
-  (define preview-directory
-    (append-posix-path (get-root) "cache" "preview"))
-  (define file-type (get-file-type target-fullpath))
-  (define preview-extension
-    (case file-type
-      ((image) ".jpeg")
-      ((video) ".gif")
-      (else #f)))
+(define ROOT_VAR_NAME "TEGFS_ROOT")
 
-  (and preview-extension
-       (let ((preview-name
-              (string-append target-id preview-extension)))
-         (append-posix-path preview-directory preview-name))))
+(define (get-root)
+  (define r (root/p))
+  (or r
+      (raisu 'unknown-root
+             "Root is unknown because $~a env variable is not defined" ROOT_VAR_NAME)))

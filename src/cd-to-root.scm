@@ -16,10 +16,10 @@
 
 %var cd-to-root
 
-%use (root/p) "./root-p.scm"
+%use (get-root) "./get-root.scm"
 
 (define (cd-to-root)
-  (define root (root/p))
+  (define root (get-root))
 
   (unless (file-or-directory-exists? root)
     (make-directories root))

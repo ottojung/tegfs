@@ -40,10 +40,9 @@
 %use (tegfs-dump-clipboard/parse) "./dump-clipboard.scm"
 %use (fatal) "./fatal.scm"
 %use (root/p) "./root-p.scm"
+%use (ROOT_VAR_NAME) "./get-root.scm"
 
 (define (main)
-  (define ROOT_VAR_NAME "TEGFS_ROOT")
-
   (parameterize ((current-program-path/p "tegfs"))
     (with-cli
      (MAIN
@@ -90,9 +89,6 @@
 
      (when --help
        (define-cli:show-help))
-
-     (unless <root>
-       (fatal "Root is unknown because $~a env variable is not defined" ROOT_VAR_NAME))
 
      (unless (file-or-directory-exists? <root>)
        (make-directories <root>))

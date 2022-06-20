@@ -20,7 +20,7 @@
 %use (open-file-port) "./euphrates/open-file-port.scm"
 %use (read-list) "./euphrates/read-list.scm"
 
-%use (root/p) "./root-p.scm"
+%use (get-root) "./get-root.scm"
 %use (get-registry-files) "./get-registry-files.scm"
 %use (entry-registry-path-key) "./entry-registry-path-key.scm"
 
@@ -28,7 +28,7 @@
   (for-each
    (lambda (registry-path0)
      (define registry-path (append-posix-path registry-path0))
-     (define registry-fullpath (append-posix-path (root/p) registry-path))
+     (define registry-fullpath (append-posix-path (get-root) registry-path))
      (define input-port (open-file-port registry-fullpath "r"))
      (let loop ()
        (define x (read input-port))

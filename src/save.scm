@@ -53,7 +53,7 @@
 
 %use (fatal) "./fatal.scm"
 %use (regfile-suffix) "./regfile-suffix.scm"
-%use (root/p) "./root-p.scm"
+%use (get-root) "./get-root.scm"
 %use (custom-preferences-filename) "./custom-preferences-filename.scm"
 %use (a-weblink?) "./a-weblink-q.scm"
 %use (tegfs-add) "./add.scm"
@@ -491,7 +491,7 @@
    ))
 
 (define (get-custom-prefernences-code)
-  (define custom-file (append-posix-path (root/p) custom-preferences-filename))
+  (define custom-file (append-posix-path (get-root) custom-preferences-filename))
   (and (file-or-directory-exists? custom-file)
        (with-input-from-file custom-file
          (lambda _
@@ -509,7 +509,7 @@
   (define registry-file (cadr (assoc 'registry-file state)))
   (define -temporary-file (cadr (assoc '-temporary-file state)))
   (define -text-content (cadr (assoc '-text-content state)))
-  (define registry-dir (append-posix-path (root/p) (dirname registry-file)))
+  (define registry-dir (append-posix-path (get-root) (dirname registry-file)))
   (define source (and (a-weblink? -text-content) -temporary-file -text-content))
   (define key-value-pairs (if source (list (cons "source" source)) (list)))
   (define <date> #f)

@@ -23,10 +23,10 @@
 %use (appcomp comp) "./euphrates/comp.scm"
 %use (append-posix-path) "./euphrates/append-posix-path.scm"
 
-%use (root/p) "./root-p.scm"
+%use (get-root) "./get-root.scm"
 
 (define (get-config)
-  (define path (append-posix-path (root/p) "config.tegfs.lisp"))
+  (define path (append-posix-path (get-root) "config.tegfs.lisp"))
   (and
    (file-or-directory-exists? path)
    (let* ((p (open-file-port path "r"))

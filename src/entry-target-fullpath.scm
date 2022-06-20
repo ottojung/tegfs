@@ -18,11 +18,11 @@
 
 %use (append-posix-path) "./euphrates/append-posix-path.scm"
 
-%use (root/p) "./root-p.scm"
+%use (get-root) "./get-root.scm"
 %use (entry-registry-path-key) "./entry-registry-path-key.scm"
 
 (define (entry-target-fullpath entry)
   (define target-p (assoc 'target entry))
   (and target-p
        (let* ((registry-dir (dirname (cdr (assoc entry-registry-path-key entry)))))
-         (append-posix-path (root/p) registry-dir (cdr target-p)))))
+         (append-posix-path (get-root) registry-dir (cdr target-p)))))

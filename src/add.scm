@@ -42,7 +42,7 @@
 %use (absolute-posix-path?) "./euphrates/absolute-posix-path-q.scm"
 
 %use (fatal) "./fatal.scm"
-%use (root/p) "./root-p.scm"
+%use (get-root) "./get-root.scm"
 %use (a-weblink?) "./a-weblink-q.scm"
 %use (last-id-filename) "./last-id-filename.scm"
 %use (id-name) "./id-name.scm"
@@ -58,7 +58,7 @@
     (system-re "date --utc '+%Y-%m-%dT%H:%M:%S+0000'"))))
 
 (define (init-registry-file <registry-file>)
-  (define registry-file (append-posix-path (root/p) <registry-file>))
+  (define registry-file (append-posix-path (get-root) <registry-file>))
 
   (unless registry-file
     (fatal "Parameter <registry-file> is required, but it is not set"))
@@ -102,7 +102,7 @@
     (generate-random-id))
 
   (define last-id-path
-    (append-posix-path (root/p) last-id-filename))
+    (append-posix-path (get-root) last-id-filename))
 
   (define prev
     (and series?

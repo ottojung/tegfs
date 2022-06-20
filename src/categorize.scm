@@ -49,7 +49,7 @@
 
 %use (categorization-filename) "./categorization-filename.scm"
 %use (categorization-split) "./categorization-split.scm"
-%use (root/p) "./root-p.scm"
+%use (get-root) "./get-root.scm"
 %use (tegfs-edit-tags) "./edit-tags.scm"
 %use (tags-this-variable) "./tags-this-variable.scm"
 %use (parse-tag-structure) "./parse-tag.scm"
@@ -62,7 +62,7 @@
   (dprintln "Categorized! Chosen tags: ~s" (cdr result)))
 
 (define (tegfs-categorize working-file-maybe)
-  (define categorization-file (append-posix-path (root/p) categorization-filename))
+  (define categorization-file (append-posix-path (get-root) categorization-filename))
   (define working-file0
     (or working-file-maybe
         (make-temporary-filename)))

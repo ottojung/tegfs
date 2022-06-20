@@ -23,11 +23,10 @@
 %use (assoc-set-value) "./euphrates/assoc-set-value.scm"
 
 %use (get-config) "./get-config.scm"
-
-%use (root/p) "./root-p.scm"
+%use (get-root) "./get-root.scm"
 
 (define (set-config name value)
-  (define path (append-posix-path (root/p) "config.tegfs.lisp"))
+  (define path (append-posix-path (get-root) "config.tegfs.lisp"))
   (define existing (or (get-config) '()))
   (define new (assoc-set-value name value existing))
   (define p (open-file-port path "w"))

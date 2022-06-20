@@ -69,7 +69,7 @@
 %use (memconst) "./euphrates/memconst.scm"
 %use (catch-any) "./euphrates/catch-any.scm"
 
-%use (root/p) "./root-p.scm"
+%use (get-root) "./get-root.scm"
 %use (categorization-filename) "./categorization-filename.scm"
 %use (tegfs-process-categorization-text) "./edit-tags.scm"
 %use (tegfs-add) "./add.scm"
@@ -410,7 +410,7 @@
 
   (define full-filename
     (and <target>
-         (append-posix-path (root/p)
+         (append-posix-path (get-root)
                             (dirname upload-registry-filename)
                             <target>)))
 

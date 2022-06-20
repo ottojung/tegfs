@@ -19,16 +19,16 @@
 %use (remove-common-prefix) "./euphrates/remove-common-prefix.scm"
 %use (directory-files-rec/filter) "./euphrates/directory-files-rec-filter.scm"
 
-%use (root/p) "./root-p.scm"
+%use (get-root) "./get-root.scm"
 %use (regfile-suffix) "./regfile-suffix.scm"
 
 (define (get-registry-files)
   (map (lambda (path)
-         (remove-common-prefix path (string-append (root/p) "/")))
+         (remove-common-prefix path (string-append (get-root) "/")))
        (map car
             (directory-files-rec/filter
              (lambda (fullname)
                (string-suffix? regfile-suffix (basename fullname)))
-             (root/p)))))
+             (get-root)))))
 
 
