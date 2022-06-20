@@ -127,6 +127,9 @@
   (define-pair (ids/string code)
     (system-re "prolog -s ~a" output-path))
 
+  (define _333
+    (file-delete output-path))
+
   (define _111
     (unless (equal? 0 code)
       (fatal "Prolog execution failed with code ~s and contents:\n~a" code ids/string)))
