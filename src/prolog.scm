@@ -59,7 +59,9 @@
 %use (print-tag-as-prolog-term) "./tag-to-prolog-term.scm"
 %use (entries-for-each) "./entries-for-each.scm"
 %use (id-name) "./id-name.scm"
+%use (target-name) "./target-name.scm"
 %use (dump-rules) "./dump-rules.scm"
+%use (a-weblink?) "./a-weblink-q.scm"
 
 (define (tegfs-prolog/parse)
   (tegfs-prolog)
@@ -187,9 +189,19 @@
       (cdr (or (assoc id-name entry)
                (raisu 'could-not-get-an-id entry))))
 
-    (define tags
+    (define tags0
       (cdr (or (assoc 'tags entry)
                (cons 'tags '()))))
+
+    (define target
+      (let ((p (assoc target-name entry)))
+        (and p (cdr p))))
+    (define tags
+      (if target
+          (if (a-weblink? target)
+              (cons '%remote tags0)
+              (cons '%local tags0))
+          (cons '%notarget tags0)))
 
     (define parser (parse-tag counter))
     (define parsed-tags (apply append (map parser tags)))
