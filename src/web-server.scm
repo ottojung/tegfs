@@ -55,7 +55,6 @@
 %use (random-choice) "./euphrates/random-choice.scm"
 %use (alphanum-lowercase/alphabet) "./euphrates/alphanum-lowercase-alphabet.scm"
 %use (printf) "./euphrates/printf.scm"
-%use (path-extension) "./euphrates/path-extension.scm"
 %use (path-extensions) "./euphrates/path-extensions.scm"
 %use (dprintln) "./euphrates/dprintln.scm"
 %use (list-singleton?) "./euphrates/list-singleton-q.scm"
@@ -404,7 +403,7 @@
              cdr))
 
   (define extension
-    (path-extension filename))
+    (path-extensions filename))
 
   (define <target>
     (and (not (string-null? filename))

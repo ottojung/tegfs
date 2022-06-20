@@ -48,7 +48,6 @@
 %use (comp) "./euphrates/comp.scm"
 %use (path-without-extension) "./euphrates/path-without-extension.scm"
 %use (path-get-basename) "./euphrates/path-get-basename.scm"
-%use (path-extension) "./euphrates/path-extension.scm"
 %use (make-directories) "./euphrates/make-directories.scm"
 %use (list-take-n) "./euphrates/list-take-n.scm"
 %use (print-in-frame) "./euphrates/print-in-frame.scm"

@@ -42,7 +42,7 @@
 %use (comp) "./euphrates/comp.scm"
 %use (path-without-extension) "./euphrates/path-without-extension.scm"
 %use (path-get-basename) "./euphrates/path-get-basename.scm"
-%use (path-extension) "./euphrates/path-extension.scm"
+%use (path-extensions) "./euphrates/path-extensions.scm"
 %use (make-directories) "./euphrates/make-directories.scm"
 %use (list-take-n) "./euphrates/list-take-n.scm"
 %use (print-in-frame) "./euphrates/print-in-frame.scm"
@@ -314,7 +314,7 @@
 
   (cond
    ((and (equal? 'localfile real-type))
-    (assoc-set-preference 'target-extension (path-extension text-content) state))
+    (assoc-set-preference 'target-extension (path-extensions text-content) state))
    ((and (equal? 'pasta real-type))
     (assoc-set-preference 'target-extension ".txt" state))
    ((and (equal? 'link real-type) (a-weblink? text-content) (equal? 'no download?))
