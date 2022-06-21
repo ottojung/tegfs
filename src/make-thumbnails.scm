@@ -76,7 +76,7 @@
     (make-temporary-filename))
 
   (define _23
-    (unless (= 0 (system-fmt "curl --no-progress-meter ~a --output ~a" <input> temp))
+    (unless (= 0 (system-fmt "wget --no-verbose ~a -O ~a" <input> temp))
       (raisu 'could-not-download-the-webpage <input>)))
 
   (define-pair (link1/uns status1)
