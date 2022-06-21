@@ -118,7 +118,7 @@
   (system-fmt
    (string-append
     "convert "
-    " ~a "
+    " ~a[0] "
     " -thumbnail ~a@ "
     " -quality 10 "
     " -gravity center "
