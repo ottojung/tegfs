@@ -25,6 +25,7 @@ This program also provides a web-based file-browser
   - `entr` for checking if new previews need to be made
   - third-party file server, such as `Nginx`
   - [pup](https://github.com/ericchiang/pup) for generating weblink thumbnails
+  - `wget` for downloading webpages (for some reason this works than curl) (TODO: move everything to wget)
 
 # Note on query
 
