@@ -53,8 +53,11 @@
 %use (debugv) "./euphrates/debugv.scm"
 
 (define (tegfs-make-thumbnails/parse <input> <output>)
-  (unless (tegfs-make-thumbnails <input> <output>)
-    (fatal "Could not recognize the file type"))
+  (define ret (tegfs-make-thumbnails <input> <output>))
+  (case ret
+    ((#f) (fatal "Could not recognize the file type"))
+    ((no-web-thumbnails) (fatal "The webpage does not have a thumbnail"))
+    (else (raisu 'unexpected-result ret)))
   (dprintln "Done!"))
 
 (define (tegfs-make-thumbnails <input> <output>)
@@ -100,16 +103,14 @@
   (define _91231
     (file-delete temp))
 
-  (define link/full
-    (url-goto <input> link2))
-
-  (define _12838123
-    (unless (= 0 (system-fmt "curl --no-progress-meter ~a --output ~a" link/full temp))
-      (raisu 'could-not-download-the-preview link/full)))
-
-  (define ret (tegfs-make-image-thumbnails temp <output>))
-  (file-delete temp)
-  ret)
+  (if (string-null? link2) 'no-web-thumbnails
+      (let* ((link/full
+              (url-goto <input> link2))
+             (do (unless (= 0 (system-fmt "curl --no-progress-meter ~a --output ~a" link/full temp))
+                   (raisu 'could-not-download-the-preview link/full)))
+             (ret (tegfs-make-image-thumbnails temp <output>)))
+        (file-delete temp)
+        ret)))
 
 (define (tegfs-make-image-thumbnails <input> <output>)
   (let ((dir (dirname <output>)))
