@@ -12,5 +12,5 @@ do
 	PREVIEW="$(echo "$FILE" | awk -F '#' '{ print $2 }')"
 	test -f "$PREVIEW" && continue
 	echo '>' tegfs make-thumbnails "$TARGET"
-	tegfs make-thumbnails "$TARGET" "$PREVIEW"
+	tegfs make-thumbnails "$TARGET" "$PREVIEW" || ln -s /some/non/existing/file "$PREVIEW"
 done
