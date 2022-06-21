@@ -123,26 +123,25 @@
     (unless (file-or-directory-exists? dir)
       (make-directories dir)))
 
-  (let* ((status
-          (system-fmt
-           (string-append
-            "convert "
-            " -coalesce +dither "
-            " -layers optimize "
-            " -delay 100 "
-            " -loop 0 "
-            " -thumbnail '~ax~a>' "
-            " -gravity center "
-            " -background transparent "
-            " -extent ~ax~a "
-            " ~a/*.png"
-            " ~a "
-            " ; rm -rf ~a")
-           web-preview-width web-preview-height
-           web-preview-width web-preview-height
-           dir
-           <output>
-           dir)))
+  (let ((status
+         (system-fmt
+          (string-append
+           "convert "
+           " -coalesce +dither "
+           " -layers optimize "
+           " -delay 100 "
+           " -loop 0 "
+           " -thumbnail '~ax~a>' "
+           " -gravity center "
+           " -background transparent "
+           " -extent ~ax~a "
+           " ~a/*.png"
+           " ~a ")
+          web-preview-width web-preview-height
+          web-preview-width web-preview-height
+          dir
+          <output>)))
+    (system-fmt "rm -rf ~a" dir)
     (unless (= 0 status)
       (raisu 'imagemagick-failed status)))
 
