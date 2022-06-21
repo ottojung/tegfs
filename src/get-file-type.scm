@@ -19,9 +19,11 @@
 %use (file-is-image?) "./file-is-image-q.scm"
 %use (file-is-video?) "./file-is-video-q.scm"
 %use (file-is-text?) "./file-is-text-q.scm"
+%use (a-weblink?) "./a-weblink-q.scm"
 
 (define (get-file-type filepath)
   (cond
+   ((a-weblink? filepath) 'weblink)
    ((file-is-image? filepath) 'image)
    ((file-is-video? filepath) 'video)
    ((file-is-text? filepath) 'text)

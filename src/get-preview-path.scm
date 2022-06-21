@@ -29,6 +29,7 @@
     (case file-type
       ((image) ".jpeg")
       ((video) ".gif")
+      ((weblink) ".jpeg")
       (else #f)))
 
   (and preview-extension
