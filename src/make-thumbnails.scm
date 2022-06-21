@@ -58,6 +58,7 @@
     ((#t) 'ok-go-on)
     ((#f) (fatal "Could not recognize the file type"))
     ((no-web-thumbnails) (fatal "The webpage does not have a thumbnail"))
+    ((could-not-convert-image) (fatal "Image conversion failed"))
     (else (raisu 'unexpected-result ret)))
   (dprintln "Done!"))
 
@@ -115,22 +116,23 @@
     (unless (file-or-directory-exists? dir)
       (make-directories dir)))
 
-  (system-fmt
-   (string-append
-    "convert "
-    " ~a[0] "
-    " -thumbnail ~a@ "
-    " -quality 10 "
-    " -gravity center "
-    " -background transparent "
-    " -extent ~ax~a "
-    " ~a "
-    )
-   <input>
-   (* web-preview-width web-preview-height)
-   web-preview-width web-preview-height
-   <output>)
-  #t)
+  (or (= 0
+         (system-fmt
+          (string-append
+           "convert "
+           " ~a[0] "
+           " -thumbnail ~a@ "
+           " -quality 10 "
+           " -gravity center "
+           " -background transparent "
+           " -extent ~ax~a "
+           " ~a "
+           )
+          <input>
+          (* web-preview-width web-preview-height)
+          web-preview-width web-preview-height
+          <output>))
+      'could-not-convert-image))
 
 ;; TODO: Maybe do video previews that are videos
 ;;       Take a look: https://stackoverflow.com/questions/42747935/cut-multiple-videos-and-merge-with-ffmpeg
