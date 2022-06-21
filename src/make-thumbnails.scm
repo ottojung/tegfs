@@ -83,21 +83,18 @@
     (system-re "cat ~a | pup 'head meta[property=\"og:image\"] attr{content}'"
                temp))
 
-  (define __1
-    (unless (= 0 status1)
-      (raisu 'could-not-process-the-page-first-time status1)))
-
   (define link1 (string-strip link1/uns))
 
   (define-pair (link2/uns status2)
-    (if (string-null? link1)
+    (if (or (string-null? link1)
+            (not (= 0 status1)))
         (system-re "cat ~a | pup 'head meta[property=\"og:image\"] attr{content}'"
                    temp)
         (cons link1 0)))
 
   (define __12832
-    (unless (= 0 status2)
-      (raisu 'could-not-process-the-page-second-time status2)))
+    (unless (or (= 0 status2) (= 0 status1))
+      (dprintln "Could not process the link the second time: ~a and ~a" status1 status2)))
 
   (define link2 (string-strip link2/uns))
 
