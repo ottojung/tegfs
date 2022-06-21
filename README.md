@@ -24,6 +24,7 @@ This program also provides a web-based file-browser
   - `imagemagick` for image previews production
   - `entr` for checking if new previews need to be made
   - third-party file server, such as `Nginx`
+  - [pup](https://github.com/ericchiang/pup) for generating weblink thumbnails
 
 # Note on query
 
