@@ -39,12 +39,14 @@
 %use (compose-under) "./euphrates/compose-under.scm"
 %use (file-size) "./euphrates/file-size.scm"
 %use (make-directories) "./euphrates/make-directories.scm"
+%use (make-temporary-filename) "./euphrates/make-temporary-filename.scm"
+%use (url-goto) "./euphrates/url-goto.scm"
 
-%use (make-temporary-filename/local) "./make-temporary-filename-local.scm"
 %use (web-preview-width) "./web-preview-width.scm"
 %use (web-preview-height) "./web-preview-height.scm"
 %use (file-is-image?) "./file-is-image-q.scm"
 %use (file-is-video?) "./file-is-video-q.scm"
+%use (a-weblink?) "./a-weblink-q.scm"
 %use (fatal) "./fatal.scm"
 
 %use (debug) "./euphrates/debug.scm"
@@ -57,11 +59,57 @@
 
 (define (tegfs-make-thumbnails <input> <output>)
   (cond
+   ((a-weblink? <input>)
+    (tegfs-make-url-thumbnails <input> <output>))
    ((file-is-image? <input>)
     (tegfs-make-image-thumbnails <input> <output>))
    ((file-is-video? <input>)
     (tegfs-make-video-thumbnails <input> <output>))
    (else #f)))
+
+(define (tegfs-make-url-thumbnails <input> <output>)
+  (define temp
+    (make-temporary-filename))
+
+  (define _23
+    (unless (= 0 (system-fmt "curl --no-progress-meter ~a --output ~a" <input> temp))
+      (raisu 'could-not-download-the-webpage <input>)))
+
+  (define-pair (link1/uns status1)
+    (system-re "cat ~a | pup 'head meta[property=\"og:image\"] attr{content}'"
+               temp))
+
+  (define __1
+    (unless (= 0 status1)
+      (raisu 'could-not-process-the-page-first-time status1)))
+
+  (define link1 (string-strip link1/uns))
+
+  (define-pair (link2/uns status2)
+    (if (string-null? link1)
+        (system-re "cat ~a | pup 'head meta[property=\"og:image\"] attr{content}'"
+                   temp)
+        (cons link1 0)))
+
+  (define __12832
+    (unless (= 0 status2)
+      (raisu 'could-not-process-the-page-second-time status2)))
+
+  (define link2 (string-strip link2/uns))
+
+  (define _91231
+    (file-delete temp))
+
+  (define link/full
+    (url-goto <input> link2))
+
+  (define _12838123
+    (unless (= 0 (system-fmt "curl --no-progress-meter ~a --output ~a" link/full temp))
+      (raisu 'could-not-download-the-preview link/full)))
+
+  (define ret (tegfs-make-image-thumbnails temp <output>))
+  (file-delete temp)
+  ret)
 
 (define (tegfs-make-image-thumbnails <input> <output>)
   (let ((dir (dirname <output>)))
@@ -103,7 +151,7 @@
              ((lambda (s) (string-strip s ",")))
              string->seconds/columned))
 
-  (define dir (make-temporary-filename/local))
+  (define dir (make-temporary-filename))
   (define _1231 (make-directories dir))
 
   (define n-thumbnails 20)
