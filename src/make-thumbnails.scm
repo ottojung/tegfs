@@ -55,6 +55,7 @@
 (define (tegfs-make-thumbnails/parse <input> <output>)
   (define ret (tegfs-make-thumbnails <input> <output>))
   (case ret
+    ((#t) 'ok-go-on)
     ((#f) (fatal "Could not recognize the file type"))
     ((no-web-thumbnails) (fatal "The webpage does not have a thumbnail"))
     (else (raisu 'unexpected-result ret)))
