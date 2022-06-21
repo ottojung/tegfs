@@ -6,5 +6,5 @@ CACHEDIR="$TEGFS_ROOT/cache/preview"
 LASTFILE="$TEGFS_ROOT/lastid.tegfs.txt"
 touch "$LASTFILE"
 
-find "$CACHEDIR" -size 0 -delete
+rm -rf "$TEGFS_ROOT/cache/failed-previews/$PREVIEW"
 echo "$LASTFILE" | entr sh "$DIR/make-all-previews.sh"
