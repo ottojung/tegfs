@@ -84,7 +84,10 @@
     (system-re "cat ~a | pup 'head meta[property=\"og:image\"] attr{content}'"
                temp))
 
-  (define link1 (string-strip link1/uns))
+  (define link1
+    (string-strip
+     (car
+      (string->lines link1/uns))))
 
   (define-pair (link2/uns status2)
     (if (or (string-null? link1)
@@ -97,7 +100,11 @@
     (unless (or (= 0 status2) (= 0 status1))
       (dprintln "Could not process the link the second time: ~a and ~a" status1 status2)))
 
-  (define link2 (string-strip link2/uns))
+  (define link2
+    (string-strip
+     (car
+      (string->lines
+       link2/uns))))
 
   (define _91231
     (file-delete temp))
