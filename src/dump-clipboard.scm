@@ -51,7 +51,7 @@
 %use (~s) "./euphrates/tilda-s.scm"
 %use (define-pair) "./euphrates/define-pair.scm"
 %use (raisu) "./euphrates/raisu.scm"
-%use (make-temporary-filenamee) "./euphrates/make-temporary-filename.scm"
+%use (make-temporary-filename) "./euphrates/make-temporary-filename.scm"
 
 %use (fatal) "./fatal.scm"
 %use (classify-clipboard-text-content dump-clipboard-to-temporary dump-clipboard-to-file get-clipboard-data-types get-clipboard-text-content get-clipboard-type-extension choose-clipboard-data-type) "./clipboard.scm"
