@@ -51,13 +51,13 @@
 %use (~s) "./euphrates/tilda-s.scm"
 %use (define-pair) "./euphrates/define-pair.scm"
 %use (raisu) "./euphrates/raisu.scm"
+%use (make-temporary-filenamee) "./euphrates/make-temporary-filename.scm"
 
-%use (make-temporary-filename/local) "./make-temporary-filename-local.scm"
 %use (fatal) "./fatal.scm"
 %use (classify-clipboard-text-content dump-clipboard-to-temporary dump-clipboard-to-file get-clipboard-data-types get-clipboard-text-content get-clipboard-type-extension choose-clipboard-data-type) "./clipboard.scm"
 
 (define (tegfs-dump-clipboard/pasta text)
-  (let* ((pref (make-temporary-filename/local))
+  (let* ((pref (make-temporary-filename))
          (extension ".txt")
          (target (string-append pref extension)))
     (write-string-file target text)
@@ -76,7 +76,7 @@
              (or (choose-clipboard-data-type)
                  (fatal "Could not get clipboard data type")))
             (extension (get-clipboard-type-extension data-type))
-            (pref (make-temporary-filename/local))
+            (pref (make-temporary-filename))
             (target (string-append pref extension)))
        (unless (dump-clipboard-to-file data-type target)
          (fatal "Could not dump clipboard content"))
