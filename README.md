@@ -50,3 +50,5 @@ So, for example, doing `tegfs query %any` will return
 - [ ] web: make buttons for sharing
 - [ ] web: more granular users permissions
 - [ ] document on how to run this thing
+- [ ] web: implement pagination
+- [ ] web: implement directory sharing
