@@ -20,11 +20,14 @@
 
 %use (dprintln) "./euphrates/dprintln.scm"
 %use (make-hashmap hashmap-ref hashmap-clear!) "./euphrates/ihashmap.scm"
+%use (absolute-posix-path?) "./euphrates/absolute-posix-path-q.scm"
 
 %use (entries-for-each) "./entries-for-each.scm"
 %use (entries->hashmap) "./entries-to-hashmap.scm"
 %use (entry-print) "./entry-print.scm"
 %use (entry-print/formatted) "./entry-print-formatted.scm"
+%use (get-root) "./get-root.scm"
+%use (standalone-file->entry) "./standalone-file-to-entry.scm"
 
 (define (tegfs-get/parse <get-format> <showid>)
   (define entry (tegfs-get <showid>))
@@ -36,23 +39,27 @@
   (newline))
 
 (define (tegfs-get <showid>)
-  (call-with-current-continuation
-   (lambda (k)
-     (entries-for-each
-      (lambda (entry)
-        (define id-pair (assoc 'id entry))
-        (if id-pair
-            (when (equal? (cdr id-pair) <showid>)
-              (k entry))
-            (parameterize ((current-output-port (current-error-port)))
-              (dprintln "Entry does not have an id: ~s" entry)))))
-     #f)))
+  (if (absolute-posix-path? <showid>)
+      (standalone-file->entry <showid>)
+      (call-with-current-continuation
+       (lambda (k)
+         (entries-for-each
+          (lambda (entry)
+            (define id-pair (assoc 'id entry))
+            (if id-pair
+                (when (equal? (cdr id-pair) <showid>)
+                  (k entry))
+                (parameterize ((current-output-port (current-error-port)))
+                  (dprintln "Entry does not have an id: ~s" entry)))))
+         #f))))
 
 (define tegfs-get/cached
   (let ((H (make-hashmap)))
     (lambda (<showid>)
-      (or (hashmap-ref H <showid> #f)
-          (begin
-            (hashmap-clear! H)
-            (entries->hashmap H)
-            (hashmap-ref H <showid> #f))))))
+      (if (absolute-posix-path? <showid>)
+          (standalone-file->entry <showid>)
+          (or (hashmap-ref H <showid> #f)
+              (begin
+                (hashmap-clear! H)
+                (entries->hashmap H)
+                (hashmap-ref H <showid> #f)))))))
