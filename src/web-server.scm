@@ -31,6 +31,7 @@
 %use (string-strip) "./euphrates/string-strip.scm"
 %use (list-intersperse) "./euphrates/list-intersperse.scm"
 %use (append-posix-path) "./euphrates/append-posix-path.scm"
+%use (path-get-basename) "./euphrates/path-get-basename.scm"
 %use (words->string) "./euphrates/words-to-string.scm"
 %use (string->lines) "./euphrates/string-to-lines.scm"
 %use (string->words) "./euphrates/string-to-words.scm"
@@ -95,6 +96,7 @@
 %use (get-config) "./get-config.scm"
 %use (get-preview-path) "./get-preview-path.scm"
 %use (entry-target-fullpath) "./entry-target-fullpath.scm"
+%use (entry-parent-directory-key) "./entry-parent-directory-key.scm"
 %use (a-weblink?) "./a-weblink-q.scm"
 %use (web-url-icon/svg) "./web-url-icon-svg.scm"
 
@@ -229,6 +231,10 @@
         (else (raisu 'unknown-body-type body)))
        (display "\n</body>\n")
        (display "</html>\n")))))
+
+(define (bad-request fmt . args)
+  (define str (apply stringf (cons fmt args)))
+  (respond str #:status 400))
 
 (define (not-found)
   (define request (callcontext-request (callcontext/p)))
@@ -590,6 +596,11 @@
            (map (lambda (c) (if (equal? #\: c) #\= c)))
            list->string))
 
+(define (display-entries entries)
+  (display "<div class='cards'>")
+  (for-each display-entry entries)
+  (display "</div>"))
+
 (define (query)
   (define ctx (context/p))
   (define callctx (callcontext/p))
@@ -601,11 +612,32 @@
   (define query/split (string->words query))
   (define entries (tegfs-query #t query/split))
 
-  (respond
-   (lambda _
-     (display "<div class='cards'>")
-     (for-each display-entry  entries)
-     (display "</div>"))))
+  (respond (lambda _ (display-entries entries))))
+
+(define (standalone-file->entry filepath)
+  (define dir (dirname filepath))
+  (define name (path-get-basename filepath))
+  `((id . ,filepath)
+    (target . ,name)
+    (,entry-parent-directory-key . ,dir)
+    ))
+
+(define (directory)
+  (define ctx (context/p))
+  (define callctx (callcontext/p))
+  (define request (callcontext-request callctx))
+  (define ctxq (get-query))
+
+  (define directory-relative-to-root
+    (or (hashmap-ref ctxq 'd #f)
+        (bad-request "Request query missing requiered 'd' argument")))
+  (define target-directory
+    directory-relative-to-root) ;; FIXME: relative to root!!!
+  (define files
+    (map car (directory-files target-directory)))
+  (define entries (map standalone-file->entry files))
+
+  (respond (lambda _ (display-entries entries))))
 
 (define (web-make-preview target-id target-fullpath entry)
   (define preview-fullpath
@@ -829,6 +861,7 @@
     (/main.css ,main.css public)
     (/collectgarbage ,collectgarbage public)
     (/query ,query public)
+    (/directory ,directory public)
     (/details ,details public)
     (/full ,full public)
     (/upload ,upload)
