@@ -21,6 +21,7 @@
 
 %use (get-root) "./get-root.scm"
 %use (entry-registry-path-key) "./entry-registry-path-key.scm"
+%use (entry-parent-directory-key) "./entry-parent-directory-key.scm"
 %use (a-weblink?) "./a-weblink-q.scm"
 
 (define (entry-target-fullpath entry)
@@ -28,8 +29,13 @@
   (and target-p
        (let ((target (cdr target-p)))
          (if (a-weblink? target) target
-             (let* ((registry-p
-                     (or (assoc entry-registry-path-key entry)
-                         (raisu 'entry-missing-registry-path)))
-                    (registry-dir (dirname (cdr registry-p))))
-               (append-posix-path (get-root) registry-dir target))))))
+             (let* ((parent-directory-p (assoc entry-parent-directory-key entry))
+                    (parent-directory (and parent-directory-p (cdr parent-directory-p)))
+                    (registry-p (assoc entry-registry-path-key entry))
+                    (registry-dir (and registry-p (dirname (cdr registry-p))))
+                    (directory (or parent-directory registry-dir)))
+               (unless directory
+                 (raisu 'entry-does-no-have-parent-directory-info
+                        entry-parent-directory-key
+                        entry-registry-path-key))
+               (append-posix-path (get-root) directory target))))))
