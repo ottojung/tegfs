@@ -24,11 +24,14 @@
 %use (entries-for-each) "./entries-for-each.scm"
 %use (entries->hashmap) "./entries-to-hashmap.scm"
 %use (entry-print) "./entry-print.scm"
+%use (entry-print/formatted) "./entry-print-formatted.scm"
 
-(define (tegfs-get/parse <showid>)
+(define (tegfs-get/parse <get-format> <showid>)
   (define entry (tegfs-get <showid>))
   (if entry
-      (entry-print entry)
+      (if <get-format>
+          (entry-print/formatted <get-format> entry)
+          (entry-print entry))
       (display "Not found." (current-error-port)))
   (newline))
 

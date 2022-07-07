@@ -53,7 +53,7 @@
       /      categorize
       /      prolog
       /      query QUERYARGS
-      /      get GETOPT
+      /      get GETARGS
       /      status
       /      serve
       /      make-thumbnails THUMBOPT
@@ -73,7 +73,8 @@
       QUERYARGS : QUERYOPT? QUERYQ+
       QUERYOPT : --format <query-format> / --entries
       QUERYQ : <query...>
-      GETOPT : <getid>
+      GETARGS : GETOPT? <getid>
+      GETOPT : --format <get-format> / --entry
       THUMBOPT : <target> <output>
       CONFIGOPT : get <name>
       /           set <name> <value>
@@ -85,6 +86,8 @@
      :exclusive (--no-series --series)
      :default (--entries #t)
      :exclusive (--entries --format)
+     :default (--entry #t)
+     :exclusive (--entry --format)
      :help (<remote> "A remote address like 'user1@example.com'")
 
      (when --help
@@ -104,7 +107,7 @@
         (serve (tegfs-serve/parse))
         (prolog (tegfs-prolog/parse))
         (query (tegfs-query/parse --entries <query-format> <query...>))
-        ((and get <getid>) (tegfs-get/parse <getid>))
+        ((and get <getid>) (tegfs-get/parse <get-format> <getid>))
         (make-thumbnails (tegfs-make-thumbnails/parse <target> <output>))
         (config (tegfs-config/parse get set <name> <value>))
         (dump-clipboard (tegfs-dump-clipboard/parse))
