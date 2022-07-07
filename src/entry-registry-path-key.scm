@@ -16,4 +16,4 @@
 
 %var entry-registry-path-key
 
-(define entry-registry-path-key 'registry-path)
+(define entry-registry-path-key '%registry-path)
