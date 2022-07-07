@@ -3,8 +3,8 @@
 
 TegFS is a virtual tag-based file system with higher order tags.
 
-It is a perfect tool for categorizing files.
-And is a replacement for classical directory-based categorization.
+It is used for file categorization,
+ as an alternative for classical directory-based categorization.
 
 This program also provides a web-based file-browser
  with advanced sharing capabilities.
