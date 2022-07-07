@@ -17,6 +17,7 @@
 %var entry-target-fullpath
 
 %use (append-posix-path) "./euphrates/append-posix-path.scm"
+%use (raisu) "./euphrates/raisu.scm"
 
 %use (get-root) "./get-root.scm"
 %use (entry-registry-path-key) "./entry-registry-path-key.scm"
@@ -27,5 +28,8 @@
   (and target-p
        (let ((target (cdr target-p)))
          (if (a-weblink? target) target
-             (let* ((registry-dir (dirname (cdr (assoc entry-registry-path-key entry)))))
+             (let* ((registry-p
+                     (or (assoc entry-registry-path-key entry)
+                         (raisu 'entry-missing-registry-path)))
+                    (registry-dir (dirname (cdr registry-p))))
                (append-posix-path (get-root) registry-dir target))))))
