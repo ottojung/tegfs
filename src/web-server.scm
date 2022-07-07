@@ -99,6 +99,7 @@
 %use (entry-parent-directory-key) "./entry-parent-directory-key.scm"
 %use (a-weblink?) "./a-weblink-q.scm"
 %use (web-url-icon/svg) "./web-url-icon-svg.scm"
+%use (standalone-file->entry) "./standalone-file-to-entry.scm"
 
 %use (debug) "./euphrates/debug.scm"
 %use (debugv) "./euphrates/debugv.scm"
@@ -613,14 +614,6 @@
   (define entries (tegfs-query #t query/split))
 
   (respond (lambda _ (display-entries entries))))
-
-(define (standalone-file->entry filepath)
-  (define dir (dirname filepath))
-  (define name (path-get-basename filepath))
-  `((id . ,filepath)
-    (target . ,name)
-    (,entry-parent-directory-key . ,dir)
-    ))
 
 (define (directory)
   (define ctx (context/p))
