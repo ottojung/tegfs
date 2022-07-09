@@ -509,14 +509,18 @@
    (get-sharedinfo-for-perm perm target-fullpath)
    (share-file/new target-fullpath for-duration make-symlink?)))
 
-(define (share-file target-fullpath for-duration)
+(define (share-file target-fullpath for-duration0)
   (define ctx (context/p))
   (define filemap (context-filemap ctx))
   (define perm (get-permissions))
+  (define for-duration
+    (min for-duration0
+         (permission-time-left perm)))
   (define make-symlink? #t)
-  (or
-   (get-sharedinfo-for-perm perm target-fullpath)
-   (share-file/new target-fullpath for-duration make-symlink?)))
+  (and (< 0 for-duration)
+       (or
+        (get-sharedinfo-for-perm perm target-fullpath)
+        (share-file/new target-fullpath for-duration make-symlink?))))
 
 (define (display-preview target-id target-fullpath)
   (define ctx (context/p))
@@ -526,34 +530,37 @@
     (if (a-weblink? target-fullpath) "/previewunknownurl" "/previewunknown"))
 
   (display "<img src=")
-  (if preview-fullpath
-      (let* ((info (share-file preview-fullpath default-preview-sharing-time))
-             (shared-name (sharedinfo-targetpath info))
-             (sharedir (context-sharedir ctx))
-             (shared-fullpath (append-posix-path sharedir shared-name))
-             (location (string-append fileserver shared-name)))
-        (if (file-or-directory-exists? shared-fullpath)
-            (write location)
-            (write default-preview)))
-      (write default-preview))
+  (unless
+      (and preview-fullpath
+           (let ((info (share-file preview-fullpath default-preview-sharing-time)))
+             (and info
+                  (let* ((shared-name (sharedinfo-targetpath info))
+                         (sharedir (context-sharedir ctx))
+                         (shared-fullpath (append-posix-path sharedir shared-name))
+                         (location (string-append fileserver shared-name)))
+                    (if (file-or-directory-exists? shared-fullpath)
+                        (write location)
+                        (write default-preview))
+                    #t))))
+    (write default-preview))
   (display "/>"))
 
 (define (get-full-link entry target-fullpath)
   (if (a-weblink? target-fullpath) target-fullpath
       (let* ((id (cdr (assoc 'id entry)))
              (location (string-append "/full?id=" id)))
-        (share-file/dont-link-yet target-fullpath default-full-sharing-time)
-        location)))
+        (and (share-file/dont-link-yet target-fullpath default-full-sharing-time)
+             location))))
 
 (define (maybe-display-preview entry)
   (define target-fullpath (entry-target-fullpath entry))
   (when target-fullpath
     (let* ((target-id (cdr (assoc 'id entry)))
            (full-link (get-full-link entry target-fullpath)))
-      (display "<a href=") (write full-link) (display ">")
-      (display-preview target-id target-fullpath)
-      (display "</a>")
-      )))
+      (when full-link
+        (display "<a href=") (write full-link) (display ">")
+        (display-preview target-id target-fullpath)
+        (display "</a>")))))
 
 (define (display-title entry)
   (display "<a href='/details?id=")
@@ -739,14 +746,21 @@
               (Cache-Control . "no-cache"))))
    #f))
 
+(define permission-time-left
+  (case-lambda
+   ((perm)
+    (permission-time-left perm (time-get-current-unixtime)))
+   ((perm current-time)
+    (define end (+ (permission-start perm)
+                   (permission-time perm)))
+    (max 0 (- end current-time)))))
+
 (define permission-still-valid?
   (case-lambda
    ((perm)
     (permission-still-valid? perm (time-get-current-unixtime)))
    ((perm current-time)
-    (define end (+ (permission-start perm)
-                   (permission-time perm)))
-    (< current-time end))))
+    (< 0 (permission-time-left perm current-time)))))
 
 (define (invalidate-permission perm)
   (define ctx (context/p))
