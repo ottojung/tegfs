@@ -578,7 +578,7 @@
   (display "</a>")
   )
 
-(define (has-access-for-entry? perm entry)
+(define (has-access-for-entry-full? perm entry)
   (and perm
        (let ((id (cdr (assoc 'id entry)))
              (idset (permission-idset perm)))
@@ -587,7 +587,7 @@
 
 (define (display-entry entry)
   (define perm (get-permissions))
-  (when (has-access-for-entry? perm entry)
+  (when (has-access-for-entry-full? perm entry)
     (display "<div class='card'>")
     (display "<div>")
     (maybe-display-preview entry)
@@ -722,7 +722,7 @@
   (define entry (tegfs-get/cached id))
 
   (define _11
-    (unless (has-access-for-entry? perm entry)
+    (unless (has-access-for-entry-full? perm entry)
       (not-found)))
 
   (define target-fullpath (entry-target-fullpath entry))
@@ -874,7 +874,7 @@
          entry)
         (display "</table>\n"))))
 
-  (unless (has-access-for-entry? perm entry)
+  (unless (has-access-for-entry-full? perm entry)
     (not-found))
 
   (respond table))
