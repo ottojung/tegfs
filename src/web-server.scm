@@ -64,6 +64,7 @@
 %use (stringf) "./euphrates/stringf.scm"
 %use (string->seconds) "./euphrates/string-to-seconds.scm"
 %use (directory-files) "./euphrates/directory-files.scm"
+%use (directory-files-rec) "./euphrates/directory-files-rec.scm"
 %use (file-delete) "./euphrates/file-delete.scm"
 %use (time-get-current-unixtime) "./euphrates/time-get-current-unixtime.scm"
 %use (memconst) "./euphrates/memconst.scm"
@@ -845,11 +846,21 @@
   (define idset (permission-idset perm))
   (define token (permission-token perm))
   (define location (stringf "/query?q=~a&key=~a" query/encoded token))
+  (define (add1 entry)
+    (define id (cdr (assoc 'id entry)))
+    (hashset-add! idset id))
 
   (for-each
    (lambda (entry)
-     (define id (cdr (assoc 'id entry)))
-     (hashset-add! idset id))
+     (define target-fullpath (entry-target-fullpath entry))
+     (add1 entry)
+     ;; FIXME: why does below has no effect?
+     (when (file-is-directory?/no-readlink target-fullpath)
+       (for-each
+        (lambda (p)
+          (define path (car p))
+          (add1 (standalone-file->entry path)))
+        (directory-files-rec target-fullpath))))
    entries)
 
   (return!
