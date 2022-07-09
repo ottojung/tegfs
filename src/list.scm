@@ -55,6 +55,8 @@
 %use (make-hashset hashset-ref hashset-length) "./euphrates/ihashset.scm"
 %use (list-deduplicate/reverse) "./euphrates/list-deduplicate.scm"
 %use (cons!) "./euphrates/cons-bang.scm"
+%use (file-is-directory?/no-readlink) "./euphrates/file-is-directory-q-no-readlink.scm"
+%use (directory-files-rec) "./euphrates/directory-files-rec.scm"
 
 %use (make-temporary-filename/local) "./make-temporary-filename-local.scm"
 %use (categorization-filename) "./categorization-filename.scm"
@@ -71,6 +73,10 @@
 %use (make-prolog-var) "./prolog-var.scm"
 %use (fatal) "./fatal.scm"
 %use (entry-registry-path-key) "./entry-registry-path-key.scm"
+%use (entry-target-fullpath) "./entry-target-fullpath.scm"
+%use (standalone-file->entry) "./standalone-file-to-entry.scm"
+
+%use (debugv) "./euphrates/debugv.scm"
 
 (define (tegfs-list/parse --dirs --entries <list-format>)
   (define append-registry-file?
@@ -85,5 +91,22 @@
 
 (define (tegfs-list --dirs append-registry-file? fn)
   (if --dirs
-      (raisu 'TODO)
+      (entries-for-each*
+       #t
+       (lambda (entry)
+         (define target-fullpath (entry-target-fullpath entry))
+         (define entry*
+           (if append-registry-file?
+               entry
+               (filter
+                (lambda (p)
+                  (not (equal? entry-registry-path-key (car p))))
+                entry)))
+         (fn entry)
+         (when (file-is-directory?/no-readlink target-fullpath)
+           (for-each
+            (lambda (p)
+              (define path (car p))
+              (fn (standalone-file->entry path)))
+            (directory-files-rec target-fullpath)))))
       (entries-for-each* append-registry-file? fn)))
