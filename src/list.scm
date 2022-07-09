@@ -96,13 +96,12 @@
        (lambda (entry)
          (define target-fullpath (entry-target-fullpath entry))
          (define entry*
-           (if append-registry-file?
-               entry
+           (if append-registry-file? entry
                (filter
                 (lambda (p)
                   (not (equal? entry-registry-path-key (car p))))
                 entry)))
-         (fn entry)
+         (fn entry*)
          (when (file-is-directory?/no-readlink target-fullpath)
            (for-each
             (lambda (p)
