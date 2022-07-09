@@ -992,7 +992,7 @@
     (map (lambda (sp)
            (define-values (key eq val) (string-split-3 #\= sp))
            (when (string-null? eq) (raisu 'bad-query query))
-           (cons (string->symbol key) val))
+           (cons (string->symbol key) (uri-decode val)))
          split))
   (alist->hashmap key-values))
 
