@@ -152,11 +152,12 @@
   )
 
 (define-type9 <permission>
-  (permission-constructor token start time admin? filemap idset) permission?
+  (permission-constructor token start time admin? detailsaccess? filemap idset) permission?
   (token permission-token) ;; token string
   (start permission-start) ;; timestamp for when this token was created
   (time permission-time) ;; duration in secods for how long this token is valid
   (admin? permission-admin?) ;; true if user is an admin
+  (detailsaccess? permission-detailsaccess?) ;; true if user has access to objects details
   (filemap permission-filemap) ;; hashmap with `keys: target-fullpath`, `values: file info that is shared for this permissions`
   (idset permission-idset) ;; hashset with `values: id of entry that is shared with this permission`
   )
@@ -277,7 +278,7 @@
 (define (set-user-key! key)
   (set-callcontext-key! (callcontext/p) key))
 
-(define (make-permission! expiery-time admin?)
+(define (make-permission! expiery-time admin? detailsaccess?)
   (define ctx (context/p))
   (define tokens (context-tokens ctx))
   (define token (generate-token))
@@ -285,7 +286,7 @@
   (define time expiery-time)
   (define perm
     (permission-constructor
-     token start time admin?
+     token start time admin? detailsaccess?
      (make-hashmap) (make-hashset)))
   (hashmap-set! tokens token perm)
   perm)
@@ -324,9 +325,10 @@
   (define passwords (context-passwords ctx))
   (define registered? (hashmap-ref passwords passw #f))
   (define admin? #t) ;; TODO: read from the config
+  (define detailsaccess? #t) ;; TODO: read from the config
 
   (if registered?
-      (let* ((perm (make-permission! default-login-expiery-time admin?))
+      (let* ((perm (make-permission! default-login-expiery-time admin? detailsaccess?))
              (token (permission-token perm)))
         (respond
          web-login-success-body
@@ -562,10 +564,14 @@
         (display-preview target-id target-fullpath)
         (display "</a>")))))
 
-(define (display-title entry)
-  (display "<a href='/details?id=")
-  (display (cdr (assoc 'id entry)))
-  (display "' style='color: white'>")
+(define (display-title perm entry)
+  (define details-link? (has-access-for-entry-details? perm entry))
+
+  (when details-link?
+    (display "<a href='/details?id=")
+    (display (cdr (assoc 'id entry)))
+    (display "' style='color: white'>"))
+
   (cond
    ((and (assoc 'title entry)
          (not (string-null? (cdr (assoc 'title entry)))))
@@ -575,15 +581,25 @@
     (display (cdr (assoc 'target entry))))
    (else
     (display (cdr (assoc 'id entry)))))
-  (display "</a>")
+
+  (when details-link?
+    (display "</a>"))
   )
 
-(define (has-access-for-entry-full? perm entry)
+(define (has-access-for-entry? perm entry)
   (and perm
-       (let ((id (cdr (assoc 'id entry)))
-             (idset (permission-idset perm)))
-         (or (permission-admin? perm)
+       (or (permission-admin? perm)
+           (let ((id (cdr (assoc 'id entry)))
+                 (idset (permission-idset perm)))
              (hashset-ref idset id)))))
+
+(define (has-access-for-entry-full? perm entry)
+  (has-access-for-entry? perm entry))
+
+(define (has-access-for-entry-details? perm entry)
+  (and perm
+       (and (permission-detailsaccess? perm)
+            (has-access-for-entry? perm entry))))
 
 (define (display-entry entry)
   (define perm (get-permissions))
@@ -593,7 +609,7 @@
     (maybe-display-preview entry)
     (display "</div>")
     (display "<div>")
-    (display-title entry)
+    (display-title perm entry)
     (display "</div>")
     (display "</div>")
     ))
@@ -824,7 +840,8 @@
   (define entries (tegfs-query #t query/split))
 
   (define admin? #f)
-  (define perm (make-permission! default-share-expiery-time admin?))
+  (define detailsaccess? #f) ;; TODO: maybe allow sometimes
+  (define perm (make-permission! default-share-expiery-time admin? detailsaccess?))
   (define idset (permission-idset perm))
   (define token (permission-token perm))
   (define location (stringf "/query?q=~a&key=~a" query/encoded token))
@@ -874,7 +891,7 @@
          entry)
         (display "</table>\n"))))
 
-  (unless (has-access-for-entry-full? perm entry)
+  (unless (has-access-for-entry-details? perm entry)
     (not-found))
 
   (respond table))
