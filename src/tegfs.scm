@@ -34,6 +34,7 @@
 %use (tegfs-serve/parse) "./web-server.scm"
 %use (tegfs-prolog/parse) "./prolog.scm"
 %use (tegfs-query/parse) "./query.scm"
+%use (tegfs-list/parse) "./list.scm"
 %use (tegfs-get/parse) "./get.scm"
 %use (tegfs-make-thumbnails/parse) "./make-thumbnails.scm"
 %use (tegfs-config/parse) "./config.scm"
@@ -53,6 +54,7 @@
       /      categorize
       /      prolog
       /      query QUERYARGS
+      /      list LISTARGS
       /      get GETARGS
       /      status
       /      serve
@@ -73,6 +75,10 @@
       QUERYARGS : QUERYOPT? QUERYQ+
       QUERYOPT : --format <query-format> / --entries
       QUERYQ : <query...>
+      LISTARGS : LISTDIRSQ? LISTOPT?
+      /          LISTOPT? LISTDIRSQ?
+      LISTDIRSQ : --dirs
+      LISTOPT : --format <list-format> / --entries
       GETARGS : GETOPT? <getid>
       GETOPT : --format <get-format> / --entry
       THUMBOPT : <target> <output>
@@ -107,6 +113,7 @@
         (serve (tegfs-serve/parse))
         (prolog (tegfs-prolog/parse))
         (query (tegfs-query/parse --entries <query-format> <query...>))
+        (list (tegfs-list/parse --dirs --entries <list-format>))
         ((and get <getid>) (tegfs-get/parse <get-format> <getid>))
         (make-thumbnails (tegfs-make-thumbnails/parse <target> <output>))
         (config (tegfs-config/parse get set <name> <value>))
