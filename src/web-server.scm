@@ -69,6 +69,7 @@
 %use (memconst) "./euphrates/memconst.scm"
 %use (catch-any) "./euphrates/catch-any.scm"
 %use (file-is-directory?/no-readlink) "./euphrates/file-is-directory-q-no-readlink.scm"
+%use (remove-common-prefix) "./euphrates/remove-common-prefix.scm"
 
 %use (get-root) "./get-root.scm"
 %use (categorization-filename) "./categorization-filename.scm"
@@ -620,15 +621,26 @@
   (define ctx (context/p))
   (define callctx (callcontext/p))
   (define request (callcontext-request callctx))
+  (define sharedir (context-sharedir ctx))
   (define ctxq (get-query))
 
-  (define directory-relative-to-root
+  (define shared-name
     (or (hashmap-ref ctxq 'd #f)
         (bad-request "Request query missing requiered 'd' argument")))
-  (define target-directory
-    directory-relative-to-root) ;; FIXME: relative to root!!!
+  (define shared-fullpath
+    (append-posix-path sharedir shared-name))
+  (define dir-fullpath
+    (readlink shared-fullpath))
+  (define root (get-root))
+  (define _1213
+    (unless (string-prefix? root dir-fullpath)
+      (bad-request "Bad directory")))
+  (define dir
+    (remove-common-prefix dir-fullpath root))
+  (define file-names
+    (map cadr (directory-files shared-fullpath)))
   (define files
-    (map car (directory-files target-directory)))
+    (map (comp (append-posix-path "/" dir)) file-names))
   (define entries (map standalone-file->entry files))
 
   (respond (lambda _ (display-entries entries))))
