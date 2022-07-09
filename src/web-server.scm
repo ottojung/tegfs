@@ -645,7 +645,8 @@
   (define dir
     (remove-common-prefix dir-fullpath root))
   (define file-names
-    (map cadr (directory-files shared-fullpath)))
+    (let ((include-directories? #t))
+      (map cadr (directory-files shared-fullpath include-directories?))))
   (define files
     (map (comp (append-posix-path "/" dir)) file-names))
   (define entries (map standalone-file->entry files))
