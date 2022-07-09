@@ -68,6 +68,7 @@
 %use (time-get-current-unixtime) "./euphrates/time-get-current-unixtime.scm"
 %use (memconst) "./euphrates/memconst.scm"
 %use (catch-any) "./euphrates/catch-any.scm"
+%use (file-is-directory?/no-readlink) "./euphrates/file-is-directory-q-no-readlink.scm"
 
 %use (get-root) "./get-root.scm"
 %use (categorization-filename) "./categorization-filename.scm"
@@ -710,7 +711,10 @@
         (not-found)))
   (define shared-name (sharedinfo-targetpath info))
   (define fileserver (context-fileserver ctx))
-  (define location (string-append fileserver shared-name))
+  (define location
+    (if (file-is-directory?/no-readlink target-fullpath)
+        (string-append "/directory?d=" shared-name)
+        (string-append fileserver shared-name)))
 
   (symlink-shared-file target-fullpath shared-name)
 
