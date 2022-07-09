@@ -18,13 +18,22 @@
 %var ROOT_VAR_NAME
 
 %use (raisu) "./euphrates/raisu.scm"
+%use (absolute-posix-path?) "./euphrates/absolute-posix-path-q.scm"
+%use (append-posix-path) "./euphrates/append-posix-path.scm"
+%use (get-current-directory) "./euphrates/get-current-directory.scm"
 
 %use (root/p) "./root-p.scm"
 
 (define ROOT_VAR_NAME "TEGFS_ROOT")
 
 (define (get-root)
-  (define r (root/p))
-  (or r
-      (raisu 'unknown-root
-             "Root is unknown because $~a env variable is not defined" ROOT_VAR_NAME)))
+  (define root0
+    (or (root/p)
+        (raisu 'unknown-root
+               "Root is unknown because $~a env variable is not defined" ROOT_VAR_NAME)))
+  (define root
+    (if (absolute-posix-path? root0) root0
+        (append-posix-path (get-current-directory) root0)))
+
+  root)
+
