@@ -587,18 +587,18 @@
     (write default-preview))
   (display "/>"))
 
-(define (get-full-link entry target-fullpath)
+(define (get-full-link target-fullpath)
   (if (a-weblink? target-fullpath) target-fullpath
-      (let* ((id (cdr (assoc 'id entry)))
-             (location (string-append "/full?id=" id)))
-        (and (share-file/dont-link-yet target-fullpath default-full-sharing-time)
-             location))))
+      (let* ((info (share-file/dont-link-yet target-fullpath default-full-sharing-time))
+             (sharedname (sharedinfo-sharedname info))
+             (location (and info (string-append "/full?sharedname=" sharedname))))
+        (and info location))))
 
 (define (maybe-display-preview entry)
   (define target-fullpath (entry-target-fullpath entry))
   (when target-fullpath
     (let* ((target-id (cdr (assoc 'id entry)))
-           (full-link (get-full-link entry target-fullpath)))
+           (full-link (get-full-link target-fullpath)))
       (when full-link
         (display "<a href=") (write full-link) (display ">")
         (display-preview target-id target-fullpath)
@@ -772,20 +772,19 @@
 
 (define (full)
   (define ctx (context/p))
+  (define filemap/2 (context-filemap/2 ctx))
   (define perm (get-permissions))
   (define ctxq (get-query))
-  (define id (hashmap-ref ctxq 'id #f))
-  (define entry (tegfs-get/cached id))
-
-  (define _11
-    (unless (has-access-for-entry-full? perm entry)
+  (define sharedname (hashmap-ref ctxq 'sharedname #f))
+  (define info (filemap-ref-by-sharedname filemap/2 sharedname #f))
+  (define _8123
+    (unless info
       (not-found)))
-
-  (define target-fullpath (entry-target-fullpath entry))
-  (define info
-    (or (get-sharedinfo-for-perm perm target-fullpath)
-        (not-found)))
-  (define sharedname (sharedinfo-sharedname info))
+  (define target-fullpath (sharedinfo-sourcepath info))
+  (define _11
+    (unless (hashset-ref (permission-fileset perm) target-fullpath)
+      ;; file was not shared with this permission
+      (not-found)))
   (define fileserver (context-fileserver ctx))
   (define location
     (if (file-is-directory?/no-readlink target-fullpath)
