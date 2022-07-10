@@ -846,6 +846,7 @@
   (define idset (permission-idset perm))
   (define token (permission-token perm))
   (define location (stringf "/query?q=~a&key=~a" query/encoded token))
+  (define root (get-root))
   (define (add1 entry)
     (define id (cdr (assoc 'id entry)))
     (hashset-add! idset id))
@@ -859,7 +860,9 @@
        (for-each
         (lambda (p)
           (define path (car p))
-          (add1 (standalone-file->entry path)))
+          (define relative (remove-common-prefix path root))
+          (when (string-prefix? root path)
+            (add1 (standalone-file->entry relative))))
         (directory-files-rec target-fullpath))))
    entries)
 
