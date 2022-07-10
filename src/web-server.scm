@@ -842,7 +842,7 @@
      (unless (< now end)
        (file-delete full-name)
        (filemap-delete-by-sharedname! filemap/2 sharedname)))
-   filemap/2)
+   (cdr filemap/2))
 
   (hashmap-foreach
    (lambda (token perm)
