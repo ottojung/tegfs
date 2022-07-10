@@ -855,7 +855,6 @@
    (lambda (entry)
      (define target-fullpath (entry-target-fullpath entry))
      (add1 entry)
-     ;; FIXME: why does below has no effect?
      (when (file-is-directory?/no-readlink target-fullpath)
        (for-each
         (lambda (p)
