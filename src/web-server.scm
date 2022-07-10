@@ -56,7 +56,7 @@
 %use (random-choice) "./euphrates/random-choice.scm"
 %use (alphanum-lowercase/alphabet) "./euphrates/alphanum-lowercase-alphabet.scm"
 %use (printf) "./euphrates/printf.scm"
-%use (path-extension) "./euphrates/path-extension.scm"
+%use (path-extensions) "./euphrates/path-extensions.scm"
 %use (dprintln) "./euphrates/dprintln.scm"
 %use (list-singleton?) "./euphrates/list-singleton-q.scm"
 %use (absolute-posix-path?) "./euphrates/absolute-posix-path-q.scm"
@@ -186,7 +186,7 @@
   (define sharedname
     (string-append
      (get-random-basename)
-     (path-extension target-fullpath)))
+     (path-extensions target-fullpath)))
   (define callctx (callcontext/p))
   (define now (callcontext-time callctx))
   (sharedinfo-ctr target-fullpath sharedname token now for-duration))
@@ -459,7 +459,7 @@
              cdr))
 
   (define extension
-    (path-extension filename))
+    (path-extensions filename))
 
   (define <target>
     (and (not (string-null? filename))
