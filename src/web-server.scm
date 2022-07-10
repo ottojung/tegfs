@@ -122,14 +122,14 @@
 %end
 
 (define-type9 <context>
-  (context-ctr passwords database tokens port fileserver sharedir filemap) context?
+  (context-ctr passwords database tokens port fileserver sharedir filemap/2) context?
   (passwords context-passwords) ;; user credentials passwords
   (database context-database) ;; tag database
   (tokens context-tokens) ;; temporary session tokens
   (port context-port) ;; port to host the server on
   (fileserver context-fileserver) ;; full URI of the file server
   (sharedir context-sharedir) ;; directory with shared wiles
-  (filemap context-filemap) ;; hashmap of type [: id -> shared filepath]
+  (filemap/2 context-filemap/2) ;; cons of hashmaps of type [: id -> info] and [: sharedname -> info]
   )
 
 (define-type9 <callcontext>
@@ -144,11 +144,10 @@
   )
 
 (define-type9 <sharedinfo>
-  (sharedinfo-ctr token sourcepath id vid ctime stime) sharedinfo?
-  (token sharedinfo-token) ;; token of the perms that shared this file
+  (sharedinfo-ctr sourcepath sharedname token ctime stime) sharedinfo?
   (sourcepath sharedinfo-sourcepath) ;; the original file path
-  (id sharedinfo-id) ;; mapped file id, sometimes #f
-  (vid sharedinfo-vid) ;; temporary virtual id, it's the prefix of `sharedinfo-targetpath`
+  (sharedname sharedinfo-sharedname) ;; the linked file path suffix (without the sharedir)
+  (token sharedinfo-token) ;; token of the perms that shared this file
   (ctime sharedinfo-ctime) ;; time in seconds for when this info was created
   (stime sharedinfo-stime) ;; time in seconds for how long to share this file
   )
@@ -183,20 +182,48 @@
 
 (define upload-registry-filename "upload/upload.tegfs.reg.lisp")
 
-;; the linked file path suffix (without the sharedir)
-(define (sharedinfo-targetpath info)
-  (define vid (sharedinfo-vid info))
-  (define target-fullpath (sharedinfo-sourcepath info))
-  (string-append (string-append vid (path-extension target-fullpath))))
-
-(define (make-sharedinfo id token target-fullpath for-duration)
-  (define vid (get-random-basename))
+(define (make-sharedinfo token target-fullpath for-duration)
+  (define sharedname
+    (string-append
+     (get-random-basename)
+     (path-extension target-fullpath)))
   (define callctx (callcontext/p))
   (define now (callcontext-time callctx))
-  (sharedinfo-ctr token target-fullpath id vid now for-duration))
+  (sharedinfo-ctr target-fullpath sharedname token now for-duration))
 
-(define (make-file-sharedinfo token target-fullpath for-duration)
-  (make-sharedinfo #f token target-fullpath for-duration))
+(define (filemap-set! filemap/2 info)
+  (define id (sharedinfo-sourcepath info))
+  (define sharedname (sharedinfo-sharedname info))
+  (define first (car filemap/2))
+  (define second (cdr filemap/2))
+  (hashmap-set! first id info)
+  (hashmap-set! second sharedname info))
+
+(define (filemap-ref-by-sourcepath filemap/2 id default)
+  (define first (car filemap/2))
+  (hashmap-ref first id default))
+
+(define (filemap-ref-by-sharedname filemap/2 sharedname default)
+  (define second (cdr filemap/2))
+  (hashmap-ref second sharedname default))
+
+(define (filemap-delete-by-sourcepath! filemap/2 id)
+  (define first (car filemap/2))
+  (define second (cdr filemap/2))
+  (define info (filemap-ref-by-sourcepath filemap/2 id #f))
+  (when info
+    (let ((sharedname (sharedinfo-sharedname info)))
+      (hashmap-delete! first id)
+      (hashmap-delete! second sharedname))))
+
+(define (filemap-delete-by-sharedname! filemap/2 sharedname)
+  (define first (car filemap/2))
+  (define second (cdr filemap/2))
+  (define info (filemap-ref-by-sharedname filemap/2 sharedname #f))
+  (when info
+    (let ((id (sharedinfo-sourcepath info)))
+      (hashmap-delete! first id)
+      (hashmap-delete! second sharedname))))
 
 (define (return! stats body)
   (define callctx (callcontext/p))
@@ -475,18 +502,13 @@
   (respond (web-make-upload-body)))
 
 (define (get-sharedinfo-for-perm perm target-fullpath)
-  (define ctx (context/p))
-  (define filemap (context-filemap ctx))
   (define perm-filemap (permission-filemap perm))
-  (define info (hashmap-ref perm-filemap target-fullpath #f))
-  (and info
-       (let ((shared-name (sharedinfo-targetpath info)))
-         (hashmap-ref filemap shared-name #f))))
+  (hashmap-ref perm-filemap target-fullpath #f))
 
-(define (symlink-shared-file target-fullpath shared-name)
+(define (symlink-shared-file target-fullpath sharedname)
   (define ctx (context/p))
   (define sharedir (context-sharedir ctx))
-  (define shared-fullpath (append-posix-path sharedir shared-name))
+  (define shared-fullpath (append-posix-path sharedir sharedname))
   (define target-fullpath/abs
     (if (absolute-posix-path? target-fullpath) target-fullpath
         (append-posix-path (get-current-directory) target-fullpath)))
@@ -502,24 +524,23 @@
 
 (define (share-file/new target-fullpath for-duration make-symlink?)
   (define ctx (context/p))
-  (define filemap (context-filemap ctx))
+  (define filemap/2 (context-filemap/2 ctx))
   (define perm (get-permissions))
   (define token (permission-token perm))
-  (define info (make-file-sharedinfo token target-fullpath for-duration))
-  (define shared-name (sharedinfo-targetpath info))
+  (define info (make-sharedinfo token target-fullpath for-duration))
+  (define sharedname (sharedinfo-sharedname info))
   (define perm-filemap (permission-filemap perm))
 
   (hashmap-set! perm-filemap target-fullpath info)
-  (hashmap-set! filemap shared-name info)
+  (filemap-set! filemap/2 info)
 
   (when make-symlink?
-    (symlink-shared-file target-fullpath shared-name))
+    (symlink-shared-file target-fullpath sharedname))
 
   info)
 
 (define (share-file/dont-link-yet target-fullpath for-duration)
   (define ctx (context/p))
-  (define filemap (context-filemap ctx))
   (define perm (get-permissions))
   (define make-symlink? #f)
   (or
@@ -529,7 +550,6 @@
 (define (share-file target-fullpath for-duration0)
   (define ctx (context/p))
   (define callctx (callcontext/p))
-  (define filemap (context-filemap ctx))
   (define perm (get-permissions))
   (define now (callcontext-time callctx))
   (define for-duration
@@ -553,10 +573,10 @@
       (and preview-fullpath
            (let ((info (share-file preview-fullpath default-preview-sharing-time)))
              (and info
-                  (let* ((shared-name (sharedinfo-targetpath info))
+                  (let* ((sharedname (sharedinfo-sharedname info))
                          (sharedir (context-sharedir ctx))
-                         (shared-fullpath (append-posix-path sharedir shared-name))
-                         (location (string-append fileserver shared-name)))
+                         (shared-fullpath (append-posix-path sharedir sharedname))
+                         (location (string-append fileserver sharedname)))
                     (if (file-or-directory-exists? shared-fullpath)
                         (write location)
                         (write default-preview))
@@ -664,11 +684,11 @@
   (define sharedir (context-sharedir ctx))
   (define ctxq (get-query))
 
-  (define shared-name
+  (define sharedname
     (or (hashmap-ref ctxq 'd #f)
         (bad-request "Request query missing requiered 'd' argument")))
   (define shared-fullpath
-    (append-posix-path sharedir shared-name))
+    (append-posix-path sharedir sharedname))
   (define dir-fullpath
     (readlink shared-fullpath))
   (define root (get-root))
@@ -762,14 +782,14 @@
   (define info
     (or (get-sharedinfo-for-perm perm target-fullpath)
         (not-found)))
-  (define shared-name (sharedinfo-targetpath info))
+  (define sharedname (sharedinfo-sharedname info))
   (define fileserver (context-fileserver ctx))
   (define location
     (if (file-is-directory?/no-readlink target-fullpath)
-        (string-append "/directory?d=" shared-name)
-        (string-append fileserver shared-name)))
+        (string-append "/directory?d=" sharedname)
+        (string-append fileserver sharedname)))
 
-  (symlink-shared-file target-fullpath shared-name)
+  (symlink-shared-file target-fullpath sharedname)
 
   (return!
    (build-response
@@ -807,20 +827,20 @@
   (define ctx (context/p))
   (define callctx (callcontext/p))
   (define sharedir (context-sharedir ctx))
-  (define filemap (context-filemap ctx))
+  (define filemap/2 (context-filemap/2 ctx))
   (define now (callcontext-time callctx))
   (define tokens (context-tokens ctx))
 
   (hashmap-foreach
-   (lambda (shared-name info)
+   (lambda (sharedname info)
      (define end (+ (sharedinfo-ctime info)
                     (sharedinfo-stime info)))
      (define full-name
-       (append-posix-path sharedir (sharedinfo-targetpath info)))
+       (append-posix-path sharedir (sharedinfo-sharedname info)))
      (unless (< now end)
        (file-delete full-name)
-       (hashmap-delete! filemap shared-name)))
-   filemap)
+       (filemap-delete-by-sharedname! filemap/2 sharedname)))
+   filemap/2)
 
   (hashmap-foreach
    (lambda (token perm)
@@ -831,11 +851,11 @@
   (for-each
    (lambda (namepair)
      (define full-name (car namepair))
-     (define shared-name (cadr namepair))
-     (define info (hashmap-ref filemap shared-name #f))
+     (define sharedname (cadr namepair))
+     (define info (filemap-ref-by-sharedname filemap/2 sharedname #f))
      (unless info
        (display "File not shared: ")
-       (write shared-name)
+       (write sharedname)
        (display " deleting...\n")
        (file-delete full-name)))
    (directory-files sharedir))
@@ -980,8 +1000,8 @@
   (define database (make-hashmap))
   (define tokens (make-hashmap))
 
-  (define filemap
-    (make-hashmap))
+  (define filemap/2
+    (cons (make-hashmap) (make-hashmap)))
   (define config
     (get-config))
   (define _1
@@ -1031,7 +1051,7 @@
   (unless (and (integer? port) (exact? port) (> port 0))
     (raisu 'port-must-be-a-natural-number port))
 
-  (context-ctr passwords database tokens port fileserver sharedir filemap))
+  (context-ctr passwords database tokens port fileserver sharedir filemap/2))
 
 (define (query->hashmap query)
   (define split (string-split/simple query #\&))
