@@ -144,11 +144,11 @@
   )
 
 (define-type9 <sharedinfo>
-  (sharedinfo-ctr token sourcepath targetpath ctime stime) sharedinfo?
+  (sharedinfo-ctr token sourcepath id vid ctime stime) sharedinfo?
   (token sharedinfo-token) ;; token of the perms that shared this file
   (sourcepath sharedinfo-sourcepath) ;; the original file path
-  (targetpath sharedinfo-targetpath) ;; the linked file path suffix (without the sharedir)
-  (id sharedinfo-id) ;; mapped file id
+  (id sharedinfo-id) ;; mapped file id, sometimes #f
+  (vid sharedinfo-vid) ;; temporary virtual id, it's the prefix of `sharedinfo-targetpath`
   (ctime sharedinfo-ctime) ;; time in seconds for when this info was created
   (stime sharedinfo-stime) ;; time in seconds for how long to share this file
   )
@@ -182,6 +182,21 @@
   (string->seconds "1h"))
 
 (define upload-registry-filename "upload/upload.tegfs.reg.lisp")
+
+;; the linked file path suffix (without the sharedir)
+(define (sharedinfo-targetpath info)
+  (define vid (sharedinfo-vid info))
+  (define target-fullpath (sharedinfo-sourcepath info))
+  (string-append (string-append vid (path-extension target-fullpath))))
+
+(define (make-sharedinfo id token target-fullpath for-duration)
+  (define vid (get-random-basename))
+  (define callctx (callcontext/p))
+  (define now (callcontext-time callctx))
+  (sharedinfo-ctr token target-fullpath id vid now for-duration))
+
+(define (make-file-sharedinfo token target-fullpath for-duration)
+  (make-sharedinfo #f token target-fullpath for-duration))
 
 (define (return! stats body)
   (define callctx (callcontext/p))
@@ -487,15 +502,11 @@
 
 (define (share-file/new target-fullpath for-duration make-symlink?)
   (define ctx (context/p))
-  (define callctx (callcontext/p))
   (define filemap (context-filemap ctx))
   (define perm (get-permissions))
-  (define shared-name
-    (string-append (get-random-basename)
-                   (path-extension target-fullpath)))
-  (define now (callcontext-time callctx))
   (define token (permission-token perm))
-  (define info (sharedinfo-ctr token target-fullpath shared-name now for-duration))
+  (define info (make-file-sharedinfo token target-fullpath for-duration))
+  (define shared-name (sharedinfo-targetpath info))
   (define perm-filemap (permission-filemap perm))
 
   (hashmap-set! perm-filemap target-fullpath info)
