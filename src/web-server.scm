@@ -133,11 +133,12 @@
   )
 
 (define-type9 <callcontext>
-  (callcontext-ctr break request query body key permissions) callcontext?
+  (callcontext-ctr break request query body time key permissions) callcontext?
   (break callcontext-break) ;; break handler
   (request callcontext-request) ;; client request
   (query callcontext-query) ;; query hashmap
   (body callcontext-body) ;; client body
+  (time callcontext-time) ;; timestamp for when request was received
   (key callcontext-key set-callcontext-key!) ;; access key to-set to
   (permissions callcontext-permissions) ;; permissions associated with this call
   )
@@ -281,9 +282,10 @@
 
 (define (make-permission! expiery-time admin? detailsaccess?)
   (define ctx (context/p))
+  (define callctx (callcontext/p))
   (define tokens (context-tokens ctx))
   (define token (generate-token))
-  (define start (time-get-current-unixtime))
+  (define start (callcontext-time callctx))
   (define time expiery-time)
   (define perm
     (permission-constructor
@@ -485,12 +487,13 @@
 
 (define (share-file/new target-fullpath for-duration make-symlink?)
   (define ctx (context/p))
+  (define callctx (callcontext/p))
   (define filemap (context-filemap ctx))
   (define perm (get-permissions))
   (define shared-name
     (string-append (get-random-basename)
                    (path-extensions target-fullpath)))
-  (define now (time-get-current-unixtime))
+  (define now (callcontext-time callctx))
   (define token (permission-token perm))
   (define info (sharedinfo-ctr token target-fullpath shared-name now for-duration))
   (define perm-filemap (permission-filemap perm))
@@ -514,11 +517,13 @@
 
 (define (share-file target-fullpath for-duration0)
   (define ctx (context/p))
+  (define callctx (callcontext/p))
   (define filemap (context-filemap ctx))
   (define perm (get-permissions))
+  (define now (callcontext-time callctx))
   (define for-duration
     (min for-duration0
-         (permission-time-left perm)))
+         (permission-time-left perm now)))
   (define make-symlink? #t)
   (and (< 0 for-duration)
        (or
@@ -789,9 +794,10 @@
 
 (define (collectgarbage)
   (define ctx (context/p))
+  (define callctx (callcontext/p))
   (define sharedir (context-sharedir ctx))
   (define filemap (context-filemap ctx))
-  (define now (time-get-current-unixtime))
+  (define now (callcontext-time callctx))
   (define tokens (context-tokens ctx))
 
   (hashmap-foreach
@@ -1069,7 +1075,8 @@
 (define (make-callcontext break request body)
   (define qH (memconst (initialize-query request)))
   (define perm (memconst (initialize-permissions)))
-  (callcontext-ctr break request qH body #f perm))
+  (define time (time-get-current-unixtime))
+  (callcontext-ctr break request qH body time #f perm))
 
 (define (make-handler)
   (lambda (request body)
