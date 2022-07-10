@@ -232,7 +232,7 @@
 
 (define* (respond #:optional body #:key
                             (status 200)
-                            (title #f)
+                            (title "TegFS")
                             (extra-heads '())
                             (doctype "<!DOCTYPE html>\n")
                             (content-type-params '((charset . "utf-8")))
