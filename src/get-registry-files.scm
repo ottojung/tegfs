@@ -17,18 +17,16 @@
 %var get-registry-files
 
 %use (remove-common-prefix) "./euphrates/remove-common-prefix.scm"
-%use (directory-files-rec/filter) "./euphrates/directory-files-rec-filter.scm"
+%use (string-split/simple) "./euphrates/string-split-simple.scm"
 
 %use (get-root) "./get-root.scm"
 %use (regfile-suffix) "./regfile-suffix.scm"
+%use (get-config) "./get-config.scm"
 
 (define (get-registry-files)
-  (map (lambda (path)
-         (remove-common-prefix path (string-append (get-root) "/")))
-       (map car
-            (directory-files-rec/filter
-             (lambda (fullname)
-               (string-suffix? regfile-suffix (basename fullname)))
-             (get-root)))))
-
-
+  (define root (get-root))
+  (define config (get-config))
+  (define registries/string
+    (cadr (or (assoc 'registries config) '(registries ""))))
+  (define registries (string-split/simple registries/string #\:))
+  registries)

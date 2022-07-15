@@ -5,7 +5,7 @@ PREFIX_BIN=$(PREFIX)/bin
 BINARY_PATH=$(PREFIX_BIN)/tegfs
 
 TEST_ROOT=dist/testroot
-TEST_FILES=$(TEST_ROOT) $(TEST_ROOT)/categorization.tegfs.txt
+TEST_FILES=$(TEST_ROOT) $(TEST_ROOT)/categorization.tegfs.txt $(TEST_ROOT)/config.tegfs.lisp
 
 SUBMODULES = deps/euphrates/.git deps/czempak/.git
 
@@ -52,6 +52,9 @@ $(TEST_ROOT):
 $(TEST_ROOT)/categorization.tegfs.txt:
 	TEST_ROOT=$(TEST_ROOT) sh test/make-example-categorization.sh
 
+$(TEST_ROOT)/config.tegfs.lisp:
+	TEST_ROOT=$(TEST_ROOT) sh test/make-example-config.sh
+
 test1: dist/tegfs $(TEST_FILES)
 	touch $(TEST_ROOT)/hi.txt
 	echo hi | TEGFS_ROOT=$(TEST_ROOT) dist/tegfs add \
@@ -72,7 +75,7 @@ test3: dist/tegfs $(TEST_FILES)
 	TEGFS_ROOT=$(TEST_ROOT) dist/tegfs categorize
 
 test4: dist/tegfs $(TEST_FILES)
-	TEST_ROOT=$(TEST_ROOT) sh test/test-serve.sh
+	TEGFS_ROOT=$(TEST_ROOT) dist/tegfs serve
 
 test5: dist/tegfs $(TEST_FILES)
 	TEGFS_ROOT=$(TEST_ROOT) dist/tegfs prolog
