@@ -70,9 +70,8 @@
       /        --registry-file <registry-file>
       /        --date <date>
       SAVEARGS : REMOTEOPT? SAVETARGET?
-      /          LINKOPT? SAVETARGET
+      /          --link SAVETARGET
       REMOTEOPT : --remote <remote>
-      LINKOPT : --link / --no-link
       SAVETARGET : --target <savetext>
       QUERYARGS : QUERYOPT? QUERYQ+
       QUERYOPT : --format <query-format> / --entries
@@ -96,8 +95,6 @@
      :exclusive (--entries --format)
      :default (--entry #t)
      :exclusive (--entry --format)
-     :default (--no-link #t)
-     :exclusive (--link --no-link)
      :help (<remote> "A remote address like 'user1@example.com'")
 
      (when --help
