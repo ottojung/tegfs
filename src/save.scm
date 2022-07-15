@@ -149,6 +149,11 @@
          '-text-content <savetext>
          state))))
 
+(define (set-link-preference --link state)
+  (assoc-set-preference
+   'link? (if --link 'yes 'no)
+   state))
+
 (define (set-text-content-preference state)
   (if (cadr (assoc '-text-content state)) state
       (let ((text-content (or (get-clipboard-text-content)
@@ -193,6 +198,15 @@
       ((data link localfile pasta) answer)
       (else
        (dprintln "Please answer either \"data\" or \"link\" or \"localfile\" or \"pasta\"")
+       (loop)))))
+
+(define (get-link-flag edit?)
+  (let loop ()
+    (case (string->symbol (read-answer "Link target to the new location? (yes/no)"))
+      ((yes Yes YES) 'yes)
+      ((no No NO) 'no)
+      (else
+       (dprintln "Please answer \"yes\" or \"no\"")
        (loop)))))
 
 (define (get-download-flag edit?)
@@ -404,6 +418,7 @@
     (registry-file . ,get-registry-file)
     (real-type . ,get-real-type)
     (download? . ,get-download-flag)
+    (link? . ,get-link-flag)
     (series . ,get-series)
     (data-type . ,get-data-type)
     (target-extension . ,get-target-extension)
@@ -472,9 +487,10 @@
            (next (eval-state-next state)))
       (if next (loop next) state))))
 
-(define (state-set-generic-preferences <savetext>)
+(define (state-set-generic-preferences --link <savetext>)
   (comp
    (set-savefile-preference <savetext>)
+   (set-link-preference --link)
    set-text-content-preference
    (assoc-set-preference 'series 'no)
    (assoc-set-preference 'confirm 'no)
@@ -505,6 +521,7 @@
   (define real-type (cadr (assoc 'real-type state)))
   (define series (cadr (assoc 'series state)))
   (define series? (case series ((yes) #t) ((no) #f) (else (fatal "Bad value for series ~s" series))))
+  (define link? (case (cadr (assoc 'link? state)) ((yes) #t) ((no) #f) (else (fatal "Bad value for link? ~s" (cadr (assoc 'link? state))))))
   (define registry-file (cadr (assoc 'registry-file state)))
   (define -temporary-file (cadr (assoc '-temporary-file state)))
   (define -text-content (cadr (assoc '-text-content state)))
@@ -525,6 +542,8 @@
                                target-name0))
              (target-fullname (append-posix-path registry-dir target-name)))
         (rename-file -temporary-file target-fullname)
+        (when link?
+          (symlink target-fullname -temporary-file))
         target-name))
      ((equal? real-type 'pasta) #f)
      (else -text-content)))
@@ -536,11 +555,11 @@
    series? key-value-pairs
    registry-file <date>))
 
-(define (tegfs-save/parse/no-remote <savetext>)
+(define (tegfs-save/parse/no-remote --link <savetext>)
   (define preferences-code
     (get-custom-prefernences-code))
   (define generic-preferences
-    (state-set-generic-preferences <savetext>))
+    (state-set-generic-preferences --link <savetext>))
   (define custom-preferences
     (comp (state-set-custom-preferences preferences-code)))
   (define set-preferences
@@ -584,10 +603,10 @@
 
   (dprintln "Saved!"))
 
-(define (tegfs-save/parse <remote> <savetext>)
+(define (tegfs-save/parse <remote> --link <savetext>)
   (if <remote>
       (tegfs-save/parse/remote <remote> <savetext>)
-      (tegfs-save/parse/no-remote <savetext>)))
+      (tegfs-save/parse/no-remote --link <savetext>)))
 
 
 

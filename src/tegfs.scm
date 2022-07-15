@@ -69,9 +69,11 @@
       /        --key <key...> <value...>
       /        --registry-file <registry-file>
       /        --date <date>
-      SAVEARGS : SAVEOPT? SAVETARGET?
-      SAVEOPT : --remote <remote>
-      SAVETARGET : <savetext>
+      SAVEARGS : REMOTEOPT? SAVETARGET?
+      /          LINKOPT? SAVETARGET
+      REMOTEOPT : --remote <remote>
+      LINKOPT : --link / --no-link
+      SAVETARGET : --target <savetext>
       QUERYARGS : QUERYOPT? QUERYQ+
       QUERYOPT : --format <query-format> / --entries
       QUERYQ : <query...>
@@ -94,6 +96,8 @@
      :exclusive (--entries --format)
      :default (--entry #t)
      :exclusive (--entry --format)
+     :default (--no-link #t)
+     :exclusive (--link --no-link)
      :help (<remote> "A remote address like 'user1@example.com'")
 
      (when --help
@@ -108,7 +112,7 @@
         (add (tegfs-add/parse
               <add-target> <title> <tag...> --series <key...> <value...>
               <registry-file> <date>))
-        (save (tegfs-save/parse <remote> <savetext>))
+        (save (tegfs-save/parse <remote> --link <savetext>))
         (categorize (tegfs-categorize/parse))
         (serve (tegfs-serve/parse))
         (prolog (tegfs-prolog/parse))
