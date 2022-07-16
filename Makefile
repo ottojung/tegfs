@@ -1,15 +1,19 @@
 
 PREFIX=$(HOME)/.local
 PREFIX_BIN=$(PREFIX)/bin
+PREFIX_SHARE=$(PREFIX)/share
 
 BINARY_PATH=$(PREFIX_BIN)/tegfs
+CZEMPAK_INSTALL_ROOT=$(PREFIX_SHARE)/tegfs/czempakroot/
 
 TEST_ROOT=dist/testroot
 TEST_FILES=$(TEST_ROOT) $(TEST_ROOT)/categorization.tegfs.txt $(TEST_ROOT)/config.tegfs.lisp
 
 SUBMODULES = deps/euphrates/.git
 
-CZEMPAK = CZEMPAK_ROOT=$(PWD)/.czempak-root guile -s ./deps/czempak.scm
+CZEMPAK_ROOT=$(PWD)/.czempak-root
+
+CZEMPAK = CZEMPAK_ROOT=$(CZEMPAK_ROOT) guile -s ./deps/czempak.scm
 
 all: dist/tegfs
 
@@ -17,8 +21,14 @@ build: dist/tegfs
 
 install: $(BINARY_PATH)
 
-$(BINARY_PATH): dist/tegfs $(PREFIX_BIN)
-	cp dist/tegfs $(PREFIX_BIN)
+$(BINARY_PATH): dist/tegfs $(CZEMPAK_INSTALL_ROOT) $(PREFIX_BIN)
+	sed "s#$(CZEMPAK_ROOT)#$(CZEMPAK_INSTALL_ROOT)#g" dist/tegfs > "$@"
+	chmod +x "$@"
+
+$(CZEMPAK_INSTALL_ROOT):
+	mkdir -p "$@"
+	rm -rf "$@"
+	cp -r $(CZEMPAK_ROOT) "$@"
 
 $(PREFIX_BIN):
 	mkdir -p "$@"
