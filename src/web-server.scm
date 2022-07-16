@@ -774,6 +774,10 @@
   (define ctx (context/p))
   (define filemap/2 (context-filemap/2 ctx))
   (define perm (get-permissions))
+  (define _87123
+    (unless perm
+      ;; not logged in
+      (not-found)))
   (define ctxq (get-query))
   (define sharedname (hashmap-ref ctxq 'sharedname #f))
   (define info (filemap-ref-by-sharedname filemap/2 sharedname #f))
