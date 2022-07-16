@@ -590,11 +590,14 @@
   (define remote-name
     (case real-type
       ((localfile)
-       (unless (file-or-directory-exists? working-text)
-         (raisu 'file-must-have-been-created working-text))
-       (unless (= 0 (system-fmt "rsync --info=progress2 --mkpath --partial ~a ~a:" working-text <remote>))
-         (fatal "Syncing to remote failed"))
-       (path-get-basename working-text))
+       (let ((HOME (system-environment-get "HOME")))
+         (unless (file-or-directory-exists? working-text)
+           (raisu 'file-must-have-been-created working-text))
+         (unless (= 0 (system-fmt "rsync --info=progress2 --mkpath --partial ~a ~a:tegfs-remote-hub/" working-text <remote>))
+           (fatal "Syncing to remote failed"))
+         (append-posix-path
+          HOME "tegfs-remote-hub"
+          (path-get-basename working-text))))
       ((link) working-text)
       ((data pasta) (raisu 'impossible-real-type real-type working-text))
       (else (raisu 'unhandled-real-type real-type working-text))))
@@ -611,10 +614,12 @@
   (dprintln "Saved!"))
 
 (define (tegfs-save/parse/from-remote)
+  (define HOME (system-environment-get "HOME"))
   (define <savetext>
-    (read-string-file "tegfs-remote-name"))
-  (file-delete "tegfs-remote-name")
-  (tegfs-save/parse/no-remote #f <savetext>))
+    (read-string-file
+     (append-posix-path HOME "tegfs-remote-name")))
+  (tegfs-save/parse/no-remote #f <savetext>)
+  (file-delete "tegfs-remote-name"))
 
 (define (tegfs-save/parse <remote> --from-remote --link <savetext>)
   (cond
