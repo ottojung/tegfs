@@ -7,9 +7,9 @@ BINARY_PATH=$(PREFIX_BIN)/tegfs
 TEST_ROOT=dist/testroot
 TEST_FILES=$(TEST_ROOT) $(TEST_ROOT)/categorization.tegfs.txt $(TEST_ROOT)/config.tegfs.lisp
 
-SUBMODULES = deps/euphrates/.git deps/czempak/.git
+SUBMODULES = deps/euphrates/.git
 
-CZEMPAK = CZEMPAK_ROOT=$(PWD)/.czempak-root ./dist/czempak
+CZEMPAK = CZEMPAK_ROOT=$(PWD)/.czempak-root guile -s ./deps/czempak.scm
 
 all: dist/tegfs
 
@@ -29,16 +29,10 @@ clean:
 	git submodule foreach --recursive 'git clean -dfx'
 	git clean -dfx
 
-dist/czempak: $(SUBMODULES)
-	cd deps/czempak && $(MAKE) PREFIXBIN=$(PWD)/dist
-
-deps/czempak/.git:
-	git submodule update --init
-
 deps/euphrates/.git:
 	git submodule update --init
 
-dist/tegfs: src/*.scm dist dist/czempak $(SUBMODULES)
+dist/tegfs: src/*.scm dist $(SUBMODULES)
 	$(CZEMPAK) install src/tegfs.scm "$@"
 
 dist:
