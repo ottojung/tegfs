@@ -591,14 +591,14 @@
       ((localfile)
        (unless (file-or-directory-exists? working-text)
          (raisu 'file-must-have-been-created working-text))
-       (unless (= 0 (system-fmt "rsync --info=progress2 --partial ~a ~a:tegfs-remote-hub/" working-text <remote>))
+       (unless (= 0 (system-fmt "rsync --info=progress2 --partial ~a ~a:" working-text <remote>))
          (fatal "Syncing to remote failed"))
        (path-get-basename working-text))
       ((link) working-text)
       ((data pasta) (raisu 'impossible-real-type real-type working-text))
       (else (raisu 'unhandled-real-type real-type working-text))))
 
-  (unless (= 0 (system-fmt "exec ssh -t ~a \"exec /bin/sh -l -c \\\"exec tegfs save --target tegfs-remote-hub/*\\\"\"" <remote>))
+  (unless (= 0 (system-fmt "exec ssh -t ~a \"exec /bin/sh -l -c \\\"exec tegfs save ~a\\\"\"" <remote> remote-name))
     (fatal "Something went wrong on the other side"))
 
   (dprintln "Saved!"))
