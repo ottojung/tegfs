@@ -47,6 +47,7 @@
 %use (list-take-n) "./euphrates/list-take-n.scm"
 %use (print-in-frame) "./euphrates/print-in-frame.scm"
 %use (string-split/simple) "./euphrates/string-split-simple.scm"
+%use (string-split-3) "./euphrates/string-split-3.scm"
 %use (~s) "./euphrates/tilda-s.scm"
 %use (raisu) "./euphrates/raisu.scm"
 %use (system-environment-get) "./euphrates/system-environment.scm"
@@ -600,7 +601,8 @@
       (else (raisu 'unhandled-real-type real-type working-text))))
 
   (define temp-file (get-random-basename))
-  (write-string-file temp-file remote-name)
+  (define temp-file-content (string-append real-type ":" remote-name))
+  (write-string-file temp-file temp-file-content)
 
   (unless (= 0 (system-fmt "exec scp ~a ~a:tegfs-remote-name" temp-file <remote>))
     (fatal "Something went wrong on the other side"))
@@ -612,9 +614,19 @@
 
 (define (tegfs-save/parse/from-remote)
   (define HOME (system-environment-get "HOME"))
-  (define <savetext>
+  (define temp-file-content
     (read-string-file
      (append-posix-path HOME "tegfs-remote-name")))
+  (define-values (real-type col remote-name)
+    (string-split-3 #\: temp-file-content))
+  (when (string-null? col)
+    (fatal "Client sent bad tegfs-remote-name"))
+  (define <savetext>
+    (case real-type
+      ((localfile) (append-posix-path HOME remote-name))
+      ((link) remote-name)
+      ((data pasta) (fatal "Impossible real type: ~s" real-type))
+      (else (raisu 'unhandled-real-type-in-server real-type))))
   (dprintln "Remote file content: ~s" <savetext>)
   (tegfs-save/parse/no-remote #f <savetext>)
   (file-delete "tegfs-remote-name"))
