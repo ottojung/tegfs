@@ -21,6 +21,10 @@ build: dist/tegfs
 
 install: $(BINARY_PATH)
 
+uninstall:
+	rm -f $(BINARY_PATH)
+	rm -rf $(CZEMPAK_INSTALL_ROOT)
+
 $(BINARY_PATH): dist/tegfs $(CZEMPAK_INSTALL_ROOT) $(PREFIX_BIN)
 	sed "s#$(CZEMPAK_ROOT)#$(CZEMPAK_INSTALL_ROOT)#g" dist/tegfs > "$@"
 	chmod +x "$@"
@@ -33,7 +37,7 @@ $(CZEMPAK_INSTALL_ROOT):
 $(PREFIX_BIN):
 	mkdir -p "$@"
 
-reinstall: | clean install
+reinstall: | uninstall clean install
 
 clean:
 	git submodule foreach --recursive 'git clean -dfx'
@@ -48,7 +52,7 @@ dist/tegfs: src/*.scm dist $(SUBMODULES)
 dist:
 	mkdir -p "$@"
 
-.PHONY: test1 test2 test3 test4 all clean install reinstall
+.PHONY: test1 test2 test3 test4 all clean install reinstall uninstall
 
 $(TEST_ROOT):
 	mkdir -p $@
