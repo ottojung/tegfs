@@ -608,7 +608,7 @@
   (unless (= 0 (system-fmt "exec scp ~a ~a:tegfs-remote-name" temp-file <remote>))
     (fatal "Something went wrong on the other side"))
 
-  (unless (= 0 (system-fmt "exec ssh -t ~a \"exec /bin/sh -l -c \\\"exec tegfs save --from-remote" <remote>))
+  (unless (= 0 (system-fmt "exec ssh -t ~a \"exec /bin/sh -l -c \\\"exec tegfs save --from-remote\\\"\"" <remote>))
     (fatal "Something went wrong on the other side"))
 
   (dprintln "Saved!"))
