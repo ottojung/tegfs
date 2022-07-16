@@ -601,7 +601,7 @@
       (else (raisu 'unhandled-real-type real-type working-text))))
 
   (define temp-file (get-random-basename))
-  (define temp-file-content (string-append real-type ":" remote-name))
+  (define temp-file-content (string-append (~s real-type) ":" remote-name))
   (write-string-file temp-file temp-file-content)
 
   (unless (= 0 (system-fmt "exec scp ~a ~a:tegfs-remote-name" temp-file <remote>))
@@ -617,10 +617,12 @@
   (define temp-file-content
     (read-string-file
      (append-posix-path HOME "tegfs-remote-name")))
-  (define-values (real-type col remote-name)
+  (define-values (real-type/string col remote-name)
     (string-split-3 #\: temp-file-content))
-  (when (string-null? col)
-    (fatal "Client sent bad tegfs-remote-name"))
+  (define _12737123
+    (when (string-null? col)
+      (fatal "Client sent bad tegfs-remote-name")))
+  (define real-type (string->symbol real-type/string))
   (define <savetext>
     (case real-type
       ((localfile) (append-posix-path HOME remote-name))
