@@ -49,6 +49,7 @@
 %use (string-split/simple) "./euphrates/string-split-simple.scm"
 %use (~s) "./euphrates/tilda-s.scm"
 %use (raisu) "./euphrates/raisu.scm"
+%use (system-environment-get) "./euphrates/system-environment.scm"
 
 %use (make-temporary-filename/local) "./make-temporary-filename-local.scm"
 %use (fatal) "./fatal.scm"
@@ -591,23 +592,35 @@
       ((localfile)
        (unless (file-or-directory-exists? working-text)
          (raisu 'file-must-have-been-created working-text))
-       (unless (= 0 (system-fmt "rsync --info=progress2 --partial ~a ~a:" working-text <remote>))
+       (unless (= 0 (system-fmt "rsync --info=progress2 --mkpath --partial ~a ~a:" working-text <remote>))
          (fatal "Syncing to remote failed"))
        (path-get-basename working-text))
       ((link) working-text)
       ((data pasta) (raisu 'impossible-real-type real-type working-text))
       (else (raisu 'unhandled-real-type real-type working-text))))
 
-  (unless (= 0 (system-fmt "exec ssh -t ~a \"exec /bin/sh -l -c \\\"exec tegfs save ~a\\\"\"" <remote> remote-name))
+  (define temp-file (get-random-basename))
+  (write-string-file temp-file remote-name)
+
+  (unless (= 0 (system-fmt "exec scp ~a ~a:tegfs-remote-name" temp-file <remote>))
+    (fatal "Something went wrong on the other side"))
+
+  (unless (= 0 (system-fmt "exec ssh -t ~a \"exec /bin/sh -l -c \\\"exec tegfs save --from-remote" <remote>))
     (fatal "Something went wrong on the other side"))
 
   (dprintln "Saved!"))
 
-(define (tegfs-save/parse <remote> --link <savetext>)
-  (if <remote>
-      (tegfs-save/parse/remote <remote> <savetext>)
-      (tegfs-save/parse/no-remote --link <savetext>)))
+(define (tegfs-save/parse/from-remote)
+  (define <savetext>
+    (read-string-file "tegfs-remote-name"))
+  (file-delete "tegfs-remote-name")
+  (tegfs-save/parse/no-remote #f <savetext>))
 
-
-
-
+(define (tegfs-save/parse <remote> --from-remote --link <savetext>)
+  (cond
+   (<remote>
+    (tegfs-save/parse/remote <remote> <savetext>))
+   (--from-remote
+    (tegfs-save/parse/from-remote))
+   (else
+    (tegfs-save/parse/no-remote --link <savetext>))))

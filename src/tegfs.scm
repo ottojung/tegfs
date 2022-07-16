@@ -69,8 +69,9 @@
       /        --key <key...> <value...>
       /        --registry-file <registry-file>
       /        --date <date>
-      SAVEARGS : REMOTEOPT? SAVETARGET?
-      /          --link SAVETARGET
+      SAVEARGS : --link SAVETARGET
+      /          --from-remote
+      /          REMOTEOPT? SAVETARGET?
       REMOTEOPT : --remote <remote>
       SAVETARGET : --target <savetext>
       QUERYARGS : QUERYOPT? QUERYQ+
@@ -109,7 +110,7 @@
         (add (tegfs-add/parse
               <add-target> <title> <tag...> --series <key...> <value...>
               <registry-file> <date>))
-        (save (tegfs-save/parse <remote> --link <savetext>))
+        (save (tegfs-save/parse <remote> --from-remote --link <savetext>))
         (categorize (tegfs-categorize/parse))
         (serve (tegfs-serve/parse))
         (prolog (tegfs-prolog/parse))
