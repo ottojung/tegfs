@@ -27,7 +27,8 @@ uninstall:
 
 $(BINARY_PATH): dist/tegfs $(PREFIX_BIN)
 	mkdir -p "$(CZEMPAK_INSTALL_ROOT)"
-	cp -T -r "$(CZEMPAK_ROOT)" "$(CZEMPAK_INSTALL_ROOT)"
+	rm -rf "$(CZEMPAK_INSTALL_ROOT)"
+	cp -p -T -r "$(CZEMPAK_ROOT)" "$(CZEMPAK_INSTALL_ROOT)"
 	sed "s#$(CZEMPAK_ROOT)#$(CZEMPAK_INSTALL_ROOT)#g" dist/tegfs > "$@"
 	chmod +x "$@"
 
