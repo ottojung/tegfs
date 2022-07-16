@@ -4,7 +4,7 @@ PREFIX_BIN=$(PREFIX)/bin
 PREFIX_SHARE=$(PREFIX)/share
 
 BINARY_PATH=$(PREFIX_BIN)/tegfs
-CZEMPAK_INSTALL_ROOT=$(PREFIX_SHARE)/tegfs/czempakroot/
+CZEMPAK_INSTALL_ROOT=$(PREFIX_SHARE)/tegfs/czempakroot
 
 TEST_ROOT=dist/testroot
 TEST_FILES=$(TEST_ROOT) $(TEST_ROOT)/categorization.tegfs.txt $(TEST_ROOT)/config.tegfs.lisp
@@ -27,8 +27,7 @@ uninstall:
 
 $(BINARY_PATH): dist/tegfs $(PREFIX_BIN)
 	mkdir -p "$(CZEMPAK_INSTALL_ROOT)"
-	rm -rf "$(CZEMPAK_INSTALL_ROOT)"
-	cp -r "$(CZEMPAK_ROOT)" "$(CZEMPAK_INSTALL_ROOT)"
+	cp -T -r "$(CZEMPAK_ROOT)" "$(CZEMPAK_INSTALL_ROOT)"
 	sed "s#$(CZEMPAK_ROOT)#$(CZEMPAK_INSTALL_ROOT)#g" dist/tegfs > "$@"
 	chmod +x "$@"
 
