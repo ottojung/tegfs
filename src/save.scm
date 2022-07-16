@@ -618,6 +618,7 @@
   (define <savetext>
     (read-string-file
      (append-posix-path HOME "tegfs-remote-name")))
+  (dprintln "Remote file content: ~s" <savetext>)
   (tegfs-save/parse/no-remote #f <savetext>)
   (file-delete "tegfs-remote-name"))
 
