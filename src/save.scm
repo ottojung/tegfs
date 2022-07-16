@@ -590,14 +590,11 @@
   (define remote-name
     (case real-type
       ((localfile)
-       (let ((HOME (system-environment-get "HOME")))
-         (unless (file-or-directory-exists? working-text)
-           (raisu 'file-must-have-been-created working-text))
-         (unless (= 0 (system-fmt "rsync --info=progress2 --mkpath --partial ~a ~a:tegfs-remote-hub/" working-text <remote>))
-           (fatal "Syncing to remote failed"))
-         (append-posix-path
-          HOME "tegfs-remote-hub"
-          (path-get-basename working-text))))
+       (unless (file-or-directory-exists? working-text)
+         (raisu 'file-must-have-been-created working-text))
+       (unless (= 0 (system-fmt "rsync --info=progress2 --mkpath --partial ~a ~a:tegfs-remote-hub/" working-text <remote>))
+         (fatal "Syncing to remote failed"))
+       (append-posix-path "tegfs-remote-hub" (path-get-basename working-text)))
       ((link) working-text)
       ((data pasta) (raisu 'impossible-real-type real-type working-text))
       (else (raisu 'unhandled-real-type real-type working-text))))
