@@ -605,7 +605,9 @@
   (write-string-file temp-file temp-file-content)
 
   (unless (= 0 (system-fmt "exec scp ~a ~a:tegfs-remote-name" temp-file <remote>))
+    (file-delete temp-file)
     (fatal "Something went wrong on the other side"))
+  (file-delete temp-file)
 
   (unless (= 0 (system-fmt "exec ssh -t ~a \"exec /bin/sh -l -c \\\"exec tegfs save --from-remote\\\"\"" <remote>))
     (fatal "Something went wrong on the other side"))
