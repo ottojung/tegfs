@@ -15,6 +15,19 @@
 %run guile
 
 %var entry-print
+%var entry-print/all
+
+%use (entry-registry-path-key) "./entry-registry-path-key.scm"
+
+(define (entry-print/all entry)
+  (display "(")
+  (write (car entry))
+  (for-each
+   (lambda (prop)
+     (display "\n ")
+     (write prop))
+   (cdr entry))
+  (display ")"))
 
 (define (entry-print entry)
   (display "(")
@@ -22,6 +35,7 @@
   (for-each
    (lambda (prop)
      (display "\n ")
-     (write prop))
+     (unless (equal? entry-registry-path-key (car prop))
+       (write prop)))
    (cdr entry))
   (display ")"))
