@@ -676,7 +676,7 @@
   (define query/encoded (hashmap-ref ctxq 'q ""))
   (define query (decode-query query/encoded))
   (define query/split (string->words query))
-  (define entries (tegfs-query #t query/split))
+  (define entries (tegfs-query query/split))
 
   (respond (lambda _ (display-entries entries))))
 
@@ -881,7 +881,7 @@
   (define query/encoded (hashmap-ref ctxq 'q ""))
   (define query (decode-query query/encoded))
   (define query/split (string->words query))
-  (define entries (tegfs-query #t query/split))
+  (define entries (tegfs-query query/split))
 
   (define admin? #f)
   (define detailsaccess? #f) ;; TODO: maybe allow sometimes
