@@ -73,33 +73,31 @@
 %use (entry-registry-path-key) "./entry-registry-path-key.scm"
 
 (define (tegfs-query/parse --entries <query-format> <query...>)
-  (define entries
-    (tegfs-query <query...>))
+  (define counter 0)
 
   (cond
    (--entries
-    (for-each
+    (tegfs-query
+     <query...>
      (lambda (entry)
+       (set! counter (+ 1 counter))
        (entry-print entry)
-       (display "\n\n"))
-     entries))
+       (display "\n\n"))))
    (<query-format>
-    (for-each
+    (tegfs-query
+     <query...>
      (lambda (entry)
+       (set! counter (+ 1 counter))
        (entry-print/formatted <query-format> entry)
-       (display "\n"))
-     entries)))
+       (display "\n")))))
 
   (parameterize ((current-output-port (current-error-port)))
-    (let ((len (length entries)))
-      (if (equal? 0 len)
-          (display "No matches.")
-          (printf "Total of ~a matches." len))
-      (newline)))
+    (if (equal? 0 counter)
+        (display "No matches.")
+        (printf "Total of ~a matches." counter))
+    (newline)))
 
-  )
-
-(define (tegfs-query <query...>)
+(define (tegfs-query <query...> for-each-fn)
   (define output-path (string-append (make-temporary-filename/local) ".pl"))
   (define output-port (open-file-port output-path "w"))
 
@@ -141,12 +139,8 @@
              (filter (negate string-null?))
              make-hashset))
 
-  (define ret '())
-
   (entries-for-each
    (lambda (entry)
      (define id (cdr (assoc id-name entry)))
      (when (hashset-ref ids id)
-       (cons! entry ret))))
-
-  ret)
+       (for-each-fn entry)))))

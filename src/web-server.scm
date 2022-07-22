@@ -662,9 +662,9 @@
            (map (lambda (c) (if (equal? #\: c) #\= c)))
            list->string))
 
-(define (display-entries entries)
+(define (display-entries for-each-generator)
   (display "<div class='cards'>")
-  (for-each display-entry entries)
+  (for-each-generator display-entry)
   (display "</div>"))
 
 (define (query)
@@ -676,9 +676,11 @@
   (define query/encoded (hashmap-ref ctxq 'q ""))
   (define query (decode-query query/encoded))
   (define query/split (string->words query))
-  (define entries (tegfs-query query/split))
 
-  (respond (lambda _ (display-entries entries))))
+  (respond
+   (lambda _
+     (display-entries
+      (lambda (fn) (tegfs-query query/split fn))))))
 
 (define (directory)
   (define ctx (context/p))
@@ -707,7 +709,10 @@
     (map (comp (append-posix-path "/" dir)) file-names))
   (define entries (map standalone-file->entry files))
 
-  (respond (lambda _ (display-entries entries))))
+  (respond
+   (lambda _
+     (display-entries
+      (lambda (fn) (for-each fn entries))))))
 
 (define (web-make-preview target-id target-fullpath entry)
   (define preview-fullpath
@@ -881,7 +886,6 @@
   (define query/encoded (hashmap-ref ctxq 'q ""))
   (define query (decode-query query/encoded))
   (define query/split (string->words query))
-  (define entries (tegfs-query query/split))
 
   (define admin? #f)
   (define detailsaccess? #f) ;; TODO: maybe allow sometimes
@@ -894,7 +898,8 @@
     (define id (cdr (assoc 'id entry)))
     (hashset-add! idset id))
 
-  (for-each
+  (tegfs-query
+   query/split
    (lambda (entry)
      (define target-fullpath (entry-target-fullpath entry))
      (add1 entry)
@@ -905,8 +910,7 @@
           (define relative (remove-common-prefix path root))
           (when (string-prefix? root path)
             (add1 (standalone-file->entry relative))))
-        (directory-files-rec target-fullpath))))
-   entries)
+        (directory-files-rec target-fullpath)))))
 
   (return!
    (build-response
