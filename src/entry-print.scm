@@ -15,27 +15,36 @@
 %run guile
 
 %var entry-print
-%var entry-print/all
 
 %use (entry-registry-path-key) "./entry-registry-path-key.scm"
 
-(define (entry-print/all entry)
-  (display "(")
-  (write (car entry))
-  (for-each
-   (lambda (prop)
-     (display "\n ")
-     (write prop))
-   (cdr entry))
-  (display ")"))
+%use (debugv) "./euphrates/debugv.scm"
+
+(define (prop-print prop)
+  (define key (car prop))
+  (define val (cdr prop))
+  (if (equal? entry-registry-path-key key) #f
+      (begin
+        (display "(")
+        (cond
+         ((symbol? key) (display key))
+         (else (write key)))
+        (cond
+         ((string? val)
+          (display " . ")
+          (write val))
+         ((symbol? val)
+          (display " . ")
+          (display val))
+         ((list? val)
+          (for-each (lambda (elem) (display " ") (display elem)) val)))
+        (display ")"))))
 
 (define (entry-print entry)
   (display "(")
-  (write (car entry))
-  (for-each
-   (lambda (prop)
-     (display "\n ")
-     (unless (equal? entry-registry-path-key (car prop))
-       (write prop)))
-   (cdr entry))
+  (let loop ((buf entry) (first? #t))
+    (unless (null? buf)
+      (let ((prop (car buf)))
+        (unless first? (display "\n "))
+        (loop (cdr buf) (not (prop-print prop))))))
   (display ")"))
