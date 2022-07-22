@@ -24,21 +24,7 @@
   (define key (car prop))
   (define val (cdr prop))
   (if (equal? entry-registry-path-key key) #f
-      (begin
-        (display "(")
-        (cond
-         ((symbol? key) (display key))
-         (else (write key)))
-        (cond
-         ((string? val)
-          (display " . ")
-          (write val))
-         ((symbol? val)
-          (display " . ")
-          (display val))
-         ((list? val)
-          (for-each (lambda (elem) (display " ") (display elem)) val)))
-        (display ")"))))
+      (write prop)))
 
 (define (entry-print entry)
   (display "(")
