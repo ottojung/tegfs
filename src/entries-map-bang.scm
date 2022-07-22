@@ -40,5 +40,7 @@
              (when ret
                (entry-print x-ret)))
            (loop))))
-     (close-port temp-port))
+     (close-port temp-port)
+     (file-delete registry-fullpath)
+     (rename-file temp-name registry-fullpath))
    (get-registry-files)))
