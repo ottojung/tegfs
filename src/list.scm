@@ -66,7 +66,7 @@
 %use (tegfs-dump-prolog) "./prolog.scm"
 %use (query-parse) "./query-parse.scm"
 %use (tag->prolog-term) "./tag-to-prolog-term.scm"
-%use (entries-for-each*) "./entries-for-each.scm"
+%use (entries-for-each) "./entries-for-each.scm"
 %use (entry-print) "./entry-print.scm"
 %use (entry-print/formatted) "./entry-print-formatted.scm"
 %use (id-name) "./id-name.scm"
@@ -79,33 +79,22 @@
 %use (debugv) "./euphrates/debugv.scm"
 
 (define (tegfs-list/parse --dirs --entries <list-format>)
-  (define append-registry-file?
-    (if <list-format> #t #f))
-
   (tegfs-list
    --dirs
-   append-registry-file?
    (if --entries
        (lambda (e) (entry-print e) (display "\n\n"))
        (lambda (e) (entry-print/formatted <list-format> e) (display "\n")))))
 
-(define (tegfs-list --dirs append-registry-file? fn)
+(define (tegfs-list --dirs fn)
   (if --dirs
-      (entries-for-each*
-       #t
+      (entries-for-each
        (lambda (entry)
          (define target-fullpath (entry-target-fullpath entry))
-         (define entry*
-           (if append-registry-file? entry
-               (filter
-                (lambda (p)
-                  (not (equal? entry-registry-path-key (car p))))
-                entry)))
-         (fn entry*)
+         (fn entry)
          (when (file-is-directory?/no-readlink target-fullpath)
            (for-each
             (lambda (p)
               (define path (car p))
               (fn (standalone-file->entry path)))
             (directory-files-rec target-fullpath)))))
-      (entries-for-each* append-registry-file? fn)))
+      (entries-for-each fn)))
