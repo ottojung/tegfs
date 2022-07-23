@@ -16,6 +16,8 @@
 
 %var entry-print
 
+%use (~a) "./euphrates/tilda-a.scm"
+
 %use (entry-registry-path-key) "./entry-registry-path-key.scm"
 
 (define (prop-print prop)
@@ -35,7 +37,7 @@
           (display " . ")
           (display (symbol->string val)))
          ((list? val)
-          (for-each (lambda (elem) (display " ") (display (symbol->string elem))) val)))
+          (for-each (lambda (elem) (display " ") (display (~a elem))) val)))
         (display ")"))))
 
 (define (entry-print entry)
