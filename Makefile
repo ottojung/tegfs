@@ -15,6 +15,8 @@ CZEMPAK_ROOT=$(PWD)/.czempak-root
 
 CZEMPAK = CZEMPAK_ROOT=$(CZEMPAK_ROOT) guile -s ./deps/czempak.scm
 
+TEST_FS = TEGFS_ROOT=$(TEST_ROOT) dist/tegfs
+
 all: dist/tegfs
 
 build: dist/tegfs
@@ -63,7 +65,7 @@ $(TEST_ROOT)/config.tegfs.lisp:
 
 test1: dist/tegfs $(TEST_FILES)
 	touch $(TEST_ROOT)/hi.txt
-	echo hi | TEGFS_ROOT=$(TEST_ROOT) dist/tegfs add \
+	echo hi | $(TEST_FS) add \
 		--target hi.txt \
 		--registry-file testreg.tegfs.reg.lisp \
 		--key a 1 \
@@ -71,27 +73,27 @@ test1: dist/tegfs $(TEST_FILES)
 		--key SCHEDULED 3 \
 
 test2: dist/tegfs $(TEST_FILES)
-	TEGFS_ROOT=$(TEST_ROOT) dist/tegfs save
+	$(TEST_FS) save
 
 test2-m: dist/tegfs $(TEST_FILES)
 	cp COPYING dist/
-	TEGFS_ROOT=$(TEST_ROOT) dist/tegfs save dist/COPYING
+	$(TEST_FS) save dist/COPYING
 
 test3: dist/tegfs $(TEST_FILES)
-	TEGFS_ROOT=$(TEST_ROOT) dist/tegfs categorize
+	$(TEST_FS) categorize
 
 test4: dist/tegfs $(TEST_FILES)
-	TEGFS_ROOT=$(TEST_ROOT) dist/tegfs serve
+	$(TEST_FS) serve
 
 test5: dist/tegfs $(TEST_FILES)
-	TEGFS_ROOT=$(TEST_ROOT) dist/tegfs prolog
+	$(TEST_FS) prolog
 
 test6: dist/tegfs $(TEST_FILES)
-	TEGFS_ROOT=$(TEST_ROOT) dist/tegfs query hi
+	$(TEST_FS) query hi
 
 test7: dist/tegfs $(TEST_FILES)
-	TEGFS_ROOT=$(TEST_ROOT) dist/tegfs get "non-existent-id"
-	TEGFS_ROOT=$(TEST_ROOT) dist/tegfs get "$(shell cat $(TEST_ROOT)/lastid.tegfs.txt)"
+	$(TEST_FS) get "non-existent-id"
+	$(TEST_FS) get "$(shell cat $(TEST_ROOT)/lastid.tegfs.txt)"
 
 test8: dist/tegfs $(TEST_FILES)
 	TEGFS_ROOT=$(TEST_ROOT) $(CZEMPAK) run example/rename-tag.scm
