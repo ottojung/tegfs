@@ -19,11 +19,13 @@
 %use (append-posix-path) "./euphrates/append-posix-path.scm"
 %use (open-file-port) "./euphrates/open-file-port.scm"
 %use (read-list) "./euphrates/read-list.scm"
+%use (file-delete) "./euphrates/file-delete.scm"
 
 %use (get-root) "./get-root.scm"
 %use (get-registry-files) "./get-registry-files.scm"
 %use (entry-registry-path-key) "./entry-registry-path-key.scm"
 %use (entry-print) "./entry-print.scm"
+%use (make-temporary-filename/local) "./make-temporary-filename-local.scm"
 
 (define (entries-map! fn)
   (for-each
@@ -39,7 +41,8 @@
          (unless (eof-object? x)
            (let ((ret (fn x)))
              (when ret
-               (entry-print x-ret)))
+               (entry-print ret)
+               (display "\n\n")))
            (loop))))
      (close-port temp-port)
      (file-delete registry-fullpath)
