@@ -92,3 +92,6 @@ test6: dist/tegfs $(TEST_FILES)
 test7: dist/tegfs $(TEST_FILES)
 	TEGFS_ROOT=$(TEST_ROOT) dist/tegfs get "non-existent-id"
 	TEGFS_ROOT=$(TEST_ROOT) dist/tegfs get "$(shell cat $(TEST_ROOT)/lastid.tegfs.txt)"
+
+test8: dist/tegfs $(TEST_FILES)
+	TEGFS_ROOT=$(TEST_ROOT) $(CZEMPAK) run example/rename-tag.scm
