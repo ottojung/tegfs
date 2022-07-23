@@ -18,13 +18,25 @@
 
 %use (entry-registry-path-key) "./entry-registry-path-key.scm"
 
-%use (debugv) "./euphrates/debugv.scm"
-
 (define (prop-print prop)
   (define key (car prop))
   (define val (cdr prop))
   (if (equal? entry-registry-path-key key) #f
-      (write prop)))
+      (begin
+        (display "(")
+        (cond
+         ((symbol? key) (display (symbol->string key)))
+         (else (write key)))
+        (cond
+         ((string? val)
+          (display " . ")
+          (write val))
+         ((symbol? val)
+          (display " . ")
+          (display (symbol->string val)))
+         ((list? val)
+          (for-each (lambda (elem) (display " ") (display (symbol->string elem))) val)))
+        (display ")"))))
 
 (define (entry-print entry)
   (display "(")
