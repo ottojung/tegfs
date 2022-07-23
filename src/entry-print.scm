@@ -16,9 +16,12 @@
 
 %var entry-print
 
-%use (~a) "./euphrates/tilda-a.scm"
-
 %use (entry-registry-path-key) "./entry-registry-path-key.scm"
+
+(define (primitive-print elem)
+  (cond
+   ((symbol? elem) (display (symbol->string elem)))
+   (else (write elem))))
 
 (define (prop-print prop)
   (define key (car prop))
@@ -26,9 +29,7 @@
   (if (equal? entry-registry-path-key key) #f
       (begin
         (display "(")
-        (cond
-         ((symbol? key) (display (symbol->string key)))
-         (else (write key)))
+        (primitive-print key)
         (cond
          ((string? val)
           (display " . ")
@@ -37,7 +38,7 @@
           (display " . ")
           (display (symbol->string val)))
          ((list? val)
-          (for-each (lambda (elem) (display " ") (display (~a elem))) val)))
+          (for-each (lambda (elem) (display " ") (primitive-print elem)) val)))
         (display ")"))))
 
 (define (entry-print entry)
