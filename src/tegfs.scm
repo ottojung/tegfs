@@ -15,12 +15,9 @@
 %run guile
 
 %use (with-cli define-cli:show-help) "./euphrates/define-cli.scm"
-%use (system-environment-get) "./euphrates/system-environment.scm"
-%use (make-directories) "./euphrates/make-directories.scm"
 %use (read-all-port) "./euphrates/read-all-port.scm"
 %use (dprintln) "./euphrates/dprintln.scm"
 %use (current-program-path/p) "./euphrates/current-program-path-p.scm"
-%use (file-or-directory-exists?) "./euphrates/file-or-directory-exists-q.scm"
 %use (write-string-file) "./euphrates/write-string-file.scm"
 %use (append-string-file) "./euphrates/append-string-file.scm"
 %use (list-zip) "./euphrates/list-zip.scm"
@@ -41,7 +38,7 @@
 %use (tegfs-dump-clipboard/parse) "./dump-clipboard.scm"
 %use (fatal) "./fatal.scm"
 %use (root/p) "./root-p.scm"
-%use (ROOT_VAR_NAME) "./get-root.scm"
+%use (get-root/default) "./get-root.scm"
 
 (define (main)
   (parameterize ((current-program-path/p "tegfs"))
@@ -89,7 +86,7 @@
       ROOT : --root <root>
       )
 
-     :default (<root> (system-environment-get ROOT_VAR_NAME))
+     :default (<root> (get-root/default))
      :default (--no-series #f)
      :exclusive (--no-series --series)
      :default (--entries #t)
@@ -100,10 +97,6 @@
 
      (when --help
        (define-cli:show-help))
-
-     (when <root>
-       (unless (file-or-directory-exists? <root>)
-         (make-directories <root>)))
 
      (parameterize ((root/p <root>))
        (cond
