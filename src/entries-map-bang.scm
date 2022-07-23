@@ -33,6 +33,7 @@
      (define temp-path (make-temporary-filename/local))
      (define temp-port (open-file-port temp-path "w"))
      (parameterize ((current-output-port temp-port))
+       (display ";; This file was modified by `entries-map!'\n\n")
        (let loop ()
          (define x (read input-port))
          (unless (eof-object? x)
