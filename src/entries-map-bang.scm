@@ -42,5 +42,5 @@
            (loop))))
      (close-port temp-port)
      (file-delete registry-fullpath)
-     (rename-file temp-name registry-fullpath))
+     (rename-file temp-path registry-fullpath))
    (get-registry-files)))
