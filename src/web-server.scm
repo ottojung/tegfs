@@ -646,7 +646,7 @@
     (display (cdr (assoc 'title entry))))
    ((and (assoc 'target entry)
          (not (string-null? (cdr (assoc 'target entry)))))
-    (display (cdr (assoc 'target entry))))
+    (display (path-get-basename (cdr (assoc 'target entry)))))
    (else
     (display (cdr (assoc 'id entry)))))
 
