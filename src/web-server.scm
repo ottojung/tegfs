@@ -209,6 +209,7 @@
   (define second (cdr filemap/2))
   (hashmap-ref second sharedname default))
 
+;; FIXME: sharednames do not map 1:1 onto sourcepaths
 (define (filemap-delete-by-sourcepath! filemap/2 id)
   (define first (car filemap/2))
   (define second (cdr filemap/2))
