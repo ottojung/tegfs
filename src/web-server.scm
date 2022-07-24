@@ -688,29 +688,33 @@
   (define request (callcontext-request callctx))
   (define sharedir (context-sharedir ctx))
   (define ctxq (get-query))
+  (define root (get-root))
 
   (define sharedname
     (or (hashmap-ref ctxq 'd #f)
         (bad-request "Request query missing requiered 'd' argument")))
   (define suffix
     (hashmap-ref ctxq 's "."))
-  (define shared-fullpath
+  (define shared-link-fullpath
     (append-posix-path sharedir sharedname))
-  (define dir-prefix-fullpath
-    (readlink shared-fullpath))
-  (define dir-fullpath
-    (append-posix-path dir-prefix-fullpath suffix))
-  (define root (get-root))
+  (define shared-fullpath
+    (readlink shared-link-fullpath))
   (define _1213
-    (unless (string-prefix? root dir-fullpath)
+    (unless (string-prefix? root shared-fullpath)
       (bad-request "Bad directory")))
+  (define shared-relativepath
+    (remove-common-prefix shared-fullpath root))
+  (define dir-fullpath
+    (append-posix-path shared-fullpath suffix))
   (define dir
     (remove-common-prefix dir-fullpath root))
   (define file-names
     (let ((include-directories? #t))
       (map cadr (directory-files shared-fullpath include-directories?))))
   (define entries
-    (map (comp (standalone-file->entry/prefixed dir)) file-names))
+    (map (comp (append-posix-path suffix)
+               (standalone-file->entry/prefixed dir))
+         file-names))
 
   (respond
    (lambda _
