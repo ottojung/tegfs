@@ -15,14 +15,26 @@
 %run guile
 
 %var standalone-file->entry
+%var standalone-file->entry/prefixed
 
 %use (path-get-basename) "./euphrates/path-get-basename.scm"
+%use (append-posix-path) "./euphrates/append-posix-path.scm"
+
 %use (entry-parent-directory-key) "./entry-parent-directory-key.scm"
 
 (define (standalone-file->entry filepath)
   (define dir (dirname filepath))
   (define name (path-get-basename filepath))
   `((id . ,filepath)
+    (target . ,name)
+    (,entry-parent-directory-key . ,dir)
+    ))
+
+(define (standalone-file->entry/prefixed prefix filepath)
+  (define dir prefix)
+  (define name filepath)
+  (define full (append-posix-path dir name))
+  `((id . ,full)
     (target . ,name)
     (,entry-parent-directory-key . ,dir)
     ))

@@ -102,7 +102,7 @@
 %use (entry-parent-directory-key) "./entry-parent-directory-key.scm"
 %use (a-weblink?) "./a-weblink-q.scm"
 %use (web-url-icon/svg) "./web-url-icon-svg.scm"
-%use (standalone-file->entry) "./standalone-file-to-entry.scm"
+%use (standalone-file->entry/prefixed) "./standalone-file-to-entry.scm"
 
 %use (debug) "./euphrates/debug.scm"
 %use (debugv) "./euphrates/debugv.scm"
@@ -709,9 +709,8 @@
   (define file-names
     (let ((include-directories? #t))
       (map cadr (directory-files shared-fullpath include-directories?))))
-  (define files
-    (map (comp (append-posix-path "/" dir)) file-names))
-  (define entries (map standalone-file->entry files))
+  (define entries
+    (map (comp (standalone-file->entry/prefixed dir)) file-names))
 
   (respond
    (lambda _
