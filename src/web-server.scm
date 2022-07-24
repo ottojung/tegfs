@@ -692,10 +692,14 @@
   (define sharedname
     (or (hashmap-ref ctxq 'd #f)
         (bad-request "Request query missing requiered 'd' argument")))
+  (define suffix
+    (hashmap-ref ctxq 's "."))
   (define shared-fullpath
     (append-posix-path sharedir sharedname))
-  (define dir-fullpath
+  (define dir-prefix-fullpath
     (readlink shared-fullpath))
+  (define dir-fullpath
+    (append-posix-path dir-prefix-fullpath suffix))
   (define root (get-root))
   (define _1213
     (unless (string-prefix? root dir-fullpath)
