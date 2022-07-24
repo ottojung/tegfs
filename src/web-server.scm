@@ -146,9 +146,10 @@
   )
 
 (define-type9 <sharedinfo>
-  (sharedinfo-ctr sourcepath sharedname token ctime stime) sharedinfo?
+  (sharedinfo-ctr sourcepath sharedname vid token ctime stime) sharedinfo?
   (sourcepath sharedinfo-sourcepath) ;; the original file path
   (sharedname sharedinfo-sharedname) ;; the linked file path suffix (without the sharedir)
+  (vid sharedinfo-vid) ;; unique virtual id
   (token sharedinfo-token) ;; token of the perms that shared this file
   (ctime sharedinfo-ctime) ;; time in seconds for when this info was created
   (stime sharedinfo-stime) ;; time in seconds for how long to share this file
@@ -191,7 +192,8 @@
      (path-extensions target-fullpath)))
   (define callctx (callcontext/p))
   (define now (callcontext-time callctx))
-  (sharedinfo-ctr target-fullpath sharedname token now for-duration))
+  (define vid (get-random-basename))
+  (sharedinfo-ctr target-fullpath sharedname vid token now for-duration))
 
 (define (filemap-set! filemap/2 info)
   (define id (sharedinfo-sourcepath info))
