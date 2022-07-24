@@ -18,6 +18,7 @@
 
 %use (append-posix-path) "./euphrates/append-posix-path.scm"
 %use (raisu) "./euphrates/raisu.scm"
+%use (path-normalize) "./euphrates/path-normalize.scm"
 
 %use (get-root) "./get-root.scm"
 %use (entry-registry-path-key) "./entry-registry-path-key.scm"
@@ -29,13 +30,14 @@
   (and target-p
        (let ((target (cdr target-p)))
          (if (a-weblink? target) target
-             (let* ((parent-directory-p (assoc entry-parent-directory-key entry))
-                    (parent-directory (and parent-directory-p (cdr parent-directory-p)))
-                    (registry-p (assoc entry-registry-path-key entry))
-                    (registry-dir (and registry-p (dirname (cdr registry-p))))
-                    (directory (or parent-directory registry-dir)))
-               (unless directory
-                 (raisu 'entry-does-no-have-parent-directory-info
-                        entry-parent-directory-key
-                        entry-registry-path-key))
-               (append-posix-path (get-root) directory target))))))
+             (path-normalize
+              (let* ((parent-directory-p (assoc entry-parent-directory-key entry))
+                     (parent-directory (and parent-directory-p (cdr parent-directory-p)))
+                     (registry-p (assoc entry-registry-path-key entry))
+                     (registry-dir (and registry-p (dirname (cdr registry-p))))
+                     (directory (or parent-directory registry-dir)))
+                (unless directory
+                  (raisu 'entry-does-no-have-parent-directory-info
+                         entry-parent-directory-key
+                         entry-registry-path-key))
+                (append-posix-path (get-root) directory target)))))))

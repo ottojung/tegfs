@@ -71,6 +71,8 @@
 %use (catch-any) "./euphrates/catch-any.scm"
 %use (file-is-directory?/no-readlink) "./euphrates/file-is-directory-q-no-readlink.scm"
 %use (remove-common-prefix) "./euphrates/remove-common-prefix.scm"
+%use (assoc-or) "./euphrates/assoc-or.scm"
+%use (path-normalize) "./euphrates/path-normalize.scm"
 
 %use (get-root) "./get-root.scm"
 %use (categorization-filename) "./categorization-filename.scm"
@@ -587,18 +589,43 @@
     (write default-preview))
   (display "/>"))
 
-(define (get-full-link target-fullpath)
-  (if (a-weblink? target-fullpath) target-fullpath
-      (let* ((info (share-file/dont-link-yet target-fullpath default-full-sharing-time))
-             (sharedname (sharedinfo-sharedname info))
-             (location (and info (string-append "/full?sharedname=" sharedname))))
-        (and info location))))
+(define (local-file-entry? entry)
+  (not (not (assoc entry-parent-directory-key entry))))
+
+(define (get-full-link entry target-fullpath)
+  (cond
+   ((a-weblink? target-fullpath)
+    target-fullpath)
+   ((local-file-entry? entry)
+    (let* ((dir (or (assoc-or entry-parent-directory-key entry #f)
+                    (raisu 'no-directory-key entry)))
+           (root (get-root))
+           (dir-fullpath (path-normalize (append-posix-path root dir)))
+           (ctx (context/p))
+           (filemap/2 (context-filemap/2 ctx))
+           (info (or (filemap-ref-by-sourcepath filemap/2 dir-fullpath #f)
+                     (raisu 'path-is-not-shared dir)))
+           (sharedname (sharedinfo-sharedname info))
+           (target-fullpath/d (string-append target-fullpath "/"))
+           (suffix (or (assoc-or 'target entry #f)
+                       (raisu 'target-does-not-have-target entry))))
+      (unless (string-prefix? dir-fullpath target-fullpath/d)
+        (raisu 'target-fullpath/d-does-not-start-with-dir-fullpath target-fullpath/d dir-fullpath))
+      (if (file-is-directory?/no-readlink target-fullpath)
+          (stringf "/directory?d=~a&s=~a" sharedname (uri-encode suffix))
+          (let ((fileserver (context-fileserver ctx)))
+            (append-posix-path fileserver sharedname suffix)))))
+   (else
+    (let* ((info (share-file/dont-link-yet target-fullpath default-full-sharing-time))
+           (sharedname (and info (sharedinfo-sharedname info)))
+           (location (and info (string-append "/full?sharedname=" sharedname))))
+      (and info location)))))
 
 (define (maybe-display-preview entry)
   (define target-fullpath (entry-target-fullpath entry))
   (when target-fullpath
     (let* ((target-id (cdr (assoc 'id entry)))
-           (full-link (get-full-link target-fullpath)))
+           (full-link (get-full-link entry target-fullpath)))
       (when full-link
         (display "<a href=") (write full-link) (display ">")
         (display-preview target-id target-fullpath)
@@ -710,10 +737,10 @@
     (remove-common-prefix dir-fullpath root))
   (define file-names
     (let ((include-directories? #t))
-      (map cadr (directory-files shared-fullpath include-directories?))))
+      (map cadr (directory-files dir-fullpath include-directories?))))
   (define entries
     (map (comp (append-posix-path suffix)
-               (standalone-file->entry/prefixed dir))
+               (standalone-file->entry/prefixed shared-relativepath))
          file-names))
 
   (respond

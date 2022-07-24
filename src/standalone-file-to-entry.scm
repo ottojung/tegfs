@@ -19,6 +19,7 @@
 
 %use (path-get-basename) "./euphrates/path-get-basename.scm"
 %use (append-posix-path) "./euphrates/append-posix-path.scm"
+%use (path-normalize) "./euphrates/path-normalize.scm"
 
 %use (entry-parent-directory-key) "./entry-parent-directory-key.scm"
 
@@ -33,7 +34,7 @@
 (define (standalone-file->entry/prefixed prefix filepath)
   (define dir prefix)
   (define name filepath)
-  (define full (append-posix-path dir name))
+  (define full (path-normalize (append-posix-path dir name)))
   `((id . ,full)
     (target . ,name)
     (,entry-parent-directory-key . ,dir)
