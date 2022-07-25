@@ -594,7 +594,7 @@
   (display "/>"))
 
 (define (local-file-entry? entry)
-  (not (not (assoc entry-parent-directory-key entry))))
+  (not (not (assoc entry-parent-directory-vid-key entry))))
 
 (define (get-full-link entry target-fullpath)
   (cond
