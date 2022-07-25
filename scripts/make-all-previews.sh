@@ -6,8 +6,8 @@ do
 	test -f "$PREVIEW" && continue
 	test -e "$TEGFS_ROOT/cache/failed-previews/$PREVIEW" && continue
 	TARGET="$(echo "$FILE" | awk -F '#tegfs-separator#' '{ print $1 }')"
-	echo '>' tegfs make-thumbnails "$TARGET"
+	echo "THUMB $TARGET"
 	tegfs make-thumbnails "$TARGET" "$PREVIEW" || mkdir -p "$TEGFS_ROOT/cache/failed-previews/$PREVIEW"
 done
 
-echo "All done" 1>&2
+echo "All done!" 1>&2
