@@ -127,6 +127,7 @@
          (system-fmt
           (string-append
            "convert "
+           " -limit memory 32mb "
            " ~a[0] "
            " -thumbnail ~a@ "
            " -quality 10 "
@@ -183,6 +184,7 @@
          (system-fmt
           (string-append
            "convert "
+           " -limit memory 32mb "
            " -coalesce +dither "
            " -layers optimize "
            " -delay 100 "
