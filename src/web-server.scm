@@ -157,13 +157,13 @@
   )
 
 (define-type9 <permission>
-  (permission-constructor token start time admin? detailsaccess? fileset idset) permission?
+  (permission-constructor token start time admin? detailsaccess? filemap idset) permission?
   (token permission-token) ;; token string
   (start permission-start) ;; timestamp for when this token was created
   (time permission-time) ;; duration in secods for how long this token is valid
   (admin? permission-admin?) ;; true if user is an admin
   (detailsaccess? permission-detailsaccess?) ;; true if user has access to objects details
-  (fileset permission-fileset) ;; hashset with `objects: target-fullpath that was shared with this permission`
+  (filemap permission-filemap) ;; hashmap with `keys: target-fullpath that was shared with this permission` and `values: sharedinfos`
   (idset permission-idset) ;; hashset with `values: id of entry that is shared with this permission`
   )
 
@@ -338,7 +338,7 @@
   (define perm
     (permission-constructor
      token start time admin? detailsaccess?
-     (make-hashset) (make-hashset)))
+     (make-hashmap) (make-hashset)))
   (hashmap-set! tokens token perm)
   perm)
 
@@ -510,8 +510,8 @@
 (define (get-sharedinfo-for-perm perm target-fullpath)
   (define ctx (context/p))
   (define filemap/2 (context-filemap/2 ctx))
-  (define perm-fileset (permission-fileset perm))
-  (and (hashset-ref perm-fileset target-fullpath)
+  (define perm-filemap (permission-filemap perm))
+  (and (hashmap-ref perm-filemap target-fullpath #f)
        (filemap-ref-by-sourcepath filemap/2 target-fullpath #f)))
 
 (define (symlink-shared-file target-fullpath sharedname)
@@ -538,9 +538,9 @@
   (define token (permission-token perm))
   (define info (make-sharedinfo token target-fullpath for-duration))
   (define sharedname (sharedinfo-sharedname info))
-  (define perm-fileset (permission-fileset perm))
+  (define perm-filemap (permission-filemap perm))
 
-  (hashset-add! perm-fileset target-fullpath)
+  (hashmap-set! perm-filemap target-fullpath info)
   (filemap-set! filemap/2 info)
 
   (when make-symlink?
@@ -820,7 +820,7 @@
       (not-found)))
   (define target-fullpath (sharedinfo-sourcepath info))
   (define _11
-    (unless (hashset-ref (permission-fileset perm) target-fullpath)
+    (unless (hashmap-ref (permission-filemap perm) target-fullpath #f)
       ;; file was not shared with this permission
       (not-found)))
   (define fileserver (context-fileserver ctx))
