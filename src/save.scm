@@ -179,7 +179,9 @@
       (let* ((default-save-registry (assoc-or default-save-registry-key config #f)))
         (if (not default-save-registry) state
             (assoc-set-preference
-             'registry-file default-save-registry state)))))
+             'registry-file
+             (car default-save-registry)
+             state)))))
 
 (define (state-set-custom-preferences preferences-code state)
   (if preferences-code

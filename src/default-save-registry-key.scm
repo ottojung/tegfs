@@ -17,4 +17,4 @@
 %var default-save-registry-key
 
 (define default-save-registry-key
-  'default-registry-file)
+  'default-save-registry)
