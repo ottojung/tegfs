@@ -102,6 +102,7 @@
 %use (get-preview-path) "./get-preview-path.scm"
 %use (entry-target-fullpath) "./entry-target-fullpath.scm"
 %use (entry-parent-directory-key) "./entry-parent-directory-key.scm"
+%use (entry-parent-directory-vid-key) "./entry-parent-directory-vid-key.scm"
 %use (a-weblink?) "./a-weblink-q.scm"
 %use (web-url-icon/svg) "./web-url-icon-svg.scm"
 %use (standalone-file->entry/prefixed) "./standalone-file-to-entry.scm"
@@ -600,23 +601,14 @@
    ((a-weblink? target-fullpath)
     target-fullpath)
    ((local-file-entry? entry)
-    (let* ((dir (or (assoc-or entry-parent-directory-key entry #f)
-                    (raisu 'no-directory-key entry)))
-           (root (get-root))
-           (dir-fullpath (path-normalize (append-posix-path root dir)))
-           (ctx (context/p))
-           (filemap/2 (context-filemap/2 ctx))
-           (info (or (filemap-ref-by-sourcepath filemap/2 dir-fullpath #f)
-                     (raisu 'path-is-not-shared dir)))
-           (sharedname (sharedinfo-sharedname info))
-           (target-fullpath/d (string-append target-fullpath "/"))
+    (let* ((sharedname (or (assoc-or entry-parent-directory-vid-key entry #f)
+                           (raisu 'entry-does-not-have-parent-vid entry)))
            (suffix (or (assoc-or 'target entry #f)
-                       (raisu 'target-does-not-have-target entry))))
-      (unless (string-prefix? dir-fullpath target-fullpath/d)
-        (raisu 'target-fullpath/d-does-not-start-with-dir-fullpath target-fullpath/d dir-fullpath))
+                       (raisu 'entry-does-not-have-target entry))))
       (if (file-is-directory?/no-readlink target-fullpath)
           (stringf "/directory?d=~a&s=~a" sharedname (uri-encode suffix))
-          (let ((fileserver (context-fileserver ctx)))
+          (let* ((ctx (context/p))
+                 (fileserver (context-fileserver ctx)))
             (append-posix-path fileserver sharedname suffix)))))
    (else
     (let* ((info (share-file/dont-link-yet target-fullpath default-full-sharing-time))
@@ -743,7 +735,7 @@
       (map cadr (directory-files dir-fullpath include-directories?))))
   (define entries
     (map (comp (append-posix-path suffix)
-               (standalone-file->entry/prefixed shared-relativepath))
+               (standalone-file->entry/prefixed shared-relativepath sharedname))
          file-names))
 
   (respond

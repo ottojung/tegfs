@@ -22,6 +22,7 @@
 %use (path-normalize) "./euphrates/path-normalize.scm"
 
 %use (entry-parent-directory-key) "./entry-parent-directory-key.scm"
+%use (entry-parent-directory-vid-key) "./entry-parent-directory-vid-key.scm"
 
 (define (standalone-file->entry filepath)
   (define dir (dirname filepath))
@@ -31,11 +32,12 @@
     (,entry-parent-directory-key . ,dir)
     ))
 
-(define (standalone-file->entry/prefixed prefix filepath)
+(define (standalone-file->entry/prefixed prefix vid filepath)
   (define dir prefix)
   (define name filepath)
   (define full (path-normalize (append-posix-path dir name)))
   `((id . ,full)
     (target . ,name)
     (,entry-parent-directory-key . ,dir)
+    (,entry-parent-directory-vid-key . ,vid)
     ))
