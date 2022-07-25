@@ -39,6 +39,7 @@
 %use (read-list) "./euphrates/read-list.scm"
 %use (range) "./euphrates/range.scm"
 %use (assoc-set-default) "./euphrates/assoc-set-default.scm"
+%use (assoc-or) "./euphrates/assoc-or.scm"
 %use (comp) "./euphrates/comp.scm"
 %use (path-without-extension) "./euphrates/path-without-extension.scm"
 %use (path-get-basename) "./euphrates/path-get-basename.scm"
@@ -64,6 +65,8 @@
 %use (get-random-basename) "./get-random-basename.scm"
 %use (classify-clipboard-text-content dump-clipboard-to-temporary dump-clipboard-to-file get-clipboard-data-types get-clipboard-text-content get-clipboard-type-extension choose-clipboard-data-type) "./clipboard.scm"
 %use (tegfs-dump-clipboard tegfs-dump-clipboard/pasta) "./dump-clipboard.scm"
+%use (get-config) "./get-config.scm"
+%use (default-save-registry-key) "./default-save-registry-key.scm"
 
 %use (debug) "./euphrates/debug.scm"
 %use (debugv) "./euphrates/debugv.scm"
@@ -166,6 +169,14 @@
         (print-in-frame #t #t 3 60 0 #\space text-content)
         (newline)
         (assoc-set-preference '-text-content text-content state))))
+
+(define (set-registry-file-preference state)
+  (define config (get-config))
+  (if (not config) state
+      (let* ((default-save-registry (assoc-or config default-save-registry-key #f)))
+        (if (not default-save-registry) state
+            (assoc-set-preference
+             'registry-file default-save-registry state)))))
 
 (define (state-set-custom-preferences preferences-code state)
   (if preferences-code
@@ -494,6 +505,7 @@
    (set-savefile-preference <savetext>)
    (set-link-preference --link)
    set-text-content-preference
+   set-registry-file-preference
    (assoc-set-preference 'series 'no)
    (assoc-set-preference 'confirm 'no)
    set-download-preference
