@@ -10,4 +10,4 @@ do
 	tegfs make-thumbnails "$TARGET" "$PREVIEW" || mkdir -p "$TEGFS_ROOT/cache/failed-previews/$PREVIEW"
 done
 
-
+echo "All done" 1>&2
