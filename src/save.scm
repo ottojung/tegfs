@@ -173,7 +173,7 @@
 (define (set-registry-file-preference state)
   (define config (get-config))
   (if (not config) state
-      (let* ((default-save-registry (assoc-or config default-save-registry-key #f)))
+      (let* ((default-save-registry (assoc-or default-save-registry-key config #f)))
         (if (not default-save-registry) state
             (assoc-set-preference
              'registry-file default-save-registry state)))))
