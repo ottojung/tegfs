@@ -76,7 +76,7 @@
       QUERYQ : <query...>
       LISTARGS : LISTDIRSQ? LISTOPT?
       /          LISTOPT? LISTDIRSQ?
-      LISTDIRSQ : --dirs
+      LISTDIRSQ : --depth <listdepth>
       LISTOPT : --format <list-format> / --entries
       GETARGS : GETOPT? <getid>
       GETOPT : --format <get-format> / --entry
@@ -108,7 +108,7 @@
         (serve (tegfs-serve/parse))
         (prolog (tegfs-prolog/parse))
         (query (tegfs-query/parse --entries <query-format> <query...>))
-        (list (tegfs-list/parse --dirs --entries <list-format>))
+        (list (tegfs-list/parse <listdepth> --entries <list-format>))
         ((and get <getid>) (tegfs-get/parse <get-format> <getid>))
         (make-thumbnails (tegfs-make-thumbnails/parse <target> <output>))
         (config (tegfs-config/parse get set <name> <value>))

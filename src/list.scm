@@ -56,7 +56,7 @@
 %use (list-deduplicate/reverse) "./euphrates/list-deduplicate.scm"
 %use (cons!) "./euphrates/cons-bang.scm"
 %use (file-is-directory?/no-readlink) "./euphrates/file-is-directory-q-no-readlink.scm"
-%use (directory-files-rec) "./euphrates/directory-files-rec.scm"
+%use (directory-files-depth-foreach) "./euphrates/directory-files-depth-foreach.scm"
 
 %use (make-temporary-filename/local) "./make-temporary-filename-local.scm"
 %use (categorization-filename) "./categorization-filename.scm"
@@ -78,23 +78,24 @@
 
 %use (debugv) "./euphrates/debugv.scm"
 
-(define (tegfs-list/parse --dirs --entries <list-format>)
+(define (tegfs-list/parse <listdepth> --entries <list-format>)
   (tegfs-list
-   --dirs
+   <listdepth>
    (if --entries
        (lambda (e) (entry-print e) (display "\n\n"))
        (lambda (e) (entry-print/formatted <list-format> e) (display "\n")))))
 
-(define (tegfs-list --dirs fn)
-  (if --dirs
+(define (tegfs-list <listdepth> fn)
+  (if <listdepth>
       (entries-for-each
        (lambda (entry)
          (define target-fullpath (entry-target-fullpath entry))
          (fn entry)
          (when (file-is-directory?/no-readlink target-fullpath)
-           (for-each
+           (directory-files-depth-foreach
+            <listdepth>
             (lambda (p)
               (define path (car p))
               (fn (standalone-file->entry path)))
-            (directory-files-rec target-fullpath)))))
+            target-fullpath))))
       (entries-for-each fn)))
