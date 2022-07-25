@@ -653,9 +653,19 @@
 (define (has-access-for-entry? perm entry)
   (and perm
        (or (permission-admin? perm)
-           (let ((id (cdr (assoc 'id entry)))
-                 (idset (permission-idset perm)))
-             (hashset-ref idset id)))))
+           (if (local-file-entry? entry)
+               (let* ((parent-vid (or (assoc-or entry-parent-directory-vid-key entry #f)
+                                      (raisu 'entry-does-not-have-parent-vid entry)))
+                      (ctx (context/p))
+                      (filemap/2 (context-filemap/2 ctx))
+                      (info (filemap-ref-by-vid filemap/2 parent-vid #f))
+                      (target-fullpath (and info (sharedinfo-sourcepath info)))
+                      (perm-filemap (permission-filemap perm)))
+                 (and target-fullpath
+                      (not (not (hashmap-ref perm-filemap target-fullpath #f)))))
+               (let ((id (cdr (assoc 'id entry)))
+                     (idset (permission-idset perm)))
+                 (hashset-ref idset id))))))
 
 (define (has-access-for-entry-full? perm entry)
   (has-access-for-entry? perm entry))
