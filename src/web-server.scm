@@ -882,6 +882,22 @@
   (hashmap-delete! tokens token)
   (values))
 
+(define sharedinfo-time-left
+  (case-lambda
+   ((info)
+    (sharedinfo-time-left info (time-get-current-unixtime)))
+   ((info current-time)
+    (define end (+ (sharedinfo-ctime info)
+                   (sharedinfo-stime info)))
+    (max 0 (- end current-time)))))
+
+(define sharedinfo-still-valid?
+  (case-lambda
+   ((info)
+    (sharedinfo-still-valid? info (time-get-current-unixtime)))
+   ((info current-time)
+    (< 0 (sharedinfo-time-left info current-time)))))
+
 (define (collectgarbage)
   (define ctx (context/p))
   (define callctx (callcontext/p))
@@ -892,13 +908,11 @@
 
   (hashmap-foreach
    (lambda (sharedname info)
-     (define end (+ (sharedinfo-ctime info)
-                    (sharedinfo-stime info)))
-     (define full-name
-       (append-posix-path sharedir (sharedinfo-sharedname info)))
-     (unless (< now end)
-       (file-delete full-name)
-       (filemap-delete-by-sharedname! filemap/2 sharedname)))
+     (unless (sharedinfo-still-valid? info)
+       (let ((full-name
+              (append-posix-path sharedir (sharedinfo-sharedname info))))
+         (file-delete full-name)
+         (filemap-delete-by-sharedname! filemap/2 sharedname))))
    (cdr filemap/2))
 
   (hashmap-foreach
