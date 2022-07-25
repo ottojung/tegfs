@@ -197,14 +197,14 @@
   (sharedinfo-ctr target-fullpath sharedname vid token now for-duration))
 
 (define (filemap-set! filemap/2 info)
-  (define id (sharedinfo-sourcepath info))
+  (define vid (sharedinfo-vid info))
   (define sharedname (sharedinfo-sharedname info))
   (define first (car filemap/2))
   (define second (cdr filemap/2))
-  (hashmap-set! first id info)
+  (hashmap-set! first vid info)
   (hashmap-set! second sharedname info))
 
-(define (filemap-ref-by-sourcepath filemap/2 id default)
+(define (filemap-ref-by-vid filemap/2 id default)
   (define first (car filemap/2))
   (hashmap-ref first id default))
 
@@ -212,11 +212,10 @@
   (define second (cdr filemap/2))
   (hashmap-ref second sharedname default))
 
-;; FIXME: sharednames do not map 1:1 onto sourcepaths
-(define (filemap-delete-by-sourcepath! filemap/2 id)
+(define (filemap-delete-by-vid! filemap/2 id)
   (define first (car filemap/2))
   (define second (cdr filemap/2))
-  (define info (filemap-ref-by-sourcepath filemap/2 id #f))
+  (define info (filemap-ref-by-vid filemap/2 id #f))
   (when info
     (let ((sharedname (sharedinfo-sharedname info)))
       (hashmap-delete! first id)
@@ -227,7 +226,7 @@
   (define second (cdr filemap/2))
   (define info (filemap-ref-by-sharedname filemap/2 sharedname #f))
   (when info
-    (let ((id (sharedinfo-sourcepath info)))
+    (let ((id (sharedinfo-vid info)))
       (hashmap-delete! first id)
       (hashmap-delete! second sharedname))))
 
@@ -511,8 +510,7 @@
   (define ctx (context/p))
   (define filemap/2 (context-filemap/2 ctx))
   (define perm-filemap (permission-filemap perm))
-  (and (hashmap-ref perm-filemap target-fullpath #f)
-       (filemap-ref-by-sourcepath filemap/2 target-fullpath #f)))
+  (hashmap-ref perm-filemap target-fullpath #f))
 
 (define (symlink-shared-file target-fullpath sharedname)
   (define ctx (context/p))
