@@ -132,7 +132,7 @@
   (port context-port) ;; port to host the server on
   (fileserver context-fileserver) ;; full URI of the file server
   (sharedir context-sharedir) ;; directory with shared wiles
-  (filemap/2 context-filemap/2) ;; cons of hashmaps of type [: id -> info] and [: sharedname -> info]
+  (filemap/2 context-filemap/2) ;; cons of hashmaps of type [: vid -> info] and [: sharedname -> info]
   )
 
 (define-type9 <callcontext>
@@ -599,14 +599,18 @@
    ((a-weblink? target-fullpath)
     target-fullpath)
    ((local-file-entry? entry)
-    (let* ((sharedname (or (assoc-or entry-parent-directory-vid-key entry #f)
+    (let* ((parent-vid (or (assoc-or entry-parent-directory-vid-key entry #f)
                            (raisu 'entry-does-not-have-parent-vid entry)))
+           (ctx (context/p))
+           (filemap/2 (context-filemap/2 ctx))
+           (info (or (filemap-ref-by-vid filemap/2 parent-vid #f)
+                     (raisu 'entry-has-bad-parent-vid entry)))
+           (sharedname (sharedinfo-sharedname info))
            (suffix (or (assoc-or 'target entry #f)
                        (raisu 'entry-does-not-have-target entry))))
       (if (file-is-directory?/no-readlink target-fullpath)
-          (stringf "/directory?d=~a&s=~a" sharedname (uri-encode suffix))
-          (let* ((ctx (context/p))
-                 (fileserver (context-fileserver ctx)))
+          (stringf "/directory?vid=~a&s=~a" parent-vid (uri-encode suffix))
+          (let* ((fileserver (context-fileserver ctx)))
             (append-posix-path fileserver sharedname suffix)))))
    (else
     (let* ((info (share-file/dont-link-yet target-fullpath default-full-sharing-time))
@@ -707,12 +711,18 @@
   (define callctx (callcontext/p))
   (define request (callcontext-request callctx))
   (define sharedir (context-sharedir ctx))
+  (define filemap/2 (context-filemap/2 ctx))
   (define ctxq (get-query))
   (define root (get-root))
 
-  (define sharedname
-    (or (hashmap-ref ctxq 'd #f)
+  (define vid
+    (or (hashmap-ref ctxq 'vid #f)
         (bad-request "Request query missing requiered 'd' argument")))
+  (define info
+    (or (filemap-ref-by-vid filemap/2 vid #f)
+        (not-found)))
+  (define sharedname
+    (sharedinfo-sharedname info))
   (define suffix
     (hashmap-ref ctxq 's "."))
   (define shared-link-fullpath
@@ -733,7 +743,7 @@
       (map cadr (directory-files dir-fullpath include-directories?))))
   (define entries
     (map (comp (append-posix-path suffix)
-               (standalone-file->entry/prefixed shared-relativepath sharedname))
+               (standalone-file->entry/prefixed shared-relativepath vid))
          file-names))
 
   (respond
@@ -816,6 +826,7 @@
   (define _8123
     (unless info
       (not-found)))
+  (define vid (sharedinfo-vid info))
   (define target-fullpath (sharedinfo-sourcepath info))
   (define _11
     (unless (hashmap-ref (permission-filemap perm) target-fullpath #f)
@@ -824,7 +835,7 @@
   (define fileserver (context-fileserver ctx))
   (define location
     (if (file-is-directory?/no-readlink target-fullpath)
-        (string-append "/directory?d=" sharedname)
+        (string-append "/directory?vid=" vid)
         (string-append fileserver sharedname)))
 
   (symlink-shared-file target-fullpath sharedname)
