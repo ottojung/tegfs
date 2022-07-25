@@ -917,8 +917,14 @@
 
   (hashmap-foreach
    (lambda (token perm)
-     (unless (permission-still-valid? perm now)
-       (invalidate-permission perm)))
+     (if (permission-still-valid? perm now)
+         (hashmap-foreach
+          (lambda (target-fullpath info)
+            (unless (sharedinfo-still-valid? info)
+              (hashmap-delete!
+               (permission-filemap perm) target-fullpath)))
+          (permission-filemap perm))
+         (invalidate-permission perm)))
    tokens)
 
   (for-each
