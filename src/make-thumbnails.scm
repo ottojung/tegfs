@@ -41,6 +41,7 @@
 %use (make-directories) "./euphrates/make-directories.scm"
 %use (make-temporary-filename) "./euphrates/make-temporary-filename.scm"
 %use (url-goto) "./euphrates/url-goto.scm"
+%use (catchu-case) "./euphrates/catchu-case.scm"
 
 %use (web-preview-width) "./web-preview-width.scm"
 %use (web-preview-height) "./web-preview-height.scm"
@@ -53,13 +54,28 @@
 %use (debugv) "./euphrates/debugv.scm"
 
 (define (tegfs-make-thumbnails/parse <input> <output>)
-  (define ret (tegfs-make-thumbnails <input> <output>))
-  (case ret
-    ((#t) 'ok-go-on)
-    ((#f) (fatal "Could not recognize the file type"))
-    ((no-web-thumbnails) (fatal "The webpage does not have a thumbnail"))
-    ((could-not-convert-image) (fatal "Image conversion failed"))
-    (else (raisu 'unexpected-result ret)))
+  (catchu-case
+   (tegfs-make-thumbnails <input> <output>)
+
+   (('could-not-recognize-filetype)
+    (fatal "Could not recognize the file type"))
+   (('no-web-thumbnails)
+    (fatal "The webpage does not have a thumbnail"))
+   (('could-not-convert-image)
+    (fatal "Image conversion failed"))
+   (('could-not-download-the-webpage input)
+    (fatal "Could not download the webpage"))
+   (('could-not-download-the-preview input)
+    (fatal "Could not download the preview"))
+   (('probe-failed status probe)
+    (fatal "FFMpeg probe failed with status: ~s" status))
+   (('ffmpeg-failed status)
+    (fatal "FFMpeg failed with status: ~s" status))
+   (('imagemagick-failed status)
+    (fatal "ImageMagick failed with status: ~s" status))
+
+   )
+
   (dprintln "Done!"))
 
 (define (tegfs-make-thumbnails <input> <output>)
@@ -70,7 +86,8 @@
     (tegfs-make-image-thumbnails <input> <output>))
    ((file-is-video? <input>)
     (tegfs-make-video-thumbnails <input> <output>))
-   (else #f)))
+   (else
+    (raisu 'could-not-recognize-filetype))))
 
 (define (tegfs-make-url-thumbnails <input> <output>)
   (define temp
@@ -109,14 +126,16 @@
   (define _91231
     (file-delete temp))
 
-  (if (string-null? link2) 'no-web-thumbnails
-      (let* ((link/full
-              (url-goto <input> link2))
-             (do (unless (= 0 (system-fmt "wget --no-verbose ~a -O ~a" link/full temp))
-                   (raisu 'could-not-download-the-preview link/full)))
-             (ret (tegfs-make-image-thumbnails temp <output>)))
-        (file-delete temp)
-        ret)))
+  (when (string-null? link2)
+    (raisu 'no-web-thumbnails))
+
+  (let* ((link/full
+          (url-goto <input> link2))
+         (do (unless (= 0 (system-fmt "wget --no-verbose ~a -O ~a" link/full temp))
+               (raisu 'could-not-download-the-preview link/full)))
+         (ret (tegfs-make-image-thumbnails temp <output>)))
+    (file-delete temp)
+    ret))
 
 (define (tegfs-make-image-thumbnails <input> <output>)
   (let ((dir (dirname <output>)))

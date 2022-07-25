@@ -766,7 +766,9 @@
     (get-preview-path target-id target-fullpath))
 
   (and (or (file-or-directory-exists? preview-fullpath)
-           (tegfs-make-thumbnails target-fullpath preview-fullpath))
+           (catch-any
+            (lambda _ (tegfs-make-thumbnails target-fullpath preview-fullpath))
+            (lambda _ #f)))
        preview-fullpath))
 
 (define unavailable-image-string
