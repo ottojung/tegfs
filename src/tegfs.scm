@@ -93,6 +93,7 @@
      :exclusive (--entries --format)
      :default (--entry #t)
      :exclusive (--entry --format)
+     :type (<listdepth> 'number)
      :help (<remote> "A remote address like 'user1@example.com'")
 
      (when --help
