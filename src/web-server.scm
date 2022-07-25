@@ -605,17 +605,17 @@
            (filemap/2 (context-filemap/2 ctx))
            (info (or (filemap-ref-by-vid filemap/2 parent-vid #f)
                      (raisu 'entry-has-bad-parent-vid entry)))
-           (sharedname (sharedinfo-sharedname info))
            (suffix (or (assoc-or 'target entry #f)
                        (raisu 'entry-does-not-have-target entry))))
       (if (file-is-directory?/no-readlink target-fullpath)
           (stringf "/directory?vid=~a&s=~a" parent-vid (uri-encode suffix))
-          (let* ((fileserver (context-fileserver ctx)))
+          (let* ((fileserver (context-fileserver ctx))
+                 (sharedname (sharedinfo-sharedname info)))
             (append-posix-path fileserver sharedname suffix)))))
    (else
     (let* ((info (share-file/dont-link-yet target-fullpath default-full-sharing-time))
-           (sharedname (and info (sharedinfo-sharedname info)))
-           (location (and info (string-append "/full?sharedname=" sharedname))))
+           (vid (and info (sharedinfo-vid info)))
+           (location (and info (string-append "/full?vid=" vid))))
       (and info location)))))
 
 (define (maybe-display-preview entry)
@@ -821,12 +821,12 @@
       ;; not logged in
       (not-found)))
   (define ctxq (get-query))
-  (define sharedname (hashmap-ref ctxq 'sharedname #f))
-  (define info (filemap-ref-by-sharedname filemap/2 sharedname #f))
+  (define vid (hashmap-ref ctxq 'vid #f))
+  (define info (filemap-ref-by-vid filemap/2 vid #f))
   (define _8123
     (unless info
       (not-found)))
-  (define vid (sharedinfo-vid info))
+  (define sharedname (sharedinfo-sharedname info))
   (define target-fullpath (sharedinfo-sourcepath info))
   (define _11
     (unless (hashmap-ref (permission-filemap perm) target-fullpath #f)
