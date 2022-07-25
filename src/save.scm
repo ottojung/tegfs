@@ -233,7 +233,13 @@
 
 (define (set-download-preference state)
   (define text-content (cadr (assoc '-text-content state)))
-  (if (a-weblink? text-content) state
+  (if (a-weblink? text-content)
+      (let ((name (path-get-basename text-content)))
+        (if (or (file-is-video? name)
+                (file-is-image? name)
+                (file-is-audio? name))
+            (assoc-set-preference 'download 'yes state)
+            state))
       (assoc-set-preference 'download? 'no state)))
 
 (define working-file/p (make-parameter #f))
