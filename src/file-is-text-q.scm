@@ -17,8 +17,9 @@
 %var file-is-text?
 
 (define (file-is-text? target-fullpath)
-  (or (string-suffix? ".txt" target-fullpath)
-      (string-suffix? ".html" target-fullpath)
-      (string-suffix? ".cpp" target-fullpath)
-      (string-suffix? ".c" target-fullpath)
-      (string-suffix? ".scm" target-fullpath)))
+  (define small (string-downcase target-fullpath))
+  (or (string-suffix? ".txt" small)
+      (string-suffix? ".html" small)
+      (string-suffix? ".cpp" small)
+      (string-suffix? ".c" small)
+      (string-suffix? ".scm" small)))

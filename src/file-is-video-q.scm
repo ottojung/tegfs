@@ -17,8 +17,9 @@
 %var file-is-video?
 
 (define (file-is-video? target-fullpath)
-  (or (string-suffix? ".mp4" target-fullpath)
-      (string-suffix? ".avi" target-fullpath)
-      (string-suffix? ".mkv" target-fullpath)
-      (string-suffix? ".mpg" target-fullpath)
-      (string-suffix? ".webm" target-fullpath)))
+  (define small (string-downcase target-fullpath))
+  (or (string-suffix? ".mp4" small)
+      (string-suffix? ".avi" small)
+      (string-suffix? ".mkv" small)
+      (string-suffix? ".mpg" small)
+      (string-suffix? ".webm" small)))

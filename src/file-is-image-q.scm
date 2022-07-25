@@ -17,7 +17,8 @@
 %var file-is-image?
 
 (define (file-is-image? target-fullpath)
-  (or (string-suffix? ".jpg" target-fullpath)
-      (string-suffix? ".jpeg" target-fullpath)
-      (string-suffix? ".png" target-fullpath)
-      (string-suffix? ".gif" target-fullpath)))
+  (define small (string-downcase target-fullpath))
+  (or (string-suffix? ".jpg" small)
+      (string-suffix? ".jpeg" small)
+      (string-suffix? ".png" small)
+      (string-suffix? ".gif" small)))
