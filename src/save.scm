@@ -67,6 +67,9 @@
 %use (tegfs-dump-clipboard tegfs-dump-clipboard/pasta) "./dump-clipboard.scm"
 %use (get-config) "./get-config.scm"
 %use (default-save-registry-key) "./default-save-registry-key.scm"
+%use (file-is-audio?) "./file-is-audio-q.scm"
+%use (file-is-video?) "./file-is-video-q.scm"
+%use (file-is-image?) "./file-is-image-q.scm"
 
 %use (debug) "./euphrates/debug.scm"
 %use (debugv) "./euphrates/debugv.scm"
