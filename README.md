@@ -13,7 +13,7 @@ This program also provides a web-based file-browser
 
 - Main program
   - `GNU guile` version >1.8 for running the main program
-  - `curl` for saving stuff from the internet
+  - `wget` for saving stuff from the internet
   - `xclip` for dumping clipboard content
   - `file` for determining file types
   - `fzf` for making choices during `tegfs save`
@@ -25,7 +25,6 @@ This program also provides a web-based file-browser
   - `entr` for checking if new previews need to be made
   - third-party file server, such as `Nginx`
   - [pup](https://github.com/ericchiang/pup) for generating weblink thumbnails
-  - `wget` for downloading webpages (for some reason this works than curl) (TODO: move everything to wget)
 
 # Note on query
 

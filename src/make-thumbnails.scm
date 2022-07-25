@@ -112,7 +112,7 @@
   (if (string-null? link2) 'no-web-thumbnails
       (let* ((link/full
               (url-goto <input> link2))
-             (do (unless (= 0 (system-fmt "curl --no-progress-meter ~a --output ~a" link/full temp))
+             (do (unless (= 0 (system-fmt "wget --no-verbose ~a -O ~a" link/full temp))
                    (raisu 'could-not-download-the-preview link/full)))
              (ret (tegfs-make-image-thumbnails temp <output>)))
         (file-delete temp)
