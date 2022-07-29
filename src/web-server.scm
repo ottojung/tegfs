@@ -173,8 +173,6 @@
 (define callcontext/p
   (make-parameter #f))
 
-(define default-sharing-time
-  (string->seconds "1h"))
 (define default-preview-sharing-time
   (string->seconds "30m"))
 (define default-full-sharing-time
@@ -911,10 +909,8 @@
   (hashmap-foreach
    (lambda (sharedname info)
      (unless (sharedinfo-still-valid? info)
-       (let ((full-name
-              (append-posix-path sharedir (sharedinfo-sharedname info))))
-         (file-delete full-name)
-         (filemap-delete-by-sharedname! filemap/2 sharedname))))
+       (display "UNSHARE ") (write sharedname) (newline)
+       (filemap-delete-by-sharedname! filemap/2 sharedname)))
    (cdr filemap/2))
 
   (hashmap-foreach
@@ -923,6 +919,8 @@
          (hashmap-foreach
           (lambda (target-fullpath info)
             (unless (sharedinfo-still-valid? info)
+              (display "UNPERM ")
+              (write target-fullpath) (newline)
               (hashmap-delete!
                (permission-filemap perm) target-fullpath)))
           (permission-filemap perm))
