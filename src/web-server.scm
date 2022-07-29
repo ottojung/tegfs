@@ -905,12 +905,19 @@
   (define filemap/2 (context-filemap/2 ctx))
   (define now (callcontext-time callctx))
   (define tokens (context-tokens ctx))
+  (define delayed-list '())
+  (define-syntax delayop
+    (syntax-rules ()
+      ((_ . bodies)
+       (set! delayed-list
+             (cons (lambda _ . bodies) delayed-list)))))
 
   (hashmap-foreach
    (lambda (sharedname info)
      (unless (sharedinfo-still-valid? info)
-       (display "UNSHARE ") (write sharedname) (newline)
-       (filemap-delete-by-sharedname! filemap/2 sharedname)))
+       (delayop
+        (display "UNSHARE ") (write sharedname) (newline)
+        (filemap-delete-by-sharedname! filemap/2 sharedname))))
    (cdr filemap/2))
 
   (hashmap-foreach
@@ -919,13 +926,17 @@
          (hashmap-foreach
           (lambda (target-fullpath info)
             (unless (sharedinfo-still-valid? info)
-              (display "UNPERM ")
-              (write target-fullpath) (newline)
-              (hashmap-delete!
-               (permission-filemap perm) target-fullpath)))
+              (delayop
+               (display "UNPERM ")
+               (write target-fullpath) (newline)
+               (hashmap-delete!
+                (permission-filemap perm) target-fullpath))))
           (permission-filemap perm))
-         (invalidate-permission perm)))
+         (delayop
+          (hashmap-delete! tokens token))))
    tokens)
+
+  (for-each (lambda (delayed) (delayed)) delayed-list)
 
   (for-each
    (lambda (namepair)
