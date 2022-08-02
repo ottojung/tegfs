@@ -24,7 +24,7 @@
 %use (file-or-directory-exists?) "./euphrates/file-or-directory-exists-q.scm"
 %use (write-string-file) "./euphrates/write-string-file.scm"
 %use (read-string-file) "./euphrates/read-string-file.scm"
-%use (comp) "./euphrates/comp.scm"
+%use (appcomp comp) "./euphrates/comp.scm"
 %use (fn) "./euphrates/fn.scm"
 %use (string->lines) "./euphrates/string-to-lines.scm"
 %use (string-strip) "./euphrates/string-strip.scm"
@@ -181,6 +181,11 @@
     (unless (equal? (~a name) tags-this-variable/string)
       (yield `(v ,cnt ,(convert name))))))
 
+(define (add-special-sorted-status-tag tags)
+  (if (null? tags)
+      (cons '%unsorted tags)
+      tags))
+
 (define (add-special-locality-tag target tags)
   (if target
       (if (a-weblink? target)
@@ -204,7 +209,9 @@
       (let ((p (assoc target-name entry)))
         (and p (cdr p))))
     (define tags
-      (add-special-locality-tag target tags0))
+      (appcomp tags0
+               add-special-sorted-status-tag
+               (add-special-locality-tag target)))
 
     (define parser (parse-tag counter))
     (define parsed-tags (apply append (map parser tags)))

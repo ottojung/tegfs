@@ -37,6 +37,7 @@ The tags are:
 - `%remote` - true if target is a web link (arity = 1)
 - `%local` - true if target is not a web link (arity = 1)
 - `%notarget` - true if the object has no target (arity = 1)
+- `%unsorted` - true if the object has no other user-defined tags (arity = 1)
 
 So, for example, doing `tegfs query %any` will return
  every object there is in the database.
