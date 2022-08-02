@@ -181,6 +181,13 @@
     (unless (equal? (~a name) tags-this-variable/string)
       (yield `(v ,cnt ,(convert name))))))
 
+(define (add-special-locality-tag target tags)
+  (if target
+      (if (a-weblink? target)
+          (cons '%remote tags)
+          (cons '%local tags))
+      (cons '%notarget tags)))
+
 (define (translate-entry yield counter)
   (lambda (entry)
     (define cnt (counter))
@@ -197,11 +204,7 @@
       (let ((p (assoc target-name entry)))
         (and p (cdr p))))
     (define tags
-      (if target
-          (if (a-weblink? target)
-              (cons '%remote tags0)
-              (cons '%local tags0))
-          (cons '%notarget tags0)))
+      (add-special-locality-tag target tags0))
 
     (define parser (parse-tag counter))
     (define parsed-tags (apply append (map parser tags)))
