@@ -52,6 +52,7 @@
 %use (~s) "./euphrates/tilda-s.scm"
 %use (raisu) "./euphrates/raisu.scm"
 %use (system-environment-get) "./euphrates/system-environment.scm"
+%use (url-get-path) "./euphrates/url-get-path.scm"
 
 %use (make-temporary-filename/local) "./make-temporary-filename-local.scm"
 %use (fatal) "./fatal.scm"
@@ -239,7 +240,7 @@
 (define (set-download-preference state)
   (define text-content (cadr (assoc '-text-content state)))
   (if (a-weblink? text-content)
-      (let ((name (path-get-basename text-content)))
+      (let ((name (url-get-path text-content)))
         (if (or (file-is-video? name)
                 (file-is-image? name)
                 (file-is-audio? name))
