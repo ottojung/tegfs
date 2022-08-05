@@ -244,7 +244,7 @@
         (if (or (file-is-video? name)
                 (file-is-image? name)
                 (file-is-audio? name))
-            (assoc-set-preference 'download 'yes state)
+            (assoc-set-preference 'download? 'yes state)
             state))
       (assoc-set-preference 'download? 'no state)))
 
