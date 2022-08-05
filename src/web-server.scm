@@ -462,18 +462,21 @@
              (assoc 'Content-Disposition:filename)
              cdr))
 
-  (define extension
-    (path-extensions filename))
-
-  (define <target>
-    (and (not (string-null? filename))
-         (append-posix-path (string-append (get-random-basename) extension))))
-
-  (define full-filename
-    (and <target>
-         (append-posix-path (get-root)
-                            (dirname upload-registry-filename)
-                            <target>)))
+  (define-values (<target> full-filename)
+    (if (not filename) (values #f #f)
+        (let* ((f1
+                (append-posix-path (get-root)
+                                   (dirname upload-registry-filename)
+                                   filename))
+               (t
+                (if (file-or-directory-exists? f1)
+                    (string-append (get-random-basename) "-" filename)
+                    filename))
+               (f2
+                (append-posix-path (get-root)
+                                   (dirname upload-registry-filename)
+                                   t)))
+          (values t f2))))
 
   (define _44
     (when full-filename
