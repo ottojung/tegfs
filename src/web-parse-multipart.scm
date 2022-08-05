@@ -182,7 +182,7 @@
     (bytevector-length header))
 
   (define header/string
-    (bytevector->string header "ascii"))
+    (bytevector->string header "latin1"))
 
   (define (split-block start end/non-inclusive)
 
