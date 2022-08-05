@@ -106,6 +106,7 @@
 %use (a-weblink?) "./a-weblink-q.scm"
 %use (web-url-icon/svg) "./web-url-icon-svg.scm"
 %use (standalone-file->entry/prefixed) "./standalone-file-to-entry.scm"
+%use (web-request-get-domainname) "./web-request-get-domainname.scm"
 
 %use (debug) "./euphrates/debug.scm"
 %use (debugv) "./euphrates/debugv.scm"
@@ -965,6 +966,8 @@
 (define (share)
   (define ctx (context/p))
   (define ctxq (get-query))
+  (define callctx (callcontext/p))
+  (define req (callcontext-request callctx))
 
   (define query/encoded (hashmap-ref ctxq 'q ""))
   (define query (decode-query query/encoded))
@@ -975,7 +978,46 @@
   (define perm (make-permission! default-share-expiery-time admin? detailsaccess?))
   (define idset (permission-idset perm))
   (define token (permission-token perm))
-  (define location (stringf "/query?q=~a&key=~a" query/encoded token))
+  (define location
+    (stringf "/query?q=~a&key=~a" query/encoded token))
+  (define hidden-query-location
+    (stringf "/query?q=%any&key=~a" token))
+
+  (define domainname
+    (web-request-get-domainname req))
+  (define (print-link url0)
+    (define url (string-append domainname url0))
+    (sxml->xml `(a (@ (href ,url)) ,url)))
+  (define (print-newline)
+    (display "<br>\n"))
+  (define (print-line title url)
+    (display title)
+    (display ":")
+    (print-newline)
+    (print-link url)
+    (print-newline))
+  (define text
+    (with-output-to-string
+      (lambda _
+        (parameterize ((current-error-port (current-output-port)))
+          (print-line "Default link" location)
+          (print-line "Hidden query link" hidden-query-location)
+          (print-newline) (print-newline)
+          (display "Second then forth:")
+          (print-newline)
+          (print-link
+           (stringf "/query?q=ll&key=~a" (generate-token)))
+          (print-newline)
+          (print-link
+           (stringf "/query?q=ll&key=~a" token))
+          (print-newline)
+          (print-link
+           (stringf "/query?q=ll&key=~a" (generate-token)))
+          (print-newline)
+          (print-link "/query?q=%any")
+          (print-newline)
+          (print-link
+           (stringf "/query?q=ll&key=~a" (generate-token)))))))
 
   (tegfs-query
    query/split
@@ -983,14 +1025,7 @@
      (define id (cdr (assoc 'id entry)))
      (hashset-add! idset id)))
 
-  (return!
-   (build-response
-    #:code 301
-    #:headers
-    (append web-basic-headers
-            `((Location . ,location)
-              (Cache-Control . "no-cache"))))
-   #f))
+  (respond text))
 
 (define (details)
   (define ctx (context/p))
