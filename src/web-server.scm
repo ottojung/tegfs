@@ -899,11 +899,23 @@
     (< 0 (sharedinfo-time-left info current-time)))))
 
 (define (collectgarbage)
-  (define ctx (context/p))
   (define callctx (callcontext/p))
+  (define now (callcontext-time callctx))
+
+  (collectgarbage/nocall now)
+
+  (return!
+   (build-response
+    #:code 200
+    #:headers
+    (append web-basic-headers
+            `((Cache-Control . "no-cache"))))
+   "ok\n"))
+
+(define (collectgarbage/nocall now)
+  (define ctx (context/p))
   (define sharedir (context-sharedir ctx))
   (define filemap/2 (context-filemap/2 ctx))
-  (define now (callcontext-time callctx))
   (define tokens (context-tokens ctx))
   (define delayed-list '())
   (define-syntax delayop
@@ -948,15 +960,7 @@
        (write sharedname)
        (display " deleting...\n")
        (file-delete full-name)))
-   (directory-files sharedir))
-
-  (return!
-   (build-response
-    #:code 200
-    #:headers
-    (append web-basic-headers
-            `((Cache-Control . "no-cache"))))
-   "ok\n"))
+   (directory-files sharedir)))
 
 (define (share)
   (define ctx (context/p))
@@ -1197,4 +1201,9 @@
   (dprintln "Starting the server")
   (parameterize ((context/p (make-context)))
     (let ((port (context-port (context/p))))
+
+      (dprintln "Collecting garbage left from the previous run...")
+      (collectgarbage/nocall (time-get-current-unixtime))
+      (dprintln "Done")
+
       (run-server (make-handler) 'http `(#:port ,port)))))
