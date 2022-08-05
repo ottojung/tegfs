@@ -37,11 +37,55 @@
 
 %end
 
+(define (split-semicolons str0)
+  (define str (string->list str0))
+
+  (let loop ((str str) (buf '()) (cur "") (escaped? #f) (in-string? #f))
+    (if (null? str)
+        (if (string-null? cur)
+            (reverse buf)
+            (reverse (cons cur buf)))
+        (let* ((x (car str)))
+          (define (regular-char)
+            (loop (cdr str)
+                  buf
+                  (string-append cur (list->string (list x)))
+                  #f
+                  in-string?))
+
+          (cond
+           ((equal? x #\;)
+            (if in-string?
+                (regular-char)
+                (loop (cdr str)
+                      (cons cur buf)
+                      ""
+                      #f
+                      in-string?)))
+           ((equal? x #\\)
+            (if in-string?
+                (loop (cdr str)
+                      buf
+                      (string-append cur (list->string (list x)))
+                      (not escaped?)
+                      in-string?)
+                (regular-char)))
+           ((equal? x #\")
+            (if escaped?
+                (regular-char)
+                (loop (cdr str)
+                      buf
+                      (string-append cur (list->string (list x)))
+                      #f
+                      (not in-string?))))
+           (else
+            (regular-char)))))))
+
 (define (parse-content-disposition key/str value)
   (define key (string->symbol key/str))
 
   (define parts
-    (map string-strip (string-split/simple value #\;)))
+    (map string-strip (split-semicolons value)))
 
   (define head
     (car parts))
@@ -81,7 +125,7 @@
 
         (define pre1 (string-strip pre0))
         (define pre (string->symbol pre1))
-        (define post (uri-decode (string-strip post0)))
+        (define post (string-strip post0))
 
         (case pre
           ((Content-Disposition) (parse-content-disposition pre1 post))
