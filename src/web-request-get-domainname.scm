@@ -31,6 +31,8 @@
        (let* ((host/pair (cdr host/get))
               (host
                (if (pair? host/pair)
-                   (string-append (~a (car host/pair)) ":" (~a (cdr host/pair)))
+                   (if (cdr host/pair)
+                       (string-append (~a (car host/pair)) ":" (~a (cdr host/pair)))
+                       (~a (car host/pair)))
                    host/pair)))
          (string-append "http://" host))))
