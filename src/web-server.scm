@@ -107,6 +107,7 @@
 %use (web-url-icon/svg) "./web-url-icon-svg.scm"
 %use (standalone-file->entry/prefixed) "./standalone-file-to-entry.scm"
 %use (web-request-get-domainname) "./web-request-get-domainname.scm"
+%use (web-try-uri-decode) "./web-try-uri-decode.scm"
 
 %use (debug) "./euphrates/debug.scm"
 %use (debugv) "./euphrates/debugv.scm"
@@ -692,7 +693,7 @@
 
 (define (decode-query query/encoded)
   (appcomp query/encoded
-           uri-decode
+           web-try-uri-decode
            string->list
            (map (lambda (c) (if (equal? #\+ c) #\space c)))
            (map (lambda (c) (if (equal? #\: c) #\= c)))
@@ -1178,7 +1179,7 @@
     (map (lambda (sp)
            (define-values (key eq val) (string-split-3 #\= sp))
            (when (string-null? eq) (raisu 'bad-query query sp))
-           (cons (string->symbol key) (uri-decode val)))
+           (cons (string->symbol key) (web-try-uri-decode val)))
          split))
   (alist->hashmap key-values))
 
