@@ -107,7 +107,7 @@
 %use (standalone-file->entry/prefixed) "./standalone-file-to-entry.scm"
 %use (web-request-get-domainname) "./web-request-get-domainname.scm"
 %use (web-try-uri-decode) "./web-try-uri-decode.scm"
-
+%use (web-callcontext/p) "./web-callcontext-p.scm"
 %use (context-ctr context? context-passwords context-database context-tokens context-port context-fileserver context-sharedir context-filemap/2) "./web-context.scm"
 %use (callcontext-ctr callcontext? callcontext-break callcontext-request callcontext-query callcontext-body callcontext-time callcontext-key set-callcontext-key! callcontext-permissions) "./web-callcontext.scm"
 %use (sharedinfo-ctr sharedinfo? sharedinfo-sourcepath sharedinfo-sharedname sharedinfo-vid sharedinfo-token sharedinfo-ctime sharedinfo-stime) "./web-sharedinfo.scm"
@@ -133,9 +133,6 @@
 (define context/p
   (make-parameter #f))
 
-(define callcontext/p
-  (make-parameter #f))
-
 (define default-preview-sharing-time
   (string->seconds "30m"))
 (define default-full-sharing-time
@@ -152,7 +149,7 @@
     (string-append
      (get-random-basename)
      (path-extensions target-fullpath)))
-  (define callctx (callcontext/p))
+  (define callctx (web-callcontext/p))
   (define now (callcontext-time callctx))
   (define vid (get-random-basename))
   (sharedinfo-ctr target-fullpath sharedname vid token now for-duration))
@@ -192,7 +189,7 @@
       (hashmap-delete! second sharedname))))
 
 (define (return! stats body)
-  (define callctx (callcontext/p))
+  (define callctx (web-callcontext/p))
   (define cont (callcontext-break callctx))
   (cont stats body))
 
@@ -205,7 +202,7 @@
                             (content-type 'text/html)
                             (extra-headers '()))
   (define ctx (context/p))
-  (define callctx (callcontext/p))
+  (define callctx (web-callcontext/p))
   (define cont (callcontext-break callctx))
   (define _perm (get-permissions))
   (define key (callcontext-key callctx))
@@ -239,7 +236,7 @@
         ((string? body) (display body))
         ((pair? body) (sxml->xml body port))
         ((procedure? body)
-         (parameterize ((callcontext/p callctx)
+         (parameterize ((web-callcontext/p callctx)
                         (context/p ctx))
            (body)))
         (else (raisu 'unknown-body-type body)))
@@ -251,7 +248,7 @@
   (respond str #:status 400))
 
 (define (not-found)
-  (define request (callcontext-request (callcontext/p)))
+  (define request (callcontext-request (web-callcontext/p)))
   (respond
    (string-append "Resource not found: "
                   (uri->string (request-uri request)))
@@ -286,11 +283,11 @@
   (static-error-message 417 "Send user body"))
 
 (define (set-user-key! key)
-  (set-callcontext-key! (callcontext/p) key))
+  (set-callcontext-key! (web-callcontext/p) key))
 
 (define (make-permission! expiery-time admin? detailsaccess?)
   (define ctx (context/p))
-  (define callctx (callcontext/p))
+  (define callctx (web-callcontext/p))
   (define tokens (context-tokens ctx))
   (define token (generate-token))
   (define start (callcontext-time callctx))
@@ -303,7 +300,7 @@
   perm)
 
 (define (logincont)
-  (define body/bytes (callcontext-body (callcontext/p)))
+  (define body/bytes (callcontext-body (web-callcontext/p)))
 
   (define _4
     (unless body/bytes
@@ -393,7 +390,7 @@
       (static-error-message 200 "Uploaded successfully")))
 
 (define (uploadcont)
-  (define callctx (callcontext/p))
+  (define callctx (web-callcontext/p))
   (define request (callcontext-request callctx))
   (define body/bytes (callcontext-body callctx))
   (define body/hash (parse-multipart-as-hashmap body/bytes))
@@ -520,7 +517,7 @@
 
 (define (share-file target-fullpath for-duration0)
   (define ctx (context/p))
-  (define callctx (callcontext/p))
+  (define callctx (web-callcontext/p))
   (define perm (get-permissions))
   (define now (callcontext-time callctx))
   (define for-duration
@@ -667,7 +664,7 @@
 
 (define (query)
   (define ctx (context/p))
-  (define callctx (callcontext/p))
+  (define callctx (web-callcontext/p))
   (define request (callcontext-request callctx))
   (define ctxq (get-query))
 
@@ -682,7 +679,7 @@
 
 (define (directory)
   (define ctx (context/p))
-  (define callctx (callcontext/p))
+  (define callctx (web-callcontext/p))
   (define request (callcontext-request callctx))
   (define sharedir (context-sharedir ctx))
   (define filemap/2 (context-filemap/2 ctx))
@@ -865,7 +862,7 @@
     (< 0 (sharedinfo-time-left info current-time)))))
 
 (define (collectgarbage)
-  (define callctx (callcontext/p))
+  (define callctx (web-callcontext/p))
   (define now (callcontext-time callctx))
 
   (collectgarbage/nocall now)
@@ -931,7 +928,7 @@
 (define (share)
   (define ctx (context/p))
   (define ctxq (get-query))
-  (define callctx (callcontext/p))
+  (define callctx (web-callcontext/p))
   (define req (callcontext-request callctx))
 
   (define query/encoded (hashmap-ref ctxq 'q ""))
@@ -1150,7 +1147,7 @@
           (ret (hashmap-ref qH 'key #f)))
      (when ret (set-user-key! ret))
      ret)
-   (let* ((callctx (callcontext/p))
+   (let* ((callctx (web-callcontext/p))
           (request (callcontext-request callctx)))
      (or (get-cookie "key" request)
          (get-cookie "pwdtoken" request)))))
@@ -1168,12 +1165,12 @@
              #f))))
 
 (define (get-permissions)
-  (define callctx (callcontext/p))
+  (define callctx (web-callcontext/p))
   (define f (callcontext-permissions callctx))
   (f))
 
 (define (get-query)
-  (define callctx (callcontext/p))
+  (define callctx (web-callcontext/p))
   (define f (callcontext-query callctx))
   (f))
 
@@ -1194,7 +1191,7 @@
   (lambda (request body)
     (call-with-current-continuation
      (lambda (k)
-       (parameterize ((callcontext/p (make-callcontext k request body)))
+       (parameterize ((web-callcontext/p (make-callcontext k request body)))
          (handler request body))))))
 
 (define (tegfs-serve/parse)
