@@ -113,6 +113,7 @@
 %use (callcontext-ctr callcontext? callcontext-break callcontext-request callcontext-query callcontext-body callcontext-time callcontext-key set-callcontext-key! callcontext-permissions) "./web-callcontext.scm"
 %use (sharedinfo-ctr sharedinfo? sharedinfo-sourcepath sharedinfo-sharedname sharedinfo-vid sharedinfo-token sharedinfo-ctime sharedinfo-stime) "./web-sharedinfo.scm"
 %use (permission-constructor permission? permission-token permission-start permission-time permission-admin? permission-detailsaccess? permission-filemap permission-idset) "./web-permission.scm"
+%use (web-get-permissions) "./web-get-permissions.scm"
 
 %use (debug) "./euphrates/debug.scm"
 %use (debugv) "./euphrates/debugv.scm"
@@ -202,7 +203,7 @@
   (define ctx (web-context/p))
   (define callctx (web-callcontext/p))
   (define cont (callcontext-break callctx))
-  (define _perm (get-permissions))
+  (define _perm (web-get-permissions))
   (define key (callcontext-key callctx))
   (define key-headers
     (if key (list (web-set-cookie-header "key" key)) '()))
@@ -372,7 +373,7 @@
     (and got (cdr got))))
 
 (define (check-permissions)
-  (unless (get-permissions)
+  (unless (web-get-permissions)
     (permission-denied)))
 
 (define (error-tags-list tags)
@@ -491,7 +492,7 @@
 (define (share-file/new target-fullpath for-duration make-symlink?)
   (define ctx (web-context/p))
   (define filemap/2 (context-filemap/2 ctx))
-  (define perm (get-permissions))
+  (define perm (web-get-permissions))
   (define token (permission-token perm))
   (define info (make-sharedinfo token target-fullpath for-duration))
   (define sharedname (sharedinfo-sharedname info))
@@ -507,7 +508,7 @@
 
 (define (share-file/dont-link-yet target-fullpath for-duration)
   (define ctx (web-context/p))
-  (define perm (get-permissions))
+  (define perm (web-get-permissions))
   (define make-symlink? #f)
   (or
    (get-sharedinfo-for-perm perm target-fullpath)
@@ -516,7 +517,7 @@
 (define (share-file target-fullpath for-duration0)
   (define ctx (web-context/p))
   (define callctx (web-callcontext/p))
-  (define perm (get-permissions))
+  (define perm (web-get-permissions))
   (define now (callcontext-time callctx))
   (define for-duration
     (min for-duration0
@@ -635,7 +636,7 @@
             (has-access-for-entry? perm entry))))
 
 (define (display-entry entry)
-  (define perm (get-permissions))
+  (define perm (web-get-permissions))
   (when (has-access-for-entry-full? perm entry)
     (display "<div class='card'>")
     (display "<div>")
@@ -786,7 +787,7 @@
 (define (full)
   (define ctx (web-context/p))
   (define filemap/2 (context-filemap/2 ctx))
-  (define perm (get-permissions))
+  (define perm (web-get-permissions))
   (define _87123
     (unless perm
       ;; not logged in
@@ -991,7 +992,7 @@
   (define ctx (web-context/p))
   (define ctxq (get-query))
   (define id (hashmap-ref ctxq 'id #f))
-  (define perm (get-permissions))
+  (define perm (web-get-permissions))
   (define entry
     (or (tegfs-get/cached id)
         (not-found)))
@@ -1161,11 +1162,6 @@
            (begin
              (invalidate-permission existing)
              #f))))
-
-(define (get-permissions)
-  (define callctx (web-callcontext/p))
-  (define f (callcontext-permissions callctx))
-  (f))
 
 (define (get-query)
   (define callctx (web-callcontext/p))
