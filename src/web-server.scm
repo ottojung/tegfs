@@ -110,6 +110,7 @@
 %use (web-try-uri-decode) "./web-try-uri-decode.scm"
 
 %use (context-ctr context? context-passwords context-database context-tokens context-port context-fileserver context-sharedir context-filemap/2) "./web-context.scm"
+%use (callcontext-ctr callcontext? callcontext-break callcontext-request callcontext-query callcontext-body callcontext-time callcontext-key set-callcontext-key! callcontext-permissions) "./web-callcontext.scm"
 
 %use (debug) "./euphrates/debug.scm"
 %use (debugv) "./euphrates/debugv.scm"
@@ -127,17 +128,6 @@
 (use-modules (ice-9 binary-ports))
 
 %end
-
-(define-type9 <callcontext>
-  (callcontext-ctr break request query body time key permissions) callcontext?
-  (break callcontext-break) ;; break handler
-  (request callcontext-request) ;; client request
-  (query callcontext-query) ;; query hashmap
-  (body callcontext-body) ;; client body
-  (time callcontext-time) ;; timestamp for when request was received
-  (key callcontext-key set-callcontext-key!) ;; access key to-set to
-  (permissions callcontext-permissions) ;; permissions associated with this call
-  )
 
 (define-type9 <sharedinfo>
   (sharedinfo-ctr sourcepath sharedname vid token ctime stime) sharedinfo?
