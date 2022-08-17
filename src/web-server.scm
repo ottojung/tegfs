@@ -115,6 +115,7 @@
 %use (permission-constructor permission? permission-token permission-start permission-time permission-admin? permission-detailsaccess? permission-filemap permission-idset) "./web-permission.scm"
 %use (web-get-permissions) "./web-get-permissions.scm"
 %use (web-get-query) "./web-get-query.scm"
+%use (web-respond) "./web-respond.scm"
 
 %use (debug) "./euphrates/debug.scm"
 %use (debugv) "./euphrates/debugv.scm"
@@ -193,63 +194,13 @@
   (define cont (callcontext-break callctx))
   (cont stats body))
 
-(define* (respond #:optional body #:key
-                            (status 200)
-                            (title "TegFS")
-                            (extra-heads '())
-                            (doctype "<!DOCTYPE html>\n")
-                            (content-type-params '((charset . "utf-8")))
-                            (content-type 'text/html)
-                            (extra-headers '()))
-  (define ctx (web-context/p))
-  (define callctx (web-callcontext/p))
-  (define cont (callcontext-break callctx))
-  (define _perm (web-get-permissions))
-  (define key (callcontext-key callctx))
-  (define key-headers
-    (if key (list (web-set-cookie-header "key" key)) '()))
-
-  (cont
-   (build-response
-    #:code status
-    ;; most of these settings come from here: https://cheatsheetseries.owasp.org/cheatsheets/HTTP_Headers_Cheat_Sheet.html
-    #:headers
-    (append web-basic-headers
-            `((content-type . (,content-type ,@content-type-params))
-              (Cache-Control . "no-cache")
-              ,@key-headers
-              ,@extra-headers)))
-   (lambda (port)
-     (parameterize ((current-output-port port))
-       (when doctype (display doctype))
-       (display "<html>\n")
-       (display "<head>\n")
-       (when title
-         (display "  <title>")
-         (display title)
-         (display "</title>\n"))
-       (display "  <link rel='stylesheet' href='/main.css'>")
-       (for-each display extra-heads)
-       (display "</head>\n")
-       (display "<body>\n")
-       (cond
-        ((string? body) (display body))
-        ((pair? body) (sxml->xml body port))
-        ((procedure? body)
-         (parameterize ((web-callcontext/p callctx)
-                        (web-context/p ctx))
-           (body)))
-        (else (raisu 'unknown-body-type body)))
-       (display "\n</body>\n")
-       (display "</html>\n")))))
-
 (define (bad-request fmt . args)
   (define str (apply stringf (cons fmt args)))
-  (respond str #:status 400))
+  (web-respond str #:status 400))
 
 (define (not-found)
   (define request (callcontext-request (web-callcontext/p)))
-  (respond
+  (web-respond
    (string-append "Resource not found: "
                   (uri->string (request-uri request)))
    #:status 404))
@@ -266,15 +217,15 @@
 
 (define (static-message message)
   (define xml (web-message-template message))
-  (lambda _ (respond xml)))
+  (lambda _ (web-respond xml)))
 
 (define (static-error-message status message)
   (define xml (web-message-template message))
   (lambda _
-    (respond xml #:status status)))
+    (web-respond xml #:status status)))
 
 (define (login)
-  (respond web-login-body))
+  (web-respond web-login-body))
 
 (define (generate-token)
   (list->string (random-choice 60 alphanum-lowercase/alphabet)))
@@ -338,10 +289,10 @@
   (if registered?
       (let* ((perm (make-permission! default-login-expiery-time admin? detailsaccess?))
              (token (permission-token perm)))
-        (respond
+        (web-respond
          web-login-success-body
          #:extra-headers (list (web-set-cookie-header "pwdtoken" token))))
-      (respond web-login-failed-body)))
+      (web-respond web-login-failed-body)))
 
 (define permission-denied
   (static-error-message 401 "Permission denied"))
@@ -465,7 +416,7 @@
   ((upload-success-page <target>)))
 
 (define (upload)
-  (respond (web-make-upload-body)))
+  (web-respond (web-make-upload-body)))
 
 (define (get-sharedinfo-for-perm perm target-fullpath)
   (define ctx (web-context/p))
@@ -672,7 +623,7 @@
   (define query (decode-query query/encoded))
   (define query/split (string->words query))
 
-  (respond
+  (web-respond
    (lambda _
      (display-entries
       (lambda (fn) (tegfs-query query/split fn))))))
@@ -717,7 +668,7 @@
                (standalone-file->entry/prefixed shared-relativepath vid))
          file-names))
 
-  (respond
+  (web-respond
    (lambda _
      (display-entries
       (lambda (fn) (for-each fn entries))))))
@@ -987,7 +938,7 @@
      (define id (cdr (assoc 'id entry)))
      (hashset-add! idset id)))
 
-  (respond text))
+  (web-respond text))
 
 (define (details)
   (define ctx (web-context/p))
@@ -1022,7 +973,7 @@
   (unless (has-access-for-entry-details? perm entry)
     (not-found))
 
-  (respond table))
+  (web-respond table))
 
 (define handlers-config
   `((/login ,login public)
