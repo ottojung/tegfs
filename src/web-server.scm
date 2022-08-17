@@ -48,7 +48,6 @@
 %use (fn-cons) "./euphrates/fn-cons.scm"
 %use (string-split/simple) "./euphrates/string-split-simple.scm"
 %use (string-split-3) "./euphrates/string-split-3.scm"
-%use (define-type9) "./euphrates/define-type9.scm"
 %use (make-hashmap hashmap-ref hashmap-set! hashmap->alist alist->hashmap hashmap-delete! hashmap-foreach) "./euphrates/ihashmap.scm"
 %use (list->hashset hashset->list hashset-ref make-hashset hashset-ref hashset-add! hashset-delete!) "./euphrates/ihashset.scm"
 %use (define-pair) "./euphrates/define-pair.scm"
@@ -112,6 +111,7 @@
 %use (context-ctr context? context-passwords context-database context-tokens context-port context-fileserver context-sharedir context-filemap/2) "./web-context.scm"
 %use (callcontext-ctr callcontext? callcontext-break callcontext-request callcontext-query callcontext-body callcontext-time callcontext-key set-callcontext-key! callcontext-permissions) "./web-callcontext.scm"
 %use (sharedinfo-ctr sharedinfo? sharedinfo-sourcepath sharedinfo-sharedname sharedinfo-vid sharedinfo-token sharedinfo-ctime sharedinfo-stime) "./web-sharedinfo.scm"
+%use (permission-constructor permission? permission-token permission-start permission-time permission-admin? permission-detailsaccess? permission-filemap permission-idset) "./web-permission.scm"
 
 %use (debug) "./euphrates/debug.scm"
 %use (debugv) "./euphrates/debugv.scm"
@@ -129,17 +129,6 @@
 (use-modules (ice-9 binary-ports))
 
 %end
-
-(define-type9 <permission>
-  (permission-constructor token start time admin? detailsaccess? filemap idset) permission?
-  (token permission-token) ;; token string
-  (start permission-start) ;; timestamp for when this token was created
-  (time permission-time) ;; duration in secods for how long this token is valid
-  (admin? permission-admin?) ;; true if user is an admin
-  (detailsaccess? permission-detailsaccess?) ;; true if user has access to objects details
-  (filemap permission-filemap) ;; hashmap with `keys: target-fullpath that was shared with this permission` and `values: sharedinfos`
-  (idset permission-idset) ;; hashset with `values: id of entry that is shared with this permission`
-  )
 
 (define context/p
   (make-parameter #f))
