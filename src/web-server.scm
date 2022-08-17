@@ -114,6 +114,7 @@
 %use (sharedinfo-ctr sharedinfo? sharedinfo-sourcepath sharedinfo-sharedname sharedinfo-vid sharedinfo-token sharedinfo-ctime sharedinfo-stime) "./web-sharedinfo.scm"
 %use (permission-constructor permission? permission-token permission-start permission-time permission-admin? permission-detailsaccess? permission-filemap permission-idset) "./web-permission.scm"
 %use (web-get-permissions) "./web-get-permissions.scm"
+%use (web-get-query) "./web-get-query.scm"
 
 %use (debug) "./euphrates/debug.scm"
 %use (debugv) "./euphrates/debugv.scm"
@@ -665,7 +666,7 @@
   (define ctx (web-context/p))
   (define callctx (web-callcontext/p))
   (define request (callcontext-request callctx))
-  (define ctxq (get-query))
+  (define ctxq (web-get-query))
 
   (define query/encoded (hashmap-ref ctxq 'q ""))
   (define query (decode-query query/encoded))
@@ -682,7 +683,7 @@
   (define request (callcontext-request callctx))
   (define sharedir (context-sharedir ctx))
   (define filemap/2 (context-filemap/2 ctx))
-  (define ctxq (get-query))
+  (define ctxq (web-get-query))
   (define root (get-root))
 
   (define vid
@@ -771,7 +772,7 @@
   (return! unknownurl-response unknownurl-bytevector))
 
 (define (preview)
-  (define ctxq (get-query))
+  (define ctxq (web-get-query))
   (define target-id (hashmap-ref ctxq 't #f))
   (define entry
     (or (tegfs-get/cached target-id)
@@ -792,7 +793,7 @@
     (unless perm
       ;; not logged in
       (not-found)))
-  (define ctxq (get-query))
+  (define ctxq (web-get-query))
   (define vid (hashmap-ref ctxq 'vid #f))
   (define info (filemap-ref-by-vid filemap/2 vid #f))
   (define _8123
@@ -926,7 +927,7 @@
 
 (define (share)
   (define ctx (web-context/p))
-  (define ctxq (get-query))
+  (define ctxq (web-get-query))
   (define callctx (web-callcontext/p))
   (define req (callcontext-request callctx))
 
@@ -990,7 +991,7 @@
 
 (define (details)
   (define ctx (web-context/p))
-  (define ctxq (get-query))
+  (define ctxq (web-get-query))
   (define id (hashmap-ref ctxq 'id #f))
   (define perm (web-get-permissions))
   (define entry
@@ -1142,7 +1143,7 @@
 
 (define (get-access-token)
   (or
-   (let* ((qH (get-query))
+   (let* ((qH (web-get-query))
           (ret (hashmap-ref qH 'key #f)))
      (when ret (set-user-key! ret))
      ret)
@@ -1162,11 +1163,6 @@
            (begin
              (invalidate-permission existing)
              #f))))
-
-(define (get-query)
-  (define callctx (web-callcontext/p))
-  (define f (callcontext-query callctx))
-  (f))
 
 (define (initialize-query request)
   (define uri (request-uri request))
