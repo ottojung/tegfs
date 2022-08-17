@@ -109,6 +109,8 @@
 %use (web-request-get-domainname) "./web-request-get-domainname.scm"
 %use (web-try-uri-decode) "./web-try-uri-decode.scm"
 
+%use (context-ctr context? context-passwords context-database context-tokens context-port context-fileserver context-sharedir context-filemap/2) "./web-context.scm"
+
 %use (debug) "./euphrates/debug.scm"
 %use (debugv) "./euphrates/debugv.scm"
 
@@ -125,17 +127,6 @@
 (use-modules (ice-9 binary-ports))
 
 %end
-
-(define-type9 <context>
-  (context-ctr passwords database tokens port fileserver sharedir filemap/2) context?
-  (passwords context-passwords) ;; user credentials passwords
-  (database context-database) ;; tag database
-  (tokens context-tokens) ;; temporary session tokens
-  (port context-port) ;; port to host the server on
-  (fileserver context-fileserver) ;; full URI of the file server
-  (sharedir context-sharedir) ;; directory with shared wiles
-  (filemap/2 context-filemap/2) ;; cons of hashmaps of type [: vid -> info] and [: sharedname -> info]
-  )
 
 (define-type9 <callcontext>
   (callcontext-ctr break request query body time key permissions) callcontext?
