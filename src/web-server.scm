@@ -111,6 +111,7 @@
 
 %use (context-ctr context? context-passwords context-database context-tokens context-port context-fileserver context-sharedir context-filemap/2) "./web-context.scm"
 %use (callcontext-ctr callcontext? callcontext-break callcontext-request callcontext-query callcontext-body callcontext-time callcontext-key set-callcontext-key! callcontext-permissions) "./web-callcontext.scm"
+%use (sharedinfo-ctr sharedinfo? sharedinfo-sourcepath sharedinfo-sharedname sharedinfo-vid sharedinfo-token sharedinfo-ctime sharedinfo-stime) "./web-sharedinfo.scm"
 
 %use (debug) "./euphrates/debug.scm"
 %use (debugv) "./euphrates/debugv.scm"
@@ -128,16 +129,6 @@
 (use-modules (ice-9 binary-ports))
 
 %end
-
-(define-type9 <sharedinfo>
-  (sharedinfo-ctr sourcepath sharedname vid token ctime stime) sharedinfo?
-  (sourcepath sharedinfo-sourcepath) ;; the original file path
-  (sharedname sharedinfo-sharedname) ;; the linked file path suffix (without the sharedir)
-  (vid sharedinfo-vid) ;; unique virtual id
-  (token sharedinfo-token) ;; token of the perms that shared this file
-  (ctime sharedinfo-ctime) ;; time in seconds for when this info was created
-  (stime sharedinfo-stime) ;; time in seconds for how long to share this file
-  )
 
 (define-type9 <permission>
   (permission-constructor token start time admin? detailsaccess? filemap idset) permission?
