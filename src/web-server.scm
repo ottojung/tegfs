@@ -112,7 +112,7 @@
 %use (context-ctr context? context-passwords context-database context-tokens context-port context-fileserver context-sharedir context-filemap/2) "./web-context.scm"
 %use (callcontext-ctr callcontext? callcontext-break callcontext-request callcontext-query callcontext-body callcontext-time callcontext-key set-callcontext-key! callcontext-permissions) "./web-callcontext.scm"
 %use (sharedinfo-ctr sharedinfo? sharedinfo-sourcepath sharedinfo-sharedname sharedinfo-vid sharedinfo-token sharedinfo-ctime sharedinfo-stime) "./web-sharedinfo.scm"
-%use (permission-constructor permission? permission-token permission-start permission-time permission-admin? permission-detailsaccess? permission-filemap permission-idset) "./web-permission.scm"
+%use (permission-constructor permission? permission-token permission-start permission-time permission-admin? permission-detailsaccess? permission-share-longer-than-view? permission-filemap permission-idset) "./web-permission.scm"
 %use (web-get-permissions) "./web-get-permissions.scm"
 %use (web-get-query) "./web-get-query.scm"
 %use (web-respond) "./web-respond.scm"
@@ -236,7 +236,7 @@
 (define (set-user-key! key)
   (set-callcontext-key! (web-callcontext/p) key))
 
-(define (make-permission! expiery-time admin? detailsaccess?)
+(define (make-permission! expiery-time admin? detailsaccess? share-longer-than-view?)
   (define ctx (web-context/p))
   (define callctx (web-callcontext/p))
   (define tokens (context-tokens ctx))
@@ -245,7 +245,8 @@
   (define time expiery-time)
   (define perm
     (permission-constructor
-     token start time admin? detailsaccess?
+     token start time
+     admin? detailsaccess? share-longer-than-view?
      (make-hashmap) (make-hashset)))
   (hashmap-set! tokens token perm)
   perm)
@@ -285,9 +286,10 @@
   (define registered? (hashmap-ref passwords passw #f))
   (define admin? #t) ;; TODO: read from the config
   (define detailsaccess? #t) ;; TODO: read from the config
+  (define share-longer-than-view? #t) ;; TODO: read from the config
 
   (if registered?
-      (let* ((perm (make-permission! default-login-expiery-time admin? detailsaccess?))
+      (let* ((perm (make-permission! default-login-expiery-time admin? detailsaccess? share-longer-than-view?))
              (token (permission-token perm)))
         (web-respond
          web-login-success-body
@@ -885,7 +887,8 @@
 
   (define admin? #f)
   (define detailsaccess? #f) ;; TODO: maybe allow sometimes
-  (define perm (make-permission! default-share-expiery-time admin? detailsaccess?))
+  (define share-longer-than-view? #f) ;; TODO: maybe allow sometimes
+  (define perm (make-permission! default-share-expiery-time admin? detailsaccess? share-longer-than-view?))
   (define idset (permission-idset perm))
   (define token (permission-token perm))
   (define location
