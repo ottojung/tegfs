@@ -876,13 +876,11 @@
        (file-delete full-name)))
    (directory-files sharedir)))
 
-(define (share)
+(define (share-query query/encoded)
   (define ctx (web-context/p))
-  (define ctxq (web-get-query))
   (define callctx (web-callcontext/p))
   (define req (callcontext-request callctx))
 
-  (define query/encoded (hashmap-ref ctxq 'q ""))
   (define query (decode-query query/encoded))
   (define query/split (string->words query))
 
@@ -939,6 +937,14 @@
      (hashset-add! idset id)))
 
   (web-respond text))
+
+(define (share)
+  (define ctxq (web-get-query))
+  (define query/encoded (hashmap-ref ctxq 'q #f))
+
+  (cond
+   (query/encoded (share-query query/encoded))
+   (else (static-error-message 417 "Bad arguments to share"))))
 
 (define (details)
   (define ctx (web-context/p))
