@@ -108,6 +108,7 @@
 %use (web-request-get-domainname) "./web-request-get-domainname.scm"
 %use (web-try-uri-decode) "./web-try-uri-decode.scm"
 %use (web-callcontext/p) "./web-callcontext-p.scm"
+%use (web-context/p) "./web-context-p.scm"
 %use (context-ctr context? context-passwords context-database context-tokens context-port context-fileserver context-sharedir context-filemap/2) "./web-context.scm"
 %use (callcontext-ctr callcontext? callcontext-break callcontext-request callcontext-query callcontext-body callcontext-time callcontext-key set-callcontext-key! callcontext-permissions) "./web-callcontext.scm"
 %use (sharedinfo-ctr sharedinfo? sharedinfo-sourcepath sharedinfo-sharedname sharedinfo-vid sharedinfo-token sharedinfo-ctime sharedinfo-stime) "./web-sharedinfo.scm"
@@ -129,9 +130,6 @@
 (use-modules (ice-9 binary-ports))
 
 %end
-
-(define context/p
-  (make-parameter #f))
 
 (define default-preview-sharing-time
   (string->seconds "30m"))
@@ -201,7 +199,7 @@
                             (content-type-params '((charset . "utf-8")))
                             (content-type 'text/html)
                             (extra-headers '()))
-  (define ctx (context/p))
+  (define ctx (web-context/p))
   (define callctx (web-callcontext/p))
   (define cont (callcontext-break callctx))
   (define _perm (get-permissions))
@@ -237,7 +235,7 @@
         ((pair? body) (sxml->xml body port))
         ((procedure? body)
          (parameterize ((web-callcontext/p callctx)
-                        (context/p ctx))
+                        (web-context/p ctx))
            (body)))
         (else (raisu 'unknown-body-type body)))
        (display "\n</body>\n")
@@ -286,7 +284,7 @@
   (set-callcontext-key! (web-callcontext/p) key))
 
 (define (make-permission! expiery-time admin? detailsaccess?)
-  (define ctx (context/p))
+  (define ctx (web-context/p))
   (define callctx (web-callcontext/p))
   (define tokens (context-tokens ctx))
   (define token (generate-token))
@@ -329,7 +327,7 @@
   (define passw
     (sha256sum value))
 
-  (define ctx (context/p))
+  (define ctx (web-context/p))
   (define passwords (context-passwords ctx))
   (define registered? (hashmap-ref passwords passw #f))
   (define admin? #t) ;; TODO: read from the config
@@ -468,13 +466,13 @@
   (respond (web-make-upload-body)))
 
 (define (get-sharedinfo-for-perm perm target-fullpath)
-  (define ctx (context/p))
+  (define ctx (web-context/p))
   (define filemap/2 (context-filemap/2 ctx))
   (define perm-filemap (permission-filemap perm))
   (hashmap-ref perm-filemap target-fullpath #f))
 
 (define (symlink-shared-file target-fullpath sharedname)
-  (define ctx (context/p))
+  (define ctx (web-context/p))
   (define sharedir (context-sharedir ctx))
   (define shared-fullpath (append-posix-path sharedir sharedname))
   (define target-fullpath/abs
@@ -491,7 +489,7 @@
        (newline)))))
 
 (define (share-file/new target-fullpath for-duration make-symlink?)
-  (define ctx (context/p))
+  (define ctx (web-context/p))
   (define filemap/2 (context-filemap/2 ctx))
   (define perm (get-permissions))
   (define token (permission-token perm))
@@ -508,7 +506,7 @@
   info)
 
 (define (share-file/dont-link-yet target-fullpath for-duration)
-  (define ctx (context/p))
+  (define ctx (web-context/p))
   (define perm (get-permissions))
   (define make-symlink? #f)
   (or
@@ -516,7 +514,7 @@
    (share-file/new target-fullpath for-duration make-symlink?)))
 
 (define (share-file target-fullpath for-duration0)
-  (define ctx (context/p))
+  (define ctx (web-context/p))
   (define callctx (web-callcontext/p))
   (define perm (get-permissions))
   (define now (callcontext-time callctx))
@@ -530,7 +528,7 @@
         (share-file/new target-fullpath for-duration make-symlink?))))
 
 (define (display-preview target-id target-fullpath)
-  (define ctx (context/p))
+  (define ctx (web-context/p))
   (define fileserver (context-fileserver ctx))
   (define preview-fullpath (get-preview-path target-id target-fullpath))
   (define default-preview
@@ -562,7 +560,7 @@
    ((local-file-entry? entry)
     (let* ((parent-vid (or (assoc-or entry-parent-directory-vid-key entry #f)
                            (raisu 'entry-does-not-have-parent-vid entry)))
-           (ctx (context/p))
+           (ctx (web-context/p))
            (filemap/2 (context-filemap/2 ctx))
            (info (or (filemap-ref-by-vid filemap/2 parent-vid #f)
                      (raisu 'entry-has-bad-parent-vid entry)))
@@ -617,7 +615,7 @@
            (if (local-file-entry? entry)
                (let* ((parent-vid (or (assoc-or entry-parent-directory-vid-key entry #f)
                                       (raisu 'entry-does-not-have-parent-vid entry)))
-                      (ctx (context/p))
+                      (ctx (web-context/p))
                       (filemap/2 (context-filemap/2 ctx))
                       (info (filemap-ref-by-vid filemap/2 parent-vid #f))
                       (target-fullpath (and info (sharedinfo-sourcepath info)))
@@ -663,7 +661,7 @@
   (display "</div>"))
 
 (define (query)
-  (define ctx (context/p))
+  (define ctx (web-context/p))
   (define callctx (web-callcontext/p))
   (define request (callcontext-request callctx))
   (define ctxq (get-query))
@@ -678,7 +676,7 @@
       (lambda (fn) (tegfs-query query/split fn))))))
 
 (define (directory)
-  (define ctx (context/p))
+  (define ctx (web-context/p))
   (define callctx (web-callcontext/p))
   (define request (callcontext-request callctx))
   (define sharedir (context-sharedir ctx))
@@ -786,7 +784,7 @@
       (previewunknown)))
 
 (define (full)
-  (define ctx (context/p))
+  (define ctx (web-context/p))
   (define filemap/2 (context-filemap/2 ctx))
   (define perm (get-permissions))
   (define _87123
@@ -839,7 +837,7 @@
     (< 0 (permission-time-left perm current-time)))))
 
 (define (invalidate-permission perm)
-  (define ctx (context/p))
+  (define ctx (web-context/p))
   (define tokens (context-tokens ctx))
   (define token (permission-token perm))
   (hashmap-delete! tokens token)
@@ -876,7 +874,7 @@
    "ok\n"))
 
 (define (collectgarbage/nocall now)
-  (define ctx (context/p))
+  (define ctx (web-context/p))
   (define sharedir (context-sharedir ctx))
   (define filemap/2 (context-filemap/2 ctx))
   (define tokens (context-tokens ctx))
@@ -926,7 +924,7 @@
    (directory-files sharedir)))
 
 (define (share)
-  (define ctx (context/p))
+  (define ctx (web-context/p))
   (define ctxq (get-query))
   (define callctx (web-callcontext/p))
   (define req (callcontext-request callctx))
@@ -990,7 +988,7 @@
   (respond text))
 
 (define (details)
-  (define ctx (context/p))
+  (define ctx (web-context/p))
   (define ctxq (get-query))
   (define id (hashmap-ref ctxq 'id #f))
   (define perm (get-permissions))
@@ -1154,7 +1152,7 @@
 
 (define (initialize-permissions)
   (define token (get-access-token))
-  (define ctx (context/p))
+  (define ctx (web-context/p))
   (define tokens (context-tokens ctx))
   (define existing (hashmap-ref tokens token #f))
 
@@ -1196,8 +1194,8 @@
 
 (define (tegfs-serve/parse)
   (dprintln "Starting the server")
-  (parameterize ((context/p (make-context)))
-    (let ((port (context-port (context/p))))
+  (parameterize ((web-context/p (make-context)))
+    (let ((port (context-port (web-context/p))))
 
       (dprintln "Collecting garbage left from the previous run...")
       (collectgarbage/nocall (time-get-current-unixtime))
