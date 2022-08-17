@@ -443,20 +443,25 @@
 
 (define (share-file/new target-fullpath for-duration make-symlink?)
   (define ctx (web-context/p))
+  (define callctx (web-callcontext/p))
   (define filemap/2 (context-filemap/2 ctx))
   (define perm (web-get-permissions))
   (define token (permission-token perm))
-  (define info (make-sharedinfo token target-fullpath for-duration))
+  (define now (callcontext-time callctx))
+  (define for-duration* (min for-duration (permission-time-left perm now)))
+  (define info (make-sharedinfo token target-fullpath for-duration*))
   (define sharedname (sharedinfo-sharedname info))
   (define perm-filemap (permission-filemap perm))
 
-  (hashmap-set! perm-filemap target-fullpath info)
-  (filemap-set! filemap/2 info)
+  (and (< 0 for-duration*)
+       (begin
+         (hashmap-set! perm-filemap target-fullpath info)
+         (filemap-set! filemap/2 info)
 
-  (when make-symlink?
-    (symlink-shared-file target-fullpath sharedname))
+         (when make-symlink?
+           (symlink-shared-file target-fullpath sharedname))
 
-  info)
+         info)))
 
 (define (share-file/dont-link-yet target-fullpath for-duration)
   (define ctx (web-context/p))
@@ -466,19 +471,13 @@
    (get-sharedinfo-for-perm perm target-fullpath)
    (share-file/new target-fullpath for-duration make-symlink?)))
 
-(define (share-file target-fullpath for-duration0)
+(define (share-file target-fullpath for-duration)
   (define ctx (web-context/p))
-  (define callctx (web-callcontext/p))
   (define perm (web-get-permissions))
-  (define now (callcontext-time callctx))
-  (define for-duration
-    (min for-duration0
-         (permission-time-left perm now)))
   (define make-symlink? #t)
-  (and (< 0 for-duration)
-       (or
-        (get-sharedinfo-for-perm perm target-fullpath)
-        (share-file/new target-fullpath for-duration make-symlink?))))
+  (or
+   (get-sharedinfo-for-perm perm target-fullpath)
+   (share-file/new target-fullpath for-duration make-symlink?)))
 
 (define (display-preview target-id target-fullpath)
   (define ctx (web-context/p))
