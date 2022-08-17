@@ -877,6 +877,45 @@
        (file-delete full-name)))
    (directory-files sharedir)))
 
+(define (get-share-query-text location hidden-query-location token)
+  (define callctx (web-callcontext/p))
+  (define req (callcontext-request callctx))
+  (define domainname
+    (web-request-get-domainname req))
+  (define (print-link url0)
+    (define url (string-append domainname url0))
+    (sxml->xml `(a (@ (href ,url)) ,url)))
+  (define (print-newline)
+    (display "<br>\n"))
+  (define (print-line title url)
+    (display title)
+    (display ":")
+    (print-newline)
+    (print-link url)
+    (print-newline))
+
+  (with-output-to-string
+    (lambda _
+      (parameterize ((current-error-port (current-output-port)))
+        (print-line "Default link" location)
+        (print-line "Hidden query link" hidden-query-location)
+        (print-newline) (print-newline)
+        (display "Second then forth:")
+        (print-newline)
+        (print-link
+         (stringf "/query?q=ll&key=~a" (generate-token)))
+        (print-newline)
+        (print-link
+         (stringf "/query?q=ll&key=~a" token))
+        (print-newline)
+        (print-link
+         (stringf "/query?q=ll&key=~a" (generate-token)))
+        (print-newline)
+        (print-link "/query?q=%any")
+        (print-newline)
+        (print-link
+         (stringf "/query?q=ll&key=~a" (generate-token)))))))
+
 (define (share-query query/encoded)
   (define ctx (web-context/p))
   (define callctx (web-callcontext/p))
@@ -895,42 +934,8 @@
     (stringf "/query?q=~a&key=~a" query/encoded token))
   (define hidden-query-location
     (stringf "/query?q=%any&key=~a" token))
-
-  (define domainname
-    (web-request-get-domainname req))
-  (define (print-link url0)
-    (define url (string-append domainname url0))
-    (sxml->xml `(a (@ (href ,url)) ,url)))
-  (define (print-newline)
-    (display "<br>\n"))
-  (define (print-line title url)
-    (display title)
-    (display ":")
-    (print-newline)
-    (print-link url)
-    (print-newline))
   (define text
-    (with-output-to-string
-      (lambda _
-        (parameterize ((current-error-port (current-output-port)))
-          (print-line "Default link" location)
-          (print-line "Hidden query link" hidden-query-location)
-          (print-newline) (print-newline)
-          (display "Second then forth:")
-          (print-newline)
-          (print-link
-           (stringf "/query?q=ll&key=~a" (generate-token)))
-          (print-newline)
-          (print-link
-           (stringf "/query?q=ll&key=~a" token))
-          (print-newline)
-          (print-link
-           (stringf "/query?q=ll&key=~a" (generate-token)))
-          (print-newline)
-          (print-link "/query?q=%any")
-          (print-newline)
-          (print-link
-           (stringf "/query?q=ll&key=~a" (generate-token)))))))
+    (get-share-query-text location hidden-query-location token))
 
   (tegfs-query
    query/split
