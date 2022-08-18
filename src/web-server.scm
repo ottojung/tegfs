@@ -451,7 +451,10 @@
   (define perm (web-get-permissions))
   (define token (permission-token perm))
   (define now (callcontext-time callctx))
-  (define for-duration* (min for-duration (permission-time-left perm now)))
+  (define for-duration*
+    (if (permission-share-longer-than-view? perm)
+        for-duration
+        (min for-duration (permission-time-left perm now))))
   (define info (make-sharedinfo token target-fullpath for-duration*))
   (define sharedname (sharedinfo-sharedname info))
   (define perm-filemap (permission-filemap perm))
