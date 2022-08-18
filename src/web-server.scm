@@ -72,6 +72,7 @@
 %use (remove-common-prefix) "./euphrates/remove-common-prefix.scm"
 %use (assoc-or) "./euphrates/assoc-or.scm"
 %use (path-normalize) "./euphrates/path-normalize.scm"
+%use (catchu-case) "./euphrates/catchu-case.scm"
 
 %use (get-root) "./get-root.scm"
 %use (categorization-filename) "./categorization-filename.scm"
@@ -945,12 +946,55 @@
 
   (web-respond text))
 
+(define (share-id id)
+  (define ctx (web-context/p))
+  (define ctxq (web-get-query))
+  (define callctx (web-callcontext/p))
+  (define req (callcontext-request callctx))
+  (define entry
+    (or (tegfs-get/cached id)
+        (static-error-message
+         404 "Entry with that id is not found")))
+  (define target-fullpath
+    (entry-target-fullpath entry))
+  (define for-duration/s
+    (hashmap-ref ctxq 'id #f))
+  (define for-duration
+    (if for-duration/s
+        (catchu-case
+         (string->seconds for-duration/s)
+         (('bad-format-for-string->seconds . args)
+          (static-error-message
+           417
+           (stringf "Bad `for-duration' value ~s" for-duration/s))))
+        default-share-expiery-time))
+
+  (define info
+    (share-file/dont-link-yet
+     target-fullpath for-duration))
+  (define vid
+    (and info (sharedinfo-vid info)))
+  (define domainname
+    (web-request-get-domainname req))
+  (define (print-link url0)
+    (define url (string-append domainname url0))
+    (sxml->xml `(a (@ (href ,url)) ,url)))
+  (define text
+    (with-output-to-string
+      (lambda _
+        (print-link
+         (string-append "/full?vid=" vid)))))
+
+  (web-respond text))
+
 (define (share)
   (define ctxq (web-get-query))
   (define query/encoded (hashmap-ref ctxq 'q #f))
+  (define id (hashmap-ref ctxq 'id #f))
 
   (cond
    (query/encoded (share-query query/encoded))
+   (id (share-id id))
    (else (static-error-message 417 "Bad arguments to share"))))
 
 (define (details)
