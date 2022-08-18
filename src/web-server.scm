@@ -892,7 +892,7 @@
     (web-request-get-domainname req))
   (define (print-link url0)
     (define url (string-append domainname url0))
-    (sxml->xml `(a (@ (href ,url)) ,url)))
+    (print-url url))
   (define (print-newline)
     (display "<br>\n"))
   (define (print-line title url)
@@ -953,6 +953,9 @@
 
   (web-respond text))
 
+(define (print-url url)
+  (sxml->xml `(a (@ (href ,url)) ,url)))
+
 (define (share-id id)
   (define ctx (web-context/p))
   (define ctxq (web-get-query))
@@ -965,32 +968,26 @@
   (define target-fullpath
     (entry-target-fullpath entry))
   (define for-duration/s
-    (hashmap-ref ctxq 'id #f))
+    (hashmap-ref ctxq 'for-duration #f))
   (define for-duration
     (if for-duration/s
         (catchu-case
          (string->seconds for-duration/s)
          (('bad-format-for-string->seconds . args)
-          (static-error-message
-           417
-           (stringf "Bad `for-duration' value ~s" for-duration/s))))
+          ((static-error-message
+            417
+            (stringf "Bad `for-duration' value ~s" for-duration/s)))))
         default-share-expiery-time))
 
+  (define make-symlink? #t)
   (define info
-    (share-file/dont-link-yet
-     target-fullpath for-duration))
-  (define vid
-    (and info (sharedinfo-vid info)))
-  (define domainname
-    (web-request-get-domainname req))
-  (define (print-link url0)
-    (define url (string-append domainname url0))
-    (sxml->xml `(a (@ (href ,url)) ,url)))
+    (share-file/new target-fullpath for-duration make-symlink?))
+  (define location
+    (get-sharedinfo-location info))
   (define text
     (with-output-to-string
       (lambda _
-        (print-link
-         (string-append "/full?vid=" vid)))))
+        (print-url location))))
 
   (web-respond text))
 
