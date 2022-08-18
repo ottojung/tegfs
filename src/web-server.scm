@@ -738,6 +738,16 @@
       (web-sendfile return! 'image/jpeg preview-fullpath)
       (previewunknown)))
 
+(define (get-sharedinfo-location info)
+  (define ctx (web-context/p))
+  (define vid (sharedinfo-vid info))
+  (define sharedname (sharedinfo-sharedname info))
+  (define target-fullpath (sharedinfo-sourcepath info))
+  (define fileserver (context-fileserver ctx))
+  (if (file-is-directory?/no-readlink target-fullpath)
+      (string-append "/directory?vid=" vid)
+      (string-append fileserver sharedname)))
+
 (define (full)
   (define ctx (web-context/p))
   (define filemap/2 (context-filemap/2 ctx))
@@ -758,11 +768,8 @@
     (unless (hashmap-ref (permission-filemap perm) target-fullpath #f)
       ;; file was not shared with this permission
       (not-found)))
-  (define fileserver (context-fileserver ctx))
   (define location
-    (if (file-is-directory?/no-readlink target-fullpath)
-        (string-append "/directory?vid=" vid)
-        (string-append fileserver sharedname)))
+    (get-sharedinfo-location info))
 
   (symlink-shared-file target-fullpath sharedname)
 
