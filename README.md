@@ -52,3 +52,4 @@ So, for example, doing `tegfs query %any` will return
 - [ ] document on how to run this thing
 - [ ] web: implement pagination
 - [*] web: implement directory sharing
+- [ ] web: escape all links
