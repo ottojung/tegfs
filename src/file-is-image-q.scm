@@ -21,4 +21,5 @@
   (or (string-suffix? ".jpg" small)
       (string-suffix? ".jpeg" small)
       (string-suffix? ".png" small)
+      (string-suffix? ".webp" small)
       (string-suffix? ".gif" small)))
