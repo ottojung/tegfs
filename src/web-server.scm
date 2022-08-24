@@ -50,7 +50,6 @@
 %use (stringf) "./euphrates/stringf.scm"
 %use (~a) "./euphrates/tilda-a.scm"
 %use (time-get-current-unixtime) "./euphrates/time-get-current-unixtime.scm"
-%use (with-randomizer-seed) "./euphrates/with-randomizer-seed.scm"
 %use (a-weblink?) "./a-weblink-q.scm"
 %use (tegfs-add) "./add.scm"
 %use (tegfs-process-categorization-text) "./edit-tags.scm"
@@ -1172,13 +1171,11 @@
 
 (define (tegfs-serve/parse)
   (dprintln "Starting the server")
-  (with-randomizer-seed
-   :random
-   (parameterize ((web-context/p (make-context)))
-     (let ((port (context-port (web-context/p))))
+  (parameterize ((web-context/p (make-context)))
+    (let ((port (context-port (web-context/p))))
 
-       (dprintln "Collecting garbage left from the previous run...")
-       (collectgarbage/nocall (time-get-current-unixtime))
-       (dprintln "Done")
+      (dprintln "Collecting garbage left from the previous run...")
+      (collectgarbage/nocall (time-get-current-unixtime))
+      (dprintln "Done")
 
-       (run-server (make-handler) 'http `(#:port ,port))))))
+      (run-server (make-handler) 'http `(#:port ,port)))))
