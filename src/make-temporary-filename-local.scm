@@ -16,10 +16,9 @@
 
 %var make-temporary-filename/local
 
-%use (make-directories) "./euphrates/make-directories.scm"
 %use (append-posix-path) "./euphrates/append-posix-path.scm"
 %use (file-or-directory-exists?) "./euphrates/file-or-directory-exists-q.scm"
-
+%use (make-directories) "./euphrates/make-directories.scm"
 %use (get-random-basename) "./get-random-basename.scm"
 %use (get-root) "./get-root.scm"
 

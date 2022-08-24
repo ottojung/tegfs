@@ -17,7 +17,6 @@
 %var entry-print/formatted
 
 %use (read-list) "./euphrates/read-list.scm"
-
 %use (entry-target-fullpath) "./entry-target-fullpath.scm"
 %use (get-preview-path) "./get-preview-path.scm"
 

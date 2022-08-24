@@ -16,12 +16,9 @@
 
 %var set-config
 
-%use (open-file-port) "./euphrates/open-file-port.scm"
-%use (raisu) "./euphrates/raisu.scm"
-%use (appcomp comp) "./euphrates/comp.scm"
 %use (append-posix-path) "./euphrates/append-posix-path.scm"
 %use (assoc-set-value) "./euphrates/assoc-set-value.scm"
-
+%use (open-file-port) "./euphrates/open-file-port.scm"
 %use (get-config) "./get-config.scm"
 %use (get-root) "./get-root.scm"
 

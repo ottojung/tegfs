@@ -16,13 +16,10 @@
 
 %var get-config
 
-%use (read-list) "./euphrates/read-list.scm"
+%use (append-posix-path) "./euphrates/append-posix-path.scm"
 %use (file-or-directory-exists?) "./euphrates/file-or-directory-exists-q.scm"
 %use (open-file-port) "./euphrates/open-file-port.scm"
-%use (raisu) "./euphrates/raisu.scm"
-%use (appcomp comp) "./euphrates/comp.scm"
-%use (append-posix-path) "./euphrates/append-posix-path.scm"
-
+%use (read-list) "./euphrates/read-list.scm"
 %use (get-root) "./get-root.scm"
 
 (define (get-config)

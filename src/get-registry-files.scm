@@ -16,12 +16,9 @@
 
 %var get-registry-files
 
-%use (remove-common-prefix) "./euphrates/remove-common-prefix.scm"
 %use (string-split/simple) "./euphrates/string-split-simple.scm"
-
-%use (get-root) "./get-root.scm"
-%use (regfile-suffix) "./regfile-suffix.scm"
 %use (get-config) "./get-config.scm"
+%use (get-root) "./get-root.scm"
 
 (define (get-registry-files)
   (define root (get-root))

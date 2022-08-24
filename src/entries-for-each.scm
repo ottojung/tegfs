@@ -17,12 +17,11 @@
 %var entries-for-each
 
 %use (append-posix-path) "./euphrates/append-posix-path.scm"
+%use (fn) "./euphrates/fn.scm"
 %use (open-file-port) "./euphrates/open-file-port.scm"
-%use (read-list) "./euphrates/read-list.scm"
-
-%use (get-root) "./get-root.scm"
-%use (get-registry-files) "./get-registry-files.scm"
 %use (entry-registry-path-key) "./entry-registry-path-key.scm"
+%use (get-registry-files) "./get-registry-files.scm"
+%use (get-root) "./get-root.scm"
 
 (define (entries-for-each fn)
   (for-each

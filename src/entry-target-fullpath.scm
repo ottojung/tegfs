@@ -17,13 +17,12 @@
 %var entry-target-fullpath
 
 %use (append-posix-path) "./euphrates/append-posix-path.scm"
-%use (raisu) "./euphrates/raisu.scm"
 %use (path-normalize) "./euphrates/path-normalize.scm"
-
-%use (get-root) "./get-root.scm"
-%use (entry-registry-path-key) "./entry-registry-path-key.scm"
-%use (entry-parent-directory-key) "./entry-parent-directory-key.scm"
+%use (raisu) "./euphrates/raisu.scm"
 %use (a-weblink?) "./a-weblink-q.scm"
+%use (entry-parent-directory-key) "./entry-parent-directory-key.scm"
+%use (entry-registry-path-key) "./entry-registry-path-key.scm"
+%use (get-root) "./get-root.scm"
 
 (define (entry-target-fullpath entry)
   (define target-p (assoc 'target entry))

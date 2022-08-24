@@ -18,16 +18,15 @@
 %var parse-multipart-as-hashmap
 %var parse-multipart->hashmap-by-name
 
+%use (comp) "./euphrates/comp.scm"
+%use (fn-cons) "./euphrates/fn-cons.scm"
+%use (hashmap-set! make-hashmap) "./euphrates/ihashmap.scm"
 %use (raisu) "./euphrates/raisu.scm"
+%use (string-split-3) "./euphrates/string-split-3.scm"
 %use (string-strip) "./euphrates/string-strip.scm"
 %use (string->lines) "./euphrates/string-to-lines.scm"
-%use (string-split-3) "./euphrates/string-split-3.scm"
-%use (string-split/simple) "./euphrates/string-split-simple.scm"
-%use (fn-cons) "./euphrates/fn-cons.scm"
-%use (un~s) "./euphrates/un-tilda-s.scm"
 %use (~a) "./euphrates/tilda-a.scm"
-%use (comp) "./euphrates/comp.scm"
-%use (make-hashmap hashmap-ref hashmap-set! hashmap->alist) "./euphrates/ihashmap.scm"
+%use (un~s) "./euphrates/un-tilda-s.scm"
 
 %for (COMPILER "guile")
 

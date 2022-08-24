@@ -18,21 +18,11 @@
 
 %use (comp) "./euphrates/comp.scm"
 %use (fn) "./euphrates/fn.scm"
-%use (string->lines) "./euphrates/string-to-lines.scm"
-%use (string-strip) "./euphrates/string-strip.scm"
-%use (string-split/simple) "./euphrates/string-split-simple.scm"
-%use (list-split-on) "./euphrates/list-split-on.scm"
-%use (define-tuple) "./euphrates/define-tuple.scm"
 %use (lines->string) "./euphrates/lines-to-string.scm"
-%use (list-map/flatten) "./euphrates/list-map-flatten.scm"
-%use (curry-if) "./euphrates/curry-if.scm"
-%use (CFG-CLI->CFG-AST) "./euphrates/parse-cfg-cli.scm"
-%use (list-deduplicate) "./euphrates/list-deduplicate.scm"
-%use (raisu) "./euphrates/raisu.scm"
-%use (list-and-map) "./euphrates/list-and-map.scm"
-%use (list-or-map) "./euphrates/list-or-map.scm"
-%use (list-find-first) "./euphrates/list-find-first.scm"
-%use (compose-under) "./euphrates/compose-under.scm"
+%use (list-split-on) "./euphrates/list-split-on.scm"
+%use (string-split/simple) "./euphrates/string-split-simple.scm"
+%use (string-strip) "./euphrates/string-strip.scm"
+%use (string->lines) "./euphrates/string-to-lines.scm"
 
 (define (categorization-split text)
   (define lines (string->lines text))

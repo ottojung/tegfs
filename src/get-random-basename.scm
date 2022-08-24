@@ -16,8 +16,8 @@
 
 %var get-random-basename
 
-%use (random-choice) "./euphrates/random-choice.scm"
 %use (alphanum-lowercase/alphabet) "./euphrates/alphanum-lowercase-alphabet.scm"
+%use (random-choice) "./euphrates/random-choice.scm"
 
 (define (get-random-basename)
   (list->string

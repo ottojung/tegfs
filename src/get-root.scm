@@ -17,15 +17,14 @@
 %var get-root
 %var get-root/default
 
-%use (raisu) "./euphrates/raisu.scm"
 %use (absolute-posix-path?) "./euphrates/absolute-posix-path-q.scm"
 %use (append-posix-path) "./euphrates/append-posix-path.scm"
-%use (get-current-directory) "./euphrates/get-current-directory.scm"
-%use (system-environment-get) "./euphrates/system-environment.scm"
 %use (file-or-directory-exists?) "./euphrates/file-or-directory-exists-q.scm"
+%use (get-current-directory) "./euphrates/get-current-directory.scm"
 %use (make-directories) "./euphrates/make-directories.scm"
 %use (memconst) "./euphrates/memconst.scm"
-
+%use (raisu) "./euphrates/raisu.scm"
+%use (system-environment-get) "./euphrates/system-environment.scm"
 %use (root/p) "./root-p.scm"
 
 (define ROOT_VAR_NAME "TEGFS_ROOT")

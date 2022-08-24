@@ -18,15 +18,13 @@
 %var tegfs-get/parse
 %var tegfs-get/cached
 
-%use (dprintln) "./euphrates/dprintln.scm"
-%use (make-hashmap hashmap-ref hashmap-clear!) "./euphrates/ihashmap.scm"
 %use (absolute-posix-path?) "./euphrates/absolute-posix-path-q.scm"
-
+%use (dprintln) "./euphrates/dprintln.scm"
+%use (hashmap-clear! hashmap-ref make-hashmap) "./euphrates/ihashmap.scm"
 %use (entries-for-each) "./entries-for-each.scm"
 %use (entries->hashmap) "./entries-to-hashmap.scm"
-%use (entry-print) "./entry-print.scm"
 %use (entry-print/formatted) "./entry-print-formatted.scm"
-%use (get-root) "./get-root.scm"
+%use (entry-print) "./entry-print.scm"
 %use (standalone-file->entry) "./standalone-file-to-entry.scm"
 
 (define (tegfs-get/parse <get-format> <showid>)

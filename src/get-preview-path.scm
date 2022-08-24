@@ -17,7 +17,6 @@
 %var get-preview-path
 
 %use (append-posix-path) "./euphrates/append-posix-path.scm"
-
 %use (get-file-type) "./get-file-type.scm"
 %use (get-root) "./get-root.scm"
 

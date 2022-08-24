@@ -16,12 +16,9 @@
 
 %var tegfs-config/parse
 
+%use (fatal) "./fatal.scm"
 %use (get-config) "./get-config.scm"
 %use (set-config) "./set-config.scm"
-%use (fatal) "./fatal.scm"
-
-%use (debugv) "./euphrates/debugv.scm"
-%use (debug) "./euphrates/debug.scm"
 
 (define (tegfs-config/parse get set <name> <value>)
   (define config (get-config))

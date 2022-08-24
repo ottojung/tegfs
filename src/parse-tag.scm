@@ -17,20 +17,17 @@
 %var parse-tag
 %var parse-tag-structure
 
+%use (comp) "./euphrates/comp.scm"
 %use (curry-if) "./euphrates/curry-if.scm"
+%use (list-intersperse) "./euphrates/list-intersperse.scm"
+%use (list-ref-or) "./euphrates/list-ref-or.scm"
 %use (list-span-while) "./euphrates/list-span-while.scm"
 %use (list-split-on) "./euphrates/list-split-on.scm"
-%use (list-ref-or) "./euphrates/list-ref-or.scm"
-%use (comp) "./euphrates/comp.scm"
 %use (raisu) "./euphrates/raisu.scm"
-%use (list-intersperse) "./euphrates/list-intersperse.scm"
 %use (~a) "./euphrates/tilda-a.scm"
-
-%use (tags-this-variable/char) "./tags-this-variable.scm"
 %use (tag-structure-sep1) "./tag-structure-sep1.scm"
 %use (tag-structure-sep2) "./tag-structure-sep2.scm"
-
-%use (debugv) "./euphrates/debugv.scm"
+%use (tags-this-variable/char) "./tags-this-variable.scm"
 
 (define (parse-tag-structure/chars counter)
   (lambda (tag)

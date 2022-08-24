@@ -17,14 +17,12 @@
 %var web-respond
 
 %use (raisu) "./euphrates/raisu.scm"
-
-%use (web-context/p) "./web-context-p.scm"
-%use (web-callcontext/p) "./web-callcontext-p.scm"
-%use (context-ctr context? context-passwords context-database context-tokens context-port context-fileserver context-sharedir context-filemap/2) "./web-context.scm"
-%use (callcontext-ctr callcontext? callcontext-break callcontext-request callcontext-query callcontext-body callcontext-time callcontext-key set-callcontext-key! callcontext-permissions) "./web-callcontext.scm"
-%use (web-set-cookie-header) "./web-set-cookie-header.scm"
 %use (web-basic-headers) "./web-basic-headers.scm"
+%use (web-callcontext/p) "./web-callcontext-p.scm"
+%use (callcontext-break callcontext-key) "./web-callcontext.scm"
+%use (web-context/p) "./web-context-p.scm"
 %use (web-get-permissions) "./web-get-permissions.scm"
+%use (web-set-cookie-header) "./web-set-cookie-header.scm"
 
 %for (COMPILER "guile")
 

@@ -16,11 +16,11 @@
 
 %var get-file-type
 
-%use (file-is-image?) "./file-is-image-q.scm"
-%use (file-is-video?) "./file-is-video-q.scm"
-%use (file-is-text?) "./file-is-text-q.scm"
-%use (file-is-audio?) "./file-is-audio-q.scm"
 %use (a-weblink?) "./a-weblink-q.scm"
+%use (file-is-audio?) "./file-is-audio-q.scm"
+%use (file-is-image?) "./file-is-image-q.scm"
+%use (file-is-text?) "./file-is-text-q.scm"
+%use (file-is-video?) "./file-is-video-q.scm"
 
 (define (get-file-type filepath)
   (cond

@@ -16,14 +16,13 @@
 
 %var web-make-upload-body
 
-%use (memconst) "./euphrates/memconst.scm"
 %use (append-posix-path) "./euphrates/append-posix-path.scm"
+%use (memconst) "./euphrates/memconst.scm"
 %use (printf) "./euphrates/printf.scm"
 %use (read-string-file) "./euphrates/read-string-file.scm"
-
+%use (categorization-filename) "./categorization-filename.scm"
 %use (get-root) "./get-root.scm"
 %use (web-form-template) "./web-form-template.scm"
-%use (categorization-filename) "./categorization-filename.scm"
 
 (define web-make-upload-body
   (memconst

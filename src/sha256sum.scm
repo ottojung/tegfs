@@ -16,12 +16,12 @@
 
 %var sha256sum
 
-%use (system-re) "./euphrates/system-re.scm"
-%use (appcomp comp) "./euphrates/comp.scm"
+%use (appcomp) "./euphrates/comp.scm"
+%use (define-pair) "./euphrates/define-pair.scm"
+%use (raisu) "./euphrates/raisu.scm"
 %use (string->lines) "./euphrates/string-to-lines.scm"
 %use (string->words) "./euphrates/string-to-words.scm"
-%use (raisu) "./euphrates/raisu.scm"
-%use (define-pair) "./euphrates/define-pair.scm"
+%use (system-re) "./euphrates/system-re.scm"
 
 (define (sha256sum text)
   (define-pair (output exit-code)

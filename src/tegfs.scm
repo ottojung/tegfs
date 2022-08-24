@@ -14,31 +14,21 @@
 
 %run guile
 
-%use (with-cli define-cli:show-help) "./euphrates/define-cli.scm"
-%use (read-all-port) "./euphrates/read-all-port.scm"
-%use (dprintln) "./euphrates/dprintln.scm"
 %use (current-program-path/p) "./euphrates/current-program-path-p.scm"
-%use (write-string-file) "./euphrates/write-string-file.scm"
-%use (append-string-file) "./euphrates/append-string-file.scm"
-%use (list-zip) "./euphrates/list-zip.scm"
-%use (system-re) "./euphrates/system-re.scm"
-%use (string-strip) "./euphrates/string-strip.scm"
-%use (list-intersperse) "./euphrates/list-intersperse.scm"
-
+%use (define-cli:show-help with-cli) "./euphrates/define-cli.scm"
 %use (tegfs-add/parse) "./add.scm"
-%use (tegfs-save/parse) "./save.scm"
 %use (tegfs-categorize/parse) "./categorize.scm"
-%use (tegfs-serve/parse) "./web-server.scm"
-%use (tegfs-prolog/parse) "./prolog.scm"
-%use (tegfs-query/parse) "./query.scm"
-%use (tegfs-list/parse) "./list.scm"
-%use (tegfs-get/parse) "./get.scm"
-%use (tegfs-make-thumbnails/parse) "./make-thumbnails.scm"
 %use (tegfs-config/parse) "./config.scm"
 %use (tegfs-dump-clipboard/parse) "./dump-clipboard.scm"
-%use (fatal) "./fatal.scm"
-%use (root/p) "./root-p.scm"
 %use (get-root/default) "./get-root.scm"
+%use (tegfs-get/parse) "./get.scm"
+%use (tegfs-list/parse) "./list.scm"
+%use (tegfs-make-thumbnails/parse) "./make-thumbnails.scm"
+%use (tegfs-prolog/parse) "./prolog.scm"
+%use (tegfs-query/parse) "./query.scm"
+%use (root/p) "./root-p.scm"
+%use (tegfs-save/parse) "./save.scm"
+%use (tegfs-serve/parse) "./web-server.scm"
 
 (define (main)
   (parameterize ((current-program-path/p "tegfs"))

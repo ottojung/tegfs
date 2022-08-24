@@ -17,7 +17,7 @@
 %var web-get-permissions
 
 %use (web-callcontext/p) "./web-callcontext-p.scm"
-%use (callcontext-ctr callcontext? callcontext-break callcontext-request callcontext-query callcontext-body callcontext-time callcontext-key set-callcontext-key! callcontext-permissions) "./web-callcontext.scm"
+%use (callcontext-permissions) "./web-callcontext.scm"
 
 (define (web-get-permissions)
   (define callctx (web-callcontext/p))

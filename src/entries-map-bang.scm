@@ -17,14 +17,12 @@
 %var entries-map!
 
 %use (append-posix-path) "./euphrates/append-posix-path.scm"
-%use (open-file-port) "./euphrates/open-file-port.scm"
-%use (read-list) "./euphrates/read-list.scm"
 %use (file-delete) "./euphrates/file-delete.scm"
-
-%use (get-root) "./get-root.scm"
-%use (get-registry-files) "./get-registry-files.scm"
-%use (entry-registry-path-key) "./entry-registry-path-key.scm"
+%use (fn) "./euphrates/fn.scm"
+%use (open-file-port) "./euphrates/open-file-port.scm"
 %use (entry-print) "./entry-print.scm"
+%use (get-registry-files) "./get-registry-files.scm"
+%use (get-root) "./get-root.scm"
 %use (make-temporary-filename/local) "./make-temporary-filename-local.scm"
 
 (define (entries-map! fn)
