@@ -17,6 +17,7 @@
 %var standalone-file->entry
 %var standalone-file->entry/prefixed
 
+%use (absolute-posix-path?) "./euphrates/absolute-posix-path-q.scm"
 %use (append-posix-path) "./euphrates/append-posix-path.scm"
 %use (path-get-basename) "./euphrates/path-get-basename.scm"
 %use (path-normalize) "./euphrates/path-normalize.scm"
@@ -24,17 +25,20 @@
 %use (entry-parent-directory-vid-key) "./entry-parent-directory-vid-key.scm"
 
 (define (standalone-file->entry filepath)
-  (define dir (dirname filepath))
-  (define name (path-get-basename filepath))
-  `((id . ,filepath)
+  (define norm (path-normalize filepath))
+  (define dir (dirname norm))
+  (define name (string-append "/" (path-get-basename norm)))
+  `((id . ,norm)
     (target . ,name)
     (,entry-parent-directory-key . ,dir)
     ))
 
 (define (standalone-file->entry/prefixed prefix vid filepath)
   (define dir prefix)
-  (define name filepath)
-  (define full (path-normalize (append-posix-path dir name)))
+  (define norm (path-normalize filepath))
+  (define name (if (absolute-posix-path? norm) norm
+                   (string-append "/" norm)))
+  (define full (path-normalize (append-posix-path dir norm)))
   `((id . ,full)
     (target . ,name)
     (,entry-parent-directory-key . ,dir)

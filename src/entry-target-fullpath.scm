@@ -16,8 +16,10 @@
 
 %var entry-target-fullpath
 
+%use (absolute-posix-path?) "./euphrates/absolute-posix-path-q.scm"
 %use (append-posix-path) "./euphrates/append-posix-path.scm"
 %use (path-normalize) "./euphrates/path-normalize.scm"
+%use (string-drop-n) "./euphrates/string-drop-n.scm"
 %use (raisu) "./euphrates/raisu.scm"
 %use (a-weblink?) "./a-weblink-q.scm"
 %use (entry-parent-directory-key) "./entry-parent-directory-key.scm"
@@ -27,7 +29,8 @@
 (define (entry-target-fullpath entry)
   (define target-p (assoc 'target entry))
   (and target-p
-       (let ((target (cdr target-p)))
+       (let* ((target/0 (path-normalize (cdr target-p)))
+              (target (if (absolute-posix-path? target/0) (string-drop-n 1 target/0) target/0)))
          (if (a-weblink? target) target
              (path-normalize
               (let* ((parent-directory-p (assoc entry-parent-directory-key entry))
