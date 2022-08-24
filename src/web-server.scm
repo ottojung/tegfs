@@ -490,10 +490,12 @@
            (filemap/2 (context-filemap/2 ctx))
            (info (or (filemap-ref-by-vid filemap/2 parent-vid #f)
                      (raisu 'entry-has-bad-parent-vid entry)))
-           (suffix (or (assoc-or 'target entry #f)
-                       (raisu 'entry-does-not-have-target entry))))
+           (suffix/raw
+            (or (assoc-or 'target entry #f)
+                (raisu 'entry-does-not-have-target entry)))
+           (suffix (uri-encode suffix/raw)))
       (if (file-is-directory?/no-readlink target-fullpath)
-          (stringf "/directory?vid=~a&s=~a" parent-vid (uri-encode suffix))
+          (stringf "/directory?vid=~a&s=~a" parent-vid suffix)
           (let* ((fileserver (context-fileserver ctx))
                  (sharedname (sharedinfo-sharedname info)))
             (append-posix-path fileserver sharedname suffix)))))
@@ -518,7 +520,7 @@
 
   (when details-link?
     (display "<a href='/details?id=")
-    (display (cdr (assoc 'id entry)))
+    (display (uri-encode (cdr (assoc 'id entry))))
     (display "' style='color: white'>"))
 
   (cond
