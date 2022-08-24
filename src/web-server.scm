@@ -470,10 +470,10 @@
                          (shared-fullpath (append-posix-path sharedir sharedname))
                          (location (string-append fileserver sharedname)))
                     (if (file-or-directory-exists? shared-fullpath)
-                        (write-link location)
-                        (write-link default-preview))
+                        (write location)
+                        (write default-preview))
                     #t))))
-    (write-link default-preview))
+    (write default-preview))
   (display "/>"))
 
 (define (local-file-entry? entry)
@@ -509,7 +509,7 @@
     (let* ((target-id (cdr (assoc 'id entry)))
            (full-link (get-full-link entry target-fullpath)))
       (when full-link
-        (display "<a href=") (write-link full-link) (display ">")
+        (display "<a href=") (write full-link) (display ">")
         (display-preview target-id target-fullpath)
         (display "</a>")))))
 
@@ -517,8 +517,9 @@
   (define details-link? (has-access-for-entry-details? perm entry))
 
   (when details-link?
-    (display "<a href=") (write-link (string-append "/details?id=" (cdr (assoc 'id entry))))
-    (display " style='color: white'>"))
+    (display "<a href='/details?id=")
+    (display (cdr (assoc 'id entry)))
+    (display "' style='color: white'>"))
 
   (cond
    ((and (assoc 'title entry)
@@ -925,8 +926,6 @@
 
 (define (print-url url)
   (sxml->xml `(a (@ (href ,url)) ,url)))
-(define (write-link url)
-  (write (uri-encode url)))
 
 (define (share-id id)
   (define ctx (web-context/p))
