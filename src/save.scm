@@ -409,7 +409,7 @@
 (define (get-confirm edit?)
   (if edit? #f
       (begin
-        (dprintln "Press enter if parameters are OK")
+        (read-answer "Press enter if parameters are OK")
         'done)))
 
 (define (index-to-key state i0)
