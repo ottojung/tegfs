@@ -29,17 +29,18 @@
 (define (entry-target-fullpath entry)
   (define target-p (assoc 'target entry))
   (and target-p
-       (let* ((target/0 (path-normalize (cdr target-p)))
-              (target (if (absolute-posix-path? target/0) (string-drop-n 1 target/0) target/0)))
-         (if (a-weblink? target) target
-             (path-normalize
-              (let* ((parent-directory-p (assoc entry-parent-directory-key entry))
-                     (parent-directory (and parent-directory-p (cdr parent-directory-p)))
-                     (registry-p (assoc entry-registry-path-key entry))
-                     (registry-dir (and registry-p (dirname (cdr registry-p))))
-                     (directory (or parent-directory registry-dir)))
-                (unless directory
-                  (raisu 'entry-does-no-have-parent-directory-info
-                         entry-parent-directory-key
-                         entry-registry-path-key))
-                (append-posix-path (get-root) directory target)))))))
+       (let ((target/1 (cdr target-p)))
+         (if (a-weblink? target/1) target/1
+             (let* ((target/0 (path-normalize target/1))
+                    (target (if (absolute-posix-path? target/0) (string-drop-n 1 target/0) target/0)))
+               (path-normalize
+                (let* ((parent-directory-p (assoc entry-parent-directory-key entry))
+                       (parent-directory (and parent-directory-p (cdr parent-directory-p)))
+                       (registry-p (assoc entry-registry-path-key entry))
+                       (registry-dir (and registry-p (dirname (cdr registry-p))))
+                       (directory (or parent-directory registry-dir)))
+                  (unless directory
+                    (raisu 'entry-does-no-have-parent-directory-info
+                           entry-parent-directory-key
+                           entry-registry-path-key))
+                  (append-posix-path (get-root) directory target))))))))
