@@ -598,6 +598,8 @@
   (define working-text
     (or savetext
         (tegfs-dump-clipboard)))
+  (define <remote-id>
+    (get-random-basename))
 
   (define real-type (classify-clipboard-text-content working-text))
 
@@ -617,21 +619,21 @@
   (define temp-file-content (string-append (~s real-type) ":" remote-name))
   (write-string-file temp-file temp-file-content)
 
-  (unless (= 0 (system-fmt "exec scp ~a ~a:tegfs-remote-name" temp-file <remote>))
+  (unless (= 0 (system-fmt "exec scp ~a ~a:tegfs-remote-hub/~a" temp-file <remote> <remote-id>))
     (file-delete temp-file)
     (fatal "Something went wrong on the other side"))
   (file-delete temp-file)
 
-  (unless (= 0 (system-fmt "exec ssh -t ~a \"exec /bin/sh -l -c \\\"exec tegfs save --from-remote\\\"\"" <remote>))
+  (unless (= 0 (system-fmt "exec ssh -t ~a \"exec /bin/sh -l -c \\\"exec tegfs save --from-remote ~a\\\"\"" <remote> <remote-id>))
     (fatal "Something went wrong on the other side"))
 
   (dprintln "Saved!"))
 
-(define (tegfs-save/parse/from-remote)
+(define (tegfs-save/parse/from-remote <remote-id>)
   (define HOME (system-environment-get "HOME"))
+  (define temp-file (append-posix-path HOME "tegfs-remote-hub" <remote-id>))
   (define temp-file-content
-    (read-string-file
-     (append-posix-path HOME "tegfs-remote-name")))
+    (read-string-file temp-file))
   (define-values (real-type/string col remote-name)
     (string-split-3 #\: temp-file-content))
   (define _12737123
@@ -646,13 +648,13 @@
       (else (raisu 'unhandled-real-type-in-server real-type))))
   (dprintln "Remote file content: ~s" <savetext>)
   (tegfs-save/parse/no-remote #f <savetext>)
-  (file-delete "tegfs-remote-name"))
+  (file-delete temp-file))
 
-(define (tegfs-save/parse <remote> --from-remote --link <savetext>)
+(define (tegfs-save/parse <remote> --from-remote <remote-id> --link <savetext>)
   (cond
    (<remote>
     (tegfs-save/parse/remote <remote> <savetext>))
    (--from-remote
-    (tegfs-save/parse/from-remote))
+    (tegfs-save/parse/from-remote <remote-id>))
    (else
     (tegfs-save/parse/no-remote --link <savetext>))))
