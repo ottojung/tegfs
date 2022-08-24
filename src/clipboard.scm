@@ -97,8 +97,7 @@
   text)
 
 (define (string-data-type? s)
-  (or (member s '("STRING" "UTF8_STRING" "TEXT" "COMPOUND_TEXT"))
-      (string-prefix? "text/" s)))
+  (member s '("STRING" "UTF8_STRING" "TEXT" "COMPOUND_TEXT")))
 
 (define (get-mime-extension mimetype)
   (let ((ext (assoc mimetype mimetype/extensions)))
