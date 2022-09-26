@@ -922,7 +922,7 @@
   (define admin? #f)
   (define detailsaccess? #f) ;; TODO: maybe allow sometimes
   (define share-longer-than-view? #f) ;; TODO: maybe allow sometimes
-  (define perm (make-permission! default-share-expiery-time admin? detailsaccess? share-longer-than-view?))
+  (define perm (make-permission! (get-share-duration) admin? detailsaccess? share-longer-than-view?))
   (define idset (permission-idset perm))
   (define token (permission-token perm))
   (define location
