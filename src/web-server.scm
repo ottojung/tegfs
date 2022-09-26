@@ -897,6 +897,20 @@
         (print-link
          (stringf "/query?q=ll&key=~a" (generate-token)))))))
 
+(define (get-share-duration)
+  (define ctxq (web-get-query))
+  (define for-duration/s
+    (hashmap-ref ctxq 'for-duration #f))
+
+  (if for-duration/s
+      (catchu-case
+       (string->seconds for-duration/s)
+       (('bad-format-for-string->seconds . args)
+        ((static-error-message
+          417
+          (stringf "Bad `for-duration' value ~s" for-duration/s)))))
+      default-share-expiery-time))
+
 (define (share-query query/encoded)
   (define ctx (web-context/p))
   (define callctx (web-callcontext/p))
@@ -931,7 +945,6 @@
 
 (define (share-id id)
   (define ctx (web-context/p))
-  (define ctxq (web-get-query))
   (define callctx (web-callcontext/p))
   (define req (callcontext-request callctx))
   (define entry
@@ -940,17 +953,8 @@
          404 "Entry with that id is not found")))
   (define target-fullpath
     (entry-target-fullpath entry))
-  (define for-duration/s
-    (hashmap-ref ctxq 'for-duration #f))
   (define for-duration
-    (if for-duration/s
-        (catchu-case
-         (string->seconds for-duration/s)
-         (('bad-format-for-string->seconds . args)
-          ((static-error-message
-            417
-            (stringf "Bad `for-duration' value ~s" for-duration/s)))))
-        default-share-expiery-time))
+    (get-share-duration))
 
   (define make-symlink? #t)
   (define info
