@@ -138,7 +138,7 @@
            " -limit memory 32mb "
            " ~a[0] "
            " -thumbnail ~a@ "
-           " -quality 10 "
+           " -quality 30 "
            " -gravity center "
            " -background transparent "
            " -extent ~ax~a "
