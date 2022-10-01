@@ -17,7 +17,7 @@ fi
 
 while true
 do
-	if ! curl --fail --no-progress-meter "http://localhost:$PORT/collectgarbage"
+	if ! wget --no-verbose "http://localhost:$PORT/collectgarbage"
 	then rm -rvf "$SHAREDIR"
 	fi
 	sleep 1800
