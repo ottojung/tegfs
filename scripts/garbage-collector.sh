@@ -17,7 +17,7 @@ fi
 
 while true
 do
-	if ! wget --no-verbose "http://localhost:$PORT/collectgarbage"
+	if ! wget --no-verbose "http://localhost:$PORT/collectgarbage" -O /dev/stdout
 	then rm -rvf "$SHAREDIR"
 	fi
 	sleep 1800
