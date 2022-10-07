@@ -26,6 +26,7 @@
 %use (read-string-line) "./euphrates/read-string-line.scm"
 %use (system-fmt) "./euphrates/system-fmt.scm"
 %use (~a) "./euphrates/tilda-a.scm"
+%use (words->string) "./euphrates/words-to-string.scm"
 %use (write-string-file) "./euphrates/write-string-file.scm"
 %use (categorization-filename) "./categorization-filename.scm"
 %use (categorization-split) "./categorization-split.scm"
@@ -38,7 +39,7 @@
 
 (define (tegfs-categorize/parse)
   (define result (tegfs-categorize #f))
-  (dprintln "Categorized! Chosen tags: ~s" (cdr result)))
+  (dprintln "Categorized! The list of chosen tags is:\n~a" (words->string (map ~a (cdr result)))))
 
 (define (tegfs-categorize working-file-maybe)
   (define categorization-file (append-posix-path (get-root) categorization-filename))
