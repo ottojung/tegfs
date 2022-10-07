@@ -1045,15 +1045,16 @@
                       (equal? 'public (caddr l))))
      handlers-config))))
 
-(define (log-request path request)
-  (display "Got request: ") (display path)
+(define (log-request request)
+  (define uri (request-uri request))
+  (display "Got request: ") (display (uri-path uri))
+  (let ((q (uri-query uri)))
+    (when q (display "?") (display q)))
   (display "\n")
   )
 
 (define (handler request body)
   (define path (uri-path (request-uri request)))
-
-  (log-request path request)
 
   (let* ((target path)
          (func (hashmap-ref handlers-funcmap target #f))
@@ -1168,6 +1169,7 @@
 
 (define (make-handler)
   (lambda (request body)
+    (log-request request)
     (call-with-current-continuation
      (lambda (k)
        (parameterize ((web-callcontext/p (make-callcontext k request body)))
