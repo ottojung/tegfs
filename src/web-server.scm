@@ -529,7 +529,9 @@
     (display (cdr (assoc 'title entry))))
    ((and (assoc 'target entry)
          (not (string-null? (cdr (assoc 'target entry)))))
-    (display (path-get-basename (cdr (assoc 'target entry)))))
+    (let* ((orig (cdr (assoc 'target entry)))
+           (relative (if (a-weblink? orig) orig (path-get-basename orig))))
+      (display relative)))
    (else
     (display (cdr (assoc 'id entry)))))
 
