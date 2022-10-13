@@ -610,7 +610,7 @@
        (unless (file-or-directory-exists? working-text)
          (raisu 'file-must-have-been-created working-text))
        (let ((normalized (path-normalize working-text)))
-         (unless (= 0 (system-fmt "rsync --info=progress2 --mkpath --partial --recursive ~a ~a:tegfs-remote-hub/" normalized <remote>))
+         (unless (= 0 (system-fmt "rsync --info=progress2 --mkpath --partial --recursive --chmod=u=rwX,g=rX,o= ~a ~a:tegfs-remote-hub/" normalized <remote>))
            (fatal "Syncing to remote failed"))
          (append-posix-path "tegfs-remote-hub" (path-get-basename normalized))))
       ((link) working-text)
