@@ -29,6 +29,7 @@
 %use (make-directories) "./euphrates/make-directories.scm"
 %use (path-extensions) "./euphrates/path-extensions.scm"
 %use (path-get-basename) "./euphrates/path-get-basename.scm"
+%use (path-normalize) "./euphrates/path-normalize.scm"
 %use (path-without-extension) "./euphrates/path-without-extension.scm"
 %use (print-in-frame) "./euphrates/print-in-frame.scm"
 %use (raisu) "./euphrates/raisu.scm"
@@ -608,9 +609,10 @@
       ((localfile)
        (unless (file-or-directory-exists? working-text)
          (raisu 'file-must-have-been-created working-text))
-       (unless (= 0 (system-fmt "rsync --info=progress2 --mkpath --partial ~a ~a:tegfs-remote-hub/" working-text <remote>))
-         (fatal "Syncing to remote failed"))
-       (append-posix-path "tegfs-remote-hub" (path-get-basename working-text)))
+       (let ((normalized (path-normalize working-text)))
+         (unless (= 0 (system-fmt "rsync --info=progress2 --mkpath --partial --recursive ~a ~a:tegfs-remote-hub/" normalized <remote>))
+           (fatal "Syncing to remote failed"))
+         (append-posix-path "tegfs-remote-hub" (path-get-basename normalized))))
       ((link) working-text)
       ((data pasta) (raisu 'impossible-real-type real-type working-text))
       (else (raisu 'unhandled-real-type real-type working-text))))
