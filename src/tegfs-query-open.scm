@@ -45,6 +45,8 @@
      ((integer? opener) opener)
      ((null? opener) 1)
      ((eq? #f opener) 1)
+     ((and (pair? opener) (list-singleton? opener) (integer? (car opener)))
+      (car opener))
      (else (raisu 'bad-opener entry opener))))
 
   (when (file-is-directory?/no-readlink target-fullpath)
