@@ -16,4 +16,4 @@
 
 %var keyword-dirpreview
 
-(define keyword-dirpreview 'diropen)
+(define keyword-dirpreview 'dirpreview)
