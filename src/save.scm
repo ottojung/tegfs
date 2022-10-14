@@ -23,6 +23,7 @@
 %use (dprintln) "./euphrates/dprintln.scm"
 %use (eval-in-current-namespace) "./euphrates/eval-in-current-namespace.scm"
 %use (file-delete) "./euphrates/file-delete.scm"
+%use (file-is-directory?/no-readlink) "./euphrates/file-is-directory-q-no-readlink.scm"
 %use (file-or-directory-exists?) "./euphrates/file-or-directory-exists-q.scm"
 %use (lines->string) "./euphrates/lines-to-string.scm"
 %use (list-take-n) "./euphrates/list-take-n.scm"
@@ -238,6 +239,44 @@
             state))
       (assoc-set-preference 'download? 'no state)))
 
+(define (get-diropen-flag edit?)
+  (let loop ()
+    (case (string->symbol (read-answer "Diropen? (yes/no)"))
+      ((yes Yes YES) 'yes)
+      ((no No NO) 'no)
+      (else
+       (dprintln "Please answer \"yes\" or \"no\"")
+       (loop)))))
+
+(define (set-diropen-preference state)
+  (define text-content (cadr (assoc '-text-content state)))
+  (cond
+   ((a-weblink? text-content)
+    (assoc-set-preference 'diropen? 'no state))
+   ((file-is-directory?/no-readlink text-content)
+    (assoc-set-preference 'diropen? 'yes state))
+   (else
+    (assoc-set-preference 'diropen? 'no state))))
+
+(define (set-dirpreview-preference state)
+  (define text-content (cadr (assoc '-text-content state)))
+  (cond
+   ((a-weblink? text-content)
+    (assoc-set-preference 'dirpreview? 'no state))
+   ((file-is-directory?/no-readlink text-content)
+    (assoc-set-preference 'dirpreview? 'yes state))
+   (else
+    (assoc-set-preference 'dirpreview? 'no state))))
+
+(define (get-dirpreview-flag edit?)
+  (let loop ()
+    (case (string->symbol (read-answer "Dirpreview? (yes/no)"))
+      ((yes Yes YES) 'yes)
+      ((no No NO) 'no)
+      (else
+       (dprintln "Please answer \"yes\" or \"no\"")
+       (loop)))))
+
 (define working-file/p (make-parameter #f))
 
 (define (get-tags edit?)
@@ -433,6 +472,8 @@
     (registry-file . ,get-registry-file)
     (real-type . ,get-real-type)
     (download? . ,get-download-flag)
+    (diropen? . ,get-diropen-flag)
+    (dirpreview? . ,get-dirpreview-flag)
     (link? . ,get-link-flag)
     (series . ,get-series)
     (data-type . ,get-data-type)
@@ -511,6 +552,8 @@
    (assoc-set-preference 'series 'no)
    (assoc-set-preference 'confirm 'no)
    set-download-preference
+   set-diropen-preference
+   set-dirpreview-preference
    set-real-type-preference
    download-maybe
    handle-localfile-maybe
