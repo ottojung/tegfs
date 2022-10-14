@@ -19,6 +19,7 @@
 %use (assoc-or) "./euphrates/assoc-or.scm"
 %use (directory-files-depth-foreach) "./euphrates/directory-files-depth-foreach.scm"
 %use (file-is-directory?/no-readlink) "./euphrates/file-is-directory-q-no-readlink.scm"
+%use (list-singleton?) "./euphrates/list-singleton-q.scm"
 %use (raisu) "./euphrates/raisu.scm"
 %use (entry-target-fullpath) "./entry-target-fullpath.scm"
 %use (standalone-file->entry) "./standalone-file-to-entry.scm"
