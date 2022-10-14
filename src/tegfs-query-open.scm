@@ -19,7 +19,6 @@
 %use (assoc-or) "./euphrates/assoc-or.scm"
 %use (directory-files-depth-foreach) "./euphrates/directory-files-depth-foreach.scm"
 %use (file-is-directory?/no-readlink) "./euphrates/file-is-directory-q-no-readlink.scm"
-%use (list-or-map) "./euphrates/list-or-map.scm"
 %use (raisu) "./euphrates/raisu.scm"
 %use (entry-target-fullpath) "./entry-target-fullpath.scm"
 %use (standalone-file->entry) "./standalone-file-to-entry.scm"
@@ -54,6 +53,7 @@
      (lambda (p)
        (define path (car p))
        (define subentry
-         (standalone-file->entry path (assoc-or 'tags entry #f)))
+         (cons (cons 'tags (assoc-or 'tags entry '()))
+               (standalone-file->entry path)))
        (for-each-fn subentry))
      target-fullpath)))

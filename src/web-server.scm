@@ -642,7 +642,7 @@
       (map cadr (directory-files dir-fullpath include-directories?))))
   (define entries
     (map (comp (append-posix-path suffix)
-               (standalone-file->entry/prefixed shared-relativepath vid #f))
+               (standalone-file->entry/prefixed shared-relativepath vid))
          file-names))
 
   (web-respond
