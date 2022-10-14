@@ -1128,7 +1128,6 @@
   (define key-values
     (map (lambda (sp)
            (define-values (key eq val) (string-split-3 #\= sp))
-           (when (string-null? eq) (raisu 'bad-query query sp))
            (cons (string->symbol key) (web-try-uri-decode val)))
          split))
   (alist->hashmap key-values))
