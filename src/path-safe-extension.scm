@@ -17,6 +17,8 @@
 %var path-safe-extension
 
 %use (alphanum/alphabet/index) "./euphrates/alphanum-alphabet.scm"
+%use (comp) "./euphrates/comp.scm"
+%use (compose-under) "./euphrates/compose-under.scm"
 %use (list-and-map) "./euphrates/list-and-map.scm"
 %use (path-extension) "./euphrates/path-extension.scm"
 
@@ -25,7 +27,7 @@
   (define ext (path-extension path))
 
   (if (and (>= max-size (string-length ext))
-           (list-and-map alphanum/alphabet/index
+           (list-and-map (compose-under or (comp (equal? #\.)) alphanum/alphabet/index)
                          (string->list ext)))
       ext
       ""))
