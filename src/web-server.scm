@@ -63,7 +63,7 @@
 %use (tegfs-make-thumbnails) "./make-thumbnails.scm"
 %use (sha256sum) "./sha256sum.scm"
 %use (standalone-file->entry/prefixed) "./standalone-file-to-entry.scm"
-%use (tegfs-query) "./tegfs-query.scm"
+%use (tegfs-query/diropen) "./tegfs-query-diropen.scm"
 %use (web-basic-headers) "./web-basic-headers.scm"
 %use (web-callcontext/p) "./web-callcontext-p.scm"
 %use (callcontext-body callcontext-break callcontext-ctr callcontext-request callcontext-time set-callcontext-key!) "./web-callcontext.scm"
@@ -603,7 +603,7 @@
   (web-respond
    (lambda _
      (display-entries
-      (lambda (fn) (tegfs-query query/split fn))))))
+      (lambda (fn) (tegfs-query/diropen query/split fn))))))
 
 (define (directory)
   (define ctx (web-context/p))
@@ -934,7 +934,7 @@
   (define text
     (get-share-query-text location hidden-query-location token))
 
-  (tegfs-query
+  (tegfs-query/diropen
    query/split
    (lambda (entry)
      (define id (cdr (assoc 'id entry)))
