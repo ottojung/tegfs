@@ -15,7 +15,6 @@
 %run guile
 
 %var tegfs-query
-%var tegfs-query/parse
 
 %use (appcomp) "./euphrates/comp.scm"
 %use (define-pair) "./euphrates/define-pair.scm"
@@ -29,39 +28,12 @@
 %use (string->lines) "./euphrates/string-to-lines.scm"
 %use (system-re) "./euphrates/system-re.scm"
 %use (entries-for-each) "./entries-for-each.scm"
-%use (entry-print/formatted) "./entry-print-formatted.scm"
-%use (entry-print) "./entry-print.scm"
 %use (id-name) "./id-name.scm"
 %use (make-temporary-filename/local) "./make-temporary-filename-local.scm"
 %use (make-prolog-var) "./prolog-var.scm"
 %use (tegfs-dump-prolog) "./prolog.scm"
 %use (query-parse) "./query-parse.scm"
 %use (tag->prolog-term) "./tag-to-prolog-term.scm"
-
-(define (tegfs-query/parse --entries <query-format> <query...>)
-  (define counter 0)
-
-  (cond
-   (--entries
-    (tegfs-query
-     <query...>
-     (lambda (entry)
-       (set! counter (+ 1 counter))
-       (entry-print entry)
-       (display "\n\n"))))
-   (<query-format>
-    (tegfs-query
-     <query...>
-     (lambda (entry)
-       (set! counter (+ 1 counter))
-       (entry-print/formatted <query-format> entry)
-       (display "\n")))))
-
-  (parameterize ((current-output-port (current-error-port)))
-    (if (equal? 0 counter)
-        (display "No matches.")
-        (printf "Total of ~a matches." counter))
-    (newline)))
 
 (define (tegfs-query <query...> for-each-fn)
   (define output-path (string-append (make-temporary-filename/local) ".pl"))

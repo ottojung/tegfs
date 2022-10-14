@@ -16,17 +16,17 @@
 
 %use (current-program-path/p) "./euphrates/current-program-path-p.scm"
 %use (define-cli:show-help with-cli) "./euphrates/define-cli.scm"
+%use (stringf) "./euphrates/stringf.scm"
 %use (with-randomizer-seed) "./euphrates/with-randomizer-seed.scm"
+%use (CLI-query) "./CLI-query.scm"
 %use (tegfs-add/parse) "./add.scm"
 %use (tegfs-categorize/parse) "./categorize.scm"
 %use (tegfs-config/parse) "./config.scm"
 %use (tegfs-dump-clipboard/parse) "./dump-clipboard.scm"
 %use (get-root/default) "./get-root.scm"
 %use (tegfs-get/parse) "./get.scm"
-%use (tegfs-list/parse) "./list.scm"
 %use (tegfs-make-thumbnails/parse) "./make-thumbnails.scm"
 %use (tegfs-prolog/parse) "./prolog.scm"
-%use (tegfs-query/parse) "./query.scm"
 %use (root/p) "./root-p.scm"
 %use (tegfs-save/parse) "./save.scm"
 %use (tegfs-serve/parse) "./web-server.scm"
@@ -44,13 +44,13 @@
        /      categorize
        /      prolog
        /      query QUERYARGS
-       /      list LISTARGS
        /      get GETARGS
        /      status
        /      serve
        /      make-thumbnails THUMBOPT
        /      config CONFIGOPT
        /      dump-clipboard
+
        ADDOPT : --target <add-target>
        /        --title <title>
        /        --tag <tag...>
@@ -64,13 +64,14 @@
        /          REMOTEOPT? SAVETARGET?
        REMOTEOPT : --remote <remote>
        SAVETARGET : --target <savetext>
-       QUERYARGS : QUERYOPT? QUERYQ+
-       QUERYOPT : --format <query-format> / --entries
+       QUERYARGS : QUERYOPT* QUERYQ+
+       QUERYOPT : --format <query-format>
+       /          --entries
+       /          --diropen
+       /          --no-diropen
+       /          --dirpreview
+       /          --no-dirpreview
        QUERYQ : <query...>
-       LISTARGS : LISTDIRSQ? LISTOPT?
-       /          LISTOPT? LISTDIRSQ?
-       LISTDIRSQ : --depth <listdepth>
-       LISTOPT : --format <list-format> / --entries
        GETARGS : GETOPT? <getid>
        GETOPT : --format <get-format> / --entry
        THUMBOPT : <target> <output>
@@ -80,14 +81,23 @@
        )
 
       :default (<root> (get-root/default))
+
       :default (--no-series #f)
       :exclusive (--no-series --series)
+
       :default (--entries #t)
       :exclusive (--entries --format)
       :default (--entry #t)
       :exclusive (--entry --format)
-      :type (<listdepth> 'number)
-      :help (<remote> "A remote address like 'user1@example.com'")
+
+      :default (--diropen #t)
+      :exclusive (--diropen --no-diropen)
+
+      :default (--no-dirpreview #t)
+      :exclusive (--no-dirpreview --dirpreview)
+
+      :help (<remote> "A remote address like 'user1@example.com'.")
+      :help (--diropen (stringf "Tolerate <~a> property by treating elements of the ~a directory as entries having the same tags as the original entry." diropen-key 'target))
 
       (when --help
         (define-cli:show-help))
@@ -101,8 +111,7 @@
          (categorize (tegfs-categorize/parse))
          (serve (tegfs-serve/parse))
          (prolog (tegfs-prolog/parse))
-         (query (tegfs-query/parse --entries <query-format> <query...>))
-         (list (tegfs-list/parse <listdepth> --entries <list-format>))
+         (query (CLI-query --diropen --dirpreview --entries <query-format> <query...>))
          ((and get <getid>) (tegfs-get/parse <get-format> <getid>))
          (make-thumbnails (tegfs-make-thumbnails/parse <target> <output>))
          (config (tegfs-config/parse get set <name> <value>))

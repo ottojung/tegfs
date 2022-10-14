@@ -38,7 +38,7 @@
 
 (define (tegfs-get <showid>)
   (if (absolute-posix-path? <showid>)
-      (standalone-file->entry <showid>)
+      (standalone-file->entry <showid> #f)
       (call-with-current-continuation
        (lambda (k)
          (entries-for-each
@@ -55,7 +55,7 @@
   (let ((H (make-hashmap)))
     (lambda (<showid>)
       (if (absolute-posix-path? <showid>)
-          (standalone-file->entry <showid>)
+          (standalone-file->entry <showid> #f)
           (or (hashmap-ref H <showid> #f)
               (begin
                 (hashmap-clear! H)

@@ -24,23 +24,31 @@
 %use (entry-parent-directory-key) "./entry-parent-directory-key.scm"
 %use (entry-parent-directory-vid-key) "./entry-parent-directory-vid-key.scm"
 
-(define (standalone-file->entry filepath)
+(define (standalone-file->entry filepath tags)
   (define norm (path-normalize filepath))
   (define dir (dirname norm))
   (define name (string-append "/" (path-get-basename norm)))
-  `((id . ,norm)
-    (target . ,name)
-    (,entry-parent-directory-key . ,dir)
-    ))
+  (define ret
+    `((id . ,norm)
+      (target . ,name)
+      (,entry-parent-directory-key . ,dir)
+      ))
 
-(define (standalone-file->entry/prefixed prefix vid filepath)
+  (if tags (cons (cons 'tags tags) ret)
+      ret))
+
+(define (standalone-file->entry/prefixed prefix vid filepath tags)
   (define dir prefix)
   (define norm (path-normalize filepath))
   (define name (if (absolute-posix-path? norm) norm
                    (string-append "/" norm)))
   (define full (path-normalize (append-posix-path dir norm)))
-  `((id . ,full)
-    (target . ,name)
-    (,entry-parent-directory-key . ,dir)
-    (,entry-parent-directory-vid-key . ,vid)
-    ))
+  (define ret
+    `((id . ,full)
+      (target . ,name)
+      (,entry-parent-directory-key . ,dir)
+      (,entry-parent-directory-vid-key . ,vid)
+      ))
+
+  (if tags (cons (cons 'tags tags) ret)
+      ret))

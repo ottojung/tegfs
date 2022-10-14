@@ -61,9 +61,9 @@
 %use (get-root) "./get-root.scm"
 %use (tegfs-get/cached) "./get.scm"
 %use (tegfs-make-thumbnails) "./make-thumbnails.scm"
-%use (tegfs-query) "./query.scm"
 %use (sha256sum) "./sha256sum.scm"
 %use (standalone-file->entry/prefixed) "./standalone-file-to-entry.scm"
+%use (tegfs-query) "./tegfs-query.scm"
 %use (web-basic-headers) "./web-basic-headers.scm"
 %use (web-callcontext/p) "./web-callcontext-p.scm"
 %use (callcontext-body callcontext-break callcontext-ctr callcontext-request callcontext-time set-callcontext-key!) "./web-callcontext.scm"
@@ -642,7 +642,7 @@
       (map cadr (directory-files dir-fullpath include-directories?))))
   (define entries
     (map (comp (append-posix-path suffix)
-               (standalone-file->entry/prefixed shared-relativepath vid))
+               (standalone-file->entry/prefixed shared-relativepath vid #f))
          file-names))
 
   (web-respond
