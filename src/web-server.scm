@@ -37,7 +37,6 @@
 %use (make-directories) "./euphrates/make-directories.scm"
 %use (memconst) "./euphrates/memconst.scm"
 %use (open-file-port) "./euphrates/open-file-port.scm"
-%use (path-extensions) "./euphrates/path-extensions.scm"
 %use (path-get-basename) "./euphrates/path-get-basename.scm"
 %use (raisu) "./euphrates/raisu.scm"
 %use (random-choice) "./euphrates/random-choice.scm"
@@ -61,6 +60,7 @@
 %use (get-root) "./get-root.scm"
 %use (tegfs-get/cached) "./get.scm"
 %use (tegfs-make-thumbnails) "./make-thumbnails.scm"
+%use (path-safe-extension) "./path-safe-extension.scm"
 %use (sha256sum) "./sha256sum.scm"
 %use (standalone-file->entry/prefixed) "./standalone-file-to-entry.scm"
 %use (tegfs-query/diropen) "./tegfs-query-diropen.scm"
@@ -118,7 +118,7 @@
   (define sharedname
     (string-append
      (get-random-basename)
-     (path-extensions target-fullpath)))
+     (path-safe-extension target-fullpath)))
   (define callctx (web-callcontext/p))
   (define now (callcontext-time callctx))
   (define vid (get-random-basename))
