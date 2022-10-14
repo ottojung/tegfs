@@ -28,9 +28,10 @@
 (define (tegfs-query/open opening-properties <query...> for-each-fn)
   (define (wrapper entry)
     (define opener
-      (list-or-map
-       (lambda (prop) (assoc-or prop entry #f))
-       opening-properties))
+      (let loop ((buf opening-properties))
+        (if (null? buf) #f
+            (or (assoc-or (car buf) entry #f)
+                (loop (cdr buf))))))
 
     (if opener
         (query-recurse opener entry for-each-fn)
