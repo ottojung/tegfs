@@ -19,7 +19,7 @@
 %use (assoc-or) "./euphrates/assoc-or.scm"
 %use (directory-files-depth-foreach) "./euphrates/directory-files-depth-foreach.scm"
 %use (file-is-directory?/no-readlink) "./euphrates/file-is-directory-q-no-readlink.scm"
-%use (list-find-first) "./euphrates/list-find-first.scm"
+%use (list-or-map) "./euphrates/list-or-map.scm"
 %use (raisu) "./euphrates/raisu.scm"
 %use (entry-target-fullpath) "./entry-target-fullpath.scm"
 %use (standalone-file->entry) "./standalone-file-to-entry.scm"
@@ -28,9 +28,9 @@
 (define (tegfs-query/open opening-properties <query...> for-each-fn)
   (define (wrapper entry)
     (define opener
-      (list-find-first
+      (list-or-map
        (lambda (prop) (assoc-or prop entry #f))
-       #f opening-properties))
+       opening-properties))
 
     (if opener
         (query-recurse opener entry for-each-fn)
