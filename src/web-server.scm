@@ -57,6 +57,7 @@
 %use (get-config) "./get-config.scm"
 %use (get-preview-path) "./get-preview-path.scm"
 %use (get-random-basename) "./get-random-basename.scm"
+%use (get-random-network-name) "./get-random-network-name.scm"
 %use (get-root) "./get-root.scm"
 %use (tegfs-get/cached) "./get.scm"
 %use (tegfs-make-thumbnails) "./make-thumbnails.scm"
@@ -117,11 +118,11 @@
 (define (make-sharedinfo token target-fullpath for-duration)
   (define sharedname
     (string-append
-     (get-random-basename)
+     (get-random-network-name)
      (path-safe-extension target-fullpath)))
   (define callctx (web-callcontext/p))
   (define now (callcontext-time callctx))
-  (define vid (get-random-basename))
+  (define vid (get-random-network-name))
   (sharedinfo-ctr target-fullpath sharedname vid token now for-duration))
 
 (define (filemap-set! filemap/2 info)
