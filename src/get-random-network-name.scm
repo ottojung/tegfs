@@ -20,6 +20,9 @@
 
 %var get-random-network-name
 
+%use (alphanum/alphabet) "./euphrates/alphanum-alphabet.scm"
+%use (random-choice) "./euphrates/random-choice.scm"
+
 (define (get-random-network-name)
   (list->string
    (random-choice 10 alphanum/alphabet)))
