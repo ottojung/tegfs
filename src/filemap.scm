@@ -19,8 +19,11 @@
 %var filemap-ref-by-sharedname
 %var filemap-delete-by-vid!
 %var filemap-delete-by-sharedname!
+%var get-current-filemap/2
 
 %use (hashmap-delete! hashmap-ref hashmap-set!) "./euphrates/ihashmap.scm"
+%use (web-context/p) "./web-context-p.scm"
+%use (context-filemap/2) "./web-context.scm"
 %use (sharedinfo-sharedname sharedinfo-vid) "./web-sharedinfo.scm"
 
 (define (filemap-set! filemap/2 info)
@@ -56,3 +59,7 @@
     (let ((id (sharedinfo-vid info)))
       (hashmap-delete! first id)
       (hashmap-delete! second sharedname))))
+
+(define (get-current-filemap/2)
+  (define ctx (web-context/p))
+  (context-filemap/2 ctx))

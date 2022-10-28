@@ -24,9 +24,7 @@
 %use (raisu) "./euphrates/raisu.scm"
 %use (entry-for-local-file?) "./entry-for-local-file-huh.scm"
 %use (entry-parent-directory-vid-key) "./entry-parent-directory-vid-key.scm"
-%use (filemap-ref-by-vid) "./filemap.scm"
-%use (web-context/p) "./web-context-p.scm"
-%use (context-filemap/2) "./web-context.scm"
+%use (filemap-ref-by-vid get-current-filemap/2) "./filemap.scm"
 %use (permission-admin? permission-detailsaccess? permission-filemap permission-idset) "./web-permission.scm"
 %use (sharedinfo-sourcepath) "./web-sharedinfo.scm"
 
@@ -36,8 +34,7 @@
            (if (entry-for-local-file? entry)
                (let* ((parent-vid (or (assoc-or entry-parent-directory-vid-key entry #f)
                                       (raisu 'entry-does-not-have-parent-vid entry)))
-                      (ctx (web-context/p))
-                      (filemap/2 (context-filemap/2 ctx))
+                      (filemap/2 (get-current-filemap/2))
                       (info (filemap-ref-by-vid filemap/2 parent-vid #f))
                       (target-fullpath (and info (sharedinfo-sourcepath info)))
                       (perm-filemap (permission-filemap perm)))
