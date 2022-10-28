@@ -50,8 +50,10 @@
 %use (~a) "./euphrates/tilda-a.scm"
 %use (time-get-current-unixtime) "./euphrates/time-get-current-unixtime.scm"
 %use (a-weblink?) "./a-weblink-q.scm"
+%use (has-access-for-entry-details? has-access-for-entry-full?) "./access.scm"
 %use (tegfs-add) "./add.scm"
 %use (tegfs-process-categorization-text) "./edit-tags.scm"
+%use (entry-for-local-file?) "./entry-for-local-file-huh.scm"
 %use (entry-parent-directory-vid-key) "./entry-parent-directory-vid-key.scm"
 %use (entry-target-fullpath) "./entry-target-fullpath.scm"
 %use (filemap-delete-by-sharedname! filemap-ref-by-sharedname filemap-ref-by-vid filemap-set!) "./filemap.scm"
@@ -79,7 +81,7 @@
 %use (web-make-upload-body) "./web-make-upload-body.scm"
 %use (web-message-template) "./web-message-template.scm"
 %use (parse-multipart-as-hashmap) "./web-parse-multipart.scm"
-%use (permission-admin? permission-constructor permission-detailsaccess? permission-filemap permission-idset permission-share-longer-than-view? permission-start permission-time permission-token) "./web-permission.scm"
+%use (permission-constructor permission-filemap permission-idset permission-share-longer-than-view? permission-start permission-time permission-token) "./web-permission.scm"
 %use (web-preview-height) "./web-preview-height.scm"
 %use (web-preview-width) "./web-preview-width.scm"
 %use (web-request-get-domainname) "./web-request-get-domainname.scm"
@@ -444,14 +446,11 @@
     (write default-preview))
   (display "/>"))
 
-(define (local-file-entry? entry)
-  (not (not (assoc entry-parent-directory-vid-key entry))))
-
 (define (get-full-link entry target-fullpath)
   (cond
    ((a-weblink? target-fullpath)
     target-fullpath)
-   ((local-file-entry? entry)
+   ((entry-for-local-file? entry)
     (let* ((parent-vid (or (assoc-or entry-parent-directory-vid-key entry #f)
                            (raisu 'entry-does-not-have-parent-vid entry)))
            (ctx (web-context/p))
@@ -506,31 +505,6 @@
   (when details-link?
     (display "</a>"))
   )
-
-(define (has-access-for-entry? perm entry)
-  (and perm
-       (or (permission-admin? perm)
-           (if (local-file-entry? entry)
-               (let* ((parent-vid (or (assoc-or entry-parent-directory-vid-key entry #f)
-                                      (raisu 'entry-does-not-have-parent-vid entry)))
-                      (ctx (web-context/p))
-                      (filemap/2 (context-filemap/2 ctx))
-                      (info (filemap-ref-by-vid filemap/2 parent-vid #f))
-                      (target-fullpath (and info (sharedinfo-sourcepath info)))
-                      (perm-filemap (permission-filemap perm)))
-                 (and target-fullpath
-                      (not (not (hashmap-ref perm-filemap target-fullpath #f)))))
-               (let ((id (cdr (assoc 'id entry)))
-                     (idset (permission-idset perm)))
-                 (hashset-ref idset id))))))
-
-(define (has-access-for-entry-full? perm entry)
-  (has-access-for-entry? perm entry))
-
-(define (has-access-for-entry-details? perm entry)
-  (and perm
-       (and (permission-detailsaccess? perm)
-            (has-access-for-entry? perm entry))))
 
 (define (display-entry entry)
   (define perm (web-get-permissions))
