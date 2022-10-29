@@ -32,7 +32,7 @@
 %use (fn) "./euphrates/fn.scm"
 %use (get-current-directory) "./euphrates/get-current-directory.scm"
 %use (alist->hashmap hashmap-delete! hashmap-foreach hashmap-ref hashmap-set! make-hashmap) "./euphrates/ihashmap.scm"
-%use (hashset-add! hashset-ref list->hashset make-hashset) "./euphrates/ihashset.scm"
+%use (hashset-add! hashset-ref list->hashset) "./euphrates/ihashset.scm"
 %use (list-singleton?) "./euphrates/list-singleton-q.scm"
 %use (make-directories) "./euphrates/make-directories.scm"
 %use (memconst) "./euphrates/memconst.scm"
@@ -65,6 +65,7 @@
 %use (get-random-network-name) "./get-random-network-name.scm"
 %use (get-root) "./get-root.scm"
 %use (tegfs-get/cached) "./get.scm"
+%use (make-permission) "./make-permission.scm"
 %use (tegfs-make-thumbnails) "./make-thumbnails.scm"
 %use (path-safe-extension) "./path-safe-extension.scm"
 %use (sha256sum) "./sha256sum.scm"
@@ -82,7 +83,7 @@
 %use (web-make-upload-body) "./web-make-upload-body.scm"
 %use (web-message-template) "./web-message-template.scm"
 %use (parse-multipart-as-hashmap) "./web-parse-multipart.scm"
-%use (permission-constructor permission-filemap permission-idset permission-share-longer-than-view? permission-start permission-time permission-token) "./web-permission.scm"
+%use (permission-filemap permission-idset permission-share-longer-than-view? permission-start permission-time permission-token) "./web-permission.scm"
 %use (web-preview-height) "./web-preview-height.scm"
 %use (web-preview-width) "./web-preview-width.scm"
 %use (web-request-get-domainname) "./web-request-get-domainname.scm"
@@ -178,16 +179,13 @@
 
 (define (make-permission! expiery-time admin? detailsaccess? share-longer-than-view?)
   (define ctx (web-context/p))
-  (define callctx (web-callcontext/p))
   (define tokens (context-tokens ctx))
   (define token (generate-token))
-  (define start (callcontext-time callctx))
-  (define time expiery-time)
   (define perm
-    (permission-constructor
-     token start time
-     admin? detailsaccess? share-longer-than-view?
-     (make-hashmap) (make-hashset)))
+    (make-permission
+     expiery-time admin?
+     detailsaccess?
+     share-longer-than-view?))
   (hashmap-set! tokens token perm)
   perm)
 
