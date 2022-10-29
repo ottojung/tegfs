@@ -1,5 +1,5 @@
 
-PREFIX=$(HOME)/.local
+PREFIX=/usr/local
 PREFIX_BIN=$(PREFIX)/bin
 PREFIX_SHARE=$(PREFIX)/share
 
