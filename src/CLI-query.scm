@@ -21,7 +21,7 @@
 %use (monadstate-qtags) "./euphrates/monadstate.scm"
 %use (printf) "./euphrates/printf.scm"
 %use (with-monad) "./euphrates/with-monad.scm"
-%use (core-query) "./core-query.scm"
+%use (tegfs-query) "./tegfs-query.scm"
 %use (entry-print/formatted) "./entry-print-formatted.scm"
 %use (entry-print) "./entry-print.scm"
 %use (fatal) "./fatal.scm"
@@ -43,7 +43,7 @@
 
   (with-monad
    show-monad
-   (core-query
+   (tegfs-query
     --diropen
     --dirpreview
     <query...>))

@@ -14,7 +14,7 @@
 
 %run guile
 
-%var core-query
+%var tegfs-query
 
 %use (appcomp comp) "./euphrates/comp.scm"
 %use (curry-if) "./euphrates/curry-if.scm"
@@ -26,7 +26,7 @@
 %use (keyword-dirpreview) "./keyword-dirpreview.scm"
 %use (tegfs-query/open) "./tegfs-query-open.scm"
 
-(define (core-query diropen? dirpreview? query/split)
+(define (tegfs-query diropen? dirpreview? query/split)
   (define perm (get-current-permissions))
   (define opening-properties
     (appcomp
