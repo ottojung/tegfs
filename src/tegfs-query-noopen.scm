@@ -14,7 +14,7 @@
 
 %run guile
 
-%var tegfs-query
+%var tegfs-query/noopen
 
 %use (appcomp) "./euphrates/comp.scm"
 %use (define-pair) "./euphrates/define-pair.scm"
@@ -35,7 +35,7 @@
 %use (query-parse) "./query-parse.scm"
 %use (tag->prolog-term) "./tag-to-prolog-term.scm"
 
-(define (tegfs-query <query...> for-each-fn)
+(define (tegfs-query/noopen <query...> for-each-fn)
   (define output-path (string-append (make-temporary-filename/local) ".pl"))
   (define output-port (open-file-port output-path "w"))
 

@@ -23,7 +23,7 @@
 %use (raisu) "./euphrates/raisu.scm"
 %use (entry-target-fullpath) "./entry-target-fullpath.scm"
 %use (standalone-file->entry) "./standalone-file-to-entry.scm"
-%use (tegfs-query) "./tegfs-query.scm"
+%use (tegfs-query/noopen) "./tegfs-query-noopen.scm"
 
 (define (tegfs-query/open opening-properties <query...> for-each-fn)
   (define (wrapper entry)
@@ -37,7 +37,7 @@
         (query-recurse opener entry for-each-fn)
         (for-each-fn entry)))
 
-  (tegfs-query <query...> wrapper))
+  (tegfs-query/noopen <query...> wrapper))
 
 (define (query-recurse opener entry for-each-fn)
   (define target-fullpath (entry-target-fullpath entry))
