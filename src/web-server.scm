@@ -176,12 +176,12 @@
 (define (make-permission! expiery-time admin? detailsaccess? share-longer-than-view?)
   (define ctx (web-context/p))
   (define tokens (context-tokens ctx))
-  (define token (get-random-access-token))
   (define perm
     (make-permission
      expiery-time admin?
      detailsaccess?
      share-longer-than-view?))
+  (define token (permission-token perm))
   (hashmap-set! tokens token perm)
   perm)
 
