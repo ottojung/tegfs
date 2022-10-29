@@ -14,24 +14,9 @@
 
 %run guile
 
-%var callcontext-ctr
-%var callcontext?
-%var callcontext-break
-%var callcontext-request
-%var callcontext-query
-%var callcontext-body
-%var callcontext-time
-%var callcontext-key
-%var set-callcontext-key!
+%var get-current-permissions
 
-%use (define-type9) "./euphrates/define-type9.scm"
+%use (current-permissions/p) "./current-permissions-p.scm"
 
-(define-type9 <callcontext>
-  (callcontext-ctr break request query body time key) callcontext?
-  (break callcontext-break) ;; break handler
-  (request callcontext-request) ;; client request
-  (query callcontext-query) ;; query hashmap
-  (body callcontext-body) ;; client body
-  (time callcontext-time) ;; timestamp for when request was received
-  (key callcontext-key set-callcontext-key!) ;; access key to-set to
-  )
+(define (get-current-permissions)
+  (current-permissions/p))

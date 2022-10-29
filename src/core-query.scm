@@ -16,10 +16,23 @@
 
 %var core-query
 
-%use (tegfs-query/diropen) "./tegfs-query-diropen.scm"
+%use (appcomp comp) "./euphrates/comp.scm"
+%use (curry-if) "./euphrates/curry-if.scm"
+%use (has-access-for-entry-details? has-access-for-entry-full?) "./access.scm"
+%use (entry-target-fullpath) "./entry-target-fullpath.scm"
+%use (get-current-permissions) "./get-current-permissions.scm"
+%use (keyword-diropen) "./keyword-diropen.scm"
+%use (keyword-dirpreview) "./keyword-dirpreview.scm"
+%use (tegfs-query/open) "./tegfs-query-open.scm"
 
-(define (core-query query/split)
-  (define perm (web-get-permissions))
+(define (core-query diropen? dirpreview? query/split)
+  (define perm (get-current-permissions))
+  (define opening-properties
+    (appcomp
+     '()
+     ((curry-if (const diropen?) (comp (cons keyword-diropen))))
+     ((curry-if (const dirpreview?) (comp (cons keyword-dirpreview))))))
+
   (define (for-each-fn entry)
     (define target-fullpath
       (entry-target-fullpath entry))
@@ -28,10 +41,6 @@
       (monadic-do target-fullpath '(say target-fullpath)))
 
     (when (has-access-for-entry-details? perm entry)
-      (monadic-do entry '(say entry)))
+      (monadic-do entry '(say entry))))
 
-    
-
-    )
-
-  (tegfs-query/diropen query/split for-each-fn))
+  (tegfs-query/open opening-properties query/split for-each-fn))
