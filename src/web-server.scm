@@ -85,7 +85,7 @@
 %use (web-make-upload-body) "./web-make-upload-body.scm"
 %use (web-message-template) "./web-message-template.scm"
 %use (parse-multipart-as-hashmap) "./web-parse-multipart.scm"
-%use (permission-filemap permission-idset permission-share-longer-than-view? permission-start permission-time permission-token) "./web-permission.scm"
+%use (permission-filemap permission-idset permission-share-longer-than-view? permission-start permission-time permission-token) "./permission.scm"
 %use (web-preview-height) "./web-preview-height.scm"
 %use (web-preview-width) "./web-preview-width.scm"
 %use (web-request-get-domainname) "./web-request-get-domainname.scm"

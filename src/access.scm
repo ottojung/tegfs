@@ -25,7 +25,7 @@
 %use (entry-for-local-file?) "./entry-for-local-file-huh.scm"
 %use (entry-parent-directory-vid-key) "./entry-parent-directory-vid-key.scm"
 %use (filemap-ref-by-vid get-current-filemap/2) "./filemap.scm"
-%use (permission-admin? permission-detailsaccess? permission-filemap permission-idset) "./web-permission.scm"
+%use (permission-admin? permission-detailsaccess? permission-filemap permission-idset) "./permission.scm"
 %use (sharedinfo-sourcepath) "./web-sharedinfo.scm"
 
 (define (has-access-for-entry? perm entry)

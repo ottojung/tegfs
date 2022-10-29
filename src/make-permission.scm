@@ -20,7 +20,7 @@
 %use (make-hashset) "./euphrates/ihashset.scm"
 %use (time-get-current-unixtime) "./euphrates/time-get-current-unixtime.scm"
 %use (get-random-access-token) "./get-random-access-token.scm"
-%use (permission-constructor) "./web-permission.scm"
+%use (permission-constructor) "./permission.scm"
 
 (define (make-permission expiery-time admin? detailsaccess? share-longer-than-view?)
   (define token (get-random-access-token))
