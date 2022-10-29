@@ -18,6 +18,7 @@
 
 %use (appcomp comp) "./euphrates/comp.scm"
 %use (curry-if) "./euphrates/curry-if.scm"
+%use (monad-do) "./euphrates/monad-do.scm"
 %use (has-access-for-entry-details? has-access-for-entry-full?) "./access.scm"
 %use (entry-target-fullpath) "./entry-target-fullpath.scm"
 %use (get-current-permissions) "./get-current-permissions.scm"
@@ -38,9 +39,9 @@
       (entry-target-fullpath entry))
 
     (when (has-access-for-entry-full? perm entry)
-      (monadic-do target-fullpath '(say target-fullpath)))
+      (monad-do target-fullpath 'say-target-fullpath))
 
     (when (has-access-for-entry-details? perm entry)
-      (monadic-do entry '(say entry))))
+      (monad-do entry 'say-entry)))
 
   (tegfs-query/open opening-properties query/split for-each-fn))

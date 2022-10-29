@@ -16,40 +16,37 @@
 
 %var CLI-query
 
-%use (appcomp comp) "./euphrates/comp.scm"
-%use (curry-if) "./euphrates/curry-if.scm"
+%use (comp) "./euphrates/comp.scm"
+%use (monad-make/hook) "./euphrates/monad-make-hook.scm"
+%use (monadstate-qtags) "./euphrates/monadstate.scm"
 %use (printf) "./euphrates/printf.scm"
+%use (with-monad) "./euphrates/with-monad.scm"
+%use (core-query) "./core-query.scm"
 %use (entry-print/formatted) "./entry-print-formatted.scm"
 %use (entry-print) "./entry-print.scm"
-%use (keyword-diropen) "./keyword-diropen.scm"
-%use (keyword-dirpreview) "./keyword-dirpreview.scm"
-%use (tegfs-query/open) "./tegfs-query-open.scm"
+%use (fatal) "./fatal.scm"
 
 (define (CLI-query --diropen --dirpreview --entries <query-format> <query...>)
   (define counter 0)
-  (define opening-properties
-    (appcomp
-     '()
-     ((curry-if (const --diropen) (comp (cons keyword-diropen))))
-     ((curry-if (const --dirpreview) (comp (cons keyword-dirpreview))))))
+  (define print-func
+    (cond
+     (--entries (lambda (entry) (entry-print entry) (newline)))
+     (<query-format> (comp (entry-print/formatted <query-format>)))
+     (else (fatal "Unexpected mode: both --entries and <query-format> were not set"))))
+  (define show-monad
+    (monad-make/hook
+     tags (entry)
+     (when (memq 'say-entry tags)
+       (set! counter (+ 1 counter))
+       (print-func entry)
+       (newline))))
 
-  (cond
-   (--entries
-    (tegfs-query/open
-     opening-properties
-     <query...>
-     (lambda (entry)
-       (set! counter (+ 1 counter))
-       (entry-print entry)
-       (display "\n\n"))))
-   (<query-format>
-    (tegfs-query/open
-     opening-properties
-     <query...>
-     (lambda (entry)
-       (set! counter (+ 1 counter))
-       (entry-print/formatted <query-format> entry)
-       (display "\n")))))
+  (with-monad
+   show-monad
+   (core-query
+    --diropen
+    --dirpreview
+    <query...>))
 
   (parameterize ((current-output-port (current-error-port)))
     (if (equal? 0 counter)
