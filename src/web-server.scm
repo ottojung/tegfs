@@ -17,7 +17,6 @@
 %var tegfs-serve/parse
 
 %use (absolute-posix-path?) "./euphrates/absolute-posix-path-q.scm"
-%use (alphanum-lowercase/alphabet) "./euphrates/alphanum-lowercase-alphabet.scm"
 %use (append-posix-path) "./euphrates/append-posix-path.scm"
 %use (assoc-or) "./euphrates/assoc-or.scm"
 %use (catch-any) "./euphrates/catch-any.scm"
@@ -39,7 +38,6 @@
 %use (open-file-port) "./euphrates/open-file-port.scm"
 %use (path-get-basename) "./euphrates/path-get-basename.scm"
 %use (raisu) "./euphrates/raisu.scm"
-%use (random-choice) "./euphrates/random-choice.scm"
 %use (remove-common-prefix) "./euphrates/remove-common-prefix.scm"
 %use (string-split-3) "./euphrates/string-split-3.scm"
 %use (string-split/simple) "./euphrates/string-split-simple.scm"
@@ -61,6 +59,7 @@
 %use (get-config) "./get-config.scm"
 %use (get-current-permissions) "./get-current-permissions.scm"
 %use (get-preview-path) "./get-preview-path.scm"
+%use (get-random-access-token) "./get-random-access-token.scm"
 %use (get-random-basename) "./get-random-basename.scm"
 %use (get-random-network-name) "./get-random-network-name.scm"
 %use (get-root) "./get-root.scm"
@@ -168,9 +167,6 @@
 (define (login)
   (web-respond web-login-body))
 
-(define (generate-token)
-  (list->string (random-choice 60 alphanum-lowercase/alphabet)))
-
 (define body-not-found
   (static-error-message 417 "Send user body"))
 
@@ -180,7 +176,7 @@
 (define (make-permission! expiery-time admin? detailsaccess? share-longer-than-view?)
   (define ctx (web-context/p))
   (define tokens (context-tokens ctx))
-  (define token (generate-token))
+  (define token (get-random-access-token))
   (define perm
     (make-permission
      expiery-time admin?
@@ -827,18 +823,18 @@
         (display "Second then forth:")
         (print-newline)
         (print-link
-         (stringf "/query?q=ll&key=~a" (generate-token)))
+         (stringf "/query?q=ll&key=~a" (get-random-access-token)))
         (print-newline)
         (print-link
          (stringf "/query?q=ll&key=~a" token))
         (print-newline)
         (print-link
-         (stringf "/query?q=ll&key=~a" (generate-token)))
+         (stringf "/query?q=ll&key=~a" (get-random-access-token)))
         (print-newline)
         (print-link "/query?q=%any")
         (print-newline)
         (print-link
-         (stringf "/query?q=ll&key=~a" (generate-token)))))))
+         (stringf "/query?q=ll&key=~a" (get-random-access-token)))))))
 
 (define (get-share-duration)
   (define ctxq (web-get-query))
