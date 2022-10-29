@@ -22,7 +22,9 @@
 %use (tegfs-add/parse) "./add.scm"
 %use (tegfs-categorize/parse) "./categorize.scm"
 %use (tegfs-config/parse) "./config.scm"
+%use (current-permissions/p) "./current-permissions-p.scm"
 %use (tegfs-dump-clipboard/parse) "./dump-clipboard.scm"
+%use (get-admin-permissions) "./get-admin-permissions.scm"
 %use (get-root/default) "./get-root.scm"
 %use (tegfs-get/parse) "./get.scm"
 %use (keyword-diropen) "./keyword-diropen.scm"
@@ -105,7 +107,8 @@
       (when --help
         (define-cli:show-help))
 
-      (parameterize ((root/p <root>))
+      (parameterize ((root/p <root>)
+                     (current-permissions/p (get-admin-permissions)))
         (cond
          (add (tegfs-add/parse
                <add-target> <title> <tag...> --series <key...> <value...>
