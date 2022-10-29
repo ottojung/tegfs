@@ -35,6 +35,7 @@
 %use (list-singleton?) "./euphrates/list-singleton-q.scm"
 %use (make-directories) "./euphrates/make-directories.scm"
 %use (memconst) "./euphrates/memconst.scm"
+%use (monad-make/hook) "./euphrates/monad-make-hook.scm"
 %use (open-file-port) "./euphrates/open-file-port.scm"
 %use (path-get-basename) "./euphrates/path-get-basename.scm"
 %use (raisu) "./euphrates/raisu.scm"
@@ -47,6 +48,7 @@
 %use (stringf) "./euphrates/stringf.scm"
 %use (~a) "./euphrates/tilda-a.scm"
 %use (time-get-current-unixtime) "./euphrates/time-get-current-unixtime.scm"
+%use (with-monad) "./euphrates/with-monad.scm"
 %use (a-weblink?) "./a-weblink-q.scm"
 %use (has-access-for-entry-details? has-access-for-entry-full?) "./access.scm"
 %use (tegfs-add) "./add.scm"
@@ -70,6 +72,7 @@
 %use (sha256sum) "./sha256sum.scm"
 %use (standalone-file->entry/prefixed) "./standalone-file-to-entry.scm"
 %use (tegfs-query/diropen) "./tegfs-query-diropen.scm"
+%use (tegfs-query) "./tegfs-query.scm"
 %use (web-basic-headers) "./web-basic-headers.scm"
 %use (web-callcontext/p) "./web-callcontext-p.scm"
 %use (callcontext-body callcontext-break callcontext-ctr callcontext-request callcontext-time set-callcontext-key!) "./web-callcontext.scm"
@@ -522,9 +525,9 @@
            (map (lambda (c) (if (equal? #\: c) #\= c)))
            list->string))
 
-(define (display-entries for-each-generator)
+(define (display-entries actual-display-thunk)
   (display "<div class='cards'>")
-  (for-each-generator display-entry)
+  (actual-display-thunk)
   (display "</div>"))
 
 (define (query)
@@ -537,10 +540,21 @@
   (define query (decode-query query/encoded))
   (define query/split (string->words query))
 
+  (define display-monad
+    (monad-make/hook
+     tags (entry)
+     (when (memq 'say-entry tags)
+       (display-entry entry))))
+
   (web-respond
    (lambda _
      (display-entries
-      (lambda (fn) (tegfs-query/diropen query/split fn))))))
+      (lambda _
+        (let ((diropen? #t)
+              (dirpreview? #f))
+          (with-monad
+           display-monad
+           (tegfs-query diropen? dirpreview? query/split))))))))
 
 (define (directory)
   (define ctx (web-context/p))
@@ -585,7 +599,7 @@
   (web-respond
    (lambda _
      (display-entries
-      (lambda (fn) (for-each fn entries))))))
+      (lambda _ (for-each display-entry entries))))))
 
 (define (web-make-preview target-id target-fullpath entry)
   (define preview-fullpath
