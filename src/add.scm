@@ -36,7 +36,7 @@
 %use (entry-print) "./entry-print.scm"
 %use (fatal) "./fatal.scm"
 %use (get-root) "./get-root.scm"
-%use (id-name) "./id-name.scm"
+%use (keyword-id) "./keyword-id.scm"
 %use (last-id-filename) "./last-id-filename.scm"
 
 (define (generate-random-id)
@@ -124,7 +124,7 @@
 
   (define entry
     (append
-     (list (cons id-name id))
+     (list (cons keyword-id id))
      (if <title>
          (list (cons 'title <title>))
          (list))

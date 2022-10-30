@@ -28,7 +28,7 @@
 %use (string->lines) "./euphrates/string-to-lines.scm"
 %use (system-re) "./euphrates/system-re.scm"
 %use (entries-for-each) "./entries-for-each.scm"
-%use (id-name) "./id-name.scm"
+%use (keyword-id) "./keyword-id.scm"
 %use (make-temporary-filename/local) "./make-temporary-filename-local.scm"
 %use (make-prolog-var) "./prolog-var.scm"
 %use (tegfs-dump-prolog) "./prolog.scm"
@@ -79,6 +79,6 @@
 
   (entries-for-each
    (lambda (entry)
-     (define id (cdr (assoc id-name entry)))
+     (define id (cdr (assoc keyword-id entry)))
      (when (hashset-ref ids id)
        (for-each-fn entry)))))

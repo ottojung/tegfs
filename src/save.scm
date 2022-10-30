@@ -64,7 +64,6 @@
 %use (get-root) "./get-root.scm"
 %use (make-temporary-filename/local) "./make-temporary-filename-local.scm"
 %use (regfile-suffix) "./regfile-suffix.scm"
-%use (target-name) "./target-name.scm"
 
 ;; TODO: factor out graph UI to euphrates
 ;;       and use progfun in it.

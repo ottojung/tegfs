@@ -29,7 +29,7 @@
 %use (a-weblink?) "./a-weblink-q.scm"
 %use (dump-rules) "./dump-rules.scm"
 %use (entries-for-each) "./entries-for-each.scm"
-%use (id-name) "./id-name.scm"
+%use (keyword-id) "./keyword-id.scm"
 %use (make-temporary-filename/local) "./make-temporary-filename-local.scm"
 %use (parse-tag) "./parse-tag.scm"
 %use (print-tag-as-prolog-term) "./tag-to-prolog-term.scm"
@@ -171,7 +171,7 @@
     (define cnt (counter))
 
     (define id
-      (cdr (or (assoc id-name entry)
+      (cdr (or (assoc keyword-id entry)
                (raisu 'could-not-get-an-id entry))))
 
     (define tags0

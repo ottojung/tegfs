@@ -14,10 +14,10 @@
 
 %run guile
 
-%var id-name
-%var id-name/string
+%var keyword-id
+%var keyword-id/string
 
-(define id-name 'id)
-(define id-name/string (symbol->string id-name))
+(define keyword-id 'id)
+(define keyword-id/string (symbol->string keyword-id))
 
 
