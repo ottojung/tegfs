@@ -14,6 +14,6 @@
 
 %run guile
 
-%var entry-parent-directory-vid-key
+%var keyword-entry-parent-directory
 
-(define entry-parent-directory-vid-key '%parent-directory-vid)
+(define keyword-entry-parent-directory '%parent-directory)

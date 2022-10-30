@@ -16,7 +16,7 @@
 
 %var entry-for-local-file?
 
-%use (entry-parent-directory-vid-key) "./entry-parent-directory-vid-key.scm"
+%use (keyword-entry-parent-directory-vid) "./keyword-entry-parent-directory-vid.scm"
 
 (define (entry-for-local-file? entry)
-  (not (not (assoc entry-parent-directory-vid-key entry))))
+  (not (not (assoc keyword-entry-parent-directory-vid entry))))

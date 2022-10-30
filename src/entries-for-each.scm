@@ -19,7 +19,7 @@
 %use (append-posix-path) "./euphrates/append-posix-path.scm"
 %use (fn) "./euphrates/fn.scm"
 %use (open-file-port) "./euphrates/open-file-port.scm"
-%use (entry-registry-path-key) "./entry-registry-path-key.scm"
+%use (keyword-entry-registry-path) "./keyword-entry-registry-path.scm"
 %use (get-registry-files) "./get-registry-files.scm"
 %use (get-root) "./get-root.scm"
 
@@ -32,6 +32,6 @@
      (let loop ()
        (define x (read input-port))
        (unless (eof-object? x)
-         (fn (cons (cons entry-registry-path-key registry-path) x))
+         (fn (cons (cons keyword-entry-registry-path registry-path) x))
          (loop))))
    (get-registry-files)))

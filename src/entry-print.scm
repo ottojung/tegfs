@@ -16,7 +16,7 @@
 
 %var entry-print
 
-%use (entry-registry-path-key) "./entry-registry-path-key.scm"
+%use (keyword-entry-registry-path) "./keyword-entry-registry-path.scm"
 
 (define (primitive-print elem)
   (cond
@@ -26,7 +26,7 @@
 (define (prop-print prop)
   (define key (car prop))
   (define val (cdr prop))
-  (if (equal? entry-registry-path-key key) #f
+  (if (equal? keyword-entry-registry-path key) #f
       (begin
         (display "(")
         (primitive-print key)

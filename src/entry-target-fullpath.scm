@@ -22,8 +22,8 @@
 %use (string-drop-n) "./euphrates/string-drop-n.scm"
 %use (raisu) "./euphrates/raisu.scm"
 %use (a-weblink?) "./a-weblink-q.scm"
-%use (entry-parent-directory-key) "./entry-parent-directory-key.scm"
-%use (entry-registry-path-key) "./entry-registry-path-key.scm"
+%use (keyword-entry-parent-directory) "./keyword-entry-parent-directory.scm"
+%use (keyword-entry-registry-path) "./keyword-entry-registry-path.scm"
 %use (get-root) "./get-root.scm"
 
 (define (entry-target-fullpath entry)
@@ -34,13 +34,13 @@
              (let* ((target/0 (path-normalize target/1))
                     (target (if (absolute-posix-path? target/0) (string-drop-n 1 target/0) target/0)))
                (path-normalize
-                (let* ((parent-directory-p (assoc entry-parent-directory-key entry))
+                (let* ((parent-directory-p (assoc keyword-entry-parent-directory entry))
                        (parent-directory (and parent-directory-p (cdr parent-directory-p)))
-                       (registry-p (assoc entry-registry-path-key entry))
+                       (registry-p (assoc keyword-entry-registry-path entry))
                        (registry-dir (and registry-p (dirname (cdr registry-p))))
                        (directory (or parent-directory registry-dir)))
                   (unless directory
                     (raisu 'entry-does-no-have-parent-directory-info
-                           entry-parent-directory-key
-                           entry-registry-path-key))
+                           keyword-entry-parent-directory
+                           keyword-entry-registry-path))
                   (append-posix-path (get-root) directory target))))))))

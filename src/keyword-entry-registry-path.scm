@@ -14,6 +14,6 @@
 
 %run guile
 
-%var entry-registry-path-key
+%var keyword-entry-registry-path
 
-(define entry-registry-path-key '%registry-path)
+(define keyword-entry-registry-path '%registry-path)

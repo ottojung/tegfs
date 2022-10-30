@@ -55,7 +55,7 @@
 %use (current-permissions/p) "./current-permissions-p.scm"
 %use (tegfs-process-categorization-text) "./edit-tags.scm"
 %use (entry-for-local-file?) "./entry-for-local-file-huh.scm"
-%use (entry-parent-directory-vid-key) "./entry-parent-directory-vid-key.scm"
+%use (keyword-entry-parent-directory-vid) "./keyword-entry-parent-directory-vid.scm"
 %use (entry-target-fullpath) "./entry-target-fullpath.scm"
 %use (filemap-delete-by-sharedname! filemap-ref-by-sharedname filemap-ref-by-vid filemap-set! get-current-filemap/2) "./filemap.scm"
 %use (get-config) "./get-config.scm"
@@ -449,7 +449,7 @@
    ((a-weblink? target-fullpath)
     target-fullpath)
    ((entry-for-local-file? entry)
-    (let* ((parent-vid (or (assoc-or entry-parent-directory-vid-key entry #f)
+    (let* ((parent-vid (or (assoc-or keyword-entry-parent-directory-vid entry #f)
                            (raisu 'entry-does-not-have-parent-vid entry)))
            (ctx (web-context/p))
            (filemap/2 (context-filemap/2 ctx))

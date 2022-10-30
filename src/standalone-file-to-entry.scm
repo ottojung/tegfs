@@ -21,8 +21,8 @@
 %use (append-posix-path) "./euphrates/append-posix-path.scm"
 %use (path-get-basename) "./euphrates/path-get-basename.scm"
 %use (path-normalize) "./euphrates/path-normalize.scm"
-%use (entry-parent-directory-key) "./entry-parent-directory-key.scm"
-%use (entry-parent-directory-vid-key) "./entry-parent-directory-vid-key.scm"
+%use (keyword-entry-parent-directory) "./keyword-entry-parent-directory.scm"
+%use (keyword-entry-parent-directory-vid) "./keyword-entry-parent-directory-vid.scm"
 
 (define (standalone-file->entry filepath)
   (define norm (path-normalize filepath))
@@ -30,7 +30,7 @@
   (define name (string-append "/" (path-get-basename norm)))
   `((id . ,norm)
     (target . ,name)
-    (,entry-parent-directory-key . ,dir)
+    (,keyword-entry-parent-directory . ,dir)
     ))
 
 (define (standalone-file->entry/prefixed prefix vid filepath)
@@ -41,6 +41,6 @@
   (define full (path-normalize (append-posix-path dir norm)))
   `((id . ,full)
     (target . ,name)
-    (,entry-parent-directory-key . ,dir)
-    (,entry-parent-directory-vid-key . ,vid)
+    (,keyword-entry-parent-directory . ,dir)
+    (,keyword-entry-parent-directory-vid . ,vid)
     ))
