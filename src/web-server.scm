@@ -547,16 +547,16 @@
 
   (define display-monad
     (monad-make/hook
-     tags (arg)
-     (cond
-      ((memq 'entry tags) (display-entry arg))
-      ((memq 'ask tags)
-       (case arg
-         ((query/split) query/split)
-         ((permissions) (web-get-permissions))
-         ((filemap/2) (web-get-filemap/2))
-         ((diropen?) #t)
-         ((dirpreview?) #f))))))
+     (lambda (tags args)
+       (cond
+        ((memq 'entry tags) (display-entry (car args)))
+        ((memq 'ask tags)
+         (case (car args)
+           ((query/split) query/split)
+           ((permissions) (web-get-permissions))
+           ((filemap/2) (web-get-filemap/2))
+           ((diropen?) #t)
+           ((dirpreview?) #f)))))))
 
   (web-respond
    (lambda _
