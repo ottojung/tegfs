@@ -17,12 +17,11 @@
 %var web-respond
 
 %use (raisu) "./euphrates/raisu.scm"
-%use (current-permissions/p) "./current-permissions-p.scm"
-%use (get-current-permissions) "./get-current-permissions.scm"
 %use (web-basic-headers) "./web-basic-headers.scm"
 %use (web-callcontext/p) "./web-callcontext-p.scm"
 %use (callcontext-break callcontext-key) "./web-callcontext.scm"
 %use (web-context/p) "./web-context-p.scm"
+%use (web-get-permissions) "./web-get-permissions.scm"
 %use (web-set-cookie-header) "./web-set-cookie-header.scm"
 
 %for (COMPILER "guile")
@@ -42,8 +41,8 @@
                       (extra-headers '()))
   (define ctx (web-context/p))
   (define callctx (web-callcontext/p))
-  (define perm (get-current-permissions))
   (define cont (callcontext-break callctx))
+  (define _perm (web-get-permissions))
   (define key (callcontext-key callctx))
   (define key-headers
     (if key (list (web-set-cookie-header "key" key)) '()))
@@ -76,7 +75,6 @@
         ((pair? body) (sxml->xml body port))
         ((procedure? body)
          (parameterize ((web-callcontext/p callctx)
-                        (current-permissions/p perm)
                         (web-context/p ctx))
            (body)))
         (else (raisu 'unknown-body-type body)))

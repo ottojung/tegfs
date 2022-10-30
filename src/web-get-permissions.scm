@@ -14,7 +14,12 @@
 
 %run guile
 
-%var current-permissions/p
+%var web-get-permissions
 
-(define current-permissions/p
-  (make-parameter #f))
+%use (web-callcontext/p) "./web-callcontext-p.scm"
+%use (callcontext-permissions) "./web-callcontext.scm"
+
+(define (web-get-permissions)
+  (define callctx (web-callcontext/p))
+  (define f (callcontext-permissions callctx))
+  (f))

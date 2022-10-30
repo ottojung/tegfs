@@ -52,13 +52,11 @@
 %use (a-weblink?) "./a-weblink-q.scm"
 %use (has-access-for-entry-details? has-access-for-entry-target?) "./access.scm"
 %use (tegfs-add) "./add.scm"
-%use (current-permissions/p) "./current-permissions-p.scm"
 %use (tegfs-process-categorization-text) "./edit-tags.scm"
 %use (entry-for-local-file?) "./entry-for-local-file-huh.scm"
 %use (entry-target-fullpath) "./entry-target-fullpath.scm"
 %use (filemap-delete-by-sharedname! filemap-ref-by-sharedname filemap-ref-by-vid filemap-set! get-current-filemap/2) "./filemap.scm"
 %use (get-config) "./get-config.scm"
-%use (get-current-permissions) "./get-current-permissions.scm"
 %use (get-preview-path) "./get-preview-path.scm"
 %use (get-random-access-token) "./get-random-access-token.scm"
 %use (get-random-basename) "./get-random-basename.scm"
@@ -81,6 +79,7 @@
 %use (callcontext-body callcontext-break callcontext-ctr callcontext-request callcontext-time set-callcontext-key!) "./web-callcontext.scm"
 %use (web-context/p) "./web-context-p.scm"
 %use (context-ctr context-filemap/2 context-fileserver context-passwords context-port context-sharedir context-tokens) "./web-context.scm"
+%use (web-get-permissions) "./web-get-permissions.scm"
 %use (web-get-query) "./web-get-query.scm"
 %use (web-login-body) "./web-login-body.scm"
 %use (web-login-failed-body) "./web-login-failed-body.scm"
@@ -266,7 +265,7 @@
     (and got (cdr got))))
 
 (define (check-permissions)
-  (unless (get-current-permissions)
+  (unless (web-get-permissions)
     (permission-denied)))
 
 (define (error-tags-list tags)
@@ -386,7 +385,7 @@
   (define ctx (web-context/p))
   (define callctx (web-callcontext/p))
   (define filemap/2 (context-filemap/2 ctx))
-  (define perm (get-current-permissions))
+  (define perm (web-get-permissions))
   (define token (permission-token perm))
   (define now (callcontext-time callctx))
   (define for-duration*
@@ -409,7 +408,7 @@
 
 (define (share-file/dont-link-yet target-fullpath for-duration)
   (define ctx (web-context/p))
-  (define perm (get-current-permissions))
+  (define perm (web-get-permissions))
   (define make-symlink? #f)
   (or
    (get-sharedinfo-for-perm perm target-fullpath)
@@ -417,7 +416,7 @@
 
 (define (share-file target-fullpath for-duration)
   (define ctx (web-context/p))
-  (define perm (get-current-permissions))
+  (define perm (web-get-permissions))
   (define make-symlink? #t)
   (or
    (get-sharedinfo-for-perm perm target-fullpath)
@@ -510,7 +509,7 @@
 
 (define (display-entry entry)
   (define filemap/2 (get-current-filemap/2))
-  (define perm (get-current-permissions))
+  (define perm (web-get-permissions))
   (when (has-access-for-entry-target? filemap/2 perm entry)
     (display "<div class='card'>")
     (display "<div>")
@@ -553,7 +552,7 @@
       ((memq 'ask tags)
        (case arg
          ((query/split) query/split)
-         ((permissions) (get-current-permissions))
+         ((permissions) (web-get-permissions))
          ((filemap/2) (get-current-filemap/2))
          ((diropen?) #t)
          ((dirpreview?) #f))))))
@@ -685,7 +684,7 @@
 (define (full)
   (define ctx (web-context/p))
   (define filemap/2 (context-filemap/2 ctx))
-  (define perm (get-current-permissions))
+  (define perm (web-get-permissions))
   (define _87123
     (unless perm
       ;; not logged in
@@ -944,7 +943,7 @@
   (define ctxq (web-get-query))
   (define id (hashmap-ref ctxq keyword-id #f))
   (define filemap/2 (get-current-filemap/2))
-  (define perm (get-current-permissions))
+  (define perm (web-get-permissions))
   (define entry
     (or (tegfs-get/cached id)
         (not-found)))
@@ -1124,8 +1123,9 @@
 
 (define (make-callcontext break request body)
   (define qH (memconst (initialize-query request)))
+  (define perm (memconst (initialize-permissions)))
   (define time (time-get-current-unixtime))
-  (callcontext-ctr break request qH body time #f))
+  (callcontext-ctr break request qH body time #f perm))
 
 (define (make-handler)
   (lambda (request body)
@@ -1133,8 +1133,7 @@
     (call-with-current-continuation
      (lambda (k)
        (parameterize ((web-callcontext/p (make-callcontext k request body)))
-         (parameterize ((current-permissions/p (initialize-permissions)))
-           (handler request body)))))))
+         (handler request body))))))
 
 (define (tegfs-serve/parse)
   (dprintln "Starting the server")

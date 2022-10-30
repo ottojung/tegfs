@@ -24,7 +24,7 @@
 %use (entry-print) "./entry-print.scm"
 %use (fatal) "./fatal.scm"
 %use (get-current-filemap/2) "./filemap.scm"
-%use (get-current-permissions) "./get-current-permissions.scm"
+%use (get-admin-permissions) "./get-admin-permissions.scm"
 %use (tegfs-query) "./tegfs-query.scm"
 
 (define (CLI-query --diropen --dirpreview --entries <query-format> <query...>)
@@ -46,7 +46,7 @@
        (case arg
          ((query/split) <query...>)
          ((filemap/2) (get-current-filemap/2))
-         ((permissions) (get-current-permissions))
+         ((permissions) (get-admin-permissions))
          ((diropen?) --diropen)
          ((dirpreview?) --dirpreview))))))
 
