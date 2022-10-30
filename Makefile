@@ -46,7 +46,7 @@ clean:
 deps/euphrates/.git:
 	git submodule update --init
 
-dist/tegfs: src/*.scm dist $(SUBMODULES)
+dist/tegfs: src/*.scm src/euphrates/*.scm dist $(SUBMODULES)
 	$(CZEMPAK) install src/tegfs.scm "$@"
 
 dist:
