@@ -14,8 +14,8 @@
 
 %run guile
 
-%var target-name
-%var target-name/string
+%var keyword-target
+%var keyword-target/string
 
-(define target-name 'target)
-(define target-name/string (symbol->string target-name))
+(define keyword-target 'target)
+(define keyword-target/string (symbol->string keyword-target))

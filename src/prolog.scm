@@ -34,7 +34,7 @@
 %use (parse-tag) "./parse-tag.scm"
 %use (print-tag-as-prolog-term) "./tag-to-prolog-term.scm"
 %use (tags-this-variable/string) "./tags-this-variable.scm"
-%use (target-name) "./target-name.scm"
+%use (keyword-target) "./keyword-target.scm"
 
 (define (tegfs-prolog/parse)
   (tegfs-prolog)
@@ -179,7 +179,7 @@
                (cons 'tags '()))))
 
     (define target
-      (let ((p (assoc target-name entry)))
+      (let ((p (assoc keyword-target entry)))
         (and p (cdr p))))
     (define tags
       (appcomp tags0
