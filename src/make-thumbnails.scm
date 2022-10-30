@@ -68,6 +68,10 @@
   (dprintln "Done!"))
 
 (define (tegfs-make-thumbnails <input> <output>)
+  (let ((dir (dirname <output>)))
+    (unless (file-or-directory-exists? dir)
+      (make-directories dir)))
+
   (cond
    ((a-weblink? <input>)
     (tegfs-make-url-thumbnails <input> <output>))
@@ -127,10 +131,6 @@
     ret))
 
 (define (tegfs-make-image-thumbnails <input> <output>)
-  (let ((dir (dirname <output>)))
-    (unless (file-or-directory-exists? dir)
-      (make-directories dir)))
-
   (or (= 0
          (system-fmt
           (string-append
@@ -183,10 +183,6 @@
            <input> rate dir)))
     (unless (= 0 status)
       (raisu 'ffmpeg-failed status)))
-
-  (let ((dir (dirname <output>)))
-    (unless (file-or-directory-exists? dir)
-      (make-directories dir)))
 
   (let ((status
          (system-fmt
