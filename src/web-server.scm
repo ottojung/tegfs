@@ -55,7 +55,7 @@
 %use (tegfs-process-categorization-text) "./edit-tags.scm"
 %use (entry-for-local-file?) "./entry-for-local-file-huh.scm"
 %use (entry-target-fullpath) "./entry-target-fullpath.scm"
-%use (filemap-delete-by-sharedname! filemap-ref-by-sharedname filemap-ref-by-vid filemap-set!) "./filemap.scm"
+%use (filemap-delete-by-sharedname! filemap-make/empty filemap-ref-by-sharedname filemap-ref-by-vid filemap-set!) "./filemap.scm"
 %use (get-config) "./get-config.scm"
 %use (get-preview-path) "./get-preview-path.scm"
 %use (get-random-access-token) "./get-random-access-token.scm"
@@ -1031,7 +1031,7 @@
   (define tokens (make-hashmap))
 
   (define filemap/2
-    (cons (make-hashmap) (make-hashmap)))
+    (filemap-make/empty))
   (define config
     (get-config))
   (define _1

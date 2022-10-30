@@ -14,14 +14,18 @@
 
 %run guile
 
+%var filemap-make/empty
 %var filemap-set!
 %var filemap-ref-by-vid
 %var filemap-ref-by-sharedname
 %var filemap-delete-by-vid!
 %var filemap-delete-by-sharedname!
 
-%use (hashmap-delete! hashmap-ref hashmap-set!) "./euphrates/ihashmap.scm"
+%use (hashmap-delete! hashmap-ref hashmap-set! make-hashmap) "./euphrates/ihashmap.scm"
 %use (sharedinfo-sharedname sharedinfo-vid) "./web-sharedinfo.scm"
+
+(define (filemap-make/empty)
+  (cons (make-hashmap) (make-hashmap)))
 
 (define (filemap-set! filemap/2 info)
   (define vid (sharedinfo-vid info))
