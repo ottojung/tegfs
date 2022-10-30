@@ -23,7 +23,6 @@
 %use (entry-print/formatted) "./entry-print-formatted.scm"
 %use (entry-print) "./entry-print.scm"
 %use (fatal) "./fatal.scm"
-%use (get-current-filemap/2) "./filemap.scm"
 %use (get-admin-permissions) "./get-admin-permissions.scm"
 %use (tegfs-query) "./tegfs-query.scm"
 
@@ -45,7 +44,7 @@
       ((memq 'ask tags)
        (case arg
          ((query/split) <query...>)
-         ((filemap/2) (get-current-filemap/2))
+         ((filemap/2) #f)
          ((permissions) (get-admin-permissions))
          ((diropen?) --diropen)
          ((dirpreview?) --dirpreview))))))
