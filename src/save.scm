@@ -52,7 +52,7 @@
 %use (tegfs-categorize) "./categorize.scm"
 %use (choose-clipboard-data-type classify-clipboard-text-content dump-clipboard-to-file dump-clipboard-to-temporary get-clipboard-text-content get-clipboard-type-extension) "./clipboard.scm"
 %use (custom-preferences-filename) "./custom-preferences-filename.scm"
-%use (default-save-registry-key) "./default-save-registry-key.scm"
+%use (keyword-default-save-registry) "./keyword-default-save-registry.scm"
 %use (tegfs-dump-clipboard tegfs-dump-clipboard/pasta) "./dump-clipboard.scm"
 %use (fatal) "./fatal.scm"
 %use (file-is-audio?) "./file-is-audio-q.scm"
@@ -167,7 +167,7 @@
 (define (set-registry-file-preference state)
   (define config (get-config))
   (if (not config) state
-      (let* ((default-save-registry (assoc-or default-save-registry-key config #f)))
+      (let* ((default-save-registry (assoc-or keyword-default-save-registry config #f)))
         (if (not default-save-registry) state
             (assoc-set-preference
              'registry-file

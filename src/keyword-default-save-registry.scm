@@ -14,7 +14,7 @@
 
 %run guile
 
-%var default-save-registry-key
+%var keyword-default-save-registry
 
-(define default-save-registry-key
+(define keyword-default-save-registry
   'default-save-registry)
