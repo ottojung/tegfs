@@ -591,7 +591,7 @@
     (unless (string-prefix? root shared-fullpath)
       (bad-request "Bad directory")))
   (define shared-relativepath
-    (string-append "/" (remove-common-prefix shared-fullpath root)))
+    (remove-common-prefix shared-fullpath root))
   (define dir-fullpath
     (append-posix-path shared-fullpath suffix))
   (define dir
