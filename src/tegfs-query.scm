@@ -18,7 +18,6 @@
 
 %use (appcomp comp) "./euphrates/comp.scm"
 %use (curry-if) "./euphrates/curry-if.scm"
-%use (fp) "./euphrates/fp.scm"
 %use (monad-ask) "./euphrates/monad-ask.scm"
 %use (monad-do) "./euphrates/monad-do.scm"
 %use (has-access-for-entry-details? has-access-for-entry-target?) "./access.scm"
@@ -58,7 +57,7 @@
        ((has-access-for-entry-details? filemap/2 permissions entry)
         entry)
        ((has-access-for-entry-target? filemap/2 permissions entry)
-        (filter (fp (key . val) (memq key target-fields)) entry))
+        (filter (lambda (p) (memq (car p) target-fields)) entry))
        (else #f)))
 
     (when modified
