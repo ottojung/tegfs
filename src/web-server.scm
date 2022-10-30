@@ -57,7 +57,7 @@
 %use (entry-for-local-file?) "./entry-for-local-file-huh.scm"
 %use (entry-parent-directory-vid-key) "./entry-parent-directory-vid-key.scm"
 %use (entry-target-fullpath) "./entry-target-fullpath.scm"
-%use (filemap-delete-by-sharedname! filemap-ref-by-sharedname filemap-ref-by-vid filemap-set!) "./filemap.scm"
+%use (filemap-delete-by-sharedname! filemap-ref-by-sharedname filemap-ref-by-vid filemap-set! get-current-filemap/2) "./filemap.scm"
 %use (get-config) "./get-config.scm"
 %use (get-current-permissions) "./get-current-permissions.scm"
 %use (get-preview-path) "./get-preview-path.scm"
@@ -69,6 +69,7 @@
 %use (make-permission) "./make-permission.scm"
 %use (tegfs-make-thumbnails) "./make-thumbnails.scm"
 %use (path-safe-extension) "./path-safe-extension.scm"
+%use (permission-filemap permission-idset permission-share-longer-than-view? permission-start permission-time permission-token) "./permission.scm"
 %use (sha256sum) "./sha256sum.scm"
 %use (standalone-file->entry/prefixed) "./standalone-file-to-entry.scm"
 %use (tegfs-query/diropen) "./tegfs-query-diropen.scm"
@@ -85,7 +86,6 @@
 %use (web-make-upload-body) "./web-make-upload-body.scm"
 %use (web-message-template) "./web-message-template.scm"
 %use (parse-multipart-as-hashmap) "./web-parse-multipart.scm"
-%use (permission-filemap permission-idset permission-share-longer-than-view? permission-start permission-time permission-token) "./permission.scm"
 %use (web-preview-height) "./web-preview-height.scm"
 %use (web-preview-width) "./web-preview-width.scm"
 %use (web-request-get-domainname) "./web-request-get-domainname.scm"
@@ -481,7 +481,9 @@
         (display "</a>")))))
 
 (define (display-title perm entry)
-  (define details-link? (has-access-for-entry-details? perm entry))
+  (define filemap/2 (get-current-filemap/2))
+  (define details-link?
+    (has-access-for-entry-details? filemap/2 perm entry))
 
   (when details-link?
     (display "<a href='/details?id=")
@@ -505,8 +507,9 @@
   )
 
 (define (display-entry entry)
+  (define filemap/2 (get-current-filemap/2))
   (define perm (get-current-permissions))
-  (when (has-access-for-entry-target? perm entry)
+  (when (has-access-for-entry-target? filemap/2 perm entry)
     (display "<div class='card'>")
     (display "<div>")
     (maybe-display-preview entry)
@@ -548,9 +551,10 @@
       ((memq 'ask tags)
        (case arg
          ((query/split) query/split)
+         ((permissions) (get-current-permissions))
+         ((filemap/2) (get-current-filemap/2))
          ((diropen?) #t)
-         ((dirpreview?) #f)
-         ((permissions) (get-current-permissions)))))))
+         ((dirpreview?) #f))))))
 
   (web-respond
    (lambda _
@@ -937,6 +941,7 @@
   (define ctx (web-context/p))
   (define ctxq (web-get-query))
   (define id (hashmap-ref ctxq 'id #f))
+  (define filemap/2 (get-current-filemap/2))
   (define perm (get-current-permissions))
   (define entry
     (or (tegfs-get/cached id)
@@ -963,7 +968,7 @@
          entry)
         (display "</table>\n"))))
 
-  (unless (has-access-for-entry-details? perm entry)
+  (unless (has-access-for-entry-details? filemap/2 perm entry)
     (not-found))
 
   (web-respond table))

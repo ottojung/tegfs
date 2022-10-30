@@ -24,17 +24,16 @@
 %use (raisu) "./euphrates/raisu.scm"
 %use (entry-for-local-file?) "./entry-for-local-file-huh.scm"
 %use (entry-parent-directory-vid-key) "./entry-parent-directory-vid-key.scm"
-%use (filemap-ref-by-vid get-current-filemap/2) "./filemap.scm"
+%use (filemap-ref-by-vid) "./filemap.scm"
 %use (permission-admin? permission-detailsaccess? permission-filemap permission-idset) "./permission.scm"
 %use (sharedinfo-sourcepath) "./web-sharedinfo.scm"
 
-(define (has-access-for-entry? perm entry)
+(define (has-access-for-entry? filemap/2 perm entry)
   (and perm
        (or (permission-admin? perm)
            (if (entry-for-local-file? entry)
                (let* ((parent-vid (or (assoc-or entry-parent-directory-vid-key entry #f)
                                       (raisu 'entry-does-not-have-parent-vid entry)))
-                      (filemap/2 (get-current-filemap/2))
                       (info (filemap-ref-by-vid filemap/2 parent-vid #f))
                       (target-fullpath (and info (sharedinfo-sourcepath info)))
                       (perm-filemap (permission-filemap perm)))
@@ -44,10 +43,10 @@
                      (idset (permission-idset perm)))
                  (hashset-ref idset id))))))
 
-(define (has-access-for-entry-target? perm entry)
-  (has-access-for-entry? perm entry))
+(define (has-access-for-entry-target? filemap/2 perm entry)
+  (has-access-for-entry? filemap/2 perm entry))
 
-(define (has-access-for-entry-details? perm entry)
+(define (has-access-for-entry-details? filemap/2 perm entry)
   (and perm
        (and (permission-detailsaccess? perm)
-            (has-access-for-entry? perm entry))))
+            (has-access-for-entry? filemap/2 perm entry))))

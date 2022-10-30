@@ -31,6 +31,7 @@
 ;;   where type is
 ;;   - 'query/split (REQUIRED)
 ;;   - 'permissions  (REQUIRED)
+;;   - 'filemap/2  (REQUIRED)
 ;;   - 'diropen? (DEFAULT #f)
 ;;   - 'dirpreview? (DEFAULT #f)
 ;; - target-fullpath { 'target-fullpath, 'say, 'many } (OPTIONAL)
@@ -38,6 +39,7 @@
 (define (tegfs-query)
   (monad-ask query/split)
   (monad-ask permissions)
+  (monad-ask filemap/2)
   (monad-ask diropen? :default #f)
   (monad-ask dirpreview? :default #f)
 
@@ -51,10 +53,10 @@
     (define target-fullpath
       (entry-target-fullpath entry))
 
-    (when (has-access-for-entry-target? permissions entry)
+    (when (has-access-for-entry-target? filemap/2 permissions entry)
       (monad-do target-fullpath 'target-fullpath 'say 'many))
 
-    (when (has-access-for-entry-details? permissions entry)
+    (when (has-access-for-entry-details? filemap/2 permissions entry)
       (monad-do entry 'entry 'say 'many)))
 
   (tegfs-query/open opening-properties query/split for-each-fn))
