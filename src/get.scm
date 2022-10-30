@@ -25,6 +25,7 @@
 %use (entries->hashmap) "./entries-to-hashmap.scm"
 %use (entry-print/formatted) "./entry-print-formatted.scm"
 %use (entry-print) "./entry-print.scm"
+%use (keyword-id) "./keyword-id.scm"
 %use (standalone-file->entry) "./standalone-file-to-entry.scm"
 
 (define (tegfs-get/parse <get-format> <showid>)
@@ -43,7 +44,7 @@
        (lambda (k)
          (entries-for-each
           (lambda (entry)
-            (define id-pair (assoc 'id entry))
+            (define id-pair (assoc keyword-id entry))
             (if id-pair
                 (when (equal? (cdr id-pair) <showid>)
                   (k entry))

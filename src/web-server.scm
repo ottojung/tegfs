@@ -55,7 +55,6 @@
 %use (current-permissions/p) "./current-permissions-p.scm"
 %use (tegfs-process-categorization-text) "./edit-tags.scm"
 %use (entry-for-local-file?) "./entry-for-local-file-huh.scm"
-%use (keyword-entry-parent-directory-vid) "./keyword-entry-parent-directory-vid.scm"
 %use (entry-target-fullpath) "./entry-target-fullpath.scm"
 %use (filemap-delete-by-sharedname! filemap-ref-by-sharedname filemap-ref-by-vid filemap-set! get-current-filemap/2) "./filemap.scm"
 %use (get-config) "./get-config.scm"
@@ -66,6 +65,8 @@
 %use (get-random-network-name) "./get-random-network-name.scm"
 %use (get-root) "./get-root.scm"
 %use (tegfs-get/cached) "./get.scm"
+%use (keyword-entry-parent-directory-vid) "./keyword-entry-parent-directory-vid.scm"
+%use (keyword-id) "./keyword-id.scm"
 %use (make-permission) "./make-permission.scm"
 %use (tegfs-make-thumbnails) "./make-thumbnails.scm"
 %use (path-safe-extension) "./path-safe-extension.scm"
@@ -473,7 +474,7 @@
 (define (maybe-display-preview entry)
   (define target-fullpath (entry-target-fullpath entry))
   (when target-fullpath
-    (let* ((target-id (cdr (assoc 'id entry)))
+    (let* ((target-id (cdr (assoc keyword-id entry)))
            (full-link (get-full-link entry target-fullpath)))
       (when full-link
         (display "<a href=") (write full-link) (display ">")
@@ -487,7 +488,7 @@
 
   (when details-link?
     (display "<a href='/details?id=")
-    (display (uri-encode (cdr (assoc 'id entry))))
+    (display (uri-encode (cdr (assoc keyword-id entry))))
     (display "' style='color: white'>"))
 
   (cond
@@ -500,7 +501,7 @@
            (relative (if (a-weblink? orig) orig (path-get-basename orig))))
       (display relative)))
    (else
-    (display (cdr (assoc 'id entry)))))
+    (display (cdr (assoc keyword-id entry)))))
 
   (when details-link?
     (display "</a>"))
@@ -894,7 +895,7 @@
   (tegfs-query/diropen
    query/split
    (lambda (entry)
-     (define id (cdr (assoc 'id entry)))
+     (define id (cdr (assoc keyword-id entry)))
      (hashset-add! idset id)))
 
   (web-respond text))
@@ -930,7 +931,7 @@
 (define (share)
   (define ctxq (web-get-query))
   (define query/encoded (hashmap-ref ctxq 'q #f))
-  (define id (hashmap-ref ctxq 'id #f))
+  (define id (hashmap-ref ctxq keyword-id #f))
 
   (cond
    (query/encoded (share-query query/encoded))
@@ -940,7 +941,7 @@
 (define (details)
   (define ctx (web-context/p))
   (define ctxq (web-get-query))
-  (define id (hashmap-ref ctxq 'id #f))
+  (define id (hashmap-ref ctxq keyword-id #f))
   (define filemap/2 (get-current-filemap/2))
   (define perm (get-current-permissions))
   (define entry

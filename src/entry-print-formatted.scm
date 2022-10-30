@@ -19,6 +19,7 @@
 %use (read-list) "./euphrates/read-list.scm"
 %use (entry-target-fullpath) "./entry-target-fullpath.scm"
 %use (get-preview-path) "./get-preview-path.scm"
+%use (keyword-id) "./keyword-id.scm"
 
 (define (entry-print/formatted <query-format> entry)
   (define format-elements
@@ -34,7 +35,7 @@
          (display (or fullpath "//NA//"))))
       ((equal? '%P element) ;; preview-fullpath
        (let* ((target-fullpath (entry-target-fullpath entry))
-              (id/p (assoc 'id entry))
+              (id/p (assoc keyword-id entry))
               (preview (and id/p target-fullpath
                             (get-preview-path (cdr id/p) target-fullpath))))
          (display (or preview "//NA//"))))

@@ -23,8 +23,9 @@
 %use (hashset-ref) "./euphrates/ihashset.scm"
 %use (raisu) "./euphrates/raisu.scm"
 %use (entry-for-local-file?) "./entry-for-local-file-huh.scm"
-%use (keyword-entry-parent-directory-vid) "./keyword-entry-parent-directory-vid.scm"
 %use (filemap-ref-by-vid) "./filemap.scm"
+%use (keyword-entry-parent-directory-vid) "./keyword-entry-parent-directory-vid.scm"
+%use (keyword-id) "./keyword-id.scm"
 %use (permission-admin? permission-detailsaccess? permission-filemap permission-idset) "./permission.scm"
 %use (sharedinfo-sourcepath) "./web-sharedinfo.scm"
 
@@ -39,7 +40,7 @@
                       (perm-filemap (permission-filemap perm)))
                  (and target-fullpath
                       (not (not (hashmap-ref perm-filemap target-fullpath #f)))))
-               (let ((id (cdr (assoc 'id entry)))
+               (let ((id (cdr (assoc keyword-id entry)))
                      (idset (permission-idset perm)))
                  (hashset-ref idset id))))))
 

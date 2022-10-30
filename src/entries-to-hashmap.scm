@@ -19,6 +19,7 @@
 %use (dprintln) "./euphrates/dprintln.scm"
 %use (hashmap-set! make-hashmap) "./euphrates/ihashmap.scm"
 %use (entries-for-each) "./entries-for-each.scm"
+%use (keyword-id) "./keyword-id.scm"
 
 (define entries->hashmap
   (case-lambda
@@ -26,7 +27,7 @@
    ((H)
     (entries-for-each
      (lambda (entry)
-       (define id-pair (assoc 'id entry))
+       (define id-pair (assoc keyword-id entry))
        (if id-pair
            (hashmap-set! H (cdr id-pair) entry)
            (parameterize ((current-output-port (current-error-port)))
