@@ -55,7 +55,7 @@
 %use (tegfs-process-categorization-text) "./edit-tags.scm"
 %use (entry-for-local-file?) "./entry-for-local-file-huh.scm"
 %use (entry-target-fullpath) "./entry-target-fullpath.scm"
-%use (filemap-delete-by-sharedname! filemap-ref-by-sharedname filemap-ref-by-vid filemap-set! get-current-filemap/2) "./filemap.scm"
+%use (filemap-delete-by-sharedname! filemap-ref-by-sharedname filemap-ref-by-vid filemap-set!) "./filemap.scm"
 %use (get-config) "./get-config.scm"
 %use (get-preview-path) "./get-preview-path.scm"
 %use (get-random-access-token) "./get-random-access-token.scm"
@@ -79,6 +79,7 @@
 %use (callcontext-body callcontext-break callcontext-ctr callcontext-request callcontext-time set-callcontext-key!) "./web-callcontext.scm"
 %use (web-context/p) "./web-context-p.scm"
 %use (context-ctr context-filemap/2 context-fileserver context-passwords context-port context-sharedir context-tokens) "./web-context.scm"
+%use (web-get-filemap/2) "./web-get-filemap-2.scm"
 %use (web-get-permissions) "./web-get-permissions.scm"
 %use (web-get-query) "./web-get-query.scm"
 %use (web-login-body) "./web-login-body.scm"
@@ -482,7 +483,7 @@
         (display "</a>")))))
 
 (define (display-title perm entry)
-  (define filemap/2 (get-current-filemap/2))
+  (define filemap/2 (web-get-filemap/2))
   (define details-link?
     (has-access-for-entry-details? filemap/2 perm entry))
 
@@ -508,7 +509,7 @@
   )
 
 (define (display-entry entry)
-  (define filemap/2 (get-current-filemap/2))
+  (define filemap/2 (web-get-filemap/2))
   (define perm (web-get-permissions))
   (when (has-access-for-entry-target? filemap/2 perm entry)
     (display "<div class='card'>")
@@ -553,7 +554,7 @@
        (case arg
          ((query/split) query/split)
          ((permissions) (web-get-permissions))
-         ((filemap/2) (get-current-filemap/2))
+         ((filemap/2) (web-get-filemap/2))
          ((diropen?) #t)
          ((dirpreview?) #f))))))
 
@@ -942,7 +943,7 @@
   (define ctx (web-context/p))
   (define ctxq (web-get-query))
   (define id (hashmap-ref ctxq keyword-id #f))
-  (define filemap/2 (get-current-filemap/2))
+  (define filemap/2 (web-get-filemap/2))
   (define perm (web-get-permissions))
   (define entry
     (or (tegfs-get/cached id)
