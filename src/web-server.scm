@@ -67,6 +67,7 @@
 %use (tegfs-get/cached) "./get.scm"
 %use (keyword-entry-parent-directory-vid) "./keyword-entry-parent-directory-vid.scm"
 %use (keyword-id) "./keyword-id.scm"
+%use (keyword-target) "./keyword-target.scm"
 %use (make-permission) "./make-permission.scm"
 %use (tegfs-make-thumbnails) "./make-thumbnails.scm"
 %use (path-safe-extension) "./path-safe-extension.scm"
@@ -457,7 +458,7 @@
            (info (or (filemap-ref-by-vid filemap/2 parent-vid #f)
                      (raisu 'entry-has-bad-parent-vid entry)))
            (suffix/raw
-            (or (assoc-or 'target entry #f)
+            (or (assoc-or keyword-target entry #f)
                 (raisu 'entry-does-not-have-target entry)))
            (suffix (uri-encode suffix/raw)))
       (if (file-is-directory?/no-readlink target-fullpath)
@@ -495,9 +496,9 @@
    ((and (assoc 'title entry)
          (not (string-null? (cdr (assoc 'title entry)))))
     (display (cdr (assoc 'title entry))))
-   ((and (assoc 'target entry)
-         (not (string-null? (cdr (assoc 'target entry)))))
-    (let* ((orig (cdr (assoc 'target entry)))
+   ((and (assoc keyword-target entry)
+         (not (string-null? (cdr (assoc keyword-target entry)))))
+    (let* ((orig (cdr (assoc keyword-target entry)))
            (relative (if (a-weblink? orig) orig (path-get-basename orig))))
       (display relative)))
    (else

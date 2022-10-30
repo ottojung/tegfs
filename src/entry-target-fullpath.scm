@@ -19,15 +19,16 @@
 %use (absolute-posix-path?) "./euphrates/absolute-posix-path-q.scm"
 %use (append-posix-path) "./euphrates/append-posix-path.scm"
 %use (path-normalize) "./euphrates/path-normalize.scm"
-%use (string-drop-n) "./euphrates/string-drop-n.scm"
 %use (raisu) "./euphrates/raisu.scm"
+%use (string-drop-n) "./euphrates/string-drop-n.scm"
 %use (a-weblink?) "./a-weblink-q.scm"
+%use (get-root) "./get-root.scm"
 %use (keyword-entry-parent-directory) "./keyword-entry-parent-directory.scm"
 %use (keyword-entry-registry-path) "./keyword-entry-registry-path.scm"
-%use (get-root) "./get-root.scm"
+%use (keyword-target) "./keyword-target.scm"
 
 (define (entry-target-fullpath entry)
-  (define target-p (assoc 'target entry))
+  (define target-p (assoc keyword-target entry))
   (and target-p
        (let ((target/1 (cdr target-p)))
          (if (a-weblink? target/1) target/1

@@ -37,6 +37,7 @@
 %use (fatal) "./fatal.scm"
 %use (get-root) "./get-root.scm"
 %use (keyword-id) "./keyword-id.scm"
+%use (keyword-target) "./keyword-target.scm"
 %use (last-id-filename) "./last-id-filename.scm"
 
 (define (generate-random-id)
@@ -112,7 +113,7 @@
     (map (fn-cons tosymbol identity)
          (if <target>
              (cons
-              (cons 'target <target>)
+              (cons keyword-target <target>)
               key-value-pairs0)
              key-value-pairs0)))
 

@@ -29,6 +29,7 @@
 %use (tegfs-get/parse) "./get.scm"
 %use (keyword-diropen) "./keyword-diropen.scm"
 %use (keyword-dirpreview) "./keyword-dirpreview.scm"
+%use (keyword-target) "./keyword-target.scm"
 %use (tegfs-make-thumbnails/parse) "./make-thumbnails.scm"
 %use (tegfs-prolog/parse) "./prolog.scm"
 %use (root/p) "./root-p.scm"
@@ -101,8 +102,8 @@
       :exclusive (--no-dirpreview --dirpreview)
 
       :help (<remote> "A remote address like 'user1@example.com'.")
-      :help (--diropen (stringf "Acknowledge <~a> property by treating elements of the ~a directory as entries having the same tags as the original entry." keyword-diropen 'target))
-      :help (--dirpreview (stringf "Acknowledge <~a> property by treating elements of the ~a directory as entries having the same tags as the original entry." keyword-dirpreview 'target))
+      :help (--diropen (stringf "Acknowledge <~a> property by treating elements of the ~a directory as entries having the same tags as the original entry." keyword-diropen keyword-target))
+      :help (--dirpreview (stringf "Acknowledge <~a> property by treating elements of the ~a directory as entries having the same tags as the original entry." keyword-dirpreview keyword-target))
 
       (when --help
         (define-cli:show-help))
