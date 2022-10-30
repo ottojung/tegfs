@@ -50,7 +50,7 @@
 %use (time-get-current-unixtime) "./euphrates/time-get-current-unixtime.scm"
 %use (with-monad) "./euphrates/with-monad.scm"
 %use (a-weblink?) "./a-weblink-q.scm"
-%use (has-access-for-entry-details? has-access-for-entry-full?) "./access.scm"
+%use (has-access-for-entry-details? has-access-for-entry-target?) "./access.scm"
 %use (tegfs-add) "./add.scm"
 %use (current-permissions/p) "./current-permissions-p.scm"
 %use (tegfs-process-categorization-text) "./edit-tags.scm"
@@ -506,7 +506,7 @@
 
 (define (display-entry entry)
   (define perm (get-current-permissions))
-  (when (has-access-for-entry-full? perm entry)
+  (when (has-access-for-entry-target? perm entry)
     (display "<div class='card'>")
     (display "<div>")
     (maybe-display-preview entry)

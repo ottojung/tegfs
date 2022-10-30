@@ -20,7 +20,7 @@
 %use (curry-if) "./euphrates/curry-if.scm"
 %use (monad-ask) "./euphrates/monad-ask.scm"
 %use (monad-do) "./euphrates/monad-do.scm"
-%use (has-access-for-entry-details? has-access-for-entry-full?) "./access.scm"
+%use (has-access-for-entry-details? has-access-for-entry-target?) "./access.scm"
 %use (entry-target-fullpath) "./entry-target-fullpath.scm"
 %use (keyword-diropen) "./keyword-diropen.scm"
 %use (keyword-dirpreview) "./keyword-dirpreview.scm"
@@ -51,7 +51,7 @@
     (define target-fullpath
       (entry-target-fullpath entry))
 
-    (when (has-access-for-entry-full? permissions entry)
+    (when (has-access-for-entry-target? permissions entry)
       (monad-do target-fullpath 'target-fullpath 'say 'many))
 
     (when (has-access-for-entry-details? permissions entry)

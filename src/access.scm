@@ -15,7 +15,7 @@
 %run guile
 
 %var has-access-for-entry?
-%var has-access-for-entry-full?
+%var has-access-for-entry-target?
 %var has-access-for-entry-details?
 
 %use (assoc-or) "./euphrates/assoc-or.scm"
@@ -44,7 +44,7 @@
                      (idset (permission-idset perm)))
                  (hashset-ref idset id))))))
 
-(define (has-access-for-entry-full? perm entry)
+(define (has-access-for-entry-target? perm entry)
   (has-access-for-entry? perm entry))
 
 (define (has-access-for-entry-details? perm entry)
