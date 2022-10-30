@@ -18,13 +18,13 @@
 
 %use (comp) "./euphrates/comp.scm"
 %use (monad-make/hook) "./euphrates/monad-make-hook.scm"
-%use (monadstate-qtags) "./euphrates/monadstate.scm"
 %use (printf) "./euphrates/printf.scm"
 %use (with-monad) "./euphrates/with-monad.scm"
-%use (tegfs-query) "./tegfs-query.scm"
 %use (entry-print/formatted) "./entry-print-formatted.scm"
 %use (entry-print) "./entry-print.scm"
 %use (fatal) "./fatal.scm"
+%use (get-current-permissions) "./get-current-permissions.scm"
+%use (tegfs-query) "./tegfs-query.scm"
 
 (define (CLI-query --diropen --dirpreview --entries <query-format> <query...>)
   (define counter 0)
@@ -35,18 +35,20 @@
      (else (fatal "Unexpected mode: both --entries and <query-format> were not set"))))
   (define show-monad
     (monad-make/hook
-     tags (entry)
-     (when (memq 'say-entry tags)
+     tags (arg)
+     (cond
+      ((memq 'entry tags)
        (set! counter (+ 1 counter))
-       (print-func entry)
-       (newline))))
+       (print-func arg)
+       (newline))
+      ((memq 'ask tags)
+       (case arg
+         ((query/split) <query...>)
+         ((diropen?) --diropen)
+         ((dirpreview?) --dirpreview)
+         ((permissions) (get-current-permissions)))))))
 
-  (with-monad
-   show-monad
-   (tegfs-query
-    --diropen
-    --dirpreview
-    <query...>))
+  (with-monad show-monad (tegfs-query))
 
   (parameterize ((current-output-port (current-error-port)))
     (if (equal? 0 counter)

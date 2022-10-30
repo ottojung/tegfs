@@ -18,16 +18,29 @@
 
 %use (appcomp comp) "./euphrates/comp.scm"
 %use (curry-if) "./euphrates/curry-if.scm"
+%use (monad-ask) "./euphrates/monad-ask.scm"
 %use (monad-do) "./euphrates/monad-do.scm"
 %use (has-access-for-entry-details? has-access-for-entry-full?) "./access.scm"
 %use (entry-target-fullpath) "./entry-target-fullpath.scm"
-%use (get-current-permissions) "./get-current-permissions.scm"
 %use (keyword-diropen) "./keyword-diropen.scm"
 %use (keyword-dirpreview) "./keyword-dirpreview.scm"
 %use (tegfs-query/open) "./tegfs-query-open.scm"
 
-(define (tegfs-query diropen? dirpreview? query/split)
-  (define perm (get-current-permissions))
+;; Monad contract:
+;; - type { 'ask }
+;;   where type is
+;;   - 'query/split (REQUIRED)
+;;   - 'permissions  (REQUIRED)
+;;   - 'diropen? (DEFAULT #f)
+;;   - 'dirpreview? (DEFAULT #f)
+;; - target-fullpath { 'target-fullpath, 'say, 'many } (OPTIONAL)
+;; - entry { 'entry, 'say, 'many } (OPTIONAL)
+(define (tegfs-query)
+  (monad-ask query/split)
+  (monad-ask permissions)
+  (monad-ask diropen? :default #f)
+  (monad-ask dirpreview? :default #f)
+
   (define opening-properties
     (appcomp
      '()
@@ -38,10 +51,10 @@
     (define target-fullpath
       (entry-target-fullpath entry))
 
-    (when (has-access-for-entry-full? perm entry)
-      (monad-do target-fullpath 'say-target-fullpath))
+    (when (has-access-for-entry-full? permissions entry)
+      (monad-do target-fullpath 'target-fullpath 'say 'many))
 
-    (when (has-access-for-entry-details? perm entry)
-      (monad-do entry 'say-entry)))
+    (when (has-access-for-entry-details? permissions entry)
+      (monad-do entry 'entry 'say 'many)))
 
   (tegfs-query/open opening-properties query/split for-each-fn))

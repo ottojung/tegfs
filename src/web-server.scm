@@ -542,19 +542,21 @@
 
   (define display-monad
     (monad-make/hook
-     tags (entry)
-     (when (memq 'say-entry tags)
-       (display-entry entry))))
+     tags (arg)
+     (cond
+      ((memq 'entry tags) (display-entry arg))
+      ((memq 'ask tags)
+       (case arg
+         ((query/split) query/split)
+         ((diropen?) #t)
+         ((dirpreview?) #f)
+         ((permissions) (get-current-permissions)))))))
 
   (web-respond
    (lambda _
      (display-entries
       (lambda _
-        (let ((diropen? #t)
-              (dirpreview? #f))
-          (with-monad
-           display-monad
-           (tegfs-query diropen? dirpreview? query/split))))))))
+        (with-monad display-monad (tegfs-query)))))))
 
 (define (directory)
   (define ctx (web-context/p))
