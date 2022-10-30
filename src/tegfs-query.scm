@@ -18,12 +18,16 @@
 
 %use (appcomp comp) "./euphrates/comp.scm"
 %use (curry-if) "./euphrates/curry-if.scm"
+%use (fp) "./euphrates/fp.scm"
 %use (monad-ask) "./euphrates/monad-ask.scm"
 %use (monad-do) "./euphrates/monad-do.scm"
 %use (has-access-for-entry-details? has-access-for-entry-target?) "./access.scm"
-%use (entry-target-fullpath) "./entry-target-fullpath.scm"
 %use (keyword-diropen) "./keyword-diropen.scm"
 %use (keyword-dirpreview) "./keyword-dirpreview.scm"
+%use (keyword-entry-parent-directory) "./keyword-entry-parent-directory.scm"
+%use (keyword-entry-registry-path) "./keyword-entry-registry-path.scm"
+%use (keyword-target) "./keyword-target.scm"
+%use (keyword-title) "./keyword-title.scm"
 %use (tegfs-query/open) "./tegfs-query-open.scm"
 
 ;; Monad contract:
@@ -34,7 +38,6 @@
 ;;   - 'filemap/2  (REQUIRED)
 ;;   - 'diropen? (DEFAULT #f)
 ;;   - 'dirpreview? (DEFAULT #f)
-;; - target-fullpath { 'target-fullpath, 'say, 'many } (OPTIONAL)
 ;; - entry { 'entry, 'say, 'many } (OPTIONAL)
 (define (tegfs-query)
   (monad-ask query/split)
@@ -50,13 +53,21 @@
      ((curry-if (const dirpreview?) (comp (cons keyword-dirpreview))))))
 
   (define (for-each-fn entry)
-    (define target-fullpath
-      (entry-target-fullpath entry))
+    (define modified
+      (cond
+       ((has-access-for-entry-details? filemap/2 permissions entry)
+        entry)
+       ((has-access-for-entry-target? filemap/2 permissions entry)
+        (filter (fp (key . val) (memq key target-fields)) entry))
+       (else #f)))
 
-    (when (has-access-for-entry-target? filemap/2 permissions entry)
-      (monad-do target-fullpath 'target-fullpath 'say 'many))
-
-    (when (has-access-for-entry-details? filemap/2 permissions entry)
-      (monad-do entry 'entry 'say 'many)))
+    (when modified
+      (monad-do modified 'entry 'say 'many)))
 
   (tegfs-query/open opening-properties query/split for-each-fn))
+
+(define target-fields
+  (list keyword-target
+        keyword-title
+        keyword-entry-parent-directory
+        keyword-entry-registry-path))
