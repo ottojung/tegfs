@@ -44,8 +44,8 @@
       ((memq 'ask tags)
        (case arg
          ((query/split) <query...>)
-         ((filemap/2) #f)
-         ((permissions) (get-admin-permissions))
+         ((filemap/2) #f) ;; TODO: get from server
+         ((permissions) (get-admin-permissions)) ;; TODO: get from command-line & server
          ((diropen?) --diropen)
          ((dirpreview?) --dirpreview))))))
 
