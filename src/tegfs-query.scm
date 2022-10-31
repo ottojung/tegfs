@@ -31,13 +31,15 @@
 
 ;; Monad contract:
 ;; - type { 'ask }
-;;   where type is
+;;   where type is:
 ;;   - 'query/split (REQUIRED)
 ;;   - 'permissions  (REQUIRED)
 ;;   - 'filemap/2  (REQUIRED)
 ;;   - 'diropen? (DEFAULT #f)
 ;;   - 'dirpreview? (DEFAULT #f)
-;; - entry { 'entry, 'say, 'many } (OPTIONAL)
+;; - handle-entry { 'handle-entry, 'say, 'many } (OPTIONAL)
+;;   unfolds to:
+;;   - entry { 'entry, 'say } (OPTIONAL)
 (define (tegfs-query)
   (monad-ask query/split)
   (monad-ask permissions)
@@ -61,8 +63,12 @@
           (filter (lambda (p) (memq (car p) target-fields)) entry0)))
        (else #f)))
 
+    (define (handle-entry)
+      (monad-do (entry) 'entry 'say)
+      )
+
     (when entry
-      (monad-do (entry) 'entry 'say 'many)))
+      (monad-do handle-entry 'handle-entry 'say 'many)))
 
   (tegfs-query/open opening-properties query/split for-each-fn))
 
