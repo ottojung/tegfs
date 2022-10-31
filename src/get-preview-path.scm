@@ -18,9 +18,13 @@
 
 %use (append-posix-path) "./euphrates/append-posix-path.scm"
 %use (remove-common-prefix) "./euphrates/remove-common-prefix.scm"
-%use (string-plus-encode) "./euphrates/string-plus-encode.scm"
+%use (string-plus-encode string-plus-encoding-make) "./euphrates/string-plus-encode.scm"
+%use (uri-safe/alphabet uri-safe/alphabet/index) "./euphrates/uri-safe-alphabet.scm"
 %use (get-file-type) "./get-file-type.scm"
 %use (get-root) "./get-root.scm"
+
+(define encoder
+  (string-plus-encoding-make uri-safe/alphabet uri-safe/alphabet/index #\+))
 
 (define (get-preview-path target-fullpath)
   (define preview-directory
@@ -35,7 +39,7 @@
 
   (and preview-extension
        (let* ((relative-path (remove-common-prefix target-fullpath (string-append (get-root) "/")))
-              (encoded-path (string-plus-encode relative-path))
+              (encoded-path (encoder relative-path))
               (preview-name
                (string-append encoded-path preview-extension)))
          (append-posix-path preview-directory preview-name))))
