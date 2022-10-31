@@ -24,7 +24,7 @@
   (monad-make/hook
    (lambda (tags)
      (cond
-      ((memq 'handle-entry tags) (lambda (f) (f)))
+      ((memq 'unfold-entry tags) (lambda (f) (f)))
       ((memq 'entry tags) handler)
       ((memq 'ask tags)
        (lambda (type)

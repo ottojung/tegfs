@@ -37,7 +37,7 @@
 ;;   - 'filemap/2  (REQUIRED)
 ;;   - 'diropen? (DEFAULT #f)
 ;;   - 'dirpreview? (DEFAULT #f)
-;; - handle-entry { 'handle-entry, 'say, 'many } (OPTIONAL)
+;; - unfold-entry { 'unfold-entry, 'say, 'many } (OPTIONAL)
 ;;   unfolds to:
 ;;   - entry { 'entry, 'say } (OPTIONAL)
 (define (tegfs-query)
@@ -63,12 +63,12 @@
           (filter (lambda (p) (memq (car p) target-fields)) entry0)))
        (else #f)))
 
-    (define (handle-entry)
+    (define (unfold-entry)
       (monad-do (entry) 'entry 'say)
       )
 
     (when entry
-      (monad-do handle-entry 'handle-entry 'say 'many)))
+      (monad-do unfold-entry 'unfold-entry 'say 'many)))
 
   (tegfs-query/open opening-properties query/split for-each-fn))
 
