@@ -28,7 +28,7 @@
 %use (filemap-ref-by-vid) "./filemap.scm"
 %use (keyword-entry-parent-directory-vid) "./keyword-entry-parent-directory-vid.scm"
 %use (keyword-target) "./keyword-target.scm"
-%use (sharedinfo-sharedname sharedinfo-vid) "./sharedinfo.scm"
+%use (sharedinfo-recepientid sharedinfo-vid) "./sharedinfo.scm"
 %use (web-context/p) "./web-context-p.scm"
 %use (context-filemap/2 context-fileserver) "./web-context.scm"
 %use (web-share-file/dont-link-yet) "./web-share-file.scm"
@@ -51,8 +51,8 @@
       (if (file-is-directory?/no-readlink target-fullpath)
           (stringf "/directory?vid=~a&s=~a" parent-vid suffix)
           (let* ((fileserver (context-fileserver ctx))
-                 (sharedname (sharedinfo-sharedname info)))
-            (append-posix-path fileserver sharedname suffix)))))
+                 (recepientid (sharedinfo-recepientid info)))
+            (append-posix-path fileserver recepientid suffix)))))
    (else
     (let* ((info (web-share-file/dont-link-yet target-fullpath default-full-sharing-time))
            (vid (and info (sharedinfo-vid info)))

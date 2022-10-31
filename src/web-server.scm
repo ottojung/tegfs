@@ -50,7 +50,7 @@
 %use (default-share-expiery-time) "./default-share-expiery-time.scm"
 %use (tegfs-process-categorization-text) "./edit-tags.scm"
 %use (entry-target-fullpath) "./entry-target-fullpath.scm"
-%use (filemap-delete-by-sharedname! filemap-make/empty filemap-ref-by-sharedname filemap-ref-by-vid) "./filemap.scm"
+%use (filemap-delete-by-recepientid! filemap-make/empty filemap-ref-by-recepientid filemap-ref-by-vid) "./filemap.scm"
 %use (get-config) "./get-config.scm"
 %use (get-preview-path) "./get-preview-path.scm"
 %use (get-random-access-token) "./get-random-access-token.scm"
@@ -63,7 +63,7 @@
 %use (permission-still-valid?) "./permission-still-valid-huh.scm"
 %use (permission-filemap permission-idset permission-token) "./permission.scm"
 %use (sha256sum) "./sha256sum.scm"
-%use (sharedinfo-ctime sharedinfo-sharedname sharedinfo-sourcepath sharedinfo-stime sharedinfo-vid) "./sharedinfo.scm"
+%use (sharedinfo-ctime sharedinfo-recepientid sharedinfo-sourcepath sharedinfo-stime sharedinfo-vid) "./sharedinfo.scm"
 %use (standalone-file->entry/prefixed) "./standalone-file-to-entry.scm"
 %use (symlink-shared-file) "./symlink-shared-file.scm"
 %use (tegfs-query) "./tegfs-query.scm"
@@ -341,12 +341,12 @@
   (define info
     (or (filemap-ref-by-vid filemap/2 vid #f)
         (not-found)))
-  (define sharedname
-    (sharedinfo-sharedname info))
+  (define recepientid
+    (sharedinfo-recepientid info))
   (define suffix
     (hashmap-ref ctxq 's "."))
   (define shared-link-fullpath
-    (append-posix-path sharedir sharedname))
+    (append-posix-path sharedir recepientid))
   (define shared-fullpath
     (readlink shared-link-fullpath))
   (define _1213
@@ -437,12 +437,12 @@
 (define (get-sharedinfo-location info)
   (define ctx (web-context/p))
   (define vid (sharedinfo-vid info))
-  (define sharedname (sharedinfo-sharedname info))
+  (define recepientid (sharedinfo-recepientid info))
   (define target-fullpath (sharedinfo-sourcepath info))
   (define fileserver (context-fileserver ctx))
   (if (file-is-directory?/no-readlink target-fullpath)
       (string-append "/directory?vid=" vid)
-      (string-append fileserver sharedname)))
+      (string-append fileserver recepientid)))
 
 (define (full)
   (define ctx (web-context/p))
@@ -458,7 +458,7 @@
   (define _8123
     (unless info
       (not-found)))
-  (define sharedname (sharedinfo-sharedname info))
+  (define recepientid (sharedinfo-recepientid info))
   (define target-fullpath (sharedinfo-sourcepath info))
   (define _11
     (unless (hashmap-ref (permission-filemap perm) target-fullpath #f)
@@ -467,7 +467,7 @@
   (define location
     (get-sharedinfo-location info))
 
-  (symlink-shared-file target-fullpath sharedname)
+  (symlink-shared-file target-fullpath recepientid)
 
   (return!
    (build-response
@@ -528,11 +528,11 @@
              (cons (lambda _ . bodies) delayed-list)))))
 
   (hashmap-foreach
-   (lambda (sharedname info)
+   (lambda (recepientid info)
      (unless (sharedinfo-still-valid? info)
        (delayop
-        (display "UNSHARE ") (write sharedname) (newline)
-        (filemap-delete-by-sharedname! filemap/2 sharedname))))
+        (display "UNSHARE ") (write recepientid) (newline)
+        (filemap-delete-by-recepientid! filemap/2 recepientid))))
    (cdr filemap/2))
 
   (hashmap-foreach
@@ -556,11 +556,11 @@
   (for-each
    (lambda (namepair)
      (define full-name (car namepair))
-     (define sharedname (cadr namepair))
-     (define info (filemap-ref-by-sharedname filemap/2 sharedname #f))
+     (define recepientid (cadr namepair))
+     (define info (filemap-ref-by-recepientid filemap/2 recepientid #f))
      (unless info
        (display "File not shared: ")
-       (write sharedname)
+       (write recepientid)
        (display " deleting...\n")
        (file-delete full-name)))
    (directory-files sharedir)))

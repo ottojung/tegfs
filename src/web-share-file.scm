@@ -24,7 +24,7 @@
 %use (make-sharedinfo) "./make-sharedinfo.scm"
 %use (permission-time-left) "./permission-time-left.scm"
 %use (permission-filemap permission-share-longer-than-view?) "./permission.scm"
-%use (sharedinfo-sharedname) "./sharedinfo.scm"
+%use (sharedinfo-recepientid) "./sharedinfo.scm"
 %use (symlink-shared-file) "./symlink-shared-file.scm"
 %use (web-callcontext/p) "./web-callcontext-p.scm"
 %use (callcontext-time) "./web-callcontext.scm"
@@ -43,7 +43,7 @@
         for-duration
         (min for-duration (permission-time-left perm now))))
   (define info (make-sharedinfo target-fullpath for-duration*))
-  (define sharedname (sharedinfo-sharedname info))
+  (define recepientid (sharedinfo-recepientid info))
   (define perm-filemap (permission-filemap perm))
 
   (and (< 0 for-duration*)
@@ -52,7 +52,7 @@
          (filemap-set! filemap/2 info)
 
          (when make-symlink?
-           (symlink-shared-file target-fullpath sharedname))
+           (symlink-shared-file target-fullpath recepientid))
 
          info)))
 

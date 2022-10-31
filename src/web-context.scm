@@ -34,5 +34,5 @@
   (port context-port) ;; port to host the server on
   (fileserver context-fileserver) ;; full URI of the file server
   (sharedir context-sharedir) ;; directory with shared wiles
-  (filemap/2 context-filemap/2) ;; cons of hashmaps of type [: vid -> info] and [: sharedname -> info]
+  (filemap/2 context-filemap/2) ;; cons of hashmaps of type [: vid -> info] and [: recepientid -> info]
   )

@@ -17,46 +17,46 @@
 %var filemap-make/empty
 %var filemap-set!
 %var filemap-ref-by-vid
-%var filemap-ref-by-sharedname
+%var filemap-ref-by-recepientid
 %var filemap-delete-by-vid!
-%var filemap-delete-by-sharedname!
+%var filemap-delete-by-recepientid!
 
 %use (hashmap-delete! hashmap-ref hashmap-set! make-hashmap) "./euphrates/ihashmap.scm"
-%use (sharedinfo-sharedname sharedinfo-vid) "./sharedinfo.scm"
+%use (sharedinfo-recepientid sharedinfo-vid) "./sharedinfo.scm"
 
 (define (filemap-make/empty)
   (cons (make-hashmap) (make-hashmap)))
 
 (define (filemap-set! filemap/2 info)
   (define vid (sharedinfo-vid info))
-  (define sharedname (sharedinfo-sharedname info))
+  (define recepientid (sharedinfo-recepientid info))
   (define first (car filemap/2))
   (define second (cdr filemap/2))
   (hashmap-set! first vid info)
-  (hashmap-set! second sharedname info))
+  (hashmap-set! second recepientid info))
 
 (define (filemap-ref-by-vid filemap/2 id default)
   (define first (car filemap/2))
   (hashmap-ref first id default))
 
-(define (filemap-ref-by-sharedname filemap/2 sharedname default)
+(define (filemap-ref-by-recepientid filemap/2 recepientid default)
   (define second (cdr filemap/2))
-  (hashmap-ref second sharedname default))
+  (hashmap-ref second recepientid default))
 
 (define (filemap-delete-by-vid! filemap/2 id)
   (define first (car filemap/2))
   (define second (cdr filemap/2))
   (define info (filemap-ref-by-vid filemap/2 id #f))
   (when info
-    (let ((sharedname (sharedinfo-sharedname info)))
+    (let ((recepientid (sharedinfo-recepientid info)))
       (hashmap-delete! first id)
-      (hashmap-delete! second sharedname))))
+      (hashmap-delete! second recepientid))))
 
-(define (filemap-delete-by-sharedname! filemap/2 sharedname)
+(define (filemap-delete-by-recepientid! filemap/2 recepientid)
   (define first (car filemap/2))
   (define second (cdr filemap/2))
-  (define info (filemap-ref-by-sharedname filemap/2 sharedname #f))
+  (define info (filemap-ref-by-recepientid filemap/2 recepientid #f))
   (when info
     (let ((id (sharedinfo-vid info)))
       (hashmap-delete! first id)
-      (hashmap-delete! second sharedname))))
+      (hashmap-delete! second recepientid))))

@@ -26,7 +26,7 @@
 %use (get-preview-path) "./get-preview-path.scm"
 %use (keyword-id) "./keyword-id.scm"
 %use (keyword-target) "./keyword-target.scm"
-%use (sharedinfo-sharedname) "./sharedinfo.scm"
+%use (sharedinfo-recepientid) "./sharedinfo.scm"
 %use (web-context/p) "./web-context-p.scm"
 %use (context-fileserver context-sharedir) "./web-context.scm"
 %use (web-get-full-link) "./web-get-full-link.scm"
@@ -44,10 +44,10 @@
       (and preview-fullpath
            (let ((info (web-share-file preview-fullpath default-preview-sharing-time)))
              (and info
-                  (let* ((sharedname (sharedinfo-sharedname info))
+                  (let* ((recepientid (sharedinfo-recepientid info))
                          (sharedir (context-sharedir ctx))
-                         (shared-fullpath (append-posix-path sharedir sharedname))
-                         (location (string-append fileserver sharedname)))
+                         (shared-fullpath (append-posix-path sharedir recepientid))
+                         (location (string-append fileserver recepientid)))
                     (if (file-or-directory-exists? shared-fullpath)
                         (write location)
                         (write default-preview))

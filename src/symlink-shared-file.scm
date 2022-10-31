@@ -24,10 +24,10 @@
 %use (web-context/p) "./web-context-p.scm"
 %use (context-sharedir) "./web-context.scm"
 
-(define (symlink-shared-file target-fullpath sharedname)
+(define (symlink-shared-file target-fullpath recepientid)
   (define ctx (web-context/p))
   (define sharedir (context-sharedir ctx))
-  (define shared-fullpath (append-posix-path sharedir sharedname))
+  (define shared-fullpath (append-posix-path sharedir recepientid))
   (define target-fullpath/abs
     (if (absolute-posix-path? target-fullpath) target-fullpath
         (append-posix-path (get-current-directory) target-fullpath)))

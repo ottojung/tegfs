@@ -23,11 +23,11 @@
 %use (callcontext-time) "./web-callcontext.scm"
 
 (define (make-sharedinfo target-fullpath for-duration)
-  (define sharedname
+  (define recepientid
     (string-append
      (get-random-network-name)
      (path-safe-extension target-fullpath)))
   (define callctx (web-callcontext/p))
   (define now (callcontext-time callctx))
   (define vid (get-random-network-name))
-  (sharedinfo-ctr target-fullpath sharedname vid now for-duration))
+  (sharedinfo-ctr target-fullpath recepientid vid now for-duration))
