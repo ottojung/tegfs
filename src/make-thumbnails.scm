@@ -17,7 +17,7 @@
 %var tegfs-make-thumbnails/parse
 %var tegfs-make-thumbnails
 %var tegfs-make-image-thumbnails
-%var tegfs-make-video-thumbnails
+%var tegfs-make-senderideo-thumbnails
 
 %use (catchu-case) "./euphrates/catchu-case.scm"
 %use (appcomp comp) "./euphrates/comp.scm"
@@ -78,7 +78,7 @@
    ((file-is-image? <input>)
     (tegfs-make-image-thumbnails <input> <output>))
    ((file-is-video? <input>)
-    (tegfs-make-video-thumbnails <input> <output>))
+    (tegfs-make-senderideo-thumbnails <input> <output>))
    (else
     (raisu 'could-not-recognize-filetype))))
 
@@ -151,8 +151,8 @@
       'could-not-convert-image))
 
 ;; TODO: Maybe do video previews that are videos
-;;       Take a look: https://stackoverflow.com/questions/42747935/cut-multiple-videos-and-merge-with-ffmpeg
-(define (tegfs-make-video-thumbnails <input> <output>)
+;;       Take a look: https://stackoverflow.com/questions/42747935/cut-multiple-senderideos-and-merge-with-ffmpeg
+(define (tegfs-make-senderideo-thumbnails <input> <output>)
   (define-pair (probe status) (system-re "ffprobe ~a 2>&1" <input>))
   (define _121312
     (unless (= 0 status) (raisu 'probe-failed status probe)))

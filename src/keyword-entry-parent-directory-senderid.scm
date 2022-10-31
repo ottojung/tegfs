@@ -14,6 +14,6 @@
 
 %run guile
 
-%var keyword-entry-parent-directory-vid
+%var keyword-entry-parent-directory-senderid
 
-(define keyword-entry-parent-directory-vid '%parent-directory-vid)
+(define keyword-entry-parent-directory-senderid '%parent-directory-senderid)

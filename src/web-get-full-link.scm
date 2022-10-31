@@ -25,10 +25,10 @@
 %use (a-weblink?) "./a-weblink-q.scm"
 %use (default-full-sharing-time) "./default-full-sharing-time.scm"
 %use (entry-for-local-file?) "./entry-for-local-file-huh.scm"
-%use (filemap-ref-by-vid) "./filemap.scm"
-%use (keyword-entry-parent-directory-vid) "./keyword-entry-parent-directory-vid.scm"
+%use (filemap-ref-by-senderid) "./filemap.scm"
+%use (keyword-entry-parent-directory-senderid) "./keyword-entry-parent-directory-senderid.scm"
 %use (keyword-target) "./keyword-target.scm"
-%use (sharedinfo-recepientid sharedinfo-vid) "./sharedinfo.scm"
+%use (sharedinfo-recepientid sharedinfo-senderid) "./sharedinfo.scm"
 %use (web-context/p) "./web-context-p.scm"
 %use (context-filemap/2 context-fileserver) "./web-context.scm"
 %use (web-share-file/dont-link-yet) "./web-share-file.scm"
@@ -38,23 +38,23 @@
    ((a-weblink? target-fullpath)
     target-fullpath)
    ((entry-for-local-file? entry)
-    (let* ((parent-vid (or (assoc-or keyword-entry-parent-directory-vid entry #f)
-                           (raisu 'entry-does-not-have-parent-vid entry)))
+    (let* ((parent-senderid (or (assoc-or keyword-entry-parent-directory-senderid entry #f)
+                           (raisu 'entry-does-not-have-parent-senderid entry)))
            (ctx (web-context/p))
            (filemap/2 (context-filemap/2 ctx))
-           (info (or (filemap-ref-by-vid filemap/2 parent-vid #f)
-                     (raisu 'entry-has-bad-parent-vid entry)))
+           (info (or (filemap-ref-by-senderid filemap/2 parent-senderid #f)
+                     (raisu 'entry-has-bad-parent-senderid entry)))
            (suffix/raw
             (or (assoc-or keyword-target entry #f)
                 (raisu 'entry-does-not-have-target entry)))
            (suffix (uri-encode suffix/raw)))
       (if (file-is-directory?/no-readlink target-fullpath)
-          (stringf "/directory?vid=~a&s=~a" parent-vid suffix)
+          (stringf "/directory?vid=~a&s=~a" parent-senderid suffix)
           (let* ((fileserver (context-fileserver ctx))
                  (recepientid (sharedinfo-recepientid info)))
             (append-posix-path fileserver recepientid suffix)))))
    (else
     (let* ((info (web-share-file/dont-link-yet target-fullpath default-full-sharing-time))
-           (vid (and info (sharedinfo-vid info)))
+           (vid (and info (sharedinfo-senderid info)))
            (location (and info (string-append "/full?vid=" vid))))
       (and info location)))))

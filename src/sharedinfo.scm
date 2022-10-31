@@ -18,17 +18,17 @@
 %var sharedinfo?
 %var sharedinfo-sourcepath
 %var sharedinfo-recepientid
-%var sharedinfo-vid
+%var sharedinfo-senderid
 %var sharedinfo-ctime
 %var sharedinfo-stime
 
 %use (define-type9) "./euphrates/define-type9.scm"
 
 (define-type9 <sharedinfo>
-  (sharedinfo-ctr sourcepath recepientid vid ctime stime) sharedinfo?
+  (sharedinfo-ctr sourcepath recepientid senderid ctime stime) sharedinfo?
   (sourcepath sharedinfo-sourcepath) ;; the original file path
-  (recepientid sharedinfo-recepientid) ;; the linked file path suffix (without the sharedir)
-  (vid sharedinfo-vid) ;; unique virtual id
+  (recepientid sharedinfo-recepientid) ;; uniquer virtual id visible to the recepient (so, potentially everyone). It is the linked file path suffix (without the sharedir)
+  (senderid sharedinfo-senderid) ;; unique virtual id only visible to the sender.
   (ctime sharedinfo-ctime) ;; time in seconds for when this info was created
   (stime sharedinfo-stime) ;; time in seconds for how long to share this file
   )

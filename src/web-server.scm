@@ -50,7 +50,7 @@
 %use (default-share-expiery-time) "./default-share-expiery-time.scm"
 %use (tegfs-process-categorization-text) "./edit-tags.scm"
 %use (entry-target-fullpath) "./entry-target-fullpath.scm"
-%use (filemap-delete-by-recepientid! filemap-make/empty filemap-ref-by-recepientid filemap-ref-by-vid) "./filemap.scm"
+%use (filemap-delete-by-recepientid! filemap-make/empty filemap-ref-by-recepientid filemap-ref-by-senderid) "./filemap.scm"
 %use (get-config) "./get-config.scm"
 %use (get-preview-path) "./get-preview-path.scm"
 %use (get-random-access-token) "./get-random-access-token.scm"
@@ -63,7 +63,7 @@
 %use (permission-still-valid?) "./permission-still-valid-huh.scm"
 %use (permission-filemap permission-idset permission-token) "./permission.scm"
 %use (sha256sum) "./sha256sum.scm"
-%use (sharedinfo-ctime sharedinfo-recepientid sharedinfo-sourcepath sharedinfo-stime sharedinfo-vid) "./sharedinfo.scm"
+%use (sharedinfo-ctime sharedinfo-recepientid sharedinfo-sourcepath sharedinfo-stime sharedinfo-senderid) "./sharedinfo.scm"
 %use (standalone-file->entry/prefixed) "./standalone-file-to-entry.scm"
 %use (symlink-shared-file) "./symlink-shared-file.scm"
 %use (tegfs-query) "./tegfs-query.scm"
@@ -339,7 +339,7 @@
     (or (hashmap-ref ctxq 'vid #f)
         (bad-request "Request query missing requiered 'd' argument")))
   (define info
-    (or (filemap-ref-by-vid filemap/2 vid #f)
+    (or (filemap-ref-by-senderid filemap/2 vid #f)
         (not-found)))
   (define recepientid
     (sharedinfo-recepientid info))
@@ -436,7 +436,7 @@
 
 (define (get-sharedinfo-location info)
   (define ctx (web-context/p))
-  (define vid (sharedinfo-vid info))
+  (define vid (sharedinfo-senderid info))
   (define recepientid (sharedinfo-recepientid info))
   (define target-fullpath (sharedinfo-sourcepath info))
   (define fileserver (context-fileserver ctx))
@@ -454,7 +454,7 @@
       (not-found)))
   (define ctxq (web-get-query))
   (define vid (hashmap-ref ctxq 'vid #f))
-  (define info (filemap-ref-by-vid filemap/2 vid #f))
+  (define info (filemap-ref-by-senderid filemap/2 vid #f))
   (define _8123
     (unless info
       (not-found)))

@@ -23,8 +23,8 @@
 %use (hashset-ref) "./euphrates/ihashset.scm"
 %use (raisu) "./euphrates/raisu.scm"
 %use (entry-for-local-file?) "./entry-for-local-file-huh.scm"
-%use (filemap-ref-by-vid) "./filemap.scm"
-%use (keyword-entry-parent-directory-vid) "./keyword-entry-parent-directory-vid.scm"
+%use (filemap-ref-by-senderid) "./filemap.scm"
+%use (keyword-entry-parent-directory-senderid) "./keyword-entry-parent-directory-senderid.scm"
 %use (keyword-id) "./keyword-id.scm"
 %use (permission-admin? permission-detailsaccess? permission-filemap permission-idset) "./permission.scm"
 %use (sharedinfo-sourcepath) "./sharedinfo.scm"
@@ -33,9 +33,9 @@
   (and perm
        (or (permission-admin? perm)
            (if (entry-for-local-file? entry)
-               (let* ((parent-vid (or (assoc-or keyword-entry-parent-directory-vid entry #f)
-                                      (raisu 'entry-does-not-have-parent-vid entry)))
-                      (info (filemap-ref-by-vid filemap/2 parent-vid #f))
+               (let* ((parent-senderid (or (assoc-or keyword-entry-parent-directory-senderid entry #f)
+                                      (raisu 'entry-does-not-have-parent-senderid entry)))
+                      (info (filemap-ref-by-senderid filemap/2 parent-senderid #f))
                       (target-fullpath (and info (sharedinfo-sourcepath info)))
                       (perm-filemap (permission-filemap perm)))
                  (and target-fullpath

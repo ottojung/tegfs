@@ -20,7 +20,7 @@
 %use (append-posix-path) "./euphrates/append-posix-path.scm"
 %use (path-get-basename) "./euphrates/path-get-basename.scm"
 %use (path-normalize) "./euphrates/path-normalize.scm"
-%use (keyword-entry-parent-directory-vid) "./keyword-entry-parent-directory-vid.scm"
+%use (keyword-entry-parent-directory-senderid) "./keyword-entry-parent-directory-senderid.scm"
 %use (keyword-entry-parent-directory) "./keyword-entry-parent-directory.scm"
 
 (define (standalone-file->entry filepath)
@@ -41,5 +41,5 @@
   `((id . ,id)
     (target . ,name)
     (,keyword-entry-parent-directory . ,dir)
-    (,keyword-entry-parent-directory-vid . ,vid)
+    (,keyword-entry-parent-directory-senderid . ,vid)
     ))
