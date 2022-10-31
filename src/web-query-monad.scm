@@ -24,6 +24,7 @@
   (monad-make/hook
    (lambda (tags args)
      (cond
+      ((memq 'handle-entry tags) ((car args)))
       ((memq 'entry tags) (handler (car args)))
       ((memq 'ask tags)
        (case (car args)
