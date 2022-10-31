@@ -22,13 +22,16 @@
 
 (define (web-query-monad handler query/split)
   (monad-make/hook
-   (lambda (tags args)
+   (lambda (tags)
      (cond
-      ((memq 'entry tags) (handler (car args)))
+      ((memq 'entry tags)
+       (lambda args (handler (car args))))
       ((memq 'ask tags)
-       (case (car args)
-         ((query/split) query/split)
-         ((permissions) (web-get-permissions))
-         ((filemap/2) (web-get-filemap/2))
-         ((diropen?) #t)
-         ((dirpreview?) #f)))))))
+       (lambda (type)
+         (case type
+           ((query/split) query/split)
+           ((permissions) (web-get-permissions))
+           ((filemap/2) (web-get-filemap/2))
+           ((diropen?) #t)
+           ((dirpreview?) #f))))))))
+
