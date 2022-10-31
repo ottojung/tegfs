@@ -33,6 +33,7 @@
 %use (make-directories) "./euphrates/make-directories.scm"
 %use (memconst) "./euphrates/memconst.scm"
 %use (open-file-port) "./euphrates/open-file-port.scm"
+%use (path-without-extension) "./euphrates/path-without-extension.scm"
 %use (raisu) "./euphrates/raisu.scm"
 %use (remove-common-prefix) "./euphrates/remove-common-prefix.scm"
 %use (string-split-3) "./euphrates/string-split-3.scm"
@@ -63,7 +64,7 @@
 %use (permission-still-valid?) "./permission-still-valid-huh.scm"
 %use (permission-filemap permission-idset permission-token) "./permission.scm"
 %use (sha256sum) "./sha256sum.scm"
-%use (sharedinfo-ctime sharedinfo-recepientid sharedinfo-sourcepath sharedinfo-stime sharedinfo-senderid) "./sharedinfo.scm"
+%use (sharedinfo-ctime sharedinfo-recepientid sharedinfo-senderid sharedinfo-sourcepath sharedinfo-stime) "./sharedinfo.scm"
 %use (standalone-file->entry/prefixed) "./standalone-file-to-entry.scm"
 %use (symlink-shared-file) "./symlink-shared-file.scm"
 %use (tegfs-query) "./tegfs-query.scm"
@@ -78,6 +79,7 @@
 %use (web-get-filemap/2) "./web-get-filemap-2.scm"
 %use (web-get-permissions) "./web-get-permissions.scm"
 %use (web-get-query) "./web-get-query.scm"
+%use (web-get-shared-link) "./web-get-shared-link.scm"
 %use (web-login-body) "./web-login-body.scm"
 %use (web-login-failed-body) "./web-login-failed-body.scm"
 %use (web-login-success-body) "./web-login-success-body.scm"
@@ -437,12 +439,12 @@
 (define (get-sharedinfo-location info)
   (define ctx (web-context/p))
   (define vid (sharedinfo-senderid info))
-  (define recepientid (sharedinfo-recepientid info))
   (define target-fullpath (sharedinfo-sourcepath info))
+  (define recepientid (sharedinfo-recepientid info))
   (define fileserver (context-fileserver ctx))
   (if (file-is-directory?/no-readlink target-fullpath)
       (string-append "/directory?vid=" vid)
-      (string-append fileserver recepientid)))
+      (web-get-shared-link fileserver target-fullpath recepientid)))
 
 (define (full)
   (define ctx (web-context/p))
@@ -556,11 +558,12 @@
   (for-each
    (lambda (namepair)
      (define full-name (car namepair))
-     (define recepientid (cadr namepair))
+     (define sharedname (cadr namepair))
+     (define recepientid (path-without-extension sharedname))
      (define info (filemap-ref-by-recepientid filemap/2 recepientid #f))
      (unless info
        (display "File not shared: ")
-       (write recepientid)
+       (write sharedname)
        (display " deleting...\n")
        (file-delete full-name)))
    (directory-files sharedir)))

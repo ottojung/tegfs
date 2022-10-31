@@ -14,17 +14,12 @@
 
 %run guile
 
-%var make-sharedinfo
+%var web-get-shared-link
 
-%use (get-random-network-name) "./get-random-network-name.scm"
-%use (path-safe-extension) "./path-safe-extension.scm"
-%use (sharedinfo-ctr) "./sharedinfo.scm"
-%use (web-callcontext/p) "./web-callcontext-p.scm"
-%use (callcontext-time) "./web-callcontext.scm"
+%use (append-posix-path) "./euphrates/append-posix-path.scm"
+%use (get-sharedname) "./get-sharedname.scm"
 
-(define (make-sharedinfo target-fullpath for-duration)
-  (define callctx (web-callcontext/p))
-  (define now (callcontext-time callctx))
-  (define recepientid (get-random-network-name))
-  (define senderid (get-random-network-name))
-  (sharedinfo-ctr target-fullpath recepientid senderid now for-duration))
+(define (web-get-shared-link fileserver target-fullpath recepientid)
+  (define sharedname (get-sharedname target-fullpath recepientid))
+  (append-posix-path fileserver sharedname))
+

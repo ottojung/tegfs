@@ -16,7 +16,6 @@
 
 %var web-display-entry
 
-%use (append-posix-path) "./euphrates/append-posix-path.scm"
 %use (file-or-directory-exists?) "./euphrates/file-or-directory-exists-q.scm"
 %use (path-get-basename) "./euphrates/path-get-basename.scm"
 %use (uri-encode) "./euphrates/uri-encode.scm"
@@ -30,6 +29,8 @@
 %use (web-context/p) "./web-context-p.scm"
 %use (context-fileserver context-sharedir) "./web-context.scm"
 %use (web-get-full-link) "./web-get-full-link.scm"
+%use (web-get-shared-fullpath) "./web-get-shared-fullpath.scm"
+%use (web-get-shared-link) "./web-get-shared-link.scm"
 %use (web-share-file) "./web-share-file.scm"
 
 (define (display-preview target-fullpath)
@@ -46,8 +47,8 @@
              (and info
                   (let* ((recepientid (sharedinfo-recepientid info))
                          (sharedir (context-sharedir ctx))
-                         (shared-fullpath (append-posix-path sharedir recepientid))
-                         (location (string-append fileserver recepientid)))
+                         (shared-fullpath (web-get-shared-fullpath sharedir preview-fullpath recepientid))
+                         (location (web-get-shared-link fileserver preview-fullpath recepientid)))
                     (if (file-or-directory-exists? shared-fullpath)
                         (write location)
                         (write default-preview))
