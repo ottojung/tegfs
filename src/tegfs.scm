@@ -23,7 +23,6 @@
 %use (tegfs-categorize/parse) "./categorize.scm"
 %use (tegfs-config/parse) "./config.scm"
 %use (tegfs-dump-clipboard/parse) "./dump-clipboard.scm"
-%use (get-admin-permissions) "./get-admin-permissions.scm"
 %use (get-root/default) "./get-root.scm"
 %use (tegfs-get/parse) "./get.scm"
 %use (keyword-diropen) "./keyword-diropen.scm"

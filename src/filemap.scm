@@ -22,7 +22,7 @@
 %var filemap-delete-by-sharedname!
 
 %use (hashmap-delete! hashmap-ref hashmap-set! make-hashmap) "./euphrates/ihashmap.scm"
-%use (sharedinfo-sharedname sharedinfo-vid) "./web-sharedinfo.scm"
+%use (sharedinfo-sharedname sharedinfo-vid) "./sharedinfo.scm"
 
 (define (filemap-make/empty)
   (cons (make-hashmap) (make-hashmap)))

@@ -27,7 +27,7 @@
 %use (keyword-entry-parent-directory-vid) "./keyword-entry-parent-directory-vid.scm"
 %use (keyword-id) "./keyword-id.scm"
 %use (permission-admin? permission-detailsaccess? permission-filemap permission-idset) "./permission.scm"
-%use (sharedinfo-sourcepath) "./web-sharedinfo.scm"
+%use (sharedinfo-sourcepath) "./sharedinfo.scm"
 
 (define (has-access-for-entry? filemap/2 perm entry)
   (and perm

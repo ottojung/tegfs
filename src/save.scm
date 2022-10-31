@@ -52,7 +52,6 @@
 %use (tegfs-categorize) "./categorize.scm"
 %use (choose-clipboard-data-type classify-clipboard-text-content dump-clipboard-to-file dump-clipboard-to-temporary get-clipboard-text-content get-clipboard-type-extension) "./clipboard.scm"
 %use (custom-preferences-filename) "./custom-preferences-filename.scm"
-%use (keyword-default-save-registry) "./keyword-default-save-registry.scm"
 %use (tegfs-dump-clipboard tegfs-dump-clipboard/pasta) "./dump-clipboard.scm"
 %use (fatal) "./fatal.scm"
 %use (file-is-audio?) "./file-is-audio-q.scm"
@@ -62,6 +61,7 @@
 %use (get-random-basename) "./get-random-basename.scm"
 %use (get-registry-files) "./get-registry-files.scm"
 %use (get-root) "./get-root.scm"
+%use (keyword-default-save-registry) "./keyword-default-save-registry.scm"
 %use (make-temporary-filename/local) "./make-temporary-filename-local.scm"
 %use (regfile-suffix) "./regfile-suffix.scm"
 

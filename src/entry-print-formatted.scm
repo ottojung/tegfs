@@ -19,7 +19,6 @@
 %use (read-list) "./euphrates/read-list.scm"
 %use (entry-target-fullpath) "./entry-target-fullpath.scm"
 %use (get-preview-path) "./get-preview-path.scm"
-%use (keyword-id) "./keyword-id.scm"
 
 (define (entry-print/formatted <query-format> entry)
   (define format-elements

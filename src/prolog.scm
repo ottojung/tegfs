@@ -30,11 +30,11 @@
 %use (dump-rules) "./dump-rules.scm"
 %use (entries-for-each) "./entries-for-each.scm"
 %use (keyword-id) "./keyword-id.scm"
+%use (keyword-target) "./keyword-target.scm"
 %use (make-temporary-filename/local) "./make-temporary-filename-local.scm"
 %use (parse-tag) "./parse-tag.scm"
 %use (print-tag-as-prolog-term) "./tag-to-prolog-term.scm"
 %use (tags-this-variable/string) "./tags-this-variable.scm"
-%use (keyword-target) "./keyword-target.scm"
 
 (define (tegfs-prolog/parse)
   (tegfs-prolog)

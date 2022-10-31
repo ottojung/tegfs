@@ -19,9 +19,9 @@
 %use (append-posix-path) "./euphrates/append-posix-path.scm"
 %use (fn) "./euphrates/fn.scm"
 %use (open-file-port) "./euphrates/open-file-port.scm"
-%use (keyword-entry-registry-path) "./keyword-entry-registry-path.scm"
 %use (get-registry-files) "./get-registry-files.scm"
 %use (get-root) "./get-root.scm"
+%use (keyword-entry-registry-path) "./keyword-entry-registry-path.scm"
 
 (define (entries-for-each fn)
   (for-each

@@ -16,9 +16,7 @@
 
 %var tegfs-serve/parse
 
-%use (absolute-posix-path?) "./euphrates/absolute-posix-path-q.scm"
 %use (append-posix-path) "./euphrates/append-posix-path.scm"
-%use (assoc-or) "./euphrates/assoc-or.scm"
 %use (catch-any) "./euphrates/catch-any.scm"
 %use (catchu-case) "./euphrates/catchu-case.scm"
 %use (appcomp comp) "./euphrates/comp.scm"
@@ -29,15 +27,12 @@
 %use (file-is-directory?/no-readlink) "./euphrates/file-is-directory-q-no-readlink.scm"
 %use (file-or-directory-exists?) "./euphrates/file-or-directory-exists-q.scm"
 %use (fn) "./euphrates/fn.scm"
-%use (get-current-directory) "./euphrates/get-current-directory.scm"
 %use (alist->hashmap hashmap-delete! hashmap-foreach hashmap-ref hashmap-set! make-hashmap) "./euphrates/ihashmap.scm"
 %use (hashset-add! hashset-ref list->hashset) "./euphrates/ihashset.scm"
 %use (list-singleton?) "./euphrates/list-singleton-q.scm"
 %use (make-directories) "./euphrates/make-directories.scm"
 %use (memconst) "./euphrates/memconst.scm"
-%use (monad-make/hook) "./euphrates/monad-make-hook.scm"
 %use (open-file-port) "./euphrates/open-file-port.scm"
-%use (path-get-basename) "./euphrates/path-get-basename.scm"
 %use (raisu) "./euphrates/raisu.scm"
 %use (remove-common-prefix) "./euphrates/remove-common-prefix.scm"
 %use (string-split-3) "./euphrates/string-split-3.scm"
@@ -49,35 +44,37 @@
 %use (~a) "./euphrates/tilda-a.scm"
 %use (time-get-current-unixtime) "./euphrates/time-get-current-unixtime.scm"
 %use (with-monad) "./euphrates/with-monad.scm"
-%use (a-weblink?) "./a-weblink-q.scm"
 %use (has-access-for-entry-details?) "./access.scm"
 %use (tegfs-add) "./add.scm"
+%use (default-login-expiery-time) "./default-login-expiery-time.scm"
+%use (default-share-expiery-time) "./default-share-expiery-time.scm"
 %use (tegfs-process-categorization-text) "./edit-tags.scm"
-%use (entry-for-local-file?) "./entry-for-local-file-huh.scm"
 %use (entry-target-fullpath) "./entry-target-fullpath.scm"
-%use (filemap-delete-by-sharedname! filemap-make/empty filemap-ref-by-sharedname filemap-ref-by-vid filemap-set!) "./filemap.scm"
+%use (filemap-delete-by-sharedname! filemap-make/empty filemap-ref-by-sharedname filemap-ref-by-vid) "./filemap.scm"
 %use (get-config) "./get-config.scm"
 %use (get-preview-path) "./get-preview-path.scm"
 %use (get-random-access-token) "./get-random-access-token.scm"
 %use (get-random-basename) "./get-random-basename.scm"
-%use (get-random-network-name) "./get-random-network-name.scm"
 %use (get-root) "./get-root.scm"
 %use (tegfs-get/cached) "./get.scm"
-%use (keyword-entry-parent-directory-vid) "./keyword-entry-parent-directory-vid.scm"
 %use (keyword-id) "./keyword-id.scm"
-%use (keyword-target) "./keyword-target.scm"
-%use (make-permission) "./make-permission.scm"
+%use (make-permission!) "./make-permission-bang.scm"
 %use (tegfs-make-thumbnails) "./make-thumbnails.scm"
-%use (path-safe-extension) "./path-safe-extension.scm"
-%use (permission-filemap permission-idset permission-share-longer-than-view? permission-start permission-time permission-token) "./permission.scm"
+%use (permission-still-valid?) "./permission-still-valid-huh.scm"
+%use (permission-filemap permission-idset permission-token) "./permission.scm"
 %use (sha256sum) "./sha256sum.scm"
+%use (sharedinfo-ctime sharedinfo-sharedname sharedinfo-sourcepath sharedinfo-stime sharedinfo-vid) "./sharedinfo.scm"
 %use (standalone-file->entry/prefixed) "./standalone-file-to-entry.scm"
+%use (symlink-shared-file) "./symlink-shared-file.scm"
 %use (tegfs-query) "./tegfs-query.scm"
 %use (web-basic-headers) "./web-basic-headers.scm"
 %use (web-callcontext/p) "./web-callcontext-p.scm"
 %use (callcontext-body callcontext-break callcontext-ctr callcontext-request callcontext-time set-callcontext-key!) "./web-callcontext.scm"
 %use (web-context/p) "./web-context-p.scm"
 %use (context-ctr context-filemap/2 context-fileserver context-passwords context-port context-sharedir context-tokens) "./web-context.scm"
+%use (web-decode-query) "./web-decode-query.scm"
+%use (web-display-entries) "./web-display-entries.scm"
+%use (web-display-entry) "./web-display-entry.scm"
 %use (web-get-filemap/2) "./web-get-filemap-2.scm"
 %use (web-get-permissions) "./web-get-permissions.scm"
 %use (web-get-query) "./web-get-query.scm"
@@ -89,11 +86,13 @@
 %use (parse-multipart-as-hashmap) "./web-parse-multipart.scm"
 %use (web-preview-height) "./web-preview-height.scm"
 %use (web-preview-width) "./web-preview-width.scm"
+%use (web-query-monad) "./web-query-monad.scm"
+%use (web-query) "./web-query.scm"
 %use (web-request-get-domainname) "./web-request-get-domainname.scm"
 %use (web-respond) "./web-respond.scm"
 %use (web-sendfile) "./web-sendfile.scm"
 %use (web-set-cookie-header) "./web-set-cookie-header.scm"
-%use (sharedinfo-ctime sharedinfo-ctr sharedinfo-sharedname sharedinfo-sourcepath sharedinfo-stime sharedinfo-vid) "./web-sharedinfo.scm"
+%use (web-share-file/new) "./web-share-file.scm"
 %use (web-style) "./web-style.scm"
 %use (web-try-uri-decode) "./web-try-uri-decode.scm"
 %use (web-url-icon/svg) "./web-url-icon-svg.scm"
@@ -112,26 +111,7 @@
 
 %end
 
-(define default-preview-sharing-time
-  (string->seconds "30m"))
-(define default-full-sharing-time
-  (string->seconds "30m"))
-(define default-login-expiery-time
-  (string->seconds "12h"))
-(define default-share-expiery-time
-  (string->seconds "1h"))
-
 (define upload-registry-filename "upload/upload.tegfs.reg.lisp")
-
-(define (make-sharedinfo token target-fullpath for-duration)
-  (define sharedname
-    (string-append
-     (get-random-network-name)
-     (path-safe-extension target-fullpath)))
-  (define callctx (web-callcontext/p))
-  (define now (callcontext-time callctx))
-  (define vid (get-random-network-name))
-  (sharedinfo-ctr target-fullpath sharedname vid token now for-duration))
 
 (define (return! stats body)
   (define callctx (web-callcontext/p))
@@ -176,18 +156,6 @@
 
 (define (set-user-key! key)
   (set-callcontext-key! (web-callcontext/p) key))
-
-(define (make-permission! expiery-time admin? detailsaccess? share-longer-than-view?)
-  (define ctx (web-context/p))
-  (define tokens (context-tokens ctx))
-  (define perm
-    (make-permission
-     expiery-time admin?
-     detailsaccess?
-     share-longer-than-view?))
-  (define token (permission-token perm))
-  (hashmap-set! tokens token perm)
-  perm)
 
 (define (logincont)
   (define body/bytes (callcontext-body (web-callcontext/p)))
@@ -358,208 +326,6 @@
 (define (upload)
   (web-respond (web-make-upload-body)))
 
-(define (get-sharedinfo-for-perm perm target-fullpath)
-  (define ctx (web-context/p))
-  (define filemap/2 (context-filemap/2 ctx))
-  (define perm-filemap (permission-filemap perm))
-  (hashmap-ref perm-filemap target-fullpath #f))
-
-(define (symlink-shared-file target-fullpath sharedname)
-  (define ctx (web-context/p))
-  (define sharedir (context-sharedir ctx))
-  (define shared-fullpath (append-posix-path sharedir sharedname))
-  (define target-fullpath/abs
-    (if (absolute-posix-path? target-fullpath) target-fullpath
-        (append-posix-path (get-current-directory) target-fullpath)))
-
-  (unless (file-or-directory-exists? shared-fullpath)
-    (catch-any
-     (lambda _
-       (symlink target-fullpath/abs shared-fullpath))
-     (lambda errors
-       (display "Error symlinking: ")
-       (write errors)
-       (newline)))))
-
-(define (share-file/new target-fullpath for-duration make-symlink?)
-  (define ctx (web-context/p))
-  (define callctx (web-callcontext/p))
-  (define filemap/2 (context-filemap/2 ctx))
-  (define perm (web-get-permissions))
-  (define token (permission-token perm))
-  (define now (callcontext-time callctx))
-  (define for-duration*
-    (if (permission-share-longer-than-view? perm)
-        for-duration
-        (min for-duration (permission-time-left perm now))))
-  (define info (make-sharedinfo token target-fullpath for-duration*))
-  (define sharedname (sharedinfo-sharedname info))
-  (define perm-filemap (permission-filemap perm))
-
-  (and (< 0 for-duration*)
-       (begin
-         (hashmap-set! perm-filemap target-fullpath info)
-         (filemap-set! filemap/2 info)
-
-         (when make-symlink?
-           (symlink-shared-file target-fullpath sharedname))
-
-         info)))
-
-(define (share-file/dont-link-yet target-fullpath for-duration)
-  (define ctx (web-context/p))
-  (define perm (web-get-permissions))
-  (define make-symlink? #f)
-  (or
-   (get-sharedinfo-for-perm perm target-fullpath)
-   (share-file/new target-fullpath for-duration make-symlink?)))
-
-(define (share-file target-fullpath for-duration)
-  (define ctx (web-context/p))
-  (define perm (web-get-permissions))
-  (define make-symlink? #t)
-  (or
-   (get-sharedinfo-for-perm perm target-fullpath)
-   (share-file/new target-fullpath for-duration make-symlink?)))
-
-(define (display-preview target-fullpath)
-  (define ctx (web-context/p))
-  (define fileserver (context-fileserver ctx))
-  (define preview-fullpath (get-preview-path target-fullpath))
-  (define default-preview
-    (if (a-weblink? target-fullpath) "/previewunknownurl" "/previewunknown"))
-
-  (display "<img src=")
-  (unless
-      (and preview-fullpath
-           (let ((info (share-file preview-fullpath default-preview-sharing-time)))
-             (and info
-                  (let* ((sharedname (sharedinfo-sharedname info))
-                         (sharedir (context-sharedir ctx))
-                         (shared-fullpath (append-posix-path sharedir sharedname))
-                         (location (string-append fileserver sharedname)))
-                    (if (file-or-directory-exists? shared-fullpath)
-                        (write location)
-                        (write default-preview))
-                    #t))))
-    (write default-preview))
-  (display "/>"))
-
-(define (get-full-link entry target-fullpath)
-  (cond
-   ((a-weblink? target-fullpath)
-    target-fullpath)
-   ((entry-for-local-file? entry)
-    (let* ((parent-vid (or (assoc-or keyword-entry-parent-directory-vid entry #f)
-                           (raisu 'entry-does-not-have-parent-vid entry)))
-           (ctx (web-context/p))
-           (filemap/2 (context-filemap/2 ctx))
-           (info (or (filemap-ref-by-vid filemap/2 parent-vid #f)
-                     (raisu 'entry-has-bad-parent-vid entry)))
-           (suffix/raw
-            (or (assoc-or keyword-target entry #f)
-                (raisu 'entry-does-not-have-target entry)))
-           (suffix (uri-encode suffix/raw)))
-      (if (file-is-directory?/no-readlink target-fullpath)
-          (stringf "/directory?vid=~a&s=~a" parent-vid suffix)
-          (let* ((fileserver (context-fileserver ctx))
-                 (sharedname (sharedinfo-sharedname info)))
-            (append-posix-path fileserver sharedname suffix)))))
-   (else
-    (let* ((info (share-file/dont-link-yet target-fullpath default-full-sharing-time))
-           (vid (and info (sharedinfo-vid info)))
-           (location (and info (string-append "/full?vid=" vid))))
-      (and info location)))))
-
-(define (maybe-display-preview entry)
-  (define target-fullpath (entry-target-fullpath entry))
-  (when target-fullpath
-    (let* ((full-link (get-full-link entry target-fullpath)))
-      (when full-link
-        (display "<a href=") (write full-link) (display ">")
-        (display-preview target-fullpath)
-        (display "</a>")))))
-
-(define (display-title entry)
-  (define details-link?
-    (not (not (assoc keyword-id entry))))
-
-  (when details-link?
-    (display "<a href='/details?id=")
-    (display (uri-encode (cdr (assoc keyword-id entry))))
-    (display "' style='color: white'>"))
-
-  (cond
-   ((and (assoc 'title entry)
-         (not (string-null? (cdr (assoc 'title entry)))))
-    (display (cdr (assoc 'title entry))))
-   ((and (assoc keyword-target entry)
-         (not (string-null? (cdr (assoc keyword-target entry)))))
-    (let* ((orig (cdr (assoc keyword-target entry)))
-           (relative (if (a-weblink? orig) orig (path-get-basename orig))))
-      (display relative)))
-   (else
-    (display (cdr (assoc keyword-id entry)))))
-
-  (when details-link?
-    (display "</a>"))
-  )
-
-(define (display-entry entry)
-  (display "<div class='card'>")
-  (display "<div>")
-  (maybe-display-preview entry)
-  (display "</div>")
-  (display "<div>")
-  (display-title entry)
-  (display "</div>")
-  (display "</div>")
-  )
-
-(define (decode-query query/encoded)
-  (appcomp query/encoded
-           web-try-uri-decode
-           string->list
-           (map (lambda (c) (if (equal? #\+ c) #\space c)))
-           (map (lambda (c) (if (equal? #\: c) #\= c)))
-           list->string))
-
-(define (display-entries actual-display-thunk)
-  (display "<div class='cards'>")
-  (actual-display-thunk)
-  (display "</div>"))
-
-(define (web-query-monad handler query/split)
-  (monad-make/hook
-   (lambda (tags args)
-     (cond
-      ((memq 'entry tags) (handler (car args)))
-      ((memq 'ask tags)
-       (case (car args)
-         ((query/split) query/split)
-         ((permissions) (web-get-permissions))
-         ((filemap/2) (web-get-filemap/2))
-         ((diropen?) #t)
-         ((dirpreview?) #f)))))))
-
-(define (query)
-  (define ctx (web-context/p))
-  (define callctx (web-callcontext/p))
-  (define request (callcontext-request callctx))
-  (define ctxq (web-get-query))
-
-  (define query/encoded (hashmap-ref ctxq 'q ""))
-  (define query (decode-query query/encoded))
-  (define query/split (string->words query))
-
-  (web-respond
-   (lambda _
-     (display-entries
-      (lambda _
-        (with-monad
-         (web-query-monad display-entry query/split)
-         (tegfs-query)))))))
-
 (define (directory)
   (define ctx (web-context/p))
   (define callctx (web-callcontext/p))
@@ -602,8 +368,8 @@
 
   (web-respond
    (lambda _
-     (display-entries
-      (lambda _ (for-each display-entry entries))))))
+     (web-display-entries
+      (lambda _ (for-each web-display-entry entries))))))
 
 (define (web-make-preview target-fullpath entry)
   (define preview-fullpath
@@ -711,22 +477,6 @@
             `((Location . ,location)
               (Cache-Control . "no-cache"))))
    #f))
-
-(define permission-time-left
-  (case-lambda
-   ((perm)
-    (permission-time-left perm (time-get-current-unixtime)))
-   ((perm current-time)
-    (define end (+ (permission-start perm)
-                   (permission-time perm)))
-    (max 0 (- end current-time)))))
-
-(define permission-still-valid?
-  (case-lambda
-   ((perm)
-    (permission-still-valid? perm (time-get-current-unixtime)))
-   ((perm current-time)
-    (< 0 (permission-time-left perm current-time)))))
 
 (define (invalidate-permission perm)
   (define ctx (web-context/p))
@@ -873,7 +623,7 @@
   (define callctx (web-callcontext/p))
   (define req (callcontext-request callctx))
 
-  (define query (decode-query query/encoded))
+  (define query (web-decode-query query/encoded))
   (define query/split (string->words query))
 
   (define admin? #f)
@@ -916,7 +666,7 @@
 
   (define make-symlink? #t)
   (define info
-    (share-file/new target-fullpath for-duration make-symlink?))
+    (web-share-file/new target-fullpath for-duration make-symlink?))
   (define location
     (get-sharedinfo-location info))
   (define text
@@ -977,7 +727,7 @@
     (/logincont ,logincont public)
     (/main.css ,main.css public)
     (/collectgarbage ,collectgarbage public)
-    (/query ,query public)
+    (/query ,web-query public)
     (/directory ,directory public)
     (/details ,details public)
     (/full ,full public)
