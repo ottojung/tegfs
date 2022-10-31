@@ -23,7 +23,7 @@
 %use (get-sharedinfo-for-perm) "./get-sharedinfo-for-perm.scm"
 %use (make-sharedinfo) "./make-sharedinfo.scm"
 %use (permission-time-left) "./permission-time-left.scm"
-%use (permission-filemap permission-share-longer-than-view? permission-token) "./permission.scm"
+%use (permission-filemap permission-share-longer-than-view?) "./permission.scm"
 %use (sharedinfo-sharedname) "./sharedinfo.scm"
 %use (symlink-shared-file) "./symlink-shared-file.scm"
 %use (web-callcontext/p) "./web-callcontext-p.scm"
@@ -37,13 +37,12 @@
   (define callctx (web-callcontext/p))
   (define filemap/2 (context-filemap/2 ctx))
   (define perm (web-get-permissions))
-  (define token (permission-token perm))
   (define now (callcontext-time callctx))
   (define for-duration*
     (if (permission-share-longer-than-view? perm)
         for-duration
         (min for-duration (permission-time-left perm now))))
-  (define info (make-sharedinfo token target-fullpath for-duration*))
+  (define info (make-sharedinfo target-fullpath for-duration*))
   (define sharedname (sharedinfo-sharedname info))
   (define perm-filemap (permission-filemap perm))
 

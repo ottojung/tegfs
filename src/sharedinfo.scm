@@ -19,18 +19,16 @@
 %var sharedinfo-sourcepath
 %var sharedinfo-sharedname
 %var sharedinfo-vid
-%var sharedinfo-token
 %var sharedinfo-ctime
 %var sharedinfo-stime
 
 %use (define-type9) "./euphrates/define-type9.scm"
 
 (define-type9 <sharedinfo>
-  (sharedinfo-ctr sourcepath sharedname vid token ctime stime) sharedinfo?
+  (sharedinfo-ctr sourcepath sharedname vid ctime stime) sharedinfo?
   (sourcepath sharedinfo-sourcepath) ;; the original file path
   (sharedname sharedinfo-sharedname) ;; the linked file path suffix (without the sharedir)
   (vid sharedinfo-vid) ;; unique virtual id
-  (token sharedinfo-token) ;; token of the perms that shared this file
   (ctime sharedinfo-ctime) ;; time in seconds for when this info was created
   (stime sharedinfo-stime) ;; time in seconds for how long to share this file
   )
