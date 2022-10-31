@@ -51,17 +51,18 @@
      ((curry-if (const diropen?) (comp (cons keyword-diropen))))
      ((curry-if (const dirpreview?) (comp (cons keyword-dirpreview))))))
 
-  (define (for-each-fn entry)
-    (define modified
+  (define (for-each-fn entry0)
+    (define entry
       (cond
-       ((has-access-for-entry-details? filemap/2 permissions entry)
-        entry)
-       ((has-access-for-entry-target? filemap/2 permissions entry)
-        (filter (lambda (p) (memq (car p) target-fields)) entry))
+       ((has-access-for-entry-details? filemap/2 permissions entry0)
+        (lambda _ entry0))
+       ((has-access-for-entry-target? filemap/2 permissions entry0)
+        (lambda _
+          (filter (lambda (p) (memq (car p) target-fields)) entry0)))
        (else #f)))
 
-    (when modified
-      (monad-do modified 'entry 'say 'many)))
+    (when entry
+      (monad-do (entry) 'entry 'say 'many)))
 
   (tegfs-query/open opening-properties query/split for-each-fn))
 
