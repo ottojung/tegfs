@@ -423,10 +423,10 @@
    (get-sharedinfo-for-perm perm target-fullpath)
    (share-file/new target-fullpath for-duration make-symlink?)))
 
-(define (display-preview target-id target-fullpath)
+(define (display-preview target-fullpath)
   (define ctx (web-context/p))
   (define fileserver (context-fileserver ctx))
-  (define preview-fullpath (get-preview-path target-id target-fullpath))
+  (define preview-fullpath (get-preview-path target-fullpath))
   (define default-preview
     (if (a-weblink? target-fullpath) "/previewunknownurl" "/previewunknown"))
 
@@ -475,17 +475,15 @@
 (define (maybe-display-preview entry)
   (define target-fullpath (entry-target-fullpath entry))
   (when target-fullpath
-    (let* ((target-id (cdr (assoc keyword-id entry)))
-           (full-link (get-full-link entry target-fullpath)))
+    (let* ((full-link (get-full-link entry target-fullpath)))
       (when full-link
         (display "<a href=") (write full-link) (display ">")
-        (display-preview target-id target-fullpath)
+        (display-preview target-fullpath)
         (display "</a>")))))
 
-(define (display-title perm entry)
-  (define filemap/2 (web-get-filemap/2))
+(define (display-title entry)
   (define details-link?
-    (has-access-for-entry-details? filemap/2 perm entry))
+    (not (not (assoc keyword-id entry))))
 
   (when details-link?
     (display "<a href='/details?id=")
@@ -509,18 +507,15 @@
   )
 
 (define (display-entry entry)
-  (define filemap/2 (web-get-filemap/2))
-  (define perm (web-get-permissions))
-  (when (has-access-for-entry-target? filemap/2 perm entry)
-    (display "<div class='card'>")
-    (display "<div>")
-    (maybe-display-preview entry)
-    (display "</div>")
-    (display "<div>")
-    (display-title perm entry)
-    (display "</div>")
-    (display "</div>")
-    ))
+  (display "<div class='card'>")
+  (display "<div>")
+  (maybe-display-preview entry)
+  (display "</div>")
+  (display "<div>")
+  (display-title entry)
+  (display "</div>")
+  (display "</div>")
+  )
 
 (define (decode-query query/encoded)
   (appcomp query/encoded
@@ -535,6 +530,19 @@
   (actual-display-thunk)
   (display "</div>"))
 
+(define (web-query-monad handler query/split)
+  (monad-make/hook
+   (lambda (tags args)
+     (cond
+      ((memq 'entry tags) (handler (car args)))
+      ((memq 'ask tags)
+       (case (car args)
+         ((query/split) query/split)
+         ((permissions) (web-get-permissions))
+         ((filemap/2) (web-get-filemap/2))
+         ((diropen?) #t)
+         ((dirpreview?) #f)))))))
+
 (define (query)
   (define ctx (web-context/p))
   (define callctx (web-callcontext/p))
@@ -545,24 +553,13 @@
   (define query (decode-query query/encoded))
   (define query/split (string->words query))
 
-  (define display-monad
-    (monad-make/hook
-     (lambda (tags args)
-       (cond
-        ((memq 'entry tags) (display-entry (car args)))
-        ((memq 'ask tags)
-         (case (car args)
-           ((query/split) query/split)
-           ((permissions) (web-get-permissions))
-           ((filemap/2) (web-get-filemap/2))
-           ((diropen?) #t)
-           ((dirpreview?) #f)))))))
-
   (web-respond
    (lambda _
      (display-entries
       (lambda _
-        (with-monad display-monad (tegfs-query)))))))
+        (with-monad
+         (web-query-monad display-entry query/split)
+         (tegfs-query)))))))
 
 (define (directory)
   (define ctx (web-context/p))
@@ -609,9 +606,9 @@
      (display-entries
       (lambda _ (for-each display-entry entries))))))
 
-(define (web-make-preview target-id target-fullpath entry)
+(define (web-make-preview target-fullpath entry)
   (define preview-fullpath
-    (get-preview-path target-id target-fullpath))
+    (get-preview-path target-fullpath))
 
   (and (or (file-or-directory-exists? preview-fullpath)
            (catch-any
@@ -666,7 +663,7 @@
         (not-found)))
   (define target-fullpath (entry-target-fullpath entry))
   (define preview-fullpath
-    (web-make-preview target-id target-fullpath entry))
+    (web-make-preview target-fullpath entry))
 
   (if preview-fullpath
       (web-sendfile return! 'image/jpeg preview-fullpath)
@@ -892,12 +889,13 @@
     (stringf "/query?q=%any&key=~a" token))
   (define text
     (get-share-query-text location hidden-query-location token))
+  (define (add-entry entry)
+    (define id (cdr (assoc keyword-id entry)))
+    (hashset-add! idset id))
 
-  (tegfs-query/diropen
-   query/split
-   (lambda (entry)
-     (define id (cdr (assoc keyword-id entry)))
-     (hashset-add! idset id)))
+  (with-monad
+   (web-query-monad add-entry query/split)
+   (tegfs-query))
 
   (web-respond text))
 

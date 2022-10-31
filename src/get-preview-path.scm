@@ -17,10 +17,12 @@
 %var get-preview-path
 
 %use (append-posix-path) "./euphrates/append-posix-path.scm"
+%use (remove-common-prefix) "./euphrates/remove-common-prefix.scm"
+%use (string-plus-encode) "./euphrates/string-plus-encode.scm"
 %use (get-file-type) "./get-file-type.scm"
 %use (get-root) "./get-root.scm"
 
-(define (get-preview-path target-id target-fullpath)
+(define (get-preview-path target-fullpath)
   (define preview-directory
     (append-posix-path (get-root) "cache" "preview"))
   (define file-type (get-file-type target-fullpath))
@@ -32,6 +34,8 @@
       (else #f)))
 
   (and preview-extension
-       (let ((preview-name
-              (string-append target-id preview-extension)))
+       (let* ((relative-path (remove-common-prefix target-fullpath (string-append (get-root) "/")))
+              (encoded-path (string-plus-encode relative-path))
+              (preview-name
+               (string-append encoded-path preview-extension)))
          (append-posix-path preview-directory preview-name))))

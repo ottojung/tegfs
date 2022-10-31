@@ -35,9 +35,8 @@
          (display (or fullpath "//NA//"))))
       ((equal? '%P element) ;; preview-fullpath
        (let* ((target-fullpath (entry-target-fullpath entry))
-              (id/p (assoc keyword-id entry))
-              (preview (and id/p target-fullpath
-                            (get-preview-path (cdr id/p) target-fullpath))))
+              (preview (and target-fullpath
+                            (get-preview-path target-fullpath))))
          (display (or preview "//NA//"))))
       ((symbol? element)
        (let ((p (assoc element entry)))
