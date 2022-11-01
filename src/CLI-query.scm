@@ -35,19 +35,22 @@
      (else (fatal "Unexpected mode: both --entries and <query-format> were not set"))))
   (define show-monad
     (monad-make/hook
-     (lambda (tags args)
+     (lambda (tags)
        (cond
+        ((memq 'unfold-entry tags) (lambda (f) (f)))
         ((memq 'entry tags)
-         (set! counter (+ 1 counter))
-         (print-func (car args))
-         (newline))
+         (lambda (entry)
+           (set! counter (+ 1 counter))
+           (print-func entry)
+           (newline)))
         ((memq 'ask tags)
-         (case (car args)
-           ((query/split) <query...>)
-           ((filemap/2) #f) ;; TODO: get from server
-           ((permissions) (get-admin-permissions)) ;; TODO: get from command-line & server
-           ((diropen?) --diropen)
-           ((dirpreview?) --dirpreview)))))))
+         (lambda (type)
+           (case type
+             ((query/split) <query...>)
+             ((filemap/2) #f) ;; TODO: get from server
+             ((permissions) (get-admin-permissions)) ;; TODO: get from command-line & server
+             ((diropen?) --diropen)
+             ((dirpreview?) --dirpreview))))))))
 
   (with-monad show-monad (tegfs-query))
 
