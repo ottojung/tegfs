@@ -23,8 +23,23 @@
 %use (get-file-type) "./get-file-type.scm"
 %use (get-root) "./get-root.scm"
 
+(define uri-safe/alphabet/with-slash
+  (let* ((len (vector-length uri-safe/alphabet))
+         (ret (make-vector (+ 1 len))))
+    (let loop ((i (- len 1)))
+      (unless (< i 0)
+        (vector-set! ret i (vector-ref uri-safe/alphabet i))
+        (loop (- i 1))))
+    (vector-set! ret len #\/)
+    ret))
+
+(define (uri-safe/alphabet/with-slash/index c)
+  (if (equal? #\/ c)
+      (vector-length uri-safe/alphabet)
+      (uri-safe/alphabet/index c)))
+
 (define encoder
-  (string-plus-encoding-make uri-safe/alphabet uri-safe/alphabet/index #\+))
+  (string-plus-encoding-make uri-safe/alphabet/with-slash uri-safe/alphabet/with-slash/index #\+))
 
 (define (get-preview-path target-fullpath)
   (define preview-directory
