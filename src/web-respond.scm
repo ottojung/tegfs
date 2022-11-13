@@ -16,6 +16,7 @@
 
 %var web-respond
 
+%use (lines->string) "./euphrates/lines-to-string.scm"
 %use (raisu) "./euphrates/raisu.scm"
 %use (web-basic-headers) "./web-basic-headers.scm"
 %use (web-callcontext/p) "./web-callcontext-p.scm"
@@ -30,6 +31,17 @@
              (sxml simple))
 
 %end
+
+(define web-og-headers
+  (lines->string
+   (list
+    "  <meta property='og:image' content='https://www.publicdomainpictures.net/pictures/300000/velka/lighthouse-1562112203vxk.jpg'>"
+    "  <meta property='og:site_name' content='TegFS'>"
+    "  <meta property='og:type' content='website'>"
+    "  <meta property='og:title' content='TegFS'>"
+    "  <meta property='og:description' content='TegFS is a file sharing server.'>"
+    ""
+    )))
 
 (define* (web-respond #:optional body #:key
                       (status 200)
@@ -62,6 +74,7 @@
        (when doctype (display doctype))
        (display "<html>\n")
        (display "<head>\n")
+       (display web-og-headers)
        (when title
          (display "  <title>")
          (display title)
