@@ -35,6 +35,9 @@
 (define web-og-headers
   (lines->string
    (list
+    "  <meta name='viewport' content='width=device-width, initial-scale=1'>"
+    "  <meta name='apple-mobile-web-app-title' content='TegFS'>"
+    "  <meta name='application-name' content='TegFS'>"
     "  <meta property='og:image' content='https://www.publicdomainpictures.net/pictures/300000/velka/lighthouse-1562112203vxk.jpg'>"
     "  <meta property='og:site_name' content='TegFS'>"
     "  <meta property='og:type' content='website'>"
