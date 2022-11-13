@@ -28,9 +28,9 @@
      (cond
       ((memq 'unfold-entry tags) (lambda (f) (f)))
       ((memq 'entry tags) handler)
-      ((memq 'share-preview tags)
-       (lambda (info)
-         (debugv (serialize/human info))))
+      ;; ((memq 'share-preview tags)
+      ;;  (lambda (info)
+      ;;    (debugv (serialize/human info))))
       ((memq 'ask tags)
        (lambda (type)
          (case type
