@@ -19,7 +19,7 @@
 %use (appcomp) "./euphrates/comp.scm"
 %use (define-pair) "./euphrates/define-pair.scm"
 %use (file-delete) "./euphrates/file-delete.scm"
-%use (hashset-ref make-hashset) "./euphrates/ihashset.scm"
+%use (hashset-has? make-hashset) "./euphrates/hashset.scm"
 %use (list-intersperse) "./euphrates/list-intersperse.scm"
 %use (open-file-port) "./euphrates/open-file-port.scm"
 %use (printf) "./euphrates/printf.scm"
@@ -80,5 +80,5 @@
   (entries-for-each
    (lambda (entry)
      (define id (cdr (assoc keyword-id entry)))
-     (when (hashset-ref ids id)
+     (when (hashset-has? ids id)
        (for-each-fn entry)))))

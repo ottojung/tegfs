@@ -20,7 +20,7 @@
 
 %use (appcomp) "./euphrates/comp.scm"
 %use (dprintln) "./euphrates/dprintln.scm"
-%use (hashset->list hashset-add! make-hashset) "./euphrates/ihashset.scm"
+%use (hashset->list hashset-add! make-hashset) "./euphrates/hashset.scm"
 %use (list-deduplicate/reverse) "./euphrates/list-deduplicate.scm"
 %use (open-file-port) "./euphrates/open-file-port.scm"
 %use (raisu) "./euphrates/raisu.scm"

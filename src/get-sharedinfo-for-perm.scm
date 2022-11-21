@@ -16,7 +16,7 @@
 
 %var get-sharedinfo-for-perm
 
-%use (hashmap-ref) "./euphrates/ihashmap.scm"
+%use (hashmap-ref) "./euphrates/hashmap.scm"
 %use (permission-filemap) "./permission.scm"
 %use (web-context/p) "./web-context-p.scm"
 %use (context-filemap/2) "./web-context.scm"

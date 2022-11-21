@@ -16,8 +16,8 @@
 
 %var make-permission
 
-%use (make-hashmap) "./euphrates/ihashmap.scm"
-%use (make-hashset) "./euphrates/ihashset.scm"
+%use (make-hashmap) "./euphrates/hashmap.scm"
+%use (make-hashset) "./euphrates/hashset.scm"
 %use (time-get-current-unixtime) "./euphrates/time-get-current-unixtime.scm"
 %use (get-random-access-token) "./get-random-access-token.scm"
 %use (permission-constructor) "./permission.scm"

@@ -20,7 +20,7 @@
 
 %use (comp) "./euphrates/comp.scm"
 %use (fn-cons) "./euphrates/fn-cons.scm"
-%use (hashmap-set! make-hashmap) "./euphrates/ihashmap.scm"
+%use (hashmap-set! make-hashmap) "./euphrates/hashmap.scm"
 %use (raisu) "./euphrates/raisu.scm"
 %use (string-split-3) "./euphrates/string-split-3.scm"
 %use (string-strip) "./euphrates/string-strip.scm"

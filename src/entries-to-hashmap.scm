@@ -17,7 +17,7 @@
 %var entries->hashmap
 
 %use (dprintln) "./euphrates/dprintln.scm"
-%use (hashmap-set! make-hashmap) "./euphrates/ihashmap.scm"
+%use (hashmap-set! make-hashmap) "./euphrates/hashmap.scm"
 %use (entries-for-each) "./entries-for-each.scm"
 %use (keyword-id) "./keyword-id.scm"
 

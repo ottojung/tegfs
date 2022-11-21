@@ -21,7 +21,7 @@
 %var filemap-delete-by-senderid!
 %var filemap-delete-by-recepientid!
 
-%use (hashmap-delete! hashmap-ref hashmap-set! make-hashmap) "./euphrates/ihashmap.scm"
+%use (hashmap-delete! hashmap-ref hashmap-set! make-hashmap) "./euphrates/hashmap.scm"
 %use (sharedinfo-recepientid sharedinfo-senderid) "./sharedinfo.scm"
 
 (define (filemap-make/empty)

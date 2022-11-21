@@ -16,7 +16,7 @@
 
 %var web-query
 
-%use (hashmap-ref) "./euphrates/ihashmap.scm"
+%use (hashmap-ref) "./euphrates/hashmap.scm"
 %use (string->words) "./euphrates/string-to-words.scm"
 %use (with-monad) "./euphrates/with-monad.scm"
 %use (tegfs-query) "./tegfs-query.scm"

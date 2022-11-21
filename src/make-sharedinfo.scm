@@ -17,7 +17,6 @@
 %var make-sharedinfo
 
 %use (get-random-network-name) "./get-random-network-name.scm"
-%use (path-safe-extension) "./path-safe-extension.scm"
 %use (sharedinfo-ctr) "./sharedinfo.scm"
 %use (web-callcontext/p) "./web-callcontext-p.scm"
 %use (callcontext-time) "./web-callcontext.scm"

@@ -27,8 +27,8 @@
 %use (file-is-directory?/no-readlink) "./euphrates/file-is-directory-q-no-readlink.scm"
 %use (file-or-directory-exists?) "./euphrates/file-or-directory-exists-q.scm"
 %use (fn) "./euphrates/fn.scm"
-%use (alist->hashmap hashmap-delete! hashmap-foreach hashmap-ref hashmap-set! make-hashmap) "./euphrates/ihashmap.scm"
-%use (hashset-add! hashset-ref list->hashset) "./euphrates/ihashset.scm"
+%use (alist->hashmap hashmap-delete! hashmap-foreach hashmap-ref hashmap-set! make-hashmap) "./euphrates/hashmap.scm"
+%use (hashset-add! hashset-has? list->hashset) "./euphrates/hashset.scm"
 %use (list-singleton?) "./euphrates/list-singleton-q.scm"
 %use (make-directories) "./euphrates/make-directories.scm"
 %use (memconst) "./euphrates/memconst.scm"
@@ -770,7 +770,7 @@
 
   (let* ((target path)
          (func (hashmap-ref handlers-funcmap target #f))
-         (public? (hashset-ref handlers-publicset target)))
+         (public? (hashset-has? handlers-publicset target)))
     (unless func (not-found))
     (unless public? (check-permissions))
     (func)))

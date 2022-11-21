@@ -18,7 +18,7 @@
 %var web-share-file/new
 %var web-share-file/dont-link-yet
 
-%use (hashmap-set!) "./euphrates/ihashmap.scm"
+%use (hashmap-set!) "./euphrates/hashmap.scm"
 %use (filemap-set!) "./filemap.scm"
 %use (get-sharedinfo-for-perm) "./get-sharedinfo-for-perm.scm"
 %use (make-sharedinfo) "./make-sharedinfo.scm"

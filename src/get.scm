@@ -20,7 +20,7 @@
 
 %use (absolute-posix-path?) "./euphrates/absolute-posix-path-q.scm"
 %use (dprintln) "./euphrates/dprintln.scm"
-%use (hashmap-clear! hashmap-ref make-hashmap) "./euphrates/ihashmap.scm"
+%use (hashmap-clear! hashmap-ref make-hashmap) "./euphrates/hashmap.scm"
 %use (entries-for-each) "./entries-for-each.scm"
 %use (entries->hashmap) "./entries-to-hashmap.scm"
 %use (entry-print/formatted) "./entry-print-formatted.scm"

@@ -16,7 +16,7 @@
 
 %var make-permission!
 
-%use (hashmap-set!) "./euphrates/ihashmap.scm"
+%use (hashmap-set!) "./euphrates/hashmap.scm"
 %use (make-permission) "./make-permission.scm"
 %use (permission-token) "./permission.scm"
 %use (web-context/p) "./web-context-p.scm"

@@ -19,8 +19,8 @@
 %var has-access-for-entry-details?
 
 %use (assoc-or) "./euphrates/assoc-or.scm"
-%use (hashmap-ref) "./euphrates/ihashmap.scm"
-%use (hashset-ref) "./euphrates/ihashset.scm"
+%use (hashmap-ref) "./euphrates/hashmap.scm"
+%use (hashset-has?) "./euphrates/hashset.scm"
 %use (raisu) "./euphrates/raisu.scm"
 %use (entry-for-local-file?) "./entry-for-local-file-huh.scm"
 %use (filemap-ref-by-senderid) "./filemap.scm"
@@ -42,7 +42,7 @@
                       (not (not (hashmap-ref perm-filemap target-fullpath #f)))))
                (let ((id (cdr (assoc keyword-id entry)))
                      (idset (permission-idset perm)))
-                 (hashset-ref idset id))))))
+                 (hashset-has? idset id))))))
 
 (define (has-access-for-entry-target? filemap/2 perm entry)
   (has-access-for-entry? filemap/2 perm entry))
