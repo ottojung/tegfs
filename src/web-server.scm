@@ -21,6 +21,7 @@
 %use (catch-any) "./euphrates/catch-any.scm"
 %use (catchu-case) "./euphrates/catchu-case.scm"
 %use (appcomp comp) "./euphrates/comp.scm"
+%use (debugs) "./euphrates/debugs.scm"
 %use (define-tuple) "./euphrates/define-tuple.scm"
 %use (directory-files) "./euphrates/directory-files.scm"
 %use (dprintln) "./euphrates/dprintln.scm"
@@ -34,6 +35,7 @@
 %use (make-directories) "./euphrates/make-directories.scm"
 %use (memconst) "./euphrates/memconst.scm"
 %use (open-file-port) "./euphrates/open-file-port.scm"
+%use (path-normalize) "./euphrates/path-normalize.scm"
 %use (path-without-extension) "./euphrates/path-without-extension.scm"
 %use (raisu) "./euphrates/raisu.scm"
 %use (remove-common-prefix) "./euphrates/remove-common-prefix.scm"
@@ -356,7 +358,7 @@
     (unless (string-prefix? root shared-fullpath)
       (bad-request "Bad directory")))
   (define shared-relativepath
-    (remove-common-prefix shared-fullpath root))
+    (path-normalize (remove-common-prefix shared-fullpath root)))
   (define dir-fullpath
     (append-posix-path shared-fullpath suffix))
   (define dir

@@ -25,7 +25,10 @@
 %use (keyword-entry-parent-directory) "./keyword-entry-parent-directory.scm"
 
 (define (standalone-file->entry filepath)
-  (define norm (path-normalize filepath))
+  (define norm0 (path-normalize filepath))
+  (define norm (if (string-prefix? "/" norm0)
+                   norm0
+                   (string-append "/" norm0)))
   (define dir (dirname norm))
   (define name (path-get-basename norm))
   (define id norm)
@@ -35,10 +38,17 @@
     ))
 
 (define (standalone-file->entry/prefixed prefix vid filepath)
-  (define norm (path-normalize filepath))
-  (define dir prefix)
+  (define norm0 (path-normalize filepath))
+  (define norm (if (string-prefix? "/" norm0)
+                   norm0
+                   (string-append "/" norm0)))
+  (define dir0 prefix)
+  (define dir (if (string-prefix? "/" dir0)
+                   dir0
+                   (string-append "/" dir0)))
   (define name norm)
-  (define id (path-normalize (append-posix-path dir norm)))
+  (define id
+    (path-normalize (append-posix-path dir norm)))
   `((id . ,id)
     (target . ,name)
     (,keyword-entry-parent-directory . ,dir)
