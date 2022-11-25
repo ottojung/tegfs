@@ -17,22 +17,13 @@
 
 %var entries-for-each
 
-%use (append-posix-path) "./euphrates/append-posix-path.scm"
 %use (fn) "./euphrates/fn.scm"
-%use (open-file-port) "./euphrates/open-file-port.scm"
-%use (get-registry-files) "./get-registry-files.scm"
-%use (get-root) "./get-root.scm"
-%use (keyword-entry-registry-path) "./keyword-entry-registry-path.scm"
+%use (entries-iterate) "./entries-iterate.scm"
 
 (define (entries-for-each fn)
-  (for-each
-   (lambda (registry-path0)
-     (define registry-path (append-posix-path registry-path0))
-     (define registry-fullpath (append-posix-path (get-root) registry-path))
-     (define input-port (open-file-port registry-fullpath "r"))
-     (let loop ()
-       (define x (read input-port))
-       (unless (eof-object? x)
-         (fn (cons (cons keyword-entry-registry-path registry-path) x))
-         (loop))))
-   (get-registry-files)))
+  (define iter (entries-iterate))
+  (let loop ()
+    (define x (iter))
+    (when x
+      (fn x)
+      (loop))))
