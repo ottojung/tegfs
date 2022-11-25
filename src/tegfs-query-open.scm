@@ -18,6 +18,7 @@
 %var tegfs-query/open
 
 %use (assoc-or) "./euphrates/assoc-or.scm"
+%use (debugv) "./euphrates/debugv.scm"
 %use (directory-files-depth-foreach) "./euphrates/directory-files-depth-foreach.scm"
 %use (file-is-directory?/no-readlink) "./euphrates/file-is-directory-q-no-readlink.scm"
 %use (list-singleton?) "./euphrates/list-singleton-q.scm"
@@ -38,7 +39,12 @@
         (query-recurse opener entry for-each-fn)
         (for-each-fn entry)))
 
-  (tegfs-query/noopen <query...> wrapper))
+  (define iter (tegfs-query/noopen <query...>))
+  (let loop ()
+    (define entry (iter))
+    (when entry
+      (wrapper entry)
+      (loop))))
 
 (define (query-recurse opener entry for-each-fn)
   (define target-fullpath (entry-target-fullpath entry))

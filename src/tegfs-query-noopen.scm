@@ -17,6 +17,7 @@
 
 %var tegfs-query/noopen
 
+%use (assq-or) "./euphrates/assq-or.scm"
 %use (appcomp) "./euphrates/comp.scm"
 %use (define-pair) "./euphrates/define-pair.scm"
 %use (file-delete) "./euphrates/file-delete.scm"
@@ -28,7 +29,7 @@
 %use (string-strip) "./euphrates/string-strip.scm"
 %use (string->lines) "./euphrates/string-to-lines.scm"
 %use (system-re) "./euphrates/system-re.scm"
-%use (entries-for-each) "./entries-for-each.scm"
+%use (entries-iterate) "./entries-iterate.scm"
 %use (keyword-id) "./keyword-id.scm"
 %use (make-temporary-filename/local) "./make-temporary-filename-local.scm"
 %use (make-prolog-var) "./prolog-var.scm"
@@ -36,7 +37,7 @@
 %use (query-parse) "./query-parse.scm"
 %use (tag->prolog-term) "./tag-to-prolog-term.scm"
 
-(define (tegfs-query/noopen <query...> for-each-fn)
+(define (tegfs-query/noopen <query...>)
   (define output-path (string-append (make-temporary-filename/local) ".pl"))
   (define output-port (open-file-port output-path "w"))
 
@@ -78,8 +79,15 @@
              (filter (negate string-null?))
              make-hashset))
 
-  (entries-for-each
-   (lambda (entry)
-     (define id (cdr (assoc keyword-id entry)))
-     (when (hashset-has? ids id)
-       (for-each-fn entry)))))
+  (define iter
+    (entries-iterate))
+
+  (define (next)
+    (define entry (iter))
+    (and entry
+         (let ((id (assq-or keyword-id entry #f)))
+           (if (hashset-has? ids id)
+               entry
+               (next)))))
+
+  next)
