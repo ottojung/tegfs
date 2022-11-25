@@ -97,3 +97,6 @@ test7: dist/tegfs $(TEST_FILES)
 
 test8: dist/tegfs $(TEST_FILES)
 	TEGFS_ROOT=$(TEST_ROOT) $(CZEMPAK) run example/rename-tag.scm
+
+test9: dist/tegfs $(TEST_FILES)
+	$(TEST_FS) query --talk

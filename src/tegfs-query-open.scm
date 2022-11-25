@@ -27,15 +27,7 @@
 %use (standalone-file->entry) "./standalone-file-to-entry.scm"
 %use (tegfs-query/noopen) "./tegfs-query-noopen.scm"
 
-(define (tegfs-query/open opening-properties <query...> for-each-fn)
-  (define iter (tegfs-query/open/iter opening-properties <query...>))
-  (let loop ()
-    (define entry (iter))
-    (when entry
-      (for-each-fn entry)
-      (loop))))
-
-(define (tegfs-query/open/iter opening-properties <query...>)
+(define (tegfs-query/open opening-properties <query...>)
   (define iter (tegfs-query/noopen <query...>))
   (define iter/open #f)
 

@@ -20,14 +20,16 @@
 %use (comp) "./euphrates/comp.scm"
 %use (monad-make/hook) "./euphrates/monad-make-hook.scm"
 %use (printf) "./euphrates/printf.scm"
+%use (read-list) "./euphrates/read-list.scm"
+%use (read-string-line) "./euphrates/read-string-line.scm"
 %use (with-monad) "./euphrates/with-monad.scm"
 %use (entry-print/formatted) "./entry-print-formatted.scm"
 %use (entry-print) "./entry-print.scm"
 %use (fatal) "./fatal.scm"
 %use (get-admin-permissions) "./get-admin-permissions.scm"
-%use (tegfs-query) "./tegfs-query.scm"
+%use (tegfs-query tegfs-query/talk) "./tegfs-query.scm"
 
-(define (CLI-query --diropen --dirpreview --entries <query-format> <query...>)
+(define (CLI-query --talk --diropen --dirpreview --entries <query-format> <query...>)
   (define counter 0)
   (define print-func
     (cond
@@ -53,10 +55,24 @@
              ((diropen?) --diropen)
              ((dirpreview?) --dirpreview))))))))
 
-  (with-monad show-monad (tegfs-query))
+  (define (user-input)
+    (define line
+      (begin
+        (display "[client] " (current-error-port))
+        (read-string-line)))
+    (define parsed
+      (with-input-from-string
+          line
+        (lambda _ (read-list))))
+    parsed)
 
-  (parameterize ((current-output-port (current-error-port)))
-    (if (equal? 0 counter)
-        (display "No matches.")
-        (printf "Total of ~a matches." counter))
-    (newline)))
+  (cond
+   (--talk (tegfs-query/talk user-input))
+   (else
+    (with-monad show-monad (tegfs-query))
+
+    (parameterize ((current-output-port (current-error-port)))
+      (if (equal? 0 counter)
+          (display "No matches.")
+          (printf "Total of ~a matches." counter))
+      (newline)))))

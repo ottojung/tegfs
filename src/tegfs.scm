@@ -68,7 +68,7 @@
        /          REMOTEOPT? SAVETARGET?
        REMOTEOPT : --remote <remote>
        SAVETARGET : --target <savetext>
-       QUERYARGS : QUERYOPT* QUERYQ+
+       QUERYARGS : --talk / QUERYOPT* QUERYQ+
        QUERYOPT : --format <query-format>
        /          --entries
        /          --diropen
@@ -116,7 +116,7 @@
          (categorize (tegfs-categorize/parse))
          (serve (tegfs-serve/parse))
          (prolog (tegfs-prolog/parse))
-         (query (CLI-query --diropen --dirpreview --entries <query-format> <query...>))
+         (query (CLI-query --talk --diropen --dirpreview --entries <query-format> <query...>))
          ((and get <getid>) (tegfs-get/parse <get-format> <getid>))
          (make-thumbnails (tegfs-make-thumbnails/parse <target> <output>))
          (config (tegfs-config/parse get set <name> <value>))
