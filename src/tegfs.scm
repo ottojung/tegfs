@@ -20,6 +20,7 @@
 %use (stringf) "./euphrates/stringf.scm"
 %use (with-randomizer-seed) "./euphrates/with-randomizer-seed.scm"
 %use (CLI-query) "./CLI-query.scm"
+%use (CLI-talk) "./CLI-talk.scm"
 %use (tegfs-add/parse) "./add.scm"
 %use (tegfs-categorize/parse) "./categorize.scm"
 %use (tegfs-config/parse) "./config.scm"
@@ -46,11 +47,12 @@
        FUNC : add ADDOPT+
        /      save SAVEARGS
        /      categorize
-       /      prolog
        /      query QUERYARGS
        /      get GETARGS
        /      status
        /      serve
+       /      talk
+       /      prolog
        /      make-thumbnails THUMBOPT
        /      config CONFIGOPT
        /      dump-clipboard
@@ -68,7 +70,7 @@
        /          REMOTEOPT? SAVETARGET?
        REMOTEOPT : --remote <remote>
        SAVETARGET : --target <savetext>
-       QUERYARGS : --talk / QUERYOPT* QUERYQ+
+       QUERYARGS : QUERYOPT* QUERYQ+
        QUERYOPT : --format <query-format>
        /          --entries
        /          --diropen
@@ -116,8 +118,9 @@
          (categorize (tegfs-categorize/parse))
          (serve (tegfs-serve/parse))
          (prolog (tegfs-prolog/parse))
-         (query (CLI-query --talk --diropen --dirpreview --entries <query-format> <query...>))
+         (query (CLI-query --diropen --dirpreview --entries <query-format> <query...>))
          ((and get <getid>) (tegfs-get/parse <get-format> <getid>))
+         (talk (CLI-talk))
          (make-thumbnails (tegfs-make-thumbnails/parse <target> <output>))
          (config (tegfs-config/parse get set <name> <value>))
          (dump-clipboard (tegfs-dump-clipboard/parse))
