@@ -17,7 +17,6 @@
 
 %var CLI-talk
 
-%use (debug) "./euphrates/debug.scm"
 %use (profun-make-handler) "./euphrates/profun-make-handler.scm"
 %use (profun-op-divisible) "./euphrates/profun-op-divisible.scm"
 %use (profun-op-equals) "./euphrates/profun-op-equals.scm"
@@ -93,6 +92,8 @@
     (define answer
       (profune-communicator-handle comm sentence))
 
-    (debug "[server] ~a" (words->string (map ~s answer)))
+    (display "[server] ")
+    (display (words->string (map ~s answer)))
+    (newline)
 
     (loop (read-sentence))))
