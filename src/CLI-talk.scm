@@ -17,6 +17,7 @@
 
 %var CLI-talk
 
+%use (catch-any) "./euphrates/catch-any.scm"
 %use (profun-make-handler) "./euphrates/profun-make-handler.scm"
 %use (profun-op-divisible) "./euphrates/profun-op-divisible.scm"
 %use (profun-op-equals) "./euphrates/profun-op-equals.scm"
@@ -70,15 +71,19 @@
 
 (define (CLI-talk)
   (define (read-sentence)
-    (define line
-      (begin
-        (display "[client] " (current-error-port))
-        (read-string-line)))
-    (define parsed
-      (with-input-from-string
-          line
-        (lambda _ (read-list))))
-    parsed)
+    (catch-any
+     (lambda _
+       (define line
+         (begin
+           (display "[client] " (current-error-port))
+           (read-string-line)))
+       (if (eof-object? line) line
+           (with-input-from-string
+               line
+             (lambda _ (read-list)))))
+     (lambda _
+       (display "Error parsing input\n" (current-error-port))
+       (read-sentence))))
 
   (define db
     (profun-create-database
@@ -89,11 +94,15 @@
     (make-profune-communicator db))
 
   (let loop ((sentence (read-sentence)))
-    (define answer
-      (profune-communicator-handle comm sentence))
+    (if (eof-object? sentence)
+        (display "\nGoodbye!\n" (current-error-port))
+        (let ((answer
+               (catch-any
+                (lambda _ (profune-communicator-handle comm sentence))
+                (lambda args `(error ,@args)))))
 
-    (display "[server] ")
-    (display (words->string (map ~s answer)))
-    (newline)
+          (display "[server] ")
+          (display (words->string (map ~s answer)))
+          (newline)
 
-    (loop (read-sentence))))
+          (loop (read-sentence))))))
