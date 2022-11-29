@@ -17,16 +17,11 @@
 
 %var CLI-talk
 
-%use (assq-or) "./euphrates/assq-or.scm"
-%use (bool->profun-result) "./euphrates/bool-to-profun-result.scm"
 %use (debug) "./euphrates/debug.scm"
-%use (list-and-map) "./euphrates/list-and-map.scm"
-%use (make-profun-error) "./euphrates/profun-error.scm"
 %use (profun-make-handler) "./euphrates/profun-make-handler.scm"
 %use (profun-op-divisible) "./euphrates/profun-op-divisible.scm"
 %use (profun-op-equals) "./euphrates/profun-op-equals.scm"
 %use (profun-op-false) "./euphrates/profun-op-false.scm"
-%use (profun-op-function) "./euphrates/profun-op-function.scm"
 %use (profun-op-less) "./euphrates/profun-op-less.scm"
 %use (profun-op-modulo) "./euphrates/profun-op-modulo.scm"
 %use (profun-op*) "./euphrates/profun-op-mult.scm"
@@ -37,30 +32,15 @@
 %use (profun-op-true) "./euphrates/profun-op-true.scm"
 %use (profun-op-unify) "./euphrates/profun-op-unify.scm"
 %use (profun-op-value) "./euphrates/profun-op-value.scm"
-%use (profun-reject) "./euphrates/profun-reject.scm"
 %use (profun-create-database) "./euphrates/profun.scm"
 %use (make-profune-communicator profune-communicator-handle) "./euphrates/profune-communicator.scm"
 %use (read-list) "./euphrates/read-list.scm"
 %use (read-string-line) "./euphrates/read-string-line.scm"
 %use (~s) "./euphrates/tilda-s.scm"
 %use (words->string) "./euphrates/words-to-string.scm"
+%use (entry-field-handler) "./entry-field-handler.scm"
 %use (query-diropen?/p query-dirpreview?/p query-filemap/2/p query-permissions/p query-split/p) "./talk-parameters.scm"
 %use (query-entry-handler) "./tegfs-query.scm"
-
-(define query-entry-field-handler
-  (profun-op-function
-   2 (lambda (entry field)
-       (bool->profun-result
-        (if (and (list? entry)
-                 (list-and-map pair? entry))
-            (let ((field* (cond
-                           ((symbol? field) field)
-                           ((string? field) (string->symbol field))
-                           (else #f))))
-              (if field*
-                  (assq-or field* entry (profun-reject))
-                  (make-profun-error 'not-a-valid-field field)))
-            (make-profun-error 'not-a-valid-entry entry))))))
 
 (define tegfs-server-handler
   (profun-make-handler
@@ -79,7 +59,7 @@
    (value (profun-op-value '() '()))
 
    (entry query-entry-handler)
-   (entry-field query-entry-field-handler)
+   (entry-field entry-field-handler)
 
    (query (instantiate-profun-parameter query-split/p))
    (permissions (instantiate-profun-parameter query-permissions/p))
