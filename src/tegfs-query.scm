@@ -20,18 +20,13 @@
 
 %use (appcomp comp) "./euphrates/comp.scm"
 %use (curry-if) "./euphrates/curry-if.scm"
-%use (debug) "./euphrates/debug.scm"
 %use (monad-ask) "./euphrates/monad-ask.scm"
 %use (monad-do) "./euphrates/monad-do.scm"
 %use (profun-accept profun-ctx-set profun-set) "./euphrates/profun-accept.scm"
 %use (make-profun-error) "./euphrates/profun-error.scm"
 %use (profun-op-envlambda) "./euphrates/profun-op-envlambda.scm"
 %use (profun-reject) "./euphrates/profun-reject.scm"
-%use (profun-unbound-value?) "./euphrates/profun-value.scm"
-%use (profun-create-database) "./euphrates/profun.scm"
-%use (make-profune-communicator profune-communicator-handle) "./euphrates/profune-communicator.scm"
-%use (~s) "./euphrates/tilda-s.scm"
-%use (words->string) "./euphrates/words-to-string.scm"
+%use (profun-bound-value? profun-unbound-value?) "./euphrates/profun-value.scm"
 %use (has-access-for-entry-details? has-access-for-entry-target?) "./access.scm"
 %use (default-preview-sharing-time) "./default-preview-sharing-time.scm"
 %use (entry-target-fullpath) "./entry-target-fullpath.scm"
@@ -81,13 +76,17 @@
         (or ctx (tegfs-query/open opening-properties query/split)))
 
       (define x (iter))
-      (if x
-          (profun-set
-           (E-name <- x)
-           (if ctx
-               (profun-accept)
-               (profun-ctx-set iter)))
-          (profun-reject))))
+      (cond
+       ((profun-bound-value? (env E-name))
+        (make-profun-error 'query-is-a-generator 'cannot-check-if-element-already-exists))
+       (x
+        (profun-set
+         (E-name <- x)
+         (if ctx
+             (profun-accept)
+             (profun-ctx-set iter))))
+       (else
+        (profun-reject)))))
 
    ))
 
