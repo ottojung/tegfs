@@ -37,7 +37,7 @@
 %use (keyword-entry-registry-path) "./keyword-entry-registry-path.scm"
 %use (keyword-target) "./keyword-target.scm"
 %use (keyword-title) "./keyword-title.scm"
-%use (query-split/p) "./talk-parameters.scm"
+%use (query-diropen?/p query-dirpreview?/p query-filemap/2/p query-permissions/p query-split/p) "./talk-parameters.scm"
 %use (tegfs-query/open) "./tegfs-query-open.scm"
 %use (web-share-file) "./web-share-file.scm"
 
@@ -49,46 +49,57 @@
 
 (define query-entry-handler
   (profun-op-envlambda
-   ;; (ctx env (query/split-name permissions-name filemap/2-name diropen?-name dirpreview?-name E-name))
    (ctx env (E-name))
 
-   (call-with-current-continuation
-    (lambda (return)
-      (define (error . args) (return (make-profun-error args)))
+   (define (ret iter)
+     (define x (iter))
+     (if x
+         (profun-set
+          (E-name <- x)
+          (if ctx
+              (profun-accept)
+              (profun-ctx-set iter)))
+         (profun-reject)))
 
-      ;; FIXME: ensure that they are bound
-      ;; (define query/split (env query/split-name))
-      (define query/split
-        (profun-default (query-split/p) (error 'missing-parameter 'query)))
+   (if ctx (ret ctx)
+       (call-with-current-continuation
+        (lambda (return)
+          (define (error . args) (return (make-profun-error args)))
+          (define-syntax define-param
+            (syntax-rules ()
+              ((_ name p)
+               (define-param name p (error 'missing-parameter (quote name))))
+              ((_ name p default)
+               (define name (profun-default p default)))))
 
-      ;; (define diropen? (env diropen?-name))
-      ;; (define dirpreview? (env dirpreview?-name))
-      (define diropen? #f)
-      (define dirpreview? #f)
+          (define-param query (query-split/p))
+          (define-param diropen? (query-diropen?/p) #f)
+          (define-param dirpreview? (query-dirpreview?/p) #f)
+          (define-param permissions (query-permissions/p))
+          (define-param filemap/2 (query-filemap/2/p) #f)
 
-      (define opening-properties
-        (appcomp
-         '()
-         ((curry-if (const diropen?) (comp (cons keyword-diropen))))
-         ((curry-if (const dirpreview?) (comp (cons keyword-dirpreview))))))
+          (define opening-properties
+            (appcomp
+             '()
+             ((curry-if (const diropen?) (comp (cons keyword-diropen))))
+             ((curry-if (const dirpreview?) (comp (cons keyword-dirpreview))))))
 
-      (define iter
-        (or ctx (tegfs-query/open opening-properties query/split)))
+          (define iter0 (tegfs-query/open opening-properties query))
+          (define (iter)
+            (define entry0 (iter0))
+            (cond
+             ((equal? #f entry0) #f)
+             ((has-access-for-entry-details? filemap/2 permissions entry0)
+              entry0)
+             ((has-access-for-entry-target? filemap/2 permissions entry0)
+              (filter (lambda (p) (memq (car p) target-fields)) entry0))
+             (else (iter))))
 
-      (define x (iter))
-      (cond
-       ((profun-bound-value? (env E-name))
-        (make-profun-error 'query-is-a-generator 'cannot-check-if-element-already-exists))
-       (x
-        (profun-set
-         (E-name <- x)
-         (if ctx
-             (profun-accept)
-             (profun-ctx-set iter))))
-       (else
-        (profun-reject)))))
+          (if (profun-bound-value? (env E-name))
+              (make-profun-error 'query-is-a-generator 'cannot-check-if-element-already-exists)
+              (ret iter))
 
-   ))
+          )))))
 
 ;; Monad contract:
 ;; - type { 'ask }

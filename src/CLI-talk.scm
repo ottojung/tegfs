@@ -18,72 +18,36 @@
 %var CLI-talk
 
 %use (catch-any) "./euphrates/catch-any.scm"
-%use (profun-make-handler) "./euphrates/profun-make-handler.scm"
-%use (profun-op-divisible) "./euphrates/profun-op-divisible.scm"
-%use (profun-op-equals) "./euphrates/profun-op-equals.scm"
-%use (profun-op-false) "./euphrates/profun-op-false.scm"
-%use (profun-op-less) "./euphrates/profun-op-less.scm"
-%use (profun-op-modulo) "./euphrates/profun-op-modulo.scm"
-%use (profun-op*) "./euphrates/profun-op-mult.scm"
-%use (instantiate-profun-parameter) "./euphrates/profun-op-parameter.scm"
-%use (profun-op+) "./euphrates/profun-op-plus.scm"
-%use (profun-op-separate) "./euphrates/profun-op-separate.scm"
-%use (profun-op-sqrt) "./euphrates/profun-op-sqrt.scm"
-%use (profun-op-true) "./euphrates/profun-op-true.scm"
-%use (profun-op-unify) "./euphrates/profun-op-unify.scm"
-%use (profun-op-value) "./euphrates/profun-op-value.scm"
 %use (profun-create-database) "./euphrates/profun.scm"
 %use (make-profune-communicator profune-communicator-handle) "./euphrates/profune-communicator.scm"
 %use (read-list) "./euphrates/read-list.scm"
 %use (read-string-line) "./euphrates/read-string-line.scm"
+%use (serialize/human) "./euphrates/serialization-human.scm"
 %use (~s) "./euphrates/tilda-s.scm"
 %use (words->string) "./euphrates/words-to-string.scm"
-%use (entry-field-handler) "./entry-field-handler.scm"
-%use (query-diropen?/p query-dirpreview?/p query-filemap/2/p query-permissions/p query-split/p) "./talk-parameters.scm"
-%use (query-entry-handler) "./tegfs-query.scm"
-
-(define tegfs-server-handler
-  (profun-make-handler
-   (= profun-op-unify)
-   (!= profun-op-separate)
-   (true profun-op-true)
-   (false profun-op-false)
-   (+ profun-op+)
-   (* profun-op*)
-   (modulo profun-op-modulo)
-   (sqrt profun-op-sqrt)
-   (< profun-op-less)
-   (divisible profun-op-divisible)
-   (equals profun-op-equals)
-
-   (value (profun-op-value '() '()))
-
-   (entry query-entry-handler)
-   (entry-field entry-field-handler)
-
-   (query (instantiate-profun-parameter query-split/p))
-   (permissions (instantiate-profun-parameter query-permissions/p))
-   (filemap/2 (instantiate-profun-parameter query-filemap/2/p))
-   (diropen? (instantiate-profun-parameter query-diropen?/p))
-   (dirpreview? (instantiate-profun-parameter query-dirpreview?/p))
-
-   ))
+%use (get-admin-permissions) "./get-admin-permissions.scm"
+%use (tegfs-server-handler) "./tegfs-server-handler.scm"
 
 (define (CLI-talk)
+
+  (define first-message? #t)
   (define (read-sentence)
-    (catch-any
-     (lambda _
-       (define line
-         (begin
-           (display "[client] " (current-error-port))
-           (read-string-line)))
-       (if (eof-object? line) line
-           (with-input-from-string
-               line
-             (lambda _ (read-list)))))
-     (lambda _
-       (display "Error parsing input\n" (current-error-port))
-       (read-sentence))))
+    (display "[client] " (current-error-port))
+    (if first-message?
+        (let ((ret `(listen ((AdminPermissions ,(get-admin-permissions))))))
+          (set! first-message? #f)
+          (write (serialize/human ret)) (newline)
+          ret)
+        (catch-any
+         (lambda _
+           (define line (read-string-line))
+           (if (eof-object? line) line
+               (with-input-from-string
+                   line
+                 (lambda _ (read-list)))))
+         (lambda _
+           (display "Error parsing input\n" (current-error-port))
+           (read-sentence)))))
 
   (define db
     (profun-create-database
