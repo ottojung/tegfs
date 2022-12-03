@@ -22,8 +22,7 @@
 %use (make-profune-communicator profune-communicator-handle) "./euphrates/profune-communicator.scm"
 %use (read-list) "./euphrates/read-list.scm"
 %use (read-string-line) "./euphrates/read-string-line.scm"
-%use (serialize/human) "./euphrates/serialization-human.scm"
-%use (serialize/short) "./euphrates/serialization-short.scm"
+%use (deserialize/short serialize/short) "./euphrates/serialization-short.scm"
 %use (~s) "./euphrates/tilda-s.scm"
 %use (words->string) "./euphrates/words-to-string.scm"
 %use (get-admin-permissions) "./get-admin-permissions.scm"
@@ -31,24 +30,17 @@
 
 (define (CLI-talk)
 
-  (define first-message? #f)
   (define (read-sentence)
-    (if first-message?
-        (let ((ret `(listen ((AdminPermissions ,(get-admin-permissions))))))
-          (set! first-message? #f)
-          (for-each (lambda (w) (write w) (display " ")) (serialize/human ret))
-          (newline)
-          ret)
-        (catch-any
-         (lambda _
-           (define line (read-string-line))
-           (if (eof-object? line) line
-               (with-input-from-string
-                   line
-                 (lambda _ (read-list)))))
-         (lambda _
-           (display "Error parsing input\n" (current-error-port))
-           (read-sentence)))))
+    (catch-any
+     (lambda _
+       (define line (read-string-line))
+       (if (eof-object? line) line
+           (with-input-from-string
+               line
+             (lambda _ (deserialize/short (read-list))))))
+     (lambda _
+       (display "Error parsing input\n" (current-error-port))
+       (read-sentence))))
 
   (define db
     (profun-create-database
@@ -77,7 +69,7 @@
                   (lambda args `(error ,@args)))))
 
             (display "[server] ")
-            (display (words->string (map ~s answer)))
+            (display (words->string (map ~s (serialize/short answer))))
             (newline)
             #t))))
 
