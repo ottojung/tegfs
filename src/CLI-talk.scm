@@ -23,6 +23,7 @@
 %use (read-list) "./euphrates/read-list.scm"
 %use (read-string-line) "./euphrates/read-string-line.scm"
 %use (serialize/human) "./euphrates/serialization-human.scm"
+%use (serialize/short) "./euphrates/serialization-short.scm"
 %use (~s) "./euphrates/tilda-s.scm"
 %use (words->string) "./euphrates/words-to-string.scm"
 %use (get-admin-permissions) "./get-admin-permissions.scm"
@@ -30,13 +31,13 @@
 
 (define (CLI-talk)
 
-  (define first-message? #t)
+  (define first-message? #f)
   (define (read-sentence)
-    (display "[client] " (current-error-port))
     (if first-message?
         (let ((ret `(listen ((AdminPermissions ,(get-admin-permissions))))))
           (set! first-message? #f)
-          (write (serialize/human ret)) (newline)
+          (for-each (lambda (w) (write w) (display " ")) (serialize/human ret))
+          (newline)
           ret)
         (catch-any
          (lambda _
@@ -57,16 +58,32 @@
   (define comm
     (make-profune-communicator db))
 
-  (let loop ((sentence (read-sentence)))
-    (if (eof-object? sentence)
-        (display "\nGoodbye!\n" (current-error-port))
-        (let ((answer
-               (catch-any
-                (lambda _ (profune-communicator-handle comm sentence))
-                (lambda args `(error ,@args)))))
+  (define (send-to-server echo? read-sentence)
+    (display "[client] " (current-error-port))
 
-          (display "[server] ")
-          (display (words->string (map ~s answer)))
-          (newline)
+    (let ((sentence (read-sentence)))
 
-          (loop (read-sentence))))))
+      (when echo?
+        (for-each (lambda (w) (write w) (display " ")) (serialize/short sentence))
+        (newline))
+
+      (if (eof-object? sentence)
+          (begin
+            (display "\nGoodbye!\n" (current-error-port))
+            #f)
+          (let ((answer
+                 (catch-any
+                  (lambda _ (profune-communicator-handle comm sentence))
+                  (lambda args `(error ,@args)))))
+
+            (display "[server] ")
+            (display (words->string (map ~s answer)))
+            (newline)
+            #t))))
+
+  (send-to-server
+   #t (const `(listen ((AdminPermissions ,(get-admin-permissions))))))
+
+  (let loop ()
+    (when (send-to-server #f read-sentence)
+      (loop))))
