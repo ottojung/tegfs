@@ -34,11 +34,9 @@
      (<query-format> (comp (entry-print/formatted <query-format>)))
      (else (fatal "Unexpected mode: both --entries and <query-format> were not set"))))
 
-  (define comm (tegfs-make-communicator))
-
   (define result
     (profune-communicator-handle
-     comm
+     (tegfs-make-communicator)
      `(whats
        (permissions ,(get-admin-permissions))
        (query ,<query...>)
