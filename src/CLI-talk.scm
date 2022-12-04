@@ -74,7 +74,7 @@
             #t))))
 
   (send-to-server
-   #t (const `(listen ((AdminPermissions ,(get-admin-permissions))))))
+   #t (const `(listen ((admin-permissions ,(get-admin-permissions))))))
 
   (let loop ()
     (when (send-to-server #f read-sentence)
