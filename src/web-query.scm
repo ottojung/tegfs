@@ -17,18 +17,21 @@
 
 %var web-query
 
+%use (assq-or) "./euphrates/assq-or.scm"
 %use (hashmap-ref) "./euphrates/hashmap.scm"
+%use (profune-communicator-handle) "./euphrates/profune-communicator.scm"
 %use (string->words) "./euphrates/string-to-words.scm"
-%use (with-monad) "./euphrates/with-monad.scm"
-%use (tegfs-query) "./tegfs-query.scm"
+%use (fatal) "./fatal.scm"
+%use (tegfs-make-communicator) "./tegfs-make-communicator.scm"
 %use (web-callcontext/p) "./web-callcontext-p.scm"
 %use (callcontext-request) "./web-callcontext.scm"
 %use (web-context/p) "./web-context-p.scm"
 %use (web-decode-query) "./web-decode-query.scm"
 %use (web-display-entries) "./web-display-entries.scm"
 %use (web-display-entry) "./web-display-entry.scm"
+%use (web-get-filemap/2) "./web-get-filemap-2.scm"
+%use (web-get-permissions) "./web-get-permissions.scm"
 %use (web-get-query) "./web-get-query.scm"
-%use (web-query-monad) "./web-query-monad.scm"
 %use (web-respond) "./web-respond.scm"
 
 (define (web-query)
@@ -45,6 +48,21 @@
    (lambda _
      (web-display-entries
       (lambda _
-        (with-monad
-         (web-query-monad web-display-entry query/split)
-         (tegfs-query)))))))
+        (define result
+          (profune-communicator-handle
+           (tegfs-make-communicator)
+           `(whats
+             (permissions ,(web-get-permissions))
+             (filemap/2 ,(web-get-filemap/2))
+             (query ,query/split)
+             (entry E)
+             more (99999)
+             )))
+
+        (define equals (cadr (cadr result)))
+        (for-each
+         (lambda (bindings)
+           (define entry
+             (assq-or 'E bindings (fatal "Unexpected result from backend")))
+           (web-display-entry entry))
+         equals))))))
