@@ -20,13 +20,12 @@
 %use (assq-or) "./euphrates/assq-or.scm"
 %use (comp) "./euphrates/comp.scm"
 %use (printf) "./euphrates/printf.scm"
-%use (profun-create-database) "./euphrates/profun.scm"
-%use (make-profune-communicator profune-communicator-handle) "./euphrates/profune-communicator.scm"
+%use (profune-communicator-handle) "./euphrates/profune-communicator.scm"
 %use (entry-print/formatted) "./entry-print-formatted.scm"
 %use (entry-print) "./entry-print.scm"
 %use (fatal) "./fatal.scm"
 %use (get-admin-permissions) "./get-admin-permissions.scm"
-%use (tegfs-server-handler) "./tegfs-server-handler.scm"
+%use (tegfs-make-communicator) "./tegfs-make-communicator.scm"
 
 (define (CLI-query --diropen --dirpreview --entries <query-format> <query...>)
   (define print-func
@@ -35,13 +34,7 @@
      (<query-format> (comp (entry-print/formatted <query-format>)))
      (else (fatal "Unexpected mode: both --entries and <query-format> were not set"))))
 
-  (define db
-    (profun-create-database
-     tegfs-server-handler
-     '()))
-
-  (define comm
-    (make-profune-communicator db))
+  (define comm (tegfs-make-communicator))
 
   (define result
     (profune-communicator-handle

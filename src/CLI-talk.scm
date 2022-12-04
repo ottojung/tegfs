@@ -18,15 +18,14 @@
 %var CLI-talk
 
 %use (catch-any) "./euphrates/catch-any.scm"
-%use (profun-create-database) "./euphrates/profun.scm"
-%use (make-profune-communicator profune-communicator-handle) "./euphrates/profune-communicator.scm"
+%use (profune-communicator-handle) "./euphrates/profune-communicator.scm"
 %use (read-list) "./euphrates/read-list.scm"
 %use (read-string-line) "./euphrates/read-string-line.scm"
 %use (deserialize/short serialize/short) "./euphrates/serialization-short.scm"
 %use (~s) "./euphrates/tilda-s.scm"
 %use (words->string) "./euphrates/words-to-string.scm"
 %use (get-admin-permissions) "./get-admin-permissions.scm"
-%use (tegfs-server-handler) "./tegfs-server-handler.scm"
+%use (tegfs-make-communicator) "./tegfs-make-communicator.scm"
 
 (define (CLI-talk)
 
@@ -42,13 +41,8 @@
        (display "Error parsing input\n" (current-error-port))
        (read-sentence))))
 
-  (define db
-    (profun-create-database
-     tegfs-server-handler
-     '()))
-
   (define comm
-    (make-profune-communicator db))
+    (tegfs-make-communicator))
 
   (define (send-to-server echo? read-sentence)
     (display "[client] " (current-error-port))
