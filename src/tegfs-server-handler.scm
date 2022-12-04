@@ -34,6 +34,7 @@
 %use (entry-field-handler) "./entry-field-handler.scm"
 %use (query-diropen?/p query-dirpreview?/p query-filemap/2/p query-permissions/p query-split/p) "./talk-parameters.scm"
 %use (query-entry-handler) "./tegfs-query.scm"
+%use (web-share-entry-preview-handler) "./web-share-entry-preview-handler.scm"
 
 (define tegfs-server-handler
   (profun-make-handler
@@ -59,5 +60,7 @@
    (filemap/2 (instantiate-profun-parameter query-filemap/2/p))
    (diropen? (instantiate-profun-parameter query-diropen?/p))
    (dirpreview? (instantiate-profun-parameter query-dirpreview?/p))
+
+   (entry-preview web-share-entry-preview-handler)
 
    ))
