@@ -21,7 +21,6 @@
 %use (catch-any) "./euphrates/catch-any.scm"
 %use (catchu-case) "./euphrates/catchu-case.scm"
 %use (appcomp comp) "./euphrates/comp.scm"
-%use (debugs) "./euphrates/debugs.scm"
 %use (define-tuple) "./euphrates/define-tuple.scm"
 %use (directory-files) "./euphrates/directory-files.scm"
 %use (dprintln) "./euphrates/dprintln.scm"
@@ -47,7 +46,6 @@
 %use (stringf) "./euphrates/stringf.scm"
 %use (~a) "./euphrates/tilda-a.scm"
 %use (time-get-current-unixtime) "./euphrates/time-get-current-unixtime.scm"
-%use (with-monad) "./euphrates/with-monad.scm"
 %use (has-access-for-entry-details?) "./access.scm"
 %use (tegfs-add) "./add.scm"
 %use (default-login-expiery-time) "./default-login-expiery-time.scm"
@@ -70,7 +68,6 @@
 %use (sharedinfo-ctime sharedinfo-recepientid sharedinfo-senderid sharedinfo-sourcepath sharedinfo-stime) "./sharedinfo.scm"
 %use (standalone-file->entry/prefixed) "./standalone-file-to-entry.scm"
 %use (symlink-shared-file) "./symlink-shared-file.scm"
-%use (tegfs-query) "./tegfs-query.scm"
 %use (web-basic-headers) "./web-basic-headers.scm"
 %use (web-callcontext/p) "./web-callcontext-p.scm"
 %use (callcontext-body callcontext-break callcontext-ctr callcontext-request callcontext-time set-callcontext-key!) "./web-callcontext.scm"
@@ -91,7 +88,7 @@
 %use (parse-multipart-as-hashmap) "./web-parse-multipart.scm"
 %use (web-preview-height) "./web-preview-height.scm"
 %use (web-preview-width) "./web-preview-width.scm"
-%use (web-query-monad) "./web-query-monad.scm"
+%use (web-query/foreach) "./web-query-foreach.scm"
 %use (web-query) "./web-query.scm"
 %use (web-request-get-domainname) "./web-request-get-domainname.scm"
 %use (web-respond) "./web-respond.scm"
@@ -648,9 +645,7 @@
     (define id (cdr (assoc keyword-id entry)))
     (hashset-add! idset id))
 
-  (with-monad
-   (web-query-monad add-entry query/split)
-   (tegfs-query))
+  (web-query/foreach query/split add-entry)
 
   (web-respond text))
 
