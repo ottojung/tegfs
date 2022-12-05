@@ -20,6 +20,7 @@
 %var web-share-file/dont-link-yet
 
 %use (hashmap-set!) "./euphrates/hashmap.scm"
+%use (raisu) "./euphrates/raisu.scm"
 %use (filemap-set!) "./filemap.scm"
 %use (get-sharedinfo-for-perm) "./get-sharedinfo-for-perm.scm"
 %use (make-sharedinfo) "./make-sharedinfo.scm"
@@ -34,7 +35,8 @@
 %use (web-get-permissions) "./web-get-permissions.scm"
 
 (define (web-share-file/new target-fullpath for-duration make-symlink?)
-  (define ctx (web-context/p))
+  (define ctx (or (web-context/p)
+                  (raisu 'this-operation-requires-server-to-be-running)))
   (define callctx (web-callcontext/p))
   (define filemap/2 (context-filemap/2 ctx))
   (define perm (web-get-permissions))
@@ -58,7 +60,8 @@
          info)))
 
 (define (web-share-file target-fullpath for-duration)
-  (define ctx (web-context/p))
+  (define ctx (or (web-context/p)
+                  (raisu 'this-operation-requires-server-to-be-running)))
   (define perm (web-get-permissions))
   (define make-symlink? #t)
   (or
@@ -66,7 +69,8 @@
    (web-share-file/new target-fullpath for-duration make-symlink?)))
 
 (define (web-share-file/dont-link-yet target-fullpath for-duration)
-  (define ctx (web-context/p))
+  (define ctx (or (web-context/p)
+                  (raisu 'this-operation-requires-server-to-be-running)))
   (define perm (web-get-permissions))
   (define make-symlink? #f)
   (or
