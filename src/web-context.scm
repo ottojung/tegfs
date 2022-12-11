@@ -28,9 +28,8 @@
 %use (define-type9) "./euphrates/define-type9.scm"
 
 (define-type9 <context>
-  (context-ctr passwords database tokens port fileserver sharedir filemap/2) context?
+  (context-ctr passwords tokens port fileserver sharedir filemap/2) context?
   (passwords context-passwords) ;; user credentials passwords
-  (database context-database) ;; tag database
   (tokens context-tokens) ;; temporary session tokens
   (port context-port) ;; port to host the server on
   (fileserver context-fileserver) ;; full URI of the file server

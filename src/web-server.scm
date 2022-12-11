@@ -775,7 +775,6 @@
 
 (define (make-context)
   (define passwords (make-hashmap))
-  (define database (make-hashmap))
   (define tokens (make-hashmap))
 
   (define filemap/2
@@ -829,7 +828,7 @@
   (unless (and (integer? port) (exact? port) (> port 0))
     (raisu 'port-must-be-a-natural-number port))
 
-  (context-ctr passwords database tokens port fileserver sharedir filemap/2))
+  (context-ctr passwords tokens port fileserver sharedir filemap/2))
 
 (define (query->hashmap query)
   (define split (string-split/simple query #\&))
