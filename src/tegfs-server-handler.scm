@@ -17,7 +17,7 @@
 
 %var tegfs-server-handler
 
-%use (profun-make-handler) "./euphrates/profun-make-handler.scm"
+%use (profun-make-handler) "./euphrates/profun-handler.scm"
 %use (profun-op-divisible) "./euphrates/profun-op-divisible.scm"
 %use (profun-op-equals) "./euphrates/profun-op-equals.scm"
 %use (profun-op-false) "./euphrates/profun-op-false.scm"
