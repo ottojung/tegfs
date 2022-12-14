@@ -17,38 +17,18 @@
 
 %var tegfs-server-handler
 
-%use (profun-make-handler) "./euphrates/profun-handler.scm"
-%use (profun-op-divisible) "./euphrates/profun-op-divisible.scm"
-%use (profun-op-equals) "./euphrates/profun-op-equals.scm"
-%use (profun-op-false) "./euphrates/profun-op-false.scm"
-%use (profun-op-less) "./euphrates/profun-op-less.scm"
-%use (profun-op-modulo) "./euphrates/profun-op-modulo.scm"
-%use (profun-op*) "./euphrates/profun-op-mult.scm"
+%use (profun-handler-extend) "./euphrates/profun-handler.scm"
 %use (instantiate-profun-parameter) "./euphrates/profun-op-parameter.scm"
-%use (profun-op+) "./euphrates/profun-op-plus.scm"
-%use (profun-op-separate) "./euphrates/profun-op-separate.scm"
-%use (profun-op-sqrt) "./euphrates/profun-op-sqrt.scm"
-%use (profun-op-true) "./euphrates/profun-op-true.scm"
-%use (profun-op-unify) "./euphrates/profun-op-unify.scm"
 %use (profun-op-value) "./euphrates/profun-op-value.scm"
+%use (profun-standard-handler) "./euphrates/profun-standard-handler.scm"
 %use (entry-field-handler) "./entry-field-handler.scm"
 %use (query-diropen?/p query-dirpreview?/p query-filemap/2/p query-permissions/p query-split/p) "./talk-parameters.scm"
 %use (query-entry-handler) "./tegfs-query.scm"
 %use (web-share-entry-preview-handler) "./web-share-entry-preview-handler.scm"
 
 (define tegfs-server-handler
-  (profun-make-handler
-   (= profun-op-unify)
-   (!= profun-op-separate)
-   (true profun-op-true)
-   (false profun-op-false)
-   (+ profun-op+)
-   (* profun-op*)
-   (modulo profun-op-modulo)
-   (sqrt profun-op-sqrt)
-   (< profun-op-less)
-   (divisible profun-op-divisible)
-   (equals profun-op-equals)
+  (profun-handler-extend
+   profun-standard-handler
 
    (value (profun-op-value '() '()))
 
