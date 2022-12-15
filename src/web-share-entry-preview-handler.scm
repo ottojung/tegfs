@@ -26,6 +26,7 @@
 %use (entry-target-fullpath) "./entry-target-fullpath.scm"
 %use (get-preview-path) "./get-preview-path.scm"
 %use (permission?) "./permission.scm"
+%use (sharedinfo-senderid) "./sharedinfo.scm"
 %use (query-permissions/p) "./talk-parameters.scm"
 %use (web-share-file) "./web-share-file.scm"
 
@@ -38,9 +39,9 @@
 
      (define (continue target-fullpath)
        (define preview-fullpath (get-preview-path target-fullpath))
-       (profun-set
-        (R-name
-         <- (web-share-file web-context perm preview-fullpath default-preview-sharing-time))))
+       (define info (web-share-file web-context perm preview-fullpath default-preview-sharing-time))
+       (define vid (sharedinfo-senderid info))
+       (profun-set (R-name <- vid)))
 
      (define (try entry)
        (define target-fullpath (entry-target-fullpath entry))
