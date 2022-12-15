@@ -20,6 +20,8 @@
 %var web-share-file/dont-link-yet
 
 %use (hashmap-set!) "./euphrates/hashmap.scm"
+%use (raisu) "./euphrates/raisu.scm"
+%use (current-time/p) "./current-time-p.scm"
 %use (filemap-set!) "./filemap.scm"
 %use (get-sharedinfo-for-perm) "./get-sharedinfo-for-perm.scm"
 %use (make-sharedinfo) "./make-sharedinfo.scm"
@@ -27,14 +29,11 @@
 %use (permission-filemap permission-share-longer-than-view?) "./permission.scm"
 %use (sharedinfo-recepientid) "./sharedinfo.scm"
 %use (symlink-shared-file) "./symlink-shared-file.scm"
-%use (web-callcontext/p) "./web-callcontext-p.scm"
-%use (callcontext-time) "./web-callcontext.scm"
 %use (context-filemap/2) "./web-context.scm"
 
 (define (web-share-file/new ctx perm target-fullpath for-duration make-symlink?)
-  (define callctx (web-callcontext/p))
   (define filemap/2 (context-filemap/2 ctx))
-  (define now (callcontext-time callctx))
+  (define now (or (current-time/p) (raisu 'current-time-is-not-set)))
   (define for-duration*
     (if (permission-share-longer-than-view? perm)
         for-duration

@@ -48,6 +48,7 @@
 %use (time-get-current-unixtime) "./euphrates/time-get-current-unixtime.scm"
 %use (has-access-for-entry-details?) "./access.scm"
 %use (tegfs-add) "./add.scm"
+%use (current-time/p) "./current-time-p.scm"
 %use (default-login-expiery-time) "./default-login-expiery-time.scm"
 %use (default-share-expiery-time) "./default-share-expiery-time.scm"
 %use (tegfs-process-categorization-text) "./edit-tags.scm"
@@ -69,7 +70,7 @@
 %use (symlink-shared-file) "./symlink-shared-file.scm"
 %use (web-basic-headers) "./web-basic-headers.scm"
 %use (web-callcontext/p) "./web-callcontext-p.scm"
-%use (callcontext-body callcontext-break callcontext-ctr callcontext-request callcontext-time set-callcontext-key!) "./web-callcontext.scm"
+%use (callcontext-body callcontext-break callcontext-ctr callcontext-request set-callcontext-key!) "./web-callcontext.scm"
 %use (web-context/p) "./web-context-p.scm"
 %use (context-filemap/2 context-fileserver context-passwords context-port context-sharedir context-tokens) "./web-context.scm"
 %use (web-decode-query) "./web-decode-query.scm"
@@ -504,8 +505,8 @@
     (< 0 (sharedinfo-time-left info current-time)))))
 
 (define (collectgarbage)
-  (define callctx (web-callcontext/p))
-  (define now (callcontext-time callctx))
+  (define now (or (current-time/p)
+                  (raisu 'current-time-is-not-set)))
 
   (collectgarbage/nocall now)
 
