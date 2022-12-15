@@ -19,12 +19,12 @@
 
 %use (profun-create-database) "./euphrates/profun.scm"
 %use (make-profune-communicator) "./euphrates/profune-communicator.scm"
-%use (tegfs-server-handler) "./tegfs-server-handler.scm"
+%use (tegfs-make-server-handler) "./tegfs-server-handler.scm"
 
 (define (tegfs-make-communicator)
   (define db
     (profun-create-database
-     tegfs-server-handler
+     tegfs-make-server-handler
      '()))
 
   (define comm

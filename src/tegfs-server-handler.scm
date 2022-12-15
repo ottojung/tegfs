@@ -15,7 +15,7 @@
 
 %run guile
 
-%var tegfs-server-handler
+%var tegfs-make-server-handler
 
 %use (profun-handler-extend) "./euphrates/profun-handler.scm"
 %use (instantiate-profun-parameter) "./euphrates/profun-op-parameter.scm"
@@ -44,3 +44,6 @@
    (entry-preview web-share-entry-preview-handler)
 
    ))
+
+(define (tegfs-make-server-handler)
+  tegfs-server-handler)
