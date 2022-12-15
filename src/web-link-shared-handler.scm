@@ -37,7 +37,7 @@
      (define senderid R)
 
      (define filemap/2 (context-filemap/2 web-context))
-     (define info (filemap-ref-by-senderid senderid))
+     (define info (filemap-ref-by-senderid filemap/2 senderid))
      (define target-fullpath
        (and info (sharedinfo-sourcepath info)))
      (define recepientid
