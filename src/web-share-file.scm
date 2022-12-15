@@ -61,11 +61,11 @@
 (define (web-share-file ctx perm target-fullpath for-duration)
   (define make-symlink? #t)
   (or
-   (get-sharedinfo-for-perm ctx perm target-fullpath)
+   (get-sharedinfo-for-perm ctx perm target-fullpath) ;; TODO: share for longer?
    (web-share-file/new ctx perm target-fullpath for-duration make-symlink?)))
 
 (define (web-share-file/dont-link-yet ctx perm target-fullpath for-duration)
   (define make-symlink? #f)
   (or
-   (get-sharedinfo-for-perm ctx perm target-fullpath)
+   (get-sharedinfo-for-perm ctx perm target-fullpath) ;; TODO: share for longer?
    (web-share-file/new ctx perm target-fullpath for-duration make-symlink?)))
