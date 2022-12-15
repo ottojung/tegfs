@@ -15,16 +15,19 @@
 
 %run guile
 
-%var web-make-server-handler
+%var web-make-communicator
 
-%use (profun-handler-extend) "./euphrates/profun-handler.scm"
-%use (tegfs-make-server-handler) "./tegfs-server-handler.scm"
-%use (web-share-entry-preview-handler) "./web-share-entry-preview-handler.scm"
+%use (profun-create-database) "./euphrates/profun.scm"
+%use (make-profune-communicator) "./euphrates/profune-communicator.scm"
+%use (web-make-server-handler) "./web-server-handler.scm"
 
-(define (web-make-server-handler web-context)
-  (profun-handler-extend
-   (tegfs-make-server-handler)
+(define (web-make-communicator web-context)
+  (define db
+    (profun-create-database
+     (web-make-server-handler web-context)
+     '()))
 
-   (entry-preview (web-share-entry-preview-handler web-context))
+  (define comm
+    (make-profune-communicator db))
 
-   ))
+  comm)

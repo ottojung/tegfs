@@ -28,7 +28,7 @@
 %use (web-share-file) "./web-share-file.scm"
 
 (define web-share-entry-preview-handler
-  (lambda (tegfs-context)
+  (lambda (web-context)
     (profun-op-envlambda
      (ctx env (E-name R-name))
 

@@ -20,14 +20,15 @@
 %use (assq-or) "./euphrates/assq-or.scm"
 %use (profune-communicator-handle) "./euphrates/profune-communicator.scm"
 %use (raisu) "./euphrates/raisu.scm"
-%use (tegfs-make-communicator) "./tegfs-make-communicator.scm"
+%use (web-context/p) "./web-context-p.scm"
 %use (web-get-filemap/2) "./web-get-filemap-2.scm"
 %use (web-get-permissions) "./web-get-permissions.scm"
+%use (web-make-communicator) "./web-make-communicator.scm"
 
 (define (web-query/foreach query/split for-each-fn)
   (define result
     (profune-communicator-handle
-     (tegfs-make-communicator)
+     (web-make-communicator (web-context/p))
      `(whats
        (permissions ,(web-get-permissions))
        (filemap/2 ,(web-get-filemap/2))
