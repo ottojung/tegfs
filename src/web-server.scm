@@ -25,7 +25,6 @@
 %use (directory-files) "./euphrates/directory-files.scm"
 %use (dprintln) "./euphrates/dprintln.scm"
 %use (file-delete) "./euphrates/file-delete.scm"
-%use (file-is-directory?/no-readlink) "./euphrates/file-is-directory-q-no-readlink.scm"
 %use (file-or-directory-exists?) "./euphrates/file-or-directory-exists-q.scm"
 %use (fn) "./euphrates/fn.scm"
 %use (alist->hashmap hashmap-delete! hashmap-foreach hashmap-ref make-hashmap) "./euphrates/hashmap.scm"
@@ -65,21 +64,21 @@
 %use (permission-still-valid?) "./permission-still-valid-huh.scm"
 %use (permission-filemap permission-idset permission-token) "./permission.scm"
 %use (sha256sum) "./sha256sum.scm"
-%use (sharedinfo-ctime sharedinfo-recepientid sharedinfo-senderid sharedinfo-sourcepath sharedinfo-stime) "./sharedinfo.scm"
+%use (sharedinfo-ctime sharedinfo-recepientid sharedinfo-sourcepath sharedinfo-stime) "./sharedinfo.scm"
 %use (standalone-file->entry/prefixed) "./standalone-file-to-entry.scm"
 %use (symlink-shared-file) "./symlink-shared-file.scm"
 %use (web-basic-headers) "./web-basic-headers.scm"
 %use (web-callcontext/p) "./web-callcontext-p.scm"
 %use (callcontext-body callcontext-break callcontext-ctr callcontext-request set-callcontext-key!) "./web-callcontext.scm"
 %use (web-context/p) "./web-context-p.scm"
-%use (context-filemap/2 context-fileserver context-passwords context-port context-sharedir context-tokens) "./web-context.scm"
+%use (context-filemap/2 context-passwords context-port context-sharedir context-tokens) "./web-context.scm"
 %use (web-decode-query) "./web-decode-query.scm"
 %use (web-display-entries) "./web-display-entries.scm"
 %use (web-display-entry) "./web-display-entry.scm"
 %use (web-get-filemap/2) "./web-get-filemap-2.scm"
 %use (web-get-permissions) "./web-get-permissions.scm"
 %use (web-get-query) "./web-get-query.scm"
-%use (web-get-shared-link) "./web-get-shared-link.scm"
+%use (web-get-sharedinfo-url) "./web-get-sharedinfo-url.scm"
 %use (web-login-body) "./web-login-body.scm"
 %use (web-login-failed-body) "./web-login-failed-body.scm"
 %use (web-login-success-body) "./web-login-success-body.scm"
@@ -438,16 +437,6 @@
       (web-sendfile return! 'image/jpeg preview-fullpath)
       (previewunknown)))
 
-(define (web-get-sharedinfo-url info)
-  (define ctx (web-context/p))
-  (define vid (sharedinfo-senderid info))
-  (define target-fullpath (sharedinfo-sourcepath info))
-  (define recepientid (sharedinfo-recepientid info))
-  (define fileserver (context-fileserver ctx))
-  (if (file-is-directory?/no-readlink target-fullpath)
-      (string-append "/directory?vid=" vid)
-      (web-get-shared-link fileserver target-fullpath recepientid)))
-
 (define (full)
   (define ctx (web-context/p))
   (define filemap/2 (context-filemap/2 ctx))
@@ -469,7 +458,7 @@
       ;; file was not shared with this permission
       (not-found)))
   (define location
-    (web-get-sharedinfo-url info))
+    (web-get-sharedinfo-url ctx info))
 
   (symlink-shared-file ctx target-fullpath recepientid)
 
@@ -672,7 +661,7 @@
   (define info
     (web-share-file/new ctx perm target-fullpath for-duration make-symlink?))
   (define location
-    (web-get-sharedinfo-url info))
+    (web-get-sharedinfo-url ctx info))
   (define text
     (with-output-to-string
       (lambda _
