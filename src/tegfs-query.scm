@@ -19,7 +19,7 @@
 
 %use (appcomp comp) "./euphrates/comp.scm"
 %use (curry-if) "./euphrates/curry-if.scm"
-%use (profun-accept profun-ctx-set profun-set) "./euphrates/profun-accept.scm"
+%use (profun-accept profun-ctx-set profun-set profun-set-meta) "./euphrates/profun-accept.scm"
 %use (make-profun-error) "./euphrates/profun-error.scm"
 %use (profun-op-envlambda) "./euphrates/profun-op-envlambda.scm"
 %use (profun-reject) "./euphrates/profun-reject.scm"
@@ -45,13 +45,15 @@
    (ctx env (E-name))
 
    (define (ret iter)
-     (define x (iter))
+     (define-values (x full) (iter))
      (if x
-         (profun-set
-          (E-name <- x)
-          (if ctx
-              (profun-accept)
-              (profun-ctx-set iter)))
+         (profun-set-meta
+          (E-name <- full)
+          (profun-set
+           (E-name <- x)
+           (if ctx
+               (profun-accept)
+               (profun-ctx-set iter))))
          (profun-reject)))
 
    (if ctx (ret ctx)
@@ -81,11 +83,14 @@
           (define (iter)
             (define entry0 (iter0))
             (cond
-             ((equal? #f entry0) #f)
+             ((equal? #f entry0)
+              (values #f #f))
              ((has-access-for-entry-details? filemap/2 permissions entry0)
-              entry0)
+              (values entry0 entry0))
              ((has-access-for-entry-target? filemap/2 permissions entry0)
-              (filter (lambda (p) (memq (car p) target-fields)) entry0))
+              (values
+               (filter (lambda (p) (memq (car p) target-fields)) entry0)
+               entry0))
              (else (iter))))
 
           (if (profun-bound-value? (env E-name))
