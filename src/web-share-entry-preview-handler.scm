@@ -38,7 +38,7 @@
        (define preview-fullpath (get-preview-path target-fullpath))
        (profun-set
         (R-name
-         <- (web-share-file perm preview-fullpath default-preview-sharing-time))))
+         <- (web-share-file web-context perm preview-fullpath default-preview-sharing-time))))
 
      (define (try entry)
        (define target-fullpath (entry-target-fullpath entry))

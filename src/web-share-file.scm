@@ -34,9 +34,7 @@
 %use (context-filemap/2) "./web-context.scm"
 %use (web-get-permissions) "./web-get-permissions.scm"
 
-(define (web-share-file/new perm target-fullpath for-duration make-symlink?)
-  (define ctx (or (web-context/p)
-                  (raisu 'this-operation-requires-server-to-be-running)))
+(define (web-share-file/new ctx perm target-fullpath for-duration make-symlink?)
   (define callctx (web-callcontext/p))
   (define filemap/2 (context-filemap/2 ctx))
   (define now (callcontext-time callctx))
@@ -58,18 +56,14 @@
 
          info)))
 
-(define (web-share-file perm target-fullpath for-duration)
-  (define ctx (or (web-context/p)
-                  (raisu 'this-operation-requires-server-to-be-running)))
+(define (web-share-file ctx perm target-fullpath for-duration)
   (define make-symlink? #t)
   (or
-   (get-sharedinfo-for-perm perm target-fullpath)
-   (web-share-file/new perm target-fullpath for-duration make-symlink?)))
+   (get-sharedinfo-for-perm ctx perm target-fullpath)
+   (web-share-file/new ctx perm target-fullpath for-duration make-symlink?)))
 
-(define (web-share-file/dont-link-yet perm target-fullpath for-duration)
-  (define ctx (or (web-context/p)
-                  (raisu 'this-operation-requires-server-to-be-running)))
+(define (web-share-file/dont-link-yet ctx perm target-fullpath for-duration)
   (define make-symlink? #f)
   (or
-   (get-sharedinfo-for-perm perm target-fullpath)
-   (web-share-file/new perm target-fullpath for-duration make-symlink?)))
+   (get-sharedinfo-for-perm ctx perm target-fullpath)
+   (web-share-file/new ctx perm target-fullpath for-duration make-symlink?)))

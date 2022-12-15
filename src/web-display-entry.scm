@@ -46,7 +46,7 @@
   (display "<img src=")
   (unless
       (and preview-fullpath
-           (let ((info (web-share-file perm preview-fullpath default-preview-sharing-time)))
+           (let ((info (web-share-file ctx perm preview-fullpath default-preview-sharing-time)))
              (and info
                   (let* ((recepientid (sharedinfo-recepientid info))
                          (sharedir (context-sharedir ctx))

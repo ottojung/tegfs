@@ -22,8 +22,7 @@
 %use (web-context/p) "./web-context-p.scm"
 %use (context-filemap/2) "./web-context.scm"
 
-(define (get-sharedinfo-for-perm perm target-fullpath)
-  (define ctx (web-context/p))
+(define (get-sharedinfo-for-perm ctx perm target-fullpath)
   (define filemap/2 (context-filemap/2 ctx))
   (define perm-filemap (permission-filemap perm))
   (hashmap-ref perm-filemap target-fullpath #f))

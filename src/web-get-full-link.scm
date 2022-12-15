@@ -56,8 +56,9 @@
                  (recepientid (sharedinfo-recepientid info)))
             (append-posix-path fileserver recepientid suffix)))))
    (else
-    (let* ((perm (web-get-permissions))
-           (info (web-share-file/dont-link-yet perm target-fullpath default-full-sharing-time))
+    (let* ((ctx (web-context/p))
+           (perm (web-get-permissions))
+           (info (web-share-file/dont-link-yet ctx perm target-fullpath default-full-sharing-time))
            (vid (and info (sharedinfo-senderid info)))
            (location (and info (string-append "/full?vid=" vid))))
       (and info location)))))
