@@ -17,11 +17,11 @@
 
 %var web-share-entry-generic-handler
 
-%use (make-profun-RFC) "./euphrates/profun-RFC.scm"
 %use (profun-set) "./euphrates/profun-accept.scm"
 %use (make-profun-error) "./euphrates/profun-error.scm"
 %use (profun-meta-key) "./euphrates/profun-meta-key.scm"
 %use (profun-op-envlambda) "./euphrates/profun-op-envlambda.scm"
+%use (profun-request-value) "./euphrates/profun-request-value.scm"
 %use (profun-bound-value? profun-unbound-value?) "./euphrates/profun-value.scm"
 %use (entry-target-fullpath) "./entry-target-fullpath.scm"
 %use (permission?) "./permission.scm"
@@ -53,9 +53,9 @@
 
        (cond
         ((profun-unbound-value? (env E-name))
-         (make-profun-RFC `(value ,E-name)))
+         (profun-request-value E-name))
         ((profun-unbound-value? sharing-time)
-         (make-profun-RFC `(value ,T-name)))
+         (profun-request-value T-name))
         ((permission? perm)
          (or (try (env E-name))
              (try (env (profun-meta-key E-name)))
