@@ -362,7 +362,7 @@
     (remove-common-prefix dir-fullpath root))
   (define file-names
     (let ((include-directories? #t))
-      (map cadr (directory-files dir-fullpath include-directories?))))
+      (map cadr (directory-files include-directories? dir-fullpath))))
   (define entries
     (map (comp (append-posix-path suffix)
                (standalone-file->entry/prefixed shared-relativepath vid))
