@@ -28,7 +28,7 @@
 %use (file-is-directory?/no-readlink) "./euphrates/file-is-directory-q-no-readlink.scm"
 %use (file-or-directory-exists?) "./euphrates/file-or-directory-exists-q.scm"
 %use (fn) "./euphrates/fn.scm"
-%use (alist->hashmap hashmap-delete! hashmap-foreach hashmap-ref hashmap-set! make-hashmap) "./euphrates/hashmap.scm"
+%use (alist->hashmap hashmap-delete! hashmap-foreach hashmap-ref make-hashmap) "./euphrates/hashmap.scm"
 %use (hashset-add! hashset-has? list->hashset) "./euphrates/hashset.scm"
 %use (list-singleton?) "./euphrates/list-singleton-q.scm"
 %use (make-directories) "./euphrates/make-directories.scm"
@@ -52,8 +52,7 @@
 %use (default-share-expiery-time) "./default-share-expiery-time.scm"
 %use (tegfs-process-categorization-text) "./edit-tags.scm"
 %use (entry-target-fullpath) "./entry-target-fullpath.scm"
-%use (filemap-delete-by-recepientid! filemap-make/empty filemap-ref-by-recepientid filemap-ref-by-senderid) "./filemap.scm"
-%use (get-config) "./get-config.scm"
+%use (filemap-delete-by-recepientid! filemap-ref-by-recepientid filemap-ref-by-senderid) "./filemap.scm"
 %use (get-preview-path) "./get-preview-path.scm"
 %use (get-random-access-token) "./get-random-access-token.scm"
 %use (get-random-basename) "./get-random-basename.scm"
@@ -72,7 +71,7 @@
 %use (web-callcontext/p) "./web-callcontext-p.scm"
 %use (callcontext-body callcontext-break callcontext-ctr callcontext-request callcontext-time set-callcontext-key!) "./web-callcontext.scm"
 %use (web-context/p) "./web-context-p.scm"
-%use (context-ctr context-filemap/2 context-fileserver context-passwords context-port context-sharedir context-tokens) "./web-context.scm"
+%use (context-filemap/2 context-fileserver context-passwords context-port context-sharedir context-tokens) "./web-context.scm"
 %use (web-decode-query) "./web-decode-query.scm"
 %use (web-display-entries) "./web-display-entries.scm"
 %use (web-display-entry) "./web-display-entry.scm"
@@ -83,6 +82,7 @@
 %use (web-login-body) "./web-login-body.scm"
 %use (web-login-failed-body) "./web-login-failed-body.scm"
 %use (web-login-success-body) "./web-login-success-body.scm"
+%use (web-make-context) "./web-make-context.scm"
 %use (web-make-upload-body) "./web-make-upload-body.scm"
 %use (web-message-template) "./web-message-template.scm"
 %use (parse-multipart-as-hashmap) "./web-parse-multipart.scm"
@@ -774,63 +774,6 @@
     (unless public? (check-permissions))
     (func)))
 
-(define (make-context)
-  (define passwords (make-hashmap))
-  (define tokens (make-hashmap))
-
-  (define filemap/2
-    (filemap-make/empty))
-  (define config
-    (get-config))
-  (define _1
-    (unless config
-      (raisu 'no-config-file
-             "Config file needs to be present when starting the server")))
-  (define users
-    (cdr
-     (or (assoc 'users config)
-         (raisu 'no-config-file
-                "Config file needs to be present when starting the server"))))
-  (define fileserver
-    (cadr
-     (or (assoc 'fileserver config)
-         (raisu 'no-fileserver "Variable 'fileserver is not set by the config"))))
-  (define sharedir
-    (cadr
-     (or (assoc 'sharedir config)
-         (raisu 'no-fileserver "Variable 'sharedir is not set by the config"))))
-  (define port/string
-    (cadr
-     (or (assoc 'port config)
-         (raisu 'no-port "Variable 'port is not set by the config"))))
-  (define port
-    (or (string->number (~a port/string))
-        (raisu 'port-is-not-a-number "Variable 'port must be a number" port/string)))
-
-  (unless (file-or-directory-exists? sharedir)
-    (make-directories sharedir))
-
-  (for-each
-   (lambda (user)
-     (define pass
-       (cadr
-        (or (assoc 'pass user)
-            (raisu 'no-user-pass
-                   "A user does not have a password"))))
-     (unless (string? pass)
-       (raisu 'pass-is-no-string "User passord is not a string" pass))
-     (hashmap-set! passwords pass #t))
-   users)
-
-  (unless (string? fileserver)
-    (raisu 'fileserver-must-be-a-string fileserver))
-  (unless (string? sharedir)
-    (raisu 'sharedir-must-be-a-string sharedir))
-  (unless (and (integer? port) (exact? port) (> port 0))
-    (raisu 'port-must-be-a-natural-number port))
-
-  (context-ctr passwords tokens port fileserver sharedir filemap/2))
-
 (define (query->hashmap query)
   (define split (string-split/simple query #\&))
   (define key-values
@@ -886,7 +829,7 @@
 
 (define (tegfs-serve/parse)
   (dprintln "Starting the server")
-  (parameterize ((web-context/p (make-context)))
+  (parameterize ((web-context/p (web-make-context)))
     (let ((port (context-port (web-context/p))))
 
       (dprintln "Collecting garbage left from the previous run...")
