@@ -21,6 +21,7 @@
 
 %use (hashmap-set!) "./euphrates/hashmap.scm"
 %use (raisu) "./euphrates/raisu.scm"
+%use (string->seconds) "./euphrates/string-to-seconds.scm"
 %use (current-time/p) "./current-time-p.scm"
 %use (filemap-set!) "./filemap.scm"
 %use (get-sharedinfo-for-perm) "./get-sharedinfo-for-perm.scm"
@@ -34,10 +35,15 @@
 (define (web-share-file/new ctx perm target-fullpath for-duration make-symlink?)
   (define filemap/2 (context-filemap/2 ctx))
   (define now (or (current-time/p) (raisu 'current-time-is-not-set)))
+  (define for-duration/parsed
+    (cond
+     ((number? for-duration) for-duration)
+     ((string? for-duration) (string->seconds for-duration))
+     (else (raisu 'type-error 'expected-number-or-string-for-for-duration for-duration))))
   (define for-duration*
     (if (permission-share-longer-than-view? perm)
-        for-duration
-        (min for-duration (permission-time-left perm now))))
+        for-duration/parsed
+        (min for-duration/parsed (permission-time-left perm now))))
   (define info (make-sharedinfo target-fullpath for-duration*))
   (define recepientid (sharedinfo-recepientid info))
   (define perm-filemap (permission-filemap perm))
