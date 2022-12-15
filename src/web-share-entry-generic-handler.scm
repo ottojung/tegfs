@@ -38,7 +38,7 @@
        (define sharing-time (env T-name))
        (define perm (query-permissions/p))
 
-       (define (continue entry target-fullpath)
+       (define (continue target-fullpath)
          (define generic-fullpath (get-shared-path target-fullpath))
          (define info
            (web-share-file/dont-link-yet
@@ -49,7 +49,7 @@
        (define (try entry)
          (define target-fullpath (entry-target-fullpath entry))
          (and target-fullpath
-              (continue entry target-fullpath)))
+              (continue target-fullpath)))
 
        (cond
         ((profun-unbound-value? (env E-name))
