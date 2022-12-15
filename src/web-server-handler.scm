@@ -25,6 +25,6 @@
   (profun-handler-extend
    (tegfs-make-server-handler)
 
-   (entry-preview (web-share-entry-preview-handler web-context))
+   (share-preview (web-share-entry-preview-handler web-context))
 
    ))
