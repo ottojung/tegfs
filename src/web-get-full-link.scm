@@ -32,6 +32,7 @@
 %use (sharedinfo-recepientid sharedinfo-senderid) "./sharedinfo.scm"
 %use (web-context/p) "./web-context-p.scm"
 %use (context-filemap/2 context-fileserver) "./web-context.scm"
+%use (web-get-permissions) "./web-get-permissions.scm"
 %use (web-share-file/dont-link-yet) "./web-share-file.scm"
 
 (define (web-get-full-link entry target-fullpath)
@@ -55,7 +56,8 @@
                  (recepientid (sharedinfo-recepientid info)))
             (append-posix-path fileserver recepientid suffix)))))
    (else
-    (let* ((info (web-share-file/dont-link-yet target-fullpath default-full-sharing-time))
+    (let* ((perm (web-get-permissions))
+           (info (web-share-file/dont-link-yet perm target-fullpath default-full-sharing-time))
            (vid (and info (sharedinfo-senderid info)))
            (location (and info (string-append "/full?vid=" vid))))
       (and info location)))))

@@ -24,22 +24,30 @@
 %use (default-preview-sharing-time) "./default-preview-sharing-time.scm"
 %use (entry-target-fullpath) "./entry-target-fullpath.scm"
 %use (get-preview-path) "./get-preview-path.scm"
+%use (query-permissions/p) "./talk-parameters.scm"
 %use (web-share-file) "./web-share-file.scm"
 
 (define web-share-entry-preview-handler
   (profun-op-envlambda
    (ctx env (E-name R-name))
 
+   (define perm (query-permissions/p))
+
    (define (continue target-fullpath)
      (define preview-fullpath (get-preview-path target-fullpath))
      (profun-set
-      (R-name <- (web-share-file preview-fullpath default-preview-sharing-time))))
+      (R-name
+       <- (web-share-file perm preview-fullpath default-preview-sharing-time))))
 
    (define (try entry)
      (define target-fullpath (entry-target-fullpath entry))
      (and target-fullpath
           (continue target-fullpath)))
 
-   (or (try (env E-name))
-       (try (env (profun-meta-key E-name)))
-       (make-profun-error 'bad-entry:does-not-have-target-infos))))
+   (cond
+    (perm
+     (or (try (env E-name))
+         (try (env (profun-meta-key E-name)))
+         (make-profun-error 'bad-entry:does-not-have-target-infos)))
+    (else
+     (make-profun-error 'missing-parameter 'permissions)))))

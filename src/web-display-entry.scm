@@ -30,12 +30,14 @@
 %use (web-context/p) "./web-context-p.scm"
 %use (context-fileserver context-sharedir) "./web-context.scm"
 %use (web-get-full-link) "./web-get-full-link.scm"
+%use (web-get-permissions) "./web-get-permissions.scm"
 %use (web-get-shared-fullpath) "./web-get-shared-fullpath.scm"
 %use (web-get-shared-link) "./web-get-shared-link.scm"
 %use (web-share-file) "./web-share-file.scm"
 
 (define (display-preview target-fullpath)
   (define ctx (web-context/p))
+  (define perm (web-get-permissions))
   (define fileserver (context-fileserver ctx))
   (define preview-fullpath (get-preview-path target-fullpath))
   (define default-preview
@@ -44,7 +46,7 @@
   (display "<img src=")
   (unless
       (and preview-fullpath
-           (let ((info (web-share-file preview-fullpath default-preview-sharing-time)))
+           (let ((info (web-share-file perm preview-fullpath default-preview-sharing-time)))
              (and info
                   (let* ((recepientid (sharedinfo-recepientid info))
                          (sharedir (context-sharedir ctx))
