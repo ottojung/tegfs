@@ -19,7 +19,7 @@
 
 %use (appcomp comp) "./euphrates/comp.scm"
 %use (curry-if) "./euphrates/curry-if.scm"
-%use (profun-accept profun-ctx-set profun-set profun-set-meta) "./euphrates/profun-accept.scm"
+%use (profun-accept? profun-ctx-set profun-set profun-set-meta) "./euphrates/profun-accept.scm"
 %use (make-profun-error) "./euphrates/profun-error.scm"
 %use (profun-op-envlambda) "./euphrates/profun-op-envlambda.scm"
 %use (profun-reject) "./euphrates/profun-reject.scm"
@@ -47,13 +47,10 @@
    (define (ret iter)
      (define-values (x full) (iter))
      (if x
-         (profun-set-meta
-          (E-name <- full)
-          (profun-set
-           (E-name <- x)
-           (if ctx
-               (profun-accept)
-               (profun-ctx-set iter))))
+         (profun-set
+          (E-name <- x)
+          (profun-set-meta
+           (E-name <- full)))
          (profun-reject)))
 
    (if ctx (ret ctx)
@@ -95,7 +92,10 @@
 
           (if (profun-bound-value? (env E-name))
               (make-profun-error 'query-is-a-generator 'cannot-check-if-element-already-exists)
-              (ret iter))
+              (let ((val (ret iter)))
+                (if (profun-accept? val)
+                    (profun-ctx-set iter val)
+                    val)))
 
           )))))
 
