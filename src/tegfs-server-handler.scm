@@ -41,8 +41,6 @@
    (diropen? (instantiate-profun-parameter query-diropen?/p))
    (dirpreview? (instantiate-profun-parameter query-dirpreview?/p))
 
-   (entry-preview web-share-entry-preview-handler)
-
    ))
 
 (define (tegfs-make-server-handler)
