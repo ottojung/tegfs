@@ -99,6 +99,7 @@
 %use (web-style) "./web-style.scm"
 %use (web-try-uri-decode) "./web-try-uri-decode.scm"
 %use (web-url-icon/svg) "./web-url-icon-svg.scm"
+%use (with-current-time) "./with-current-time.scm"
 
 %for (COMPILER "guile")
 
@@ -826,7 +827,8 @@
     (call-with-current-continuation
      (lambda (k)
        (parameterize ((web-callcontext/p (make-callcontext k request body)))
-         (handler request body))))))
+         (with-current-time
+          (handler request body)))))))
 
 (define (tegfs-serve/parse)
   (dprintln "Starting the server")

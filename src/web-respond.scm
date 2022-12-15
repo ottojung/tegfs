@@ -19,6 +19,7 @@
 
 %use (lines->string) "./euphrates/lines-to-string.scm"
 %use (raisu) "./euphrates/raisu.scm"
+%use (current-time/p) "./current-time-p.scm"
 %use (web-basic-headers) "./web-basic-headers.scm"
 %use (web-callcontext/p) "./web-callcontext-p.scm"
 %use (callcontext-break callcontext-key) "./web-callcontext.scm"
@@ -57,6 +58,7 @@
                       (extra-headers '()))
   (define ctx (web-context/p))
   (define callctx (web-callcontext/p))
+  (define now (current-time/p))
   (define cont (callcontext-break callctx))
   (define _perm (web-get-permissions))
   (define key (callcontext-key callctx))
@@ -92,7 +94,8 @@
         ((pair? body) (sxml->xml body port))
         ((procedure? body)
          (parameterize ((web-callcontext/p callctx)
-                        (web-context/p ctx))
+                        (web-context/p ctx)
+                        (current-time/p now))
            (body)))
         (else (raisu 'unknown-body-type body)))
        (display "\n</body>\n")
