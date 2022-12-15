@@ -21,7 +21,6 @@
 %var callcontext-request
 %var callcontext-query
 %var callcontext-body
-%var callcontext-time
 %var callcontext-key
 %var set-callcontext-key!
 %var callcontext-permissions
@@ -29,12 +28,11 @@
 %use (define-type9) "./euphrates/define-type9.scm"
 
 (define-type9 <callcontext>
-  (callcontext-ctr break request query body time key permissions) callcontext?
+  (callcontext-ctr break request query body key permissions) callcontext?
   (break callcontext-break) ;; break handler
   (request callcontext-request) ;; client request
   (query callcontext-query) ;; query hashmap
   (body callcontext-body) ;; client body
-  (time callcontext-time) ;; timestamp for when request was received
   (key callcontext-key set-callcontext-key!) ;; access key to-set to
   (permissions callcontext-permissions) ;; permissions associated with this call
   )

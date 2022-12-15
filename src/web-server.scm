@@ -818,8 +818,7 @@
 (define (make-callcontext break request body)
   (define qH (memconst (initialize-query request)))
   (define perm (memconst (initialize-permissions)))
-  (define time (time-get-current-unixtime))
-  (callcontext-ctr break request qH body time #f perm))
+  (callcontext-ctr break request qH body #f perm))
 
 (define (make-handler)
   (lambda (request body)
