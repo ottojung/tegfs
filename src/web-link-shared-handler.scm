@@ -29,7 +29,7 @@
 %use (web-get-sharedinfo-url) "./web-get-sharedinfo-url.scm"
 %use (web-share-entry-generic-handler) "./web-share-entry-generic-handler.scm"
 
-(define web-share-entry-generic-handler
+(define web-link-shared-handler
   (lambda (web-context)
     (profun-op-lambda
      (ctx (R L) (R-name L-name))
