@@ -24,7 +24,7 @@
 (define (tegfs-make-communicator)
   (define db
     (profun-create-database
-     tegfs-make-server-handler
+     (tegfs-make-server-handler)
      '()))
 
   (define comm
