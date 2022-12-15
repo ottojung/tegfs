@@ -28,6 +28,7 @@
 %use (tegfs-make-communicator) "./tegfs-make-communicator.scm"
 %use (web-make-communicator) "./web-make-communicator.scm"
 %use (web-make-context) "./web-make-context.scm"
+%use (with-current-time) "./with-current-time.scm"
 
 (define (CLI-talk --web)
 
@@ -63,7 +64,9 @@
             #f)
           (let ((answer
                  (catch-any
-                  (lambda _ (profune-communicator-handle comm sentence))
+                  (lambda _
+                    (with-current-time
+                     (profune-communicator-handle comm sentence)))
                   (lambda args `(error ,@args)))))
 
             (display "[server] ")
