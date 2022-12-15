@@ -27,7 +27,7 @@
 %use (permission?) "./permission.scm"
 %use (sharedinfo-senderid) "./sharedinfo.scm"
 %use (query-permissions/p) "./talk-parameters.scm"
-%use (web-share-file) "./web-share-file.scm"
+%use (web-share-file/dont-link-yet) "./web-share-file.scm"
 
 (define web-share-entry-generic-handler
   (lambda (get-shared-path)
@@ -40,7 +40,9 @@
 
        (define (continue entry target-fullpath)
          (define generic-fullpath (get-shared-path target-fullpath))
-         (define info (web-share-file web-context perm generic-fullpath sharing-time))
+         (define info
+           (web-share-file/dont-link-yet
+            web-context perm generic-fullpath sharing-time))
          (define vid (sharedinfo-senderid info))
          (profun-set (R-name <- vid)))
 
