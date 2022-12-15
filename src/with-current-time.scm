@@ -17,10 +17,11 @@
 
 %var with-current-time
 
+%use (time-get-current-unixtime) "./euphrates/time-get-current-unixtime.scm"
 %use (current-time/p) "./current-time-p.scm"
 
 (define-syntax with-current-time
   (syntax-rules ()
-    ((_ time . bodies)
-     (parameterize ((current-time/p time))
+    ((_ . bodies)
+     (parameterize ((current-time/p (time-get-current-unixtime)))
        (let () . bodies)))))
