@@ -15,18 +15,9 @@
 
 %run guile
 
-%var web-make-server-handler
+%var web-share-entry-full-handler
 
-%use (profun-handler-extend) "./euphrates/profun-handler.scm"
-%use (tegfs-make-server-handler) "./tegfs-server-handler.scm"
-%use (web-share-entry-full-handler) "./web-share-entry-full-handler.scm"
-%use (web-share-entry-preview-handler) "./web-share-entry-preview-handler.scm"
+%use (web-share-entry-generic-handler) "./web-share-entry-generic-handler.scm"
 
-(define (web-make-server-handler web-context)
-  (profun-handler-extend
-   (tegfs-make-server-handler)
-
-   (share-preview (web-share-entry-preview-handler web-context))
-   (share-full (web-share-entry-full-handler web-context))
-
-   ))
+(define web-share-entry-full-handler
+  (web-share-entry-generic-handler identity))

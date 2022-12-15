@@ -59,7 +59,7 @@
         ((permission? perm)
          (or (try (env E-name))
              (try (env (profun-meta-key E-name)))
-             (make-profun-error 'bad-entry:does-not-have-target-infos entry)))
+             (make-profun-error 'bad-entry:does-not-have-target-infos (env E-name))))
         ((profun-bound-value? perm)
          (make-profun-error 'type-error 'expected-permissions perm))
         (else
