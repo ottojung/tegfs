@@ -21,9 +21,11 @@
 %use (make-profun-error) "./euphrates/profun-error.scm"
 %use (profun-meta-key) "./euphrates/profun-meta-key.scm"
 %use (profun-op-envlambda) "./euphrates/profun-op-envlambda.scm"
+%use (profun-bound-value?) "./euphrates/profun-value.scm"
 %use (default-preview-sharing-time) "./default-preview-sharing-time.scm"
 %use (entry-target-fullpath) "./entry-target-fullpath.scm"
 %use (get-preview-path) "./get-preview-path.scm"
+%use (permission?) "./permission.scm"
 %use (query-permissions/p) "./talk-parameters.scm"
 %use (web-share-file) "./web-share-file.scm"
 
@@ -46,9 +48,11 @@
             (continue target-fullpath)))
 
      (cond
-      (perm
+      ((permission? perm)
        (or (try (env E-name))
            (try (env (profun-meta-key E-name)))
            (make-profun-error 'bad-entry:does-not-have-target-infos)))
+      ((profun-bound-value? perm)
+       (make-profun-error 'type-error 'expecte-permissions perm))
       (else
        (make-profun-error 'missing-parameter 'permissions))))))
