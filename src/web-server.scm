@@ -471,7 +471,7 @@
   (define location
     (get-sharedinfo-location info))
 
-  (symlink-shared-file target-fullpath recepientid)
+  (symlink-shared-file ctx target-fullpath recepientid)
 
   (return!
    (build-response

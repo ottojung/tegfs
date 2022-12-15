@@ -48,7 +48,7 @@
          (filemap-set! filemap/2 info)
 
          (when make-symlink?
-           (symlink-shared-file target-fullpath recepientid))
+           (symlink-shared-file ctx target-fullpath recepientid))
 
          info)))
 

@@ -26,8 +26,7 @@
 %use (context-sharedir) "./web-context.scm"
 %use (web-get-shared-fullpath) "./web-get-shared-fullpath.scm"
 
-(define (symlink-shared-file target-fullpath recepientid)
-  (define ctx (web-context/p))
+(define (symlink-shared-file ctx target-fullpath recepientid)
   (define sharedir (context-sharedir ctx))
   (define shared-fullpath
     (web-get-shared-fullpath
