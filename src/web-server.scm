@@ -438,7 +438,7 @@
       (web-sendfile return! 'image/jpeg preview-fullpath)
       (previewunknown)))
 
-(define (get-sharedinfo-location info)
+(define (web-get-sharedinfo-url info)
   (define ctx (web-context/p))
   (define vid (sharedinfo-senderid info))
   (define target-fullpath (sharedinfo-sourcepath info))
@@ -469,7 +469,7 @@
       ;; file was not shared with this permission
       (not-found)))
   (define location
-    (get-sharedinfo-location info))
+    (web-get-sharedinfo-url info))
 
   (symlink-shared-file ctx target-fullpath recepientid)
 
@@ -672,7 +672,7 @@
   (define info
     (web-share-file/new ctx perm target-fullpath for-duration make-symlink?))
   (define location
-    (get-sharedinfo-location info))
+    (web-get-sharedinfo-url info))
   (define text
     (with-output-to-string
       (lambda _
