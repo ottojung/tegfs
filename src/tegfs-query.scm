@@ -19,7 +19,7 @@
 
 %use (appcomp comp) "./euphrates/comp.scm"
 %use (curry-if) "./euphrates/curry-if.scm"
-%use (profun-accept? profun-ctx-set profun-set profun-set-meta) "./euphrates/profun-accept.scm"
+%use (profun-accept profun-accept? profun-ctx-set profun-set profun-set-meta) "./euphrates/profun-accept.scm"
 %use (make-profun-error) "./euphrates/profun-error.scm"
 %use (profun-op-envlambda) "./euphrates/profun-op-envlambda.scm"
 %use (profun-reject) "./euphrates/profun-reject.scm"
@@ -49,8 +49,10 @@
      (if x
          (profun-set
           (E-name <- x)
-          (profun-set-meta
-           (E-name <- full)))
+          (if full
+              (profun-set-meta
+               (E-name <- full))
+              (profun-accept)))
          (profun-reject)))
 
    (if ctx (ret ctx)
@@ -83,7 +85,7 @@
              ((equal? #f entry0)
               (values #f #f))
              ((has-access-for-entry-details? filemap/2 permissions entry0)
-              (values entry0 entry0))
+              (values entry0 #f))
              ((has-access-for-entry-target? filemap/2 permissions entry0)
               (values
                (filter (lambda (p) (memq (car p) target-fields)) entry0)
