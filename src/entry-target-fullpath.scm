@@ -34,9 +34,9 @@
          (if (a-weblink? target/1) target/1
              (let* ((target/0 (path-normalize target/1))
                     (target (if (absolute-posix-path? target/0) (string-drop-n 1 target/0) target/0)))
-               (let* ((parent-directory-p (assoc keyword-entry-parent-directory entry))
+               (let* ((parent-directory-p (assq keyword-entry-parent-directory entry))
                       (parent-directory (and parent-directory-p (cdr parent-directory-p)))
-                      (registry-p (assoc keyword-entry-registry-path entry))
+                      (registry-p (assq keyword-entry-registry-path entry))
                       (registry-dir (and registry-p (dirname (cdr registry-p))))
                       (directory (or parent-directory registry-dir)))
                  (and directory
