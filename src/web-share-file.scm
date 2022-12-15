@@ -20,7 +20,6 @@
 %var web-share-file/dont-link-yet
 
 %use (hashmap-set!) "./euphrates/hashmap.scm"
-%use (raisu) "./euphrates/raisu.scm"
 %use (filemap-set!) "./filemap.scm"
 %use (get-sharedinfo-for-perm) "./get-sharedinfo-for-perm.scm"
 %use (make-sharedinfo) "./make-sharedinfo.scm"
@@ -30,9 +29,7 @@
 %use (symlink-shared-file) "./symlink-shared-file.scm"
 %use (web-callcontext/p) "./web-callcontext-p.scm"
 %use (callcontext-time) "./web-callcontext.scm"
-%use (web-context/p) "./web-context-p.scm"
 %use (context-filemap/2) "./web-context.scm"
-%use (web-get-permissions) "./web-get-permissions.scm"
 
 (define (web-share-file/new ctx perm target-fullpath for-duration make-symlink?)
   (define callctx (web-callcontext/p))
