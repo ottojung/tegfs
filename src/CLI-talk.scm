@@ -26,8 +26,10 @@
 %use (words->string) "./euphrates/words-to-string.scm"
 %use (get-admin-permissions) "./get-admin-permissions.scm"
 %use (tegfs-make-communicator) "./tegfs-make-communicator.scm"
+%use (web-make-communicator) "./web-make-communicator.scm"
+%use (web-make-context) "./web-make-context.scm"
 
-(define (CLI-talk)
+(define (CLI-talk --web)
 
   (define (read-sentence)
     (catch-any
@@ -42,7 +44,9 @@
        (read-sentence))))
 
   (define comm
-    (tegfs-make-communicator))
+    (if --web ;; FIXME: remove after testing
+        (web-make-communicator (web-make-context))
+        (tegfs-make-communicator)))
 
   (define (send-to-server echo? read-sentence)
     (display "[client] " (current-error-port))

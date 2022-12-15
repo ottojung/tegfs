@@ -51,7 +51,7 @@
        /      get GETARGS
        /      status
        /      serve
-       /      talk
+       /      talk TALKOPTS*
        /      prolog
        /      make-thumbnails THUMBOPT
        /      config CONFIGOPT
@@ -80,6 +80,7 @@
        QUERYQ : <query...>
        GETARGS : GETOPT? <getid>
        GETOPT : --format <get-format> / --entry
+       TALKOPTS : --web
        THUMBOPT : <target> <output>
        CONFIGOPT : get <name>
        /           set <name> <value>
@@ -120,7 +121,7 @@
          (prolog (tegfs-prolog/parse))
          (query (CLI-query --diropen --dirpreview --entries <query-format> <query...>))
          ((and get <getid>) (tegfs-get/parse <get-format> <getid>))
-         (talk (CLI-talk))
+         (talk (CLI-talk --web))
          (make-thumbnails (tegfs-make-thumbnails/parse <target> <output>))
          (config (tegfs-config/parse get set <name> <value>))
          (dump-clipboard (tegfs-dump-clipboard/parse))
