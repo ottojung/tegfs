@@ -32,6 +32,8 @@
      `(whats
        (permissions ,(web-get-permissions))
        (filemap/2 ,(web-get-filemap/2))
+       (diropen? #t)
+       (dirpreview? #f)
        (query ,query/split)
        (entry E)
        more (99999)
