@@ -27,7 +27,6 @@
 %use (symlink-shared-file) "./symlink-shared-file.scm"
 %use (context-filemap/2) "./web-context.scm"
 %use (web-get-sharedinfo-url) "./web-get-sharedinfo-url.scm"
-%use (web-share-entry-generic-handler) "./web-share-entry-generic-handler.scm"
 
 (define web-link-shared-handler
   (lambda (web-context)
