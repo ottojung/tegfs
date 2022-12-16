@@ -63,11 +63,8 @@
             (display "\nGoodbye!\n" (current-error-port))
             #f)
           (let ((answer
-                 (catch-any
-                  (lambda _
                     (with-current-time
-                     (profune-communicator-handle comm sentence)))
-                  (lambda args `(error ,@args)))))
+                     (profune-communicator-handle comm sentence))))
 
             (display "[server] ")
             (display (words->string (map ~s (serialize/short answer))))
