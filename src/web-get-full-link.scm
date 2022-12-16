@@ -28,7 +28,6 @@
 %use (entry-target-fullpath) "./entry-target-fullpath.scm"
 %use (filemap-ref-by-senderid) "./filemap.scm"
 %use (keyword-entry-parent-directory-senderid) "./keyword-entry-parent-directory-senderid.scm"
-%use (keyword-target) "./keyword-target.scm"
 %use (sharedinfo-recepientid) "./sharedinfo.scm"
 %use (web-context/p) "./web-context-p.scm"
 %use (context-filemap/2 context-fileserver) "./web-context.scm"
@@ -47,8 +46,7 @@
            (info (or (filemap-ref-by-senderid filemap/2 parent-senderid #f)
                      (raisu 'entry-has-bad-parent-senderid entry)))
            (suffix/raw
-            (or (assoc-or keyword-target entry #f)
-                (raisu 'entry-does-not-have-target entry)))
+            (or target (raisu 'entry-does-not-have-target entry)))
            (suffix (uri-encode suffix/raw)))
       (if (file-is-directory?/no-readlink target-fullpath)
           (stringf "/directory?vid=~a&s=~a" parent-senderid suffix)
