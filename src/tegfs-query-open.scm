@@ -38,13 +38,13 @@
             (or (assoc-or (car buf) entry #f)
                 (loop (cdr buf))))))
 
-    (when opener
-      (let ((target-fullpath (entry-target-fullpath entry)))
-        (when (file-is-directory?/no-readlink target-fullpath)
-          (set! iter/open
-                (query-recurse opener entry target-fullpath)))))
-
-    entry)
+    (if opener
+        (let ((target-fullpath (entry-target-fullpath entry)))
+          (when (file-is-directory?/no-readlink target-fullpath)
+            (set! iter/open
+                  (query-recurse opener entry target-fullpath))
+            (next)))
+        entry))
 
   (define (next)
     (if iter/open
