@@ -39,6 +39,8 @@
      (tegfs-make-communicator)
      `(whats
        (permissions ,(get-admin-permissions))
+       (diropen? ,--diropen)
+       (dirpreview? ,--dirpreview)
        (query ,<query...>)
        (entry E)
        more (99999)
