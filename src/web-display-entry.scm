@@ -17,55 +17,62 @@
 
 %var web-display-entry
 
-%use (file-or-directory-exists?) "./euphrates/file-or-directory-exists-q.scm"
+%use (assq-or) "./euphrates/assq-or.scm"
 %use (path-get-basename) "./euphrates/path-get-basename.scm"
 %use (uri-encode) "./euphrates/uri-encode.scm"
 %use (a-weblink?) "./a-weblink-q.scm"
-%use (default-preview-sharing-time) "./default-preview-sharing-time.scm"
-%use (entry-target-fullpath) "./entry-target-fullpath.scm"
-%use (get-preview-path) "./get-preview-path.scm"
 %use (keyword-id) "./keyword-id.scm"
 %use (keyword-target) "./keyword-target.scm"
-%use (sharedinfo-recepientid) "./sharedinfo.scm"
-%use (web-context/p) "./web-context-p.scm"
-%use (context-fileserver context-sharedir) "./web-context.scm"
 %use (web-get-full-link) "./web-get-full-link.scm"
-%use (web-get-permissions) "./web-get-permissions.scm"
-%use (web-get-shared-fullpath) "./web-get-shared-fullpath.scm"
-%use (web-get-shared-link) "./web-get-shared-link.scm"
-%use (web-share-file) "./web-share-file.scm"
 
-(define (display-preview target-fullpath)
-  (define ctx (web-context/p))
-  (define perm (web-get-permissions))
-  (define fileserver (context-fileserver ctx))
-  (define preview-fullpath (get-preview-path target-fullpath))
+;; (define (display-preview/old target-fullpath)
+;;   (define ctx (web-context/p))
+;;   (define perm (web-get-permissions))
+;;   (define fileserver (context-fileserver ctx))
+;;   (define preview-fullpath (get-preview-path target-fullpath))
+;;   (define default-preview
+;;     (if (a-weblink? target-fullpath) "/previewunknownurl" "/previewunknown"))
+
+;;   (display "<img src=")
+;;   (unless
+;;       (and preview-fullpath
+;;            (let ((info (web-share-file ctx perm preview-fullpath default-preview-sharing-time)))
+;;              (and info
+;;                   (let* ((recepientid (sharedinfo-recepientid info))
+;;                          (sharedir (context-sharedir ctx))
+;;                          (shared-fullpath (web-get-shared-fullpath sharedir preview-fullpath recepientid))
+;;                          (location (web-get-shared-link fileserver preview-fullpath recepientid)))
+;;                     (if (file-or-directory-exists? shared-fullpath)
+;;                         (write location)
+;;                         (write default-preview))
+;;                     #t))))
+;;     (write default-preview))
+;;   (display "/>"))
+
+;; (define (maybe-display-preview/old entry)
+;;   (define target-fullpath (entry-target-fullpath entry))
+;;   (when target-fullpath
+;;     (let* ((full-link (web-get-full-link entry target-fullpath)))
+;;       (when full-link
+;;         (display "<a href=") (write full-link) (display ">")
+;;         (display-preview/old target-fullpath)
+;;         (display "</a>")))))
+
+(define (display-preview target preview-link)
   (define default-preview
-    (if (a-weblink? target-fullpath) "/previewunknownurl" "/previewunknown"))
+    (if (a-weblink? target) "/previewunknownurl" "/previewunknown"))
 
   (display "<img src=")
-  (unless
-      (and preview-fullpath
-           (let ((info (web-share-file ctx perm preview-fullpath default-preview-sharing-time)))
-             (and info
-                  (let* ((recepientid (sharedinfo-recepientid info))
-                         (sharedir (context-sharedir ctx))
-                         (shared-fullpath (web-get-shared-fullpath sharedir preview-fullpath recepientid))
-                         (location (web-get-shared-link fileserver preview-fullpath recepientid)))
-                    (if (file-or-directory-exists? shared-fullpath)
-                        (write location)
-                        (write default-preview))
-                    #t))))
-    (write default-preview))
+  (write (or preview-link default-preview))
   (display "/>"))
 
-(define (maybe-display-preview entry)
-  (define target-fullpath (entry-target-fullpath entry))
-  (when target-fullpath
-    (let* ((full-link (web-get-full-link entry target-fullpath)))
+(define (maybe-display-preview entry maybe-full-senderid preview-link)
+  (define target (assq-or keyword-target entry #f))
+  (when target
+    (let ((full-link (web-get-full-link entry target maybe-full-senderid)))
       (when full-link
         (display "<a href=") (write full-link) (display ">")
-        (display-preview target-fullpath)
+        (display-preview target preview-link)
         (display "</a>")))))
 
 (define (display-title entry)
@@ -93,10 +100,10 @@
     (display "</a>"))
   )
 
-(define (web-display-entry entry)
+(define (web-display-entry entry maybe-full-senderid preview-link)
   (display "<div class='card'>")
   (display "<div>")
-  (maybe-display-preview entry)
+  (maybe-display-preview entry maybe-full-senderid preview-link)
   (display "</div>")
   (display "<div>")
   (display-title entry)

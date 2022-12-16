@@ -19,7 +19,6 @@
 
 %use (append-posix-path) "./euphrates/append-posix-path.scm"
 %use (assoc-or) "./euphrates/assoc-or.scm"
-%use (assq-or) "./euphrates/assq-or.scm"
 %use (file-is-directory?/no-readlink) "./euphrates/file-is-directory-q-no-readlink.scm"
 %use (raisu) "./euphrates/raisu.scm"
 %use (stringf) "./euphrates/stringf.scm"
@@ -34,8 +33,7 @@
 %use (web-context/p) "./web-context-p.scm"
 %use (context-filemap/2 context-fileserver) "./web-context.scm"
 
-(define (web-get-full-link entry maybe-senderid)
-  (define target (assq-or keyword-target entry #f))
+(define (web-get-full-link entry target maybe-senderid)
   (cond
    (maybe-senderid (string-append "/full?vid=" maybe-senderid))
    ((a-weblink? target) target)

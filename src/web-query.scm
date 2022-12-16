@@ -60,7 +60,7 @@
              (query ,query/split)
              (entry E)
              (share-preview E ,default-preview-sharing-time _P)
-             (share-full E ,default-full-sharing-time _F)
+             (share-full E ,default-full-sharing-time F)
              (link-shared _P PL)
              more (99999)
              )))
@@ -70,7 +70,9 @@
          (lambda (bindings)
            (define entry
              (assq-or 'E bindings (raisu 'unexpected-result-from-backend bindings)))
+           (define maybe-full-senderid
+             (assq-or 'F bindings (raisu 'unexpected-result-from-backend bindings)))
            (define preview-link
              (assq-or 'PL bindings (raisu 'unexpected-result-from-backend bindings)))
-           (web-display-entry entry))
+           (web-display-entry entry maybe-full-senderid preview-link))
          equals))))))

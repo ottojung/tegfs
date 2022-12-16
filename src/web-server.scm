@@ -371,8 +371,9 @@
 
   (web-respond
    (lambda _
+     (define preview-link #f) ;; FIXME: initialize preview link
      (web-display-entries
-      (lambda _ (for-each web-display-entry entries))))))
+      (lambda _ (for-each web-display-entry entries preview-link))))))
 
 (define (web-make-preview target-fullpath entry)
   (define preview-fullpath
