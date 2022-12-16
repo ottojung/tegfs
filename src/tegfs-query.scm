@@ -104,5 +104,5 @@
 (define target-fields
   (list keyword-target
         keyword-title
-        keyword-entry-parent-directory
+        keyword-entry-parent-directory ;; FIXME: remove non-target fields
         keyword-entry-registry-path))
