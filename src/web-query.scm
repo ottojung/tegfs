@@ -17,7 +17,10 @@
 
 %var web-query
 
+%use (assq-or) "./euphrates/assq-or.scm"
 %use (hashmap-ref) "./euphrates/hashmap.scm"
+%use (profune-communicator-handle) "./euphrates/profune-communicator.scm"
+%use (raisu) "./euphrates/raisu.scm"
 %use (string->words) "./euphrates/string-to-words.scm"
 %use (web-callcontext/p) "./web-callcontext-p.scm"
 %use (callcontext-request) "./web-callcontext.scm"
@@ -25,8 +28,10 @@
 %use (web-decode-query) "./web-decode-query.scm"
 %use (web-display-entries) "./web-display-entries.scm"
 %use (web-display-entry) "./web-display-entry.scm"
+%use (web-get-filemap/2) "./web-get-filemap-2.scm"
+%use (web-get-permissions) "./web-get-permissions.scm"
 %use (web-get-query) "./web-get-query.scm"
-%use (web-query/foreach) "./web-query-foreach.scm"
+%use (web-make-communicator) "./web-make-communicator.scm"
 %use (web-respond) "./web-respond.scm"
 
 (define (web-query)
@@ -43,4 +48,21 @@
    (lambda _
      (web-display-entries
       (lambda _
-        (web-query/foreach query/split web-display-entry))))))
+        (define result
+          (profune-communicator-handle
+           (web-make-communicator (web-context/p))
+           `(whats
+             (permissions ,(web-get-permissions))
+             (filemap/2 ,(web-get-filemap/2))
+             (query ,query/split)
+             (entry E)
+             more (99999)
+             )))
+
+        (define equals (cadr (cadr result)))
+        (for-each
+         (lambda (bindings)
+           (define entry
+             (assq-or 'E bindings (raisu 'unexpected-result-from-backend bindings)))
+           (web-display-entry entry))
+         equals))))))
