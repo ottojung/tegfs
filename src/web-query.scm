@@ -18,10 +18,13 @@
 %var web-query
 
 %use (assq-or) "./euphrates/assq-or.scm"
+%use (debugs) "./euphrates/debugs.scm"
 %use (hashmap-ref) "./euphrates/hashmap.scm"
 %use (profune-communicator-handle) "./euphrates/profune-communicator.scm"
 %use (raisu) "./euphrates/raisu.scm"
 %use (string->words) "./euphrates/string-to-words.scm"
+%use (default-full-sharing-time) "./default-full-sharing-time.scm"
+%use (default-preview-sharing-time) "./default-preview-sharing-time.scm"
 %use (web-callcontext/p) "./web-callcontext-p.scm"
 %use (callcontext-request) "./web-callcontext.scm"
 %use (web-context/p) "./web-context-p.scm"
@@ -56,6 +59,9 @@
              (filemap/2 ,(web-get-filemap/2))
              (query ,query/split)
              (entry E)
+             (share-preview E ,default-preview-sharing-time _P)
+             (share-full E ,default-full-sharing-time _F)
+             (link-shared _P PL)
              more (99999)
              )))
 
@@ -64,5 +70,7 @@
          (lambda (bindings)
            (define entry
              (assq-or 'E bindings (raisu 'unexpected-result-from-backend bindings)))
+           (define preview-link
+             (assq-or 'PL bindings (raisu 'unexpected-result-from-backend bindings)))
            (web-display-entry entry))
          equals))))))
