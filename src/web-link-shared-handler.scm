@@ -51,7 +51,9 @@
       ((not info)
        (make-profun-error 'bad-senderid senderid))
       (else
-       (symlink-shared-file
-        web-context target-fullpath recepientid)
-       (let ((location (web-get-sharedinfo-url web-context info)))
-         (profun-set (L-name <- location))))))))
+       (if target-fullpath
+           (let ((location (web-get-sharedinfo-url web-context info)))
+             (symlink-shared-file
+              web-context target-fullpath recepientid)
+             (profun-set (L-name <- location)))
+           (profun-set (L-name <- #f))))))))
