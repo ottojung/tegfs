@@ -62,7 +62,7 @@
 %use (make-permission!) "./make-permission-bang.scm"
 %use (tegfs-make-thumbnails) "./make-thumbnails.scm"
 %use (permission-still-valid?) "./permission-still-valid-huh.scm"
-%use (permission-filemap permission-idset permission-token) "./permission.scm"
+%use (permission-admin? permission-filemap permission-idset permission-token) "./permission.scm"
 %use (sha256sum) "./sha256sum.scm"
 %use (sharedinfo-ctime sharedinfo-recepientid sharedinfo-sourcepath sharedinfo-stime) "./sharedinfo.scm"
 %use (standalone-file->entry/prefixed) "./standalone-file-to-entry.scm"
@@ -236,7 +236,8 @@
     (and got (cdr got))))
 
 (define (check-permissions)
-  (unless (web-get-permissions)
+  (define perm (web-get-permissions))
+  (unless (and perm (permission-admin? perm))
     (permission-denied)))
 
 (define (error-tags-list tags)
