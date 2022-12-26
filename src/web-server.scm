@@ -477,7 +477,8 @@
   (define location
     (web-get-sharedinfo-url ctx container-info info))
 
-  (symlink-shared-file ctx target-fullpath recepientid)
+  (when toplevel-entry?
+    (symlink-shared-file ctx target-fullpath recepientid))
 
   (return!
    (build-response
