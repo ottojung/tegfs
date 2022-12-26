@@ -18,8 +18,8 @@
 %var web-get-sharedinfo-url
 
 %use (file-is-directory?/no-readlink) "./euphrates/file-is-directory-q-no-readlink.scm"
+%use (a-weblink?) "./a-weblink-q.scm"
 %use (sharedinfo-recepientid sharedinfo-senderid sharedinfo-sourcepath) "./sharedinfo.scm"
-%use (web-context/p) "./web-context-p.scm"
 %use (context-fileserver) "./web-context.scm"
 %use (web-get-shared-link) "./web-get-shared-link.scm"
 
@@ -28,6 +28,10 @@
   (define target-fullpath (sharedinfo-sourcepath info))
   (define recepientid (sharedinfo-recepientid info))
   (define fileserver (context-fileserver ctx))
-  (if (file-is-directory?/no-readlink target-fullpath)
-      (string-append "/directory?vid=" vid)
-      (web-get-shared-link fileserver target-fullpath recepientid)))
+  (cond
+   ((a-weblink? target-fullpath)
+    target-fullpath)
+   ((file-is-directory?/no-readlink target-fullpath)
+    (string-append "/directory?vid=" vid))
+   (else
+    (web-get-shared-link fileserver target-fullpath recepientid))))
