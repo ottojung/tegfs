@@ -17,6 +17,7 @@
 
 %var sharedinfo-ctr
 %var sharedinfo?
+%var sharedinfo-entry
 %var sharedinfo-sourcepath
 %var sharedinfo-recepientid
 %var sharedinfo-senderid
@@ -26,7 +27,8 @@
 %use (define-type9) "./euphrates/define-type9.scm"
 
 (define-type9 <sharedinfo>
-  (sharedinfo-ctr sourcepath recepientid senderid ctime stime) sharedinfo?
+  (sharedinfo-ctr entry sourcepath recepientid senderid ctime stime) sharedinfo?
+  (entry sharedinfo-entry) ;; the relative entry
   (sourcepath sharedinfo-sourcepath) ;; the original file path
   (recepientid sharedinfo-recepientid) ;; uniquer virtual id visible to the recepient (so, potentially everyone). It is the linked file path suffix (without the sharedir)
   (senderid sharedinfo-senderid) ;; unique virtual id only visible to the sender.

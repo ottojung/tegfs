@@ -32,7 +32,7 @@
 %use (symlink-shared-file) "./symlink-shared-file.scm"
 %use (context-filemap/2) "./web-context.scm"
 
-(define (web-share-file/new ctx perm target-fullpath for-duration make-symlink?)
+(define (web-share-file/new ctx perm entry target-fullpath for-duration make-symlink?)
   (define filemap/2 (context-filemap/2 ctx))
   (define now (or (current-time/p) (raisu 'current-time-is-not-set)))
   (define for-duration/parsed
@@ -44,7 +44,7 @@
     (if (permission-share-longer-than-view? perm)
         for-duration/parsed
         (min for-duration/parsed (permission-time-left perm now))))
-  (define info (make-sharedinfo target-fullpath for-duration*))
+  (define info (make-sharedinfo entry target-fullpath for-duration*))
   (define recepientid (sharedinfo-recepientid info))
   (define perm-filemap (permission-filemap perm))
 
@@ -58,14 +58,14 @@
 
          info)))
 
-(define (web-share-file ctx perm target-fullpath for-duration)
+(define (web-share-file ctx perm entry target-fullpath for-duration)
   (define make-symlink? #t)
   (or
    (get-sharedinfo-for-perm ctx perm target-fullpath) ;; TODO: share for longer?
-   (web-share-file/new ctx perm target-fullpath for-duration make-symlink?)))
+   (web-share-file/new ctx perm entry target-fullpath for-duration make-symlink?)))
 
-(define (web-share-file/dont-link-yet ctx perm target-fullpath for-duration)
+(define (web-share-file/dont-link-yet ctx perm entry target-fullpath for-duration)
   (define make-symlink? #f)
   (or
    (get-sharedinfo-for-perm ctx perm target-fullpath) ;; TODO: share for longer?
-   (web-share-file/new ctx perm target-fullpath for-duration make-symlink?)))
+   (web-share-file/new ctx perm entry target-fullpath for-duration make-symlink?)))

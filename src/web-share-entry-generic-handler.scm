@@ -38,18 +38,18 @@
        (define sharing-time (env T-name))
        (define perm (query-permissions/p))
 
-       (define (continue target-fullpath)
+       (define (continue entry target-fullpath)
          (define generic-fullpath (get-shared-path target-fullpath))
          (define info
            (web-share-file/dont-link-yet
-            web-context perm generic-fullpath sharing-time))
+            web-context perm entry generic-fullpath sharing-time))
          (define vid (sharedinfo-senderid info))
          (profun-set (R-name <- vid)))
 
        (define (try entry)
          (define target-fullpath (entry-target-fullpath entry))
          (and target-fullpath
-              (continue target-fullpath)))
+              (continue entry target-fullpath)))
 
        (cond
         ((profun-unbound-value? (env E-name))

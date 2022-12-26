@@ -657,7 +657,7 @@
   (define perm (web-get-permissions))
   (define make-symlink? #t)
   (define info
-    (web-share-file/new ctx perm target-fullpath for-duration make-symlink?))
+    (web-share-file/new ctx perm entry target-fullpath for-duration make-symlink?))
   (define location
     (web-get-sharedinfo-url ctx info))
   (define text
