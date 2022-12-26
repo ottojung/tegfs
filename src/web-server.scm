@@ -26,7 +26,6 @@
 %use (directory-files) "./euphrates/directory-files.scm"
 %use (dprintln) "./euphrates/dprintln.scm"
 %use (file-delete) "./euphrates/file-delete.scm"
-%use (file-is-directory?/no-readlink) "./euphrates/file-is-directory-q-no-readlink.scm"
 %use (file-or-directory-exists?) "./euphrates/file-or-directory-exists-q.scm"
 %use (fn) "./euphrates/fn.scm"
 %use (alist->hashmap hashmap-delete! hashmap-foreach hashmap-ref make-hashmap) "./euphrates/hashmap.scm"
@@ -35,10 +34,8 @@
 %use (make-directories) "./euphrates/make-directories.scm"
 %use (memconst) "./euphrates/memconst.scm"
 %use (open-file-port) "./euphrates/open-file-port.scm"
-%use (path-normalize) "./euphrates/path-normalize.scm"
 %use (path-without-extension) "./euphrates/path-without-extension.scm"
 %use (raisu) "./euphrates/raisu.scm"
-%use (remove-common-prefix) "./euphrates/remove-common-prefix.scm"
 %use (string-split-3) "./euphrates/string-split-3.scm"
 %use (string-split/simple) "./euphrates/string-split-simple.scm"
 %use (string-strip) "./euphrates/string-strip.scm"
@@ -47,7 +44,6 @@
 %use (stringf) "./euphrates/stringf.scm"
 %use (~a) "./euphrates/tilda-a.scm"
 %use (time-get-current-unixtime) "./euphrates/time-get-current-unixtime.scm"
-%use (a-weblink?) "./a-weblink-q.scm"
 %use (has-access-for-entry-details?) "./access.scm"
 %use (tegfs-add) "./add.scm"
 %use (current-time/p) "./current-time-p.scm"
@@ -473,26 +469,13 @@
       (if next (loop next)
           info)))
 
-  (define relative-path
-    (if (eq? adam-info info)
-        recepientid
-        (path-normalize
-         (string-append
-          (sharedinfo-recepientid adam-info)
-          "/"
-          (let ((adam-path (sharedinfo-sourcepath adam-info)))
-            (remove-common-prefix target-fullpath adam-path))))))
+  (define toplevel-entry?
+    (eq? adam-info info))
+  (define container-info
+    (and (not toplevel-entry?) adam-info))
 
   (define location
-    (cond
-     ((a-weblink? target-fullpath)
-      target-fullpath)
-     ((eq? adam-info info)
-      (web-get-sharedinfo-url ctx info))
-     ((file-is-directory?/no-readlink target-fullpath)
-      (string-append "/directory?vid=" vid))
-     (else
-      (append-posix-path fileserver relative-path))))
+    (web-get-sharedinfo-url ctx container-info info))
 
   (symlink-shared-file ctx target-fullpath recepientid)
 
@@ -695,7 +678,7 @@
   (define info
     (web-share-file/new ctx perm entry target-fullpath for-duration make-symlink?))
   (define location
-    (web-get-sharedinfo-url ctx info))
+    (web-get-sharedinfo-url ctx #f info))
   (define text
     (with-output-to-string
       (lambda _
