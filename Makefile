@@ -6,7 +6,7 @@ PREFIX_SHARE=$(PREFIX)/share
 BINARY_PATH=$(PREFIX_BIN)/tegfs
 CZEMPAK_INSTALL_ROOT=$(PREFIX_SHARE)/tegfs/czempakroot
 
-TEST_ROOT=dist/testroot
+TEST_ROOT=dist/exampleroot
 TEST_FILES=$(TEST_ROOT) $(TEST_ROOT)/categorization.tegfs.txt $(TEST_ROOT)/config.tegfs.lisp
 
 SUBMODULES = deps/euphrates/.git
@@ -54,8 +54,13 @@ dist:
 
 .PHONY: test1 test2 test3 test4 all clean install reinstall uninstall
 
-$(TEST_ROOT):
-	mkdir -p $@
+dist/exampleroot.tar:
+	wget "https://vau.place/static/tegfs-example-root.tar" -O "$@"
+
+$(TEST_ROOT): dist/exampleroot.tar
+	cd dist && tar -xf ./exampleroot.tar
+	rm -f $(TEST_ROOT)/categorization.tegfs.txt
+	rm -f $(TEST_ROOT)/config.tegfs.lisp
 
 $(TEST_ROOT)/categorization.tegfs.txt:
 	TEST_ROOT=$(TEST_ROOT) sh test/make-example-categorization.sh
