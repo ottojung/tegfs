@@ -55,7 +55,7 @@
                (and x (car x)))
              (define (iter)
                (define full (iter1))
-               (define full-entry (and full (standalone-file->entry/prefixed dir full)))
+               (define full-entry (and full (standalone-file->entry/prefixed dir vid full)))
                (define entry (and full (list (assq keyword-target full-entry))))
                (if full
                    (profun-set-meta

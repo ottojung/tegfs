@@ -18,6 +18,7 @@
 %var tegfs-serve/parse
 
 %use (append-posix-path) "./euphrates/append-posix-path.scm"
+%use (assq-or) "./euphrates/assq-or.scm"
 %use (catch-any) "./euphrates/catch-any.scm"
 %use (catchu-case) "./euphrates/catchu-case.scm"
 %use (appcomp comp) "./euphrates/comp.scm"
@@ -25,6 +26,7 @@
 %use (directory-files) "./euphrates/directory-files.scm"
 %use (dprintln) "./euphrates/dprintln.scm"
 %use (file-delete) "./euphrates/file-delete.scm"
+%use (file-is-directory?/no-readlink) "./euphrates/file-is-directory-q-no-readlink.scm"
 %use (file-or-directory-exists?) "./euphrates/file-or-directory-exists-q.scm"
 %use (fn) "./euphrates/fn.scm"
 %use (alist->hashmap hashmap-delete! hashmap-foreach hashmap-ref make-hashmap) "./euphrates/hashmap.scm"
@@ -33,8 +35,10 @@
 %use (make-directories) "./euphrates/make-directories.scm"
 %use (memconst) "./euphrates/memconst.scm"
 %use (open-file-port) "./euphrates/open-file-port.scm"
+%use (path-normalize) "./euphrates/path-normalize.scm"
 %use (path-without-extension) "./euphrates/path-without-extension.scm"
 %use (raisu) "./euphrates/raisu.scm"
+%use (remove-common-prefix) "./euphrates/remove-common-prefix.scm"
 %use (string-split-3) "./euphrates/string-split-3.scm"
 %use (string-split/simple) "./euphrates/string-split-simple.scm"
 %use (string-strip) "./euphrates/string-strip.scm"
@@ -43,6 +47,7 @@
 %use (stringf) "./euphrates/stringf.scm"
 %use (~a) "./euphrates/tilda-a.scm"
 %use (time-get-current-unixtime) "./euphrates/time-get-current-unixtime.scm"
+%use (a-weblink?) "./a-weblink-q.scm"
 %use (has-access-for-entry-details?) "./access.scm"
 %use (tegfs-add) "./add.scm"
 %use (current-time/p) "./current-time-p.scm"
@@ -56,19 +61,20 @@
 %use (get-random-basename) "./get-random-basename.scm"
 %use (get-root) "./get-root.scm"
 %use (tegfs-get/cached) "./get.scm"
+%use (keyword-entry-parent-directory-senderid) "./keyword-entry-parent-directory-senderid.scm"
 %use (keyword-id) "./keyword-id.scm"
 %use (make-permission!) "./make-permission-bang.scm"
 %use (tegfs-make-thumbnails) "./make-thumbnails.scm"
 %use (permission-still-valid?) "./permission-still-valid-huh.scm"
 %use (permission-admin? permission-filemap permission-idset permission-token) "./permission.scm"
 %use (sha256sum) "./sha256sum.scm"
-%use (sharedinfo-ctime sharedinfo-recepientid sharedinfo-sourcepath sharedinfo-stime) "./sharedinfo.scm"
+%use (sharedinfo-ctime sharedinfo-entry sharedinfo-recepientid sharedinfo-sourcepath sharedinfo-stime) "./sharedinfo.scm"
 %use (symlink-shared-file) "./symlink-shared-file.scm"
 %use (web-basic-headers) "./web-basic-headers.scm"
 %use (web-callcontext/p) "./web-callcontext-p.scm"
 %use (callcontext-body callcontext-break callcontext-ctr callcontext-request set-callcontext-key!) "./web-callcontext.scm"
 %use (web-context/p) "./web-context-p.scm"
-%use (context-filemap/2 context-passwords context-port context-sharedir context-tokens) "./web-context.scm"
+%use (context-filemap/2 context-fileserver context-passwords context-port context-sharedir context-tokens) "./web-context.scm"
 %use (web-decode-query) "./web-decode-query.scm"
 %use (web-directory) "./web-directory.scm"
 %use (web-get-filemap/2) "./web-get-filemap-2.scm"
@@ -438,6 +444,7 @@
 (define (full)
   (define ctx (web-context/p))
   (define filemap/2 (context-filemap/2 ctx))
+  (define fileserver (context-fileserver ctx))
   (define perm (web-get-permissions))
   (define _87123
     (unless perm
@@ -455,8 +462,37 @@
     (unless (hashmap-ref (permission-filemap perm) target-fullpath #f)
       ;; file was not shared with this permission
       (not-found)))
+
+  (define adam-info
+    (let loop ((info info))
+      (define entry (sharedinfo-entry info))
+      (define parent-vid
+        (assq-or keyword-entry-parent-directory-senderid entry))
+      (define next
+        (and parent-vid (filemap-ref-by-senderid filemap/2 parent-vid #f)))
+      (if next (loop next)
+          info)))
+
+  (define relative-path
+    (if (eq? adam-info info)
+        recepientid
+        (path-normalize
+         (string-append
+          (sharedinfo-recepientid adam-info)
+          "/"
+          (let ((adam-path (sharedinfo-sourcepath adam-info)))
+            (remove-common-prefix target-fullpath adam-path))))))
+
   (define location
-    (web-get-sharedinfo-url ctx info))
+    (cond
+     ((a-weblink? target-fullpath)
+      target-fullpath)
+     ((eq? adam-info info)
+      (web-get-sharedinfo-url ctx info))
+     ((file-is-directory?/no-readlink target-fullpath)
+      (string-append "/directory?vid=" vid))
+     (else
+      (append-posix-path fileserver relative-path))))
 
   (symlink-shared-file ctx target-fullpath recepientid)
 
