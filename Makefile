@@ -68,6 +68,9 @@ $(TEST_ROOT)/categorization.tegfs.txt:
 $(TEST_ROOT)/config.tegfs.lisp:
 	TEST_ROOT=$(TEST_ROOT) sh test/make-example-config.sh
 
+test-preview-daemon: dist/tegfs $(TEST_FILES)
+	TEGFS_ROOT=$(TEST_ROOT) TEST_ROOT=$(TEST_ROOT) sh ./scripts/preview-maker-daemon.sh
+
 test1: dist/tegfs $(TEST_FILES)
 	touch $(TEST_ROOT)/hi.txt
 	echo hi | $(TEST_FS) add \
