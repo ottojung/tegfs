@@ -19,12 +19,15 @@
 %var standalone-file->entry/prefixed
 
 %use (append-posix-path) "./euphrates/append-posix-path.scm"
+%use (debugs) "./euphrates/debugs.scm"
 %use (path-get-basename) "./euphrates/path-get-basename.scm"
 %use (path-normalize) "./euphrates/path-normalize.scm"
-%use (keyword-entry-parent-directory-senderid) "./keyword-entry-parent-directory-senderid.scm"
 %use (keyword-entry-parent-directory) "./keyword-entry-parent-directory.scm"
+%use (keyword-id) "./keyword-id.scm"
+%use (keyword-target) "./keyword-target.scm"
 
 (define (standalone-file->entry filepath)
+  (debugs filepath)
   (define norm0 (path-normalize filepath))
   (define norm (if (string-prefix? "/" norm0)
                    norm0
@@ -32,12 +35,12 @@
   (define dir (dirname norm))
   (define name (path-get-basename norm))
   (define id norm)
-  `((id . ,id)
-    (target . ,name)
-    (,keyword-entry-parent-directory . ,dir)
+  `(;; (,keyword-id . ,id)
+    (,keyword-target . ,name)
+    ;; (,keyword-entry-parent-directory . ,dir)
     ))
 
-(define (standalone-file->entry/prefixed prefix vid filepath)
+(define (standalone-file->entry/prefixed prefix filepath)
   (define norm0 (path-normalize filepath))
   (define norm (if (string-prefix? "/" norm0)
                    norm0
@@ -46,11 +49,11 @@
   (define dir (if (string-prefix? "/" dir0)
                    dir0
                    (string-append "/" dir0)))
-  (define name norm)
+  (define name (path-get-basename norm))
   (define id
     (path-normalize (append-posix-path dir norm)))
-  `((id . ,id)
-    (target . ,name)
+  `((,keyword-id . ,id)
+    (,keyword-target . ,name)
     (,keyword-entry-parent-directory . ,dir)
-    (,keyword-entry-parent-directory-senderid . ,vid)
+    ;; (,keyword-entry-parent-directory-senderid . ,vid)
     ))

@@ -19,6 +19,7 @@
 
 %use (append-posix-path) "./euphrates/append-posix-path.scm"
 %use (assoc-or) "./euphrates/assoc-or.scm"
+%use (debugs) "./euphrates/debugs.scm"
 %use (file-is-directory?/no-readlink) "./euphrates/file-is-directory-q-no-readlink.scm"
 %use (raisu) "./euphrates/raisu.scm"
 %use (stringf) "./euphrates/stringf.scm"

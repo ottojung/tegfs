@@ -33,10 +33,8 @@
 %use (make-directories) "./euphrates/make-directories.scm"
 %use (memconst) "./euphrates/memconst.scm"
 %use (open-file-port) "./euphrates/open-file-port.scm"
-%use (path-normalize) "./euphrates/path-normalize.scm"
 %use (path-without-extension) "./euphrates/path-without-extension.scm"
 %use (raisu) "./euphrates/raisu.scm"
-%use (remove-common-prefix) "./euphrates/remove-common-prefix.scm"
 %use (string-split-3) "./euphrates/string-split-3.scm"
 %use (string-split/simple) "./euphrates/string-split-simple.scm"
 %use (string-strip) "./euphrates/string-strip.scm"
@@ -65,7 +63,6 @@
 %use (permission-admin? permission-filemap permission-idset permission-token) "./permission.scm"
 %use (sha256sum) "./sha256sum.scm"
 %use (sharedinfo-ctime sharedinfo-recepientid sharedinfo-sourcepath sharedinfo-stime) "./sharedinfo.scm"
-%use (standalone-file->entry/prefixed) "./standalone-file-to-entry.scm"
 %use (symlink-shared-file) "./symlink-shared-file.scm"
 %use (web-basic-headers) "./web-basic-headers.scm"
 %use (web-callcontext/p) "./web-callcontext-p.scm"
@@ -73,8 +70,7 @@
 %use (web-context/p) "./web-context-p.scm"
 %use (context-filemap/2 context-passwords context-port context-sharedir context-tokens) "./web-context.scm"
 %use (web-decode-query) "./web-decode-query.scm"
-%use (web-display-entries) "./web-display-entries.scm"
-%use (web-display-entry) "./web-display-entry.scm"
+%use (web-directory) "./web-directory.scm"
 %use (web-get-filemap/2) "./web-get-filemap-2.scm"
 %use (web-get-permissions) "./web-get-permissions.scm"
 %use (web-get-query) "./web-get-query.scm"
@@ -120,10 +116,6 @@
   (define callctx (web-callcontext/p))
   (define cont (callcontext-break callctx))
   (cont stats body))
-
-(define (bad-request fmt . args)
-  (define str (apply stringf (cons fmt args)))
-  (web-respond str #:status 400))
 
 (define (not-found)
   (define request (callcontext-request (web-callcontext/p)))
@@ -331,50 +323,54 @@
   (web-respond (web-make-upload-body)))
 
 (define (directory)
-  (define ctx (web-context/p))
-  (define callctx (web-callcontext/p))
-  (define request (callcontext-request callctx))
-  (define sharedir (context-sharedir ctx))
-  (define filemap/2 (context-filemap/2 ctx))
-  (define ctxq (web-get-query))
-  (define root (get-root))
+  (web-directory))
 
-  (define vid
-    (or (hashmap-ref ctxq 'vid #f)
-        (bad-request "Request query missing requiered 'd' argument")))
-  (define info
-    (or (filemap-ref-by-senderid filemap/2 vid #f)
-        (not-found)))
-  (define recepientid
-    (sharedinfo-recepientid info))
-  (define suffix
-    (hashmap-ref ctxq 's "."))
-  (define shared-link-fullpath
-    (append-posix-path sharedir recepientid))
-  (define shared-fullpath
-    (readlink shared-link-fullpath))
-  (define _1213
-    (unless (string-prefix? root shared-fullpath)
-      (bad-request "Bad directory")))
-  (define shared-relativepath
-    (path-normalize (remove-common-prefix shared-fullpath root)))
-  (define dir-fullpath
-    (append-posix-path shared-fullpath suffix))
-  (define dir
-    (remove-common-prefix dir-fullpath root))
-  (define file-names
-    (let ((include-directories? #t))
-      (map cadr (directory-files include-directories? dir-fullpath))))
-  (define entries
-    (map (comp (append-posix-path suffix)
-               (standalone-file->entry/prefixed shared-relativepath vid))
-         file-names))
+  ;; (define ctx (web-context/p))
+  ;; (define callctx (web-callcontext/p))
+  ;; (define request (callcontext-request callctx))
+  ;; (define sharedir (context-sharedir ctx))
+  ;; (define filemap/2 (context-filemap/2 ctx))
+  ;; (define ctxq (web-get-query))
+  ;; (define root (get-root))
 
-  (web-respond
-   (lambda _
-     (define preview-link #f) ;; FIXME: initialize preview link
-     (web-display-entries
-      (lambda _ (for-each web-display-entry entries preview-link))))))
+  ;; (define vid
+  ;;   (or (hashmap-ref ctxq 'vid #f)
+  ;;       (bad-request "Request query missing requiered 'd' argument")))
+  ;; (define info
+  ;;   (or (filemap-ref-by-senderid filemap/2 vid #f)
+  ;;       (not-found)))
+  ;; (define recepientid
+  ;;   (sharedinfo-recepientid info))
+  ;; (define suffix
+  ;;   (hashmap-ref ctxq 's "."))
+  ;; (define shared-link-fullpath
+  ;;   (append-posix-path sharedir recepientid))
+  ;; (define shared-fullpath
+  ;;   (readlink shared-link-fullpath))
+  ;; (define _1213
+  ;;   (unless (string-prefix? root shared-fullpath)
+  ;;     (bad-request "Bad directory")))
+  ;; (define shared-relativepath
+  ;;   (path-normalize (remove-common-prefix shared-fullpath root)))
+  ;; (define dir-fullpath
+  ;;   (append-posix-path shared-fullpath suffix))
+  ;; (define dir
+  ;;   (remove-common-prefix dir-fullpath root))
+  ;; (define file-names
+  ;;   (let ((include-directories? #t))
+  ;;     (map cadr (directory-files include-directories? dir-fullpath))))
+  ;; ;; (define entries
+  ;; ;;   (map (comp (append-posix-path suffix)
+  ;; ;;              (standalone-file->entry/prefixed shared-relativepath vid))
+  ;; ;;        file-names))
+  ;; (define entries
+  ;;   (raisu 'fixme:adopt-profun-solution))
+
+  ;; (web-respond
+  ;;  (lambda _
+  ;;    (define preview-link #f) ;; FIXME: initialize preview link
+  ;;    (web-display-entries
+  ;;     (lambda _ (for-each web-display-entry entries preview-link))))))
 
 (define (web-make-preview target-fullpath entry)
   (define preview-fullpath

@@ -23,6 +23,7 @@
 %use (a-weblink?) "./a-weblink-q.scm"
 %use (keyword-id) "./keyword-id.scm"
 %use (keyword-target) "./keyword-target.scm"
+%use (keyword-title) "./keyword-title.scm"
 %use (web-get-full-link) "./web-get-full-link.scm"
 
 ;; (define (display-preview/old target-fullpath)
@@ -76,8 +77,8 @@
         (display "</a>")))))
 
 (define (display-title entry)
-  (define details-link?
-    (not (not (assoc keyword-id entry))))
+  (define id (assq-or keyword-id entry #f))
+  (define details-link? (not (not id)))
 
   (when details-link?
     (display "<a href='/details?id=")
@@ -85,16 +86,14 @@
     (display "' style='color: white'>"))
 
   (cond
-   ((and (assoc 'title entry)
-         (not (string-null? (cdr (assoc 'title entry)))))
-    (display (cdr (assoc 'title entry))))
+   ((and (assoc keyword-title entry)
+         (not (string-null? (cdr (assoc keyword-title entry)))))
+    (display (cdr (assoc keyword-title entry))))
    ((and (assoc keyword-target entry)
          (not (string-null? (cdr (assoc keyword-target entry)))))
     (let* ((orig (cdr (assoc keyword-target entry)))
            (relative (if (a-weblink? orig) orig (path-get-basename orig))))
-      (display relative)))
-   (else
-    (display (cdr (assoc keyword-id entry)))))
+      (display relative))))
 
   (when details-link?
     (display "</a>"))
