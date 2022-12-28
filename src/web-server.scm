@@ -324,56 +324,6 @@
 (define (upload)
   (web-respond (web-make-upload-body)))
 
-(define (directory)
-  (web-directory))
-
-  ;; (define ctx (web-context/p))
-  ;; (define callctx (web-callcontext/p))
-  ;; (define request (callcontext-request callctx))
-  ;; (define sharedir (context-sharedir ctx))
-  ;; (define filemap/2 (context-filemap/2 ctx))
-  ;; (define ctxq (web-get-query))
-  ;; (define root (get-root))
-
-  ;; (define vid
-  ;;   (or (hashmap-ref ctxq 'vid #f)
-  ;;       (bad-request "Request query missing requiered 'd' argument")))
-  ;; (define info
-  ;;   (or (filemap-ref-by-senderid filemap/2 vid #f)
-  ;;       (not-found)))
-  ;; (define recepientid
-  ;;   (sharedinfo-recepientid info))
-  ;; (define suffix
-  ;;   (hashmap-ref ctxq 's "."))
-  ;; (define shared-link-fullpath
-  ;;   (append-posix-path sharedir recepientid))
-  ;; (define shared-fullpath
-  ;;   (readlink shared-link-fullpath))
-  ;; (define _1213
-  ;;   (unless (string-prefix? root shared-fullpath)
-  ;;     (bad-request "Bad directory")))
-  ;; (define shared-relativepath
-  ;;   (path-normalize (remove-common-prefix shared-fullpath root)))
-  ;; (define dir-fullpath
-  ;;   (append-posix-path shared-fullpath suffix))
-  ;; (define dir
-  ;;   (remove-common-prefix dir-fullpath root))
-  ;; (define file-names
-  ;;   (let ((include-directories? #t))
-  ;;     (map cadr (directory-files include-directories? dir-fullpath))))
-  ;; ;; (define entries
-  ;; ;;   (map (comp (append-posix-path suffix)
-  ;; ;;              (standalone-file->entry/prefixed shared-relativepath vid))
-  ;; ;;        file-names))
-  ;; (define entries
-  ;;   (raisu 'fixme:adopt-profun-solution))
-
-  ;; (web-respond
-  ;;  (lambda _
-  ;;    (define preview-link #f) ;; FIXME: initialize preview link
-  ;;    (web-display-entries
-  ;;     (lambda _ (for-each web-display-entry entries preview-link))))))
-
 (define (web-make-preview target-fullpath entry)
   (define preview-fullpath
     (get-preview-path target-fullpath))
@@ -739,7 +689,7 @@
     (/main.css ,main.css public)
     (/collectgarbage ,collectgarbage public)
     (/query ,web-query public)
-    (/directory ,directory public)
+    (/directory ,web-directory public)
     (/details ,details public)
     (/full ,full public)
     (/upload ,upload)
