@@ -26,39 +26,6 @@
 %use (keyword-title) "./keyword-title.scm"
 %use (web-get-full-link) "./web-get-full-link.scm"
 
-;; (define (display-preview/old target-fullpath)
-;;   (define ctx (web-context/p))
-;;   (define perm (web-get-permissions))
-;;   (define fileserver (context-fileserver ctx))
-;;   (define preview-fullpath (get-preview-path target-fullpath))
-;;   (define default-preview
-;;     (if (a-weblink? target-fullpath) "/previewunknownurl" "/previewunknown"))
-
-;;   (display "<img src=")
-;;   (unless
-;;       (and preview-fullpath
-;;            (let ((info (web-share-file ctx perm preview-fullpath default-preview-sharing-time)))
-;;              (and info
-;;                   (let* ((recepientid (sharedinfo-recepientid info))
-;;                          (sharedir (context-sharedir ctx))
-;;                          (shared-fullpath (web-get-shared-fullpath sharedir preview-fullpath recepientid))
-;;                          (location (web-get-shared-link fileserver preview-fullpath recepientid)))
-;;                     (if (file-or-directory-exists? shared-fullpath)
-;;                         (write location)
-;;                         (write default-preview))
-;;                     #t))))
-;;     (write default-preview))
-;;   (display "/>"))
-
-;; (define (maybe-display-preview/old entry)
-;;   (define target-fullpath (entry-target-fullpath entry))
-;;   (when target-fullpath
-;;     (let* ((full-link (web-get-full-link entry target-fullpath)))
-;;       (when full-link
-;;         (display "<a href=") (write full-link) (display ">")
-;;         (display-preview/old target-fullpath)
-;;         (display "</a>")))))
-
 (define (display-preview target preview-link)
   (define default-preview
     (if (a-weblink? target) "/previewunknownurl" "/previewunknown"))
