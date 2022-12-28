@@ -65,7 +65,7 @@
 %use (sharedinfo-ctime sharedinfo-stime) "./sharedinfo.scm"
 %use (web-basic-headers) "./web-basic-headers.scm"
 %use (web-callcontext/p) "./web-callcontext-p.scm"
-%use (callcontext-body callcontext-break callcontext-ctr callcontext-request set-callcontext-key!) "./web-callcontext.scm"
+%use (callcontext-body callcontext-ctr callcontext-request set-callcontext-key!) "./web-callcontext.scm"
 %use (web-context/p) "./web-context-p.scm"
 %use (context-filemap/2 context-passwords context-port context-sharedir context-tokens) "./web-context.scm"
 %use (web-decode-query) "./web-decode-query.scm"
@@ -81,6 +81,7 @@
 %use (web-make-context) "./web-make-context.scm"
 %use (web-make-upload-body) "./web-make-upload-body.scm"
 %use (web-message-template) "./web-message-template.scm"
+%use (web-not-found) "./web-not-found.scm"
 %use (parse-multipart-as-hashmap) "./web-parse-multipart.scm"
 %use (web-preview-height) "./web-preview-height.scm"
 %use (web-preview-width) "./web-preview-width.scm"
@@ -88,6 +89,7 @@
 %use (web-query) "./web-query.scm"
 %use (web-request-get-domainname) "./web-request-get-domainname.scm"
 %use (web-respond) "./web-respond.scm"
+%use (web-return!) "./web-return-bang.scm"
 %use (web-sendfile) "./web-sendfile.scm"
 %use (web-set-cookie-header) "./web-set-cookie-header.scm"
 %use (web-share-file/new) "./web-share-file.scm"
@@ -112,20 +114,8 @@
 
 (define upload-registry-filename "upload/upload.tegfs.reg.lisp")
 
-(define (return! stats body)
-  (define callctx (web-callcontext/p))
-  (define cont (callcontext-break callctx))
-  (cont stats body))
-
-(define (not-found)
-  (define request (callcontext-request (web-callcontext/p)))
-  (web-respond
-   (string-append "Resource not found: "
-                  (uri->string (request-uri request)))
-   #:status 404))
-
 (define (main.css)
-  (return!
+  (web-return!
    (build-response
     #:code 200
     #:headers
@@ -352,10 +342,10 @@
              (Cache-Control . "max-age=3600, public, private")))))
 
 (define (previewunknown)
-  (return! unavailable-response unavailable-bytevector))
+  (web-return! unavailable-response unavailable-bytevector))
 
 (define (preview-unknownurl)
-  (return! unknownurl-response unknownurl-bytevector))
+  (web-return! unknownurl-response unknownurl-bytevector))
 
 (define unknownurl-bytevector
   (string->utf8 (web-url-icon/svg web-preview-width web-preview-height)))
@@ -369,20 +359,20 @@
              (Cache-Control . "max-age=3600, public, private")))))
 
 (define (previewunknownurl)
-  (return! unknownurl-response unknownurl-bytevector))
+  (web-return! unknownurl-response unknownurl-bytevector))
 
 (define (preview)
   (define ctxq (web-get-query))
   (define target-id (hashmap-ref ctxq 't #f))
   (define entry
     (or (tegfs-get/cached target-id)
-        (not-found)))
+        (web-not-found)))
   (define target-fullpath (entry-target-fullpath entry))
   (define preview-fullpath
     (web-make-preview target-fullpath entry))
 
   (if preview-fullpath
-      (web-sendfile return! 'image/jpeg preview-fullpath)
+      (web-sendfile web-return! 'image/jpeg preview-fullpath)
       (previewunknown)))
 
 (define (invalidate-permission perm)
@@ -414,7 +404,7 @@
 
   (collectgarbage/nocall now)
 
-  (return!
+  (web-return!
    (build-response
     #:code 200
     #:headers
@@ -601,7 +591,7 @@
   (define perm (web-get-permissions))
   (define entry
     (or (tegfs-get/cached id)
-        (not-found)))
+        (web-not-found)))
   (define table
     (with-output-to-string
       (lambda _
@@ -625,7 +615,7 @@
         (display "</table>\n"))))
 
   (unless (has-access-for-entry-details? filemap/2 perm entry)
-    (not-found))
+    (web-not-found))
 
   (web-respond table))
 
@@ -675,7 +665,7 @@
   (let* ((target path)
          (func (hashmap-ref handlers-funcmap target #f))
          (public? (hashset-has? handlers-publicset target)))
-    (unless func (not-found))
+    (unless func (web-not-found))
     (unless public? (check-permissions))
     (func)))
 

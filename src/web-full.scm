@@ -30,6 +30,14 @@
 %use (web-get-permissions) "./web-get-permissions.scm"
 %use (web-get-query) "./web-get-query.scm"
 %use (web-get-sharedinfo-url) "./web-get-sharedinfo-url.scm"
+%use (web-not-found) "./web-not-found.scm"
+%use (web-return!) "./web-return-bang.scm"
+
+%for (COMPILER "guile")
+
+(use-modules (web response))
+
+%end
 
 (define (web-full)
   (define ctx (web-context/p))
@@ -39,19 +47,19 @@
   (define _87123
     (unless perm
       ;; not logged in
-      (not-found)))
+      (web-not-found)))
   (define ctxq (web-get-query))
   (define vid (hashmap-ref ctxq 'vid #f))
   (define info (filemap-ref-by-senderid filemap/2 vid #f))
   (define _8123
     (unless info
-      (not-found)))
+      (web-not-found)))
   (define recepientid (sharedinfo-recepientid info))
   (define target-fullpath (sharedinfo-sourcepath info))
   (define _11
     (unless (hashmap-ref (permission-filemap perm) target-fullpath #f)
       ;; file was not shared with this permission
-      (not-found)))
+      (web-not-found)))
 
   (define adam-info
     (let loop ((info info))
@@ -74,7 +82,7 @@
   (when toplevel-entry?
     (symlink-shared-file ctx target-fullpath recepientid))
 
-  (return!
+  (web-return!
    (build-response
     #:code 301
     #:headers
