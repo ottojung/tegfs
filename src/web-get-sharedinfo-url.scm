@@ -19,8 +19,11 @@
 
 %use (append-posix-path) "./euphrates/append-posix-path.scm"
 %use (file-is-directory?/no-readlink) "./euphrates/file-is-directory-q-no-readlink.scm"
+%use (list-intersperse) "./euphrates/list-intersperse.scm"
 %use (path-normalize) "./euphrates/path-normalize.scm"
 %use (remove-common-prefix) "./euphrates/remove-common-prefix.scm"
+%use (string-split/simple) "./euphrates/string-split-simple.scm"
+%use (uri-encode) "./euphrates/uri-encode.scm"
 %use (a-weblink?) "./a-weblink-q.scm"
 %use (sharedinfo-recepientid sharedinfo-senderid sharedinfo-sourcepath) "./sharedinfo.scm"
 %use (context-fileserver) "./web-context.scm"
@@ -38,13 +41,20 @@
    ((file-is-directory?/no-readlink target-fullpath)
     (string-append "/directory?vid=" vid))
    (container-info
-    (let ((relative-path
-           (path-normalize
-            (string-append
-             (sharedinfo-recepientid container-info)
-             "/"
-             (let ((container-path (sharedinfo-sourcepath container-info)))
-               (remove-common-prefix target-fullpath container-path))))))
+    (let* ((container-path (sharedinfo-sourcepath container-info))
+           (suffix (remove-common-prefix target-fullpath container-path))
+           (escaped-suffix
+            (apply
+             string-append
+             (list-intersperse
+              "/"
+              (map uri-encode
+                   (string-split/simple suffix #\/)))))
+           (relative-path
+            (path-normalize
+             (string-append
+              (sharedinfo-recepientid container-info)
+              "/" escaped-suffix))))
       (append-posix-path fileserver relative-path)))
    (else
     (web-get-shared-link fileserver target-fullpath recepientid))))
