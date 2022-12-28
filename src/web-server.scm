@@ -18,7 +18,6 @@
 %var tegfs-serve/parse
 
 %use (append-posix-path) "./euphrates/append-posix-path.scm"
-%use (assq-or) "./euphrates/assq-or.scm"
 %use (catch-any) "./euphrates/catch-any.scm"
 %use (catchu-case) "./euphrates/catchu-case.scm"
 %use (appcomp comp) "./euphrates/comp.scm"
@@ -51,28 +50,27 @@
 %use (default-share-expiery-time) "./default-share-expiery-time.scm"
 %use (tegfs-process-categorization-text) "./edit-tags.scm"
 %use (entry-target-fullpath) "./entry-target-fullpath.scm"
-%use (filemap-delete-by-recepientid! filemap-ref-by-recepientid filemap-ref-by-senderid) "./filemap.scm"
+%use (filemap-delete-by-recepientid! filemap-ref-by-recepientid) "./filemap.scm"
 %use (get-preview-path) "./get-preview-path.scm"
 %use (get-random-access-token) "./get-random-access-token.scm"
 %use (get-random-basename) "./get-random-basename.scm"
 %use (get-root) "./get-root.scm"
 %use (tegfs-get/cached) "./get.scm"
-%use (keyword-entry-parent-directory-senderid) "./keyword-entry-parent-directory-senderid.scm"
 %use (keyword-id) "./keyword-id.scm"
 %use (make-permission!) "./make-permission-bang.scm"
 %use (tegfs-make-thumbnails) "./make-thumbnails.scm"
 %use (permission-still-valid?) "./permission-still-valid-huh.scm"
 %use (permission-admin? permission-filemap permission-idset permission-token) "./permission.scm"
 %use (sha256sum) "./sha256sum.scm"
-%use (sharedinfo-ctime sharedinfo-entry sharedinfo-recepientid sharedinfo-sourcepath sharedinfo-stime) "./sharedinfo.scm"
-%use (symlink-shared-file) "./symlink-shared-file.scm"
+%use (sharedinfo-ctime sharedinfo-stime) "./sharedinfo.scm"
 %use (web-basic-headers) "./web-basic-headers.scm"
 %use (web-callcontext/p) "./web-callcontext-p.scm"
 %use (callcontext-body callcontext-break callcontext-ctr callcontext-request set-callcontext-key!) "./web-callcontext.scm"
 %use (web-context/p) "./web-context-p.scm"
-%use (context-filemap/2 context-fileserver context-passwords context-port context-sharedir context-tokens) "./web-context.scm"
+%use (context-filemap/2 context-passwords context-port context-sharedir context-tokens) "./web-context.scm"
 %use (web-decode-query) "./web-decode-query.scm"
 %use (web-directory) "./web-directory.scm"
+%use (web-full) "./web-full.scm"
 %use (web-get-filemap/2) "./web-get-filemap-2.scm"
 %use (web-get-permissions) "./web-get-permissions.scm"
 %use (web-get-query) "./web-get-query.scm"
@@ -387,58 +385,6 @@
       (web-sendfile return! 'image/jpeg preview-fullpath)
       (previewunknown)))
 
-(define (full)
-  (define ctx (web-context/p))
-  (define filemap/2 (context-filemap/2 ctx))
-  (define fileserver (context-fileserver ctx))
-  (define perm (web-get-permissions))
-  (define _87123
-    (unless perm
-      ;; not logged in
-      (not-found)))
-  (define ctxq (web-get-query))
-  (define vid (hashmap-ref ctxq 'vid #f))
-  (define info (filemap-ref-by-senderid filemap/2 vid #f))
-  (define _8123
-    (unless info
-      (not-found)))
-  (define recepientid (sharedinfo-recepientid info))
-  (define target-fullpath (sharedinfo-sourcepath info))
-  (define _11
-    (unless (hashmap-ref (permission-filemap perm) target-fullpath #f)
-      ;; file was not shared with this permission
-      (not-found)))
-
-  (define adam-info
-    (let loop ((info info))
-      (define entry (sharedinfo-entry info))
-      (define parent-vid
-        (assq-or keyword-entry-parent-directory-senderid entry))
-      (define next
-        (and parent-vid (filemap-ref-by-senderid filemap/2 parent-vid #f)))
-      (if next (loop next)
-          info)))
-
-  (define toplevel-entry?
-    (eq? adam-info info))
-  (define container-info
-    (and (not toplevel-entry?) adam-info))
-
-  (define location
-    (web-get-sharedinfo-url ctx container-info info))
-
-  (when toplevel-entry?
-    (symlink-shared-file ctx target-fullpath recepientid))
-
-  (return!
-   (build-response
-    #:code 301
-    #:headers
-    (append web-basic-headers
-            `((Location . ,location)
-              (Cache-Control . "no-cache"))))
-   #f))
-
 (define (invalidate-permission perm)
   (define ctx (web-context/p))
   (define tokens (context-tokens ctx))
@@ -691,7 +637,7 @@
     (/query ,web-query public)
     (/directory ,web-directory public)
     (/details ,details public)
-    (/full ,full public)
+    (/full ,web-full public)
     (/upload ,upload)
     (/uploadcont ,uploadcont)
     (/preview ,preview)
