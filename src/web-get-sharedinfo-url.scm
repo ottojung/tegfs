@@ -35,26 +35,36 @@
   (define recepientid (sharedinfo-recepientid info))
   (define fileserver (context-fileserver ctx))
 
+  (define (share-containerized container-path)
+    (define suffix
+      (remove-common-prefix target-fullpath container-path))
+    (define escaped-suffix
+      (apply
+       string-append
+       (list-intersperse
+        "/"
+        (map uri-encode
+             (string-split/simple suffix #\/)))))
+    (define relative-path
+      (path-normalize
+       (string-append
+        (sharedinfo-recepientid container-info)
+        "/" escaped-suffix)))
+
+    (append-posix-path fileserver relative-path))
+
+  (define (share-toplevel)
+    (web-get-shared-link fileserver target-fullpath recepientid))
+
   (cond
    ((a-weblink? target-fullpath)
     target-fullpath)
    ((file-is-directory?/no-readlink target-fullpath)
     (string-append "/directory?vid=" vid))
    (container-info
-    (let* ((container-path (sharedinfo-sourcepath container-info))
-           (suffix (remove-common-prefix target-fullpath container-path))
-           (escaped-suffix
-            (apply
-             string-append
-             (list-intersperse
-              "/"
-              (map uri-encode
-                   (string-split/simple suffix #\/)))))
-           (relative-path
-            (path-normalize
-             (string-append
-              (sharedinfo-recepientid container-info)
-              "/" escaped-suffix))))
-      (append-posix-path fileserver relative-path)))
+    (let ((container-path (sharedinfo-sourcepath container-info)))
+      (if (string-prefix? container-path target-fullpath)
+          (share-containerized container-path)
+          (share-toplevel))))
    (else
-    (web-get-shared-link fileserver target-fullpath recepientid))))
+    (share-toplevel))))

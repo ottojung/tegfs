@@ -17,13 +17,15 @@
 
 %var web-link-shared-handler
 
+%use (assq-or) "./euphrates/assq-or.scm"
 %use (profun-set) "./euphrates/profun-accept.scm"
 %use (make-profun-error) "./euphrates/profun-error.scm"
 %use (profun-op-lambda) "./euphrates/profun-op-lambda.scm"
 %use (profun-request-value) "./euphrates/profun-request-value.scm"
 %use (profun-unbound-value?) "./euphrates/profun-value.scm"
 %use (filemap-ref-by-senderid) "./filemap.scm"
-%use (sharedinfo-recepientid sharedinfo-sourcepath) "./sharedinfo.scm"
+%use (keyword-entry-parent-directory-senderid) "./keyword-entry-parent-directory-senderid.scm"
+%use (sharedinfo-entry sharedinfo-recepientid sharedinfo-sourcepath) "./sharedinfo.scm"
 %use (symlink-shared-file) "./symlink-shared-file.scm"
 %use (context-filemap/2) "./web-context.scm"
 %use (web-get-sharedinfo-url) "./web-get-sharedinfo-url.scm"
@@ -42,6 +44,21 @@
      (define recepientid
        (and info (sharedinfo-recepientid info)))
 
+     (define adam-info
+       (let loop ((info info))
+         (define entry (sharedinfo-entry info))
+         (define parent-vid
+           (assq-or keyword-entry-parent-directory-senderid entry))
+         (define next
+           (and parent-vid (filemap-ref-by-senderid filemap/2 parent-vid #f)))
+         (if next (loop next)
+             info)))
+
+     (define toplevel-entry?
+       (eq? adam-info info))
+     (define container-info
+       (and (not toplevel-entry?) adam-info))
+
      (cond
       ((profun-unbound-value? R)
        (profun-request-value R-name))
@@ -51,7 +68,7 @@
        (make-profun-error 'bad-senderid senderid))
       (else
        (if target-fullpath
-           (let ((location (web-get-sharedinfo-url web-context #f info)))
+           (let ((location (web-get-sharedinfo-url web-context container-info info)))
              (symlink-shared-file
               web-context target-fullpath recepientid)
              (profun-set (L-name <- location)))
