@@ -62,7 +62,5 @@
          (or (try (env E-name))
              (try (env (profun-meta-key E-name)))
              (make-profun-error 'bad-entry:does-not-have-target-infos (env E-name))))
-        ((profun-bound-value? perm)
-         (make-profun-error 'could-not-authorize))
         (else
-         (make-profun-error 'missing-parameter 'permissions)))))))
+         (make-profun-error 'could-not-authorize)))))))
