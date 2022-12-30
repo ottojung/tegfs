@@ -34,6 +34,8 @@
      (<query-format> (comp (entry-print/formatted <query-format>)))
      (else (fatal "Unexpected mode: both --entries and <query-format> were not set"))))
 
+  (fatal "FIXME: the authorization")
+
   (define result
     (profune-communicator-handle
      (tegfs-make-communicator)
