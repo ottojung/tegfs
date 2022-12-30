@@ -26,7 +26,8 @@
 %use (entry-target-fullpath) "./entry-target-fullpath.scm"
 %use (permission?) "./permission.scm"
 %use (sharedinfo-senderid) "./sharedinfo.scm"
-%use (query-permissions/p) "./talk-parameters.scm"
+%use (tegfs-key/p) "./talk-parameters.scm"
+%use (tegfs-login-by-key) "./tegfs-login-by-key.scm"
 %use (web-share-file/dont-link-yet) "./web-share-file.scm"
 
 (define web-share-entry-generic-handler
@@ -36,7 +37,8 @@
        (ctx env (E-name T-name R-name))
 
        (define sharing-time (env T-name))
-       (define perm (query-permissions/p))
+       (define key (tegfs-key/p))
+       (define perm (tegfs-login-by-key web-context key))
 
        (define (continue entry target-fullpath)
          (define generic-fullpath (get-shared-path target-fullpath))
@@ -61,6 +63,6 @@
              (try (env (profun-meta-key E-name)))
              (make-profun-error 'bad-entry:does-not-have-target-infos (env E-name))))
         ((profun-bound-value? perm)
-         (make-profun-error 'type-error 'expected-permissions perm))
+         (make-profun-error 'could-not-authorize))
         (else
          (make-profun-error 'missing-parameter 'permissions)))))))

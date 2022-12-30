@@ -22,6 +22,8 @@
 %use (profune-communicator-handle) "./euphrates/profune-communicator.scm"
 %use (raisu) "./euphrates/raisu.scm"
 %use (stringf) "./euphrates/stringf.scm"
+%use (~s) "./euphrates/tilda-s.scm"
+%use (words->string) "./euphrates/words-to-string.scm"
 %use (default-full-sharing-time) "./default-full-sharing-time.scm"
 %use (default-preview-sharing-time) "./default-preview-sharing-time.scm"
 %use (web-callcontext/p) "./web-callcontext-p.scm"
@@ -29,7 +31,7 @@
 %use (web-context/p) "./web-context-p.scm"
 %use (web-display-entries) "./web-display-entries.scm"
 %use (web-display-entry) "./web-display-entry.scm"
-%use (web-get-permissions) "./web-get-permissions.scm"
+%use (web-get-key) "./web-get-key.scm"
 %use (web-get-query) "./web-get-query.scm"
 %use (web-make-communicator) "./web-make-communicator.scm"
 %use (web-respond) "./web-respond.scm"
@@ -56,7 +58,7 @@
           (profune-communicator-handle
            (web-make-communicator (web-context/p))
            `(whats
-             (permissions ,(web-get-permissions))
+             (key ,(web-get-key callctx))
              (shared-entry-contains ,vid E)
              (share-preview E ,default-preview-sharing-time _P)
              (share-full E ,default-full-sharing-time F)
@@ -64,14 +66,16 @@
              more (99999)
              )))
 
-        (define equals (cadr (cadr result)))
-        (for-each
-         (lambda (bindings)
-           (define entry
-             (assq-or 'E bindings (raisu 'unexpected-result-from-backend bindings)))
-           (define maybe-full-senderid
-             (assq-or 'F bindings (raisu 'unexpected-result-from-backend bindings)))
-           (define preview-link
-             (assq-or 'PL bindings (raisu 'unexpected-result-from-backend bindings)))
-           (web-display-entry entry maybe-full-senderid preview-link))
-         equals))))))
+        (if (equal? 'error (car result))
+            (bad-request "error: ~a" (words->string (map ~s (cadr result))))
+            (let ((equals (cadr (cadr result))))
+              (for-each
+               (lambda (bindings)
+                 (define entry
+                   (assq-or 'E bindings (raisu 'unexpected-result-from-backend bindings)))
+                 (define maybe-full-senderid
+                   (assq-or 'F bindings (raisu 'unexpected-result-from-backend bindings)))
+                 (define preview-link
+                   (assq-or 'PL bindings (raisu 'unexpected-result-from-backend bindings)))
+                 (web-display-entry entry maybe-full-senderid preview-link))
+               equals))))))))

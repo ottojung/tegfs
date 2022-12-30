@@ -15,21 +15,22 @@
 
 %run guile
 
-%var tegfs-key/p
-%var query-split/p
-%var query-filemap/2/p
-%var query-diropen?/p
-%var query-dirpreview?/p
+%var tegfs-login-by-key
 
-%use (make-profun-parameter) "./euphrates/profun-op-parameter.scm"
+%use (hashmap-delete! hashmap-ref) "./euphrates/hashmap.scm"
+%use (permission-still-valid?) "./permission-still-valid-huh.scm"
+%use (context-tokens) "./web-context.scm"
 
-(define tegfs-key/p
-  (make-profun-parameter))
-(define query-split/p
-  (make-profun-parameter))
-(define query-filemap/2/p
-  (make-profun-parameter))
-(define query-diropen?/p
-  (make-profun-parameter))
-(define query-dirpreview?/p
-  (make-profun-parameter))
+(define (tegfs-login-by-key ctx key)
+  (define tokens (context-tokens ctx))
+  (define existing (hashmap-ref tokens key #f))
+  (define perm
+    (and existing
+         (if (permission-still-valid? existing)
+             existing
+             (begin
+               (hashmap-delete! tokens key)
+               #f))))
+
+  perm)
+

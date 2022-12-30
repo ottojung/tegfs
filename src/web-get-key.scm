@@ -15,21 +15,14 @@
 
 %run guile
 
-%var tegfs-key/p
-%var query-split/p
-%var query-filemap/2/p
-%var query-diropen?/p
-%var query-dirpreview?/p
+%var web-get-key
 
-%use (make-profun-parameter) "./euphrates/profun-op-parameter.scm"
+%use (permission-token) "./permission.scm"
+%use (callcontext-permissions) "./web-callcontext.scm"
 
-(define tegfs-key/p
-  (make-profun-parameter))
-(define query-split/p
-  (make-profun-parameter))
-(define query-filemap/2/p
-  (make-profun-parameter))
-(define query-diropen?/p
-  (make-profun-parameter))
-(define query-dirpreview?/p
-  (make-profun-parameter))
+;; TODO: dont store permissions in the callcontext
+(define (web-get-key callctx)
+  (define perm-f (callcontext-permissions callctx))
+  (define perm (and perm-f (perm-f)))
+  (define key (and perm (permission-token perm)))
+  key)

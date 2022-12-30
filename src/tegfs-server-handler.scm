@@ -16,32 +16,33 @@
 %run guile
 
 %var tegfs-make-server-handler
+%var tegfs-make-server-handler/c
 
 %use (profun-handler-extend) "./euphrates/profun-handler.scm"
 %use (instantiate-profun-parameter) "./euphrates/profun-op-parameter.scm"
 %use (profun-op-value) "./euphrates/profun-op-value.scm"
 %use (profun-standard-handler) "./euphrates/profun-standard-handler.scm"
 %use (entry-field-handler) "./entry-field-handler.scm"
-%use (query-diropen?/p query-dirpreview?/p query-filemap/2/p query-permissions/p query-split/p) "./talk-parameters.scm"
+%use (query-diropen?/p query-dirpreview?/p query-split/p tegfs-key/p) "./talk-parameters.scm"
 %use (query-entry-handler) "./tegfs-query.scm"
-%use (web-share-entry-preview-handler) "./web-share-entry-preview-handler.scm"
+%use (web-make-context) "./web-make-context.scm"
 
-(define tegfs-server-handler
+(define (tegfs-make-server-handler)
+  (define context (web-make-context)) ;; TODO: make a non-web context
+  (tegfs-make-server-handler/c context))
+
+(define (tegfs-make-server-handler/c context)
   (profun-handler-extend
    profun-standard-handler
 
    (value (profun-op-value '() '()))
 
-   (entry query-entry-handler)
+   (entry (query-entry-handler context))
    (entry-field entry-field-handler)
 
    (query (instantiate-profun-parameter query-split/p))
-   (permissions (instantiate-profun-parameter query-permissions/p))
-   (filemap/2 (instantiate-profun-parameter query-filemap/2/p))
+   (key (instantiate-profun-parameter tegfs-key/p))
    (diropen? (instantiate-profun-parameter query-diropen?/p))
    (dirpreview? (instantiate-profun-parameter query-dirpreview?/p))
 
    ))
-
-(define (tegfs-make-server-handler)
-  tegfs-server-handler)

@@ -31,8 +31,10 @@
 %use (keyword-entry-registry-path) "./keyword-entry-registry-path.scm"
 %use (keyword-target) "./keyword-target.scm"
 %use (keyword-title) "./keyword-title.scm"
-%use (query-diropen?/p query-dirpreview?/p query-filemap/2/p query-permissions/p query-split/p) "./talk-parameters.scm"
+%use (query-diropen?/p query-dirpreview?/p query-split/p tegfs-key/p) "./talk-parameters.scm"
+%use (tegfs-login-by-key) "./tegfs-login-by-key.scm"
 %use (tegfs-query/open) "./tegfs-query-open.scm"
+%use (context-filemap/2) "./web-context.scm"
 
 (define-syntax profun-default
   (syntax-rules ()
@@ -41,65 +43,69 @@
        (if (profun-unbound-value? val) default val)))))
 
 (define query-entry-handler
-  (profun-op-envlambda
-   (ctx env (E-name))
+  (lambda (context)
+    (profun-op-envlambda
+     (ctx env (E-name))
 
-   (define (ret iter)
-     (define-values (x full) (iter))
-     (if x
-         (profun-set
-          (E-name <- x)
-          (if full
-              (profun-set-meta
-               (E-name <- full))
-              (profun-accept)))
-         (profun-reject)))
+     (define (ret iter)
+       (define-values (x full) (iter))
+       (if x
+           (profun-set
+            (E-name <- x)
+            (if full
+                (profun-set-meta
+                 (E-name <- full))
+                (profun-accept)))
+           (profun-reject)))
 
-   (if ctx (ret ctx)
-       (call-with-current-continuation
-        (lambda (return)
-          (define (error . args) (return (make-profun-error args)))
-          (define-syntax define-param
-            (syntax-rules ()
-              ((_ name p)
-               (define-param name p (error 'missing-parameter (quote name))))
-              ((_ name p default)
-               (define name (profun-default p default)))))
+     (if ctx (ret ctx)
+         (call-with-current-continuation
+          (lambda (return)
+            (define (error . args) (return (make-profun-error args)))
+            (define-syntax define-param
+              (syntax-rules ()
+                ((_ name p)
+                 (define-param name p (error 'missing-parameter (quote name))))
+                ((_ name p default)
+                 (define name (profun-default p default)))))
 
-          (define-param query (query-split/p))
-          (define-param diropen? (query-diropen?/p) #f)
-          (define-param dirpreview? (query-dirpreview?/p) #f)
-          (define-param permissions (query-permissions/p))
-          (define-param filemap/2 (query-filemap/2/p) #f)
+            (define-param key (tegfs-key/p) #f)
+            (define-param query (query-split/p))
+            (define-param diropen? (query-diropen?/p) #f)
+            (define-param dirpreview? (query-dirpreview?/p) #f)
+            (define filemap/2 (context-filemap/2 context))
+            (define perm (tegfs-login-by-key context key))
 
-          (define opening-properties
-            (appcomp
-             '()
-             ((curry-if (const diropen?) (comp (cons keyword-diropen))))
-             ((curry-if (const dirpreview?) (comp (cons keyword-dirpreview))))))
+            (define opening-properties
+              (appcomp
+               '()
+               ((curry-if (const diropen?) (comp (cons keyword-diropen))))
+               ((curry-if (const dirpreview?) (comp (cons keyword-dirpreview))))))
 
-          (define iter0 (tegfs-query/open opening-properties query))
-          (define (iter)
-            (define entry0 (iter0))
+            (define iter0 (tegfs-query/open opening-properties query))
+            (define (iter)
+              (define entry0 (iter0))
+              (cond
+               ((equal? #f entry0)
+                (values #f #f))
+               ((has-access-for-entry-details? filemap/2 perm entry0)
+                (values entry0 #f))
+               ((has-access-for-entry-target? filemap/2 perm entry0)
+                (values
+                 (filter (lambda (p) (memq (car p) target-fields)) entry0)
+                 entry0))
+               (else (iter))))
+
             (cond
-             ((equal? #f entry0)
-              (values #f #f))
-             ((has-access-for-entry-details? filemap/2 permissions entry0)
-              (values entry0 #f))
-             ((has-access-for-entry-target? filemap/2 permissions entry0)
-              (values
-               (filter (lambda (p) (memq (car p) target-fields)) entry0)
-               entry0))
-             (else (iter))))
-
-          (if (profun-bound-value? (env E-name))
-              (make-profun-error 'query-is-a-generator 'cannot-check-if-element-already-exists)
+             ((profun-bound-value? (env E-name))
+              (make-profun-error 'query-is-a-generator 'cannot-check-if-element-already-exists))
+             (else
               (let ((val (ret iter)))
                 (if (profun-accept? val)
                     (profun-ctx-set iter val)
-                    val)))
+                    val))))
 
-          )))))
+            ))))))
 
 (define target-fields
   (list keyword-target

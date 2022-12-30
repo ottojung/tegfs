@@ -18,7 +18,6 @@
 %var web-query
 
 %use (assq-or) "./euphrates/assq-or.scm"
-%use (debugs) "./euphrates/debugs.scm"
 %use (hashmap-ref) "./euphrates/hashmap.scm"
 %use (profune-communicator-handle) "./euphrates/profune-communicator.scm"
 %use (raisu) "./euphrates/raisu.scm"
@@ -31,8 +30,7 @@
 %use (web-decode-query) "./web-decode-query.scm"
 %use (web-display-entries) "./web-display-entries.scm"
 %use (web-display-entry) "./web-display-entry.scm"
-%use (web-get-filemap/2) "./web-get-filemap-2.scm"
-%use (web-get-permissions) "./web-get-permissions.scm"
+%use (web-get-key) "./web-get-key.scm"
 %use (web-get-query) "./web-get-query.scm"
 %use (web-make-communicator) "./web-make-communicator.scm"
 %use (web-respond) "./web-respond.scm"
@@ -55,8 +53,7 @@
           (profune-communicator-handle
            (web-make-communicator (web-context/p))
            `(whats
-             (permissions ,(web-get-permissions))
-             (filemap/2 ,(web-get-filemap/2))
+             (key ,(web-get-key callctx))
              (diropen? #t)
              (dirpreview? #f)
              (query ,query/split)

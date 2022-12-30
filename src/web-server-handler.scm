@@ -19,14 +19,14 @@
 
 %use (profun-handler-extend) "./euphrates/profun-handler.scm"
 %use (shared-entry-contains-handler) "./shared-entry-contains-handler.scm"
-%use (tegfs-make-server-handler) "./tegfs-server-handler.scm"
+%use (tegfs-make-server-handler/c) "./tegfs-server-handler.scm"
 %use (web-link-shared-handler) "./web-link-shared-handler.scm"
 %use (web-share-entry-full-handler) "./web-share-entry-full-handler.scm"
 %use (web-share-entry-preview-handler) "./web-share-entry-preview-handler.scm"
 
 (define (web-make-server-handler web-context)
   (profun-handler-extend
-   (tegfs-make-server-handler)
+   (tegfs-make-server-handler/c web-context)
 
    (share-preview (web-share-entry-preview-handler web-context))
    (share-full (web-share-entry-full-handler web-context))
