@@ -21,11 +21,11 @@
 %use (hashmap-ref) "./euphrates/hashmap.scm"
 %use (profune-communicator-handle) "./euphrates/profune-communicator.scm"
 %use (raisu) "./euphrates/raisu.scm"
-%use (stringf) "./euphrates/stringf.scm"
 %use (~s) "./euphrates/tilda-s.scm"
 %use (words->string) "./euphrates/words-to-string.scm"
 %use (default-full-sharing-time) "./default-full-sharing-time.scm"
 %use (default-preview-sharing-time) "./default-preview-sharing-time.scm"
+%use (web-bad-request) "./web-bad-request.scm"
 %use (web-callcontext/p) "./web-callcontext-p.scm"
 %use (web-context/p) "./web-context-p.scm"
 %use (web-display-entries) "./web-display-entries.scm"
@@ -35,17 +35,13 @@
 %use (web-make-communicator) "./web-make-communicator.scm"
 %use (web-respond) "./web-respond.scm"
 
-(define (bad-request fmt . args)
-  (define str (apply stringf (cons fmt args)))
-  (web-respond str #:status 400))
-
 (define (web-directory)
   (define callctx (web-callcontext/p))
   (define ctxq (web-get-query))
 
   (define vid
     (or (hashmap-ref ctxq 'vid #f)
-        (bad-request "Request query missing requiered 'd' argument")))
+        (web-bad-request "Request query missing requiered 'd' argument")))
 
   (web-respond
    (lambda _
@@ -64,7 +60,7 @@
              )))
 
         (if (equal? 'error (car result))
-            (bad-request "error: ~a" (words->string (map ~s (cadr result))))
+            (web-bad-request "error: ~a" (words->string (map ~s (cadr result))))
             (let ((equals (cadr (cadr result))))
               (for-each
                (lambda (bindings)

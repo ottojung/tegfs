@@ -17,20 +17,15 @@
 
 %var web-full
 
-%use (assq-or) "./euphrates/assq-or.scm"
 %use (hashmap-ref) "./euphrates/hashmap.scm"
-%use (filemap-ref-by-senderid) "./filemap.scm"
-%use (keyword-entry-parent-directory-senderid) "./keyword-entry-parent-directory-senderid.scm"
-%use (permission-filemap) "./permission.scm"
-%use (sharedinfo-entry sharedinfo-recepientid sharedinfo-sourcepath) "./sharedinfo.scm"
-%use (symlink-shared-file) "./symlink-shared-file.scm"
+%use (profune-communicator-handle) "./euphrates/profune-communicator.scm"
+%use (~s) "./euphrates/tilda-s.scm"
+%use (words->string) "./euphrates/words-to-string.scm"
+%use (web-bad-request) "./web-bad-request.scm"
 %use (web-basic-headers) "./web-basic-headers.scm"
 %use (web-context/p) "./web-context-p.scm"
-%use (context-filemap/2 context-fileserver) "./web-context.scm"
-%use (web-get-permissions) "./web-get-permissions.scm"
 %use (web-get-query) "./web-get-query.scm"
-%use (web-get-sharedinfo-url) "./web-get-sharedinfo-url.scm"
-%use (web-not-found) "./web-not-found.scm"
+%use (web-make-communicator) "./web-make-communicator.scm"
 %use (web-return!) "./web-return-bang.scm"
 
 %for (COMPILER "guile")
@@ -40,53 +35,30 @@
 %end
 
 (define (web-full)
-  (define ctx (web-context/p))
-  (define filemap/2 (context-filemap/2 ctx))
-  (define fileserver (context-fileserver ctx))
-  (define perm (web-get-permissions))
-  (define _87123
-    (unless perm
-      ;; not logged in
-      (web-not-found)))
   (define ctxq (web-get-query))
-  (define vid (hashmap-ref ctxq 'vid #f))
-  (define info (filemap-ref-by-senderid filemap/2 vid #f))
-  (define _8123
-    (unless info
-      (web-not-found)))
-  (define recepientid (sharedinfo-recepientid info))
-  (define target-fullpath (sharedinfo-sourcepath info))
-  (define _11
-    (unless (hashmap-ref (permission-filemap perm) target-fullpath #f)
-      ;; file was not shared with this permission
-      (web-not-found)))
+  (define senderid (hashmap-ref ctxq 'vid #f))
 
-  (define adam-info
-    (let loop ((info info))
-      (define entry (sharedinfo-entry info))
-      (define parent-vid
-        (assq-or keyword-entry-parent-directory-senderid entry))
-      (define next
-        (and parent-vid (filemap-ref-by-senderid filemap/2 parent-vid #f)))
-      (if next (loop next)
-          info)))
+  (define result
+    (profune-communicator-handle
+     (web-make-communicator (web-context/p))
+     `(whats
+       (link-shared ,senderid L)
+       )))
 
-  (define toplevel-entry?
-    (eq? adam-info info))
-  (define container-info
-    (and (not toplevel-entry?) adam-info))
-
-  (define location
-    (web-get-sharedinfo-url ctx container-info info))
-
-  (when toplevel-entry?
-    (symlink-shared-file ctx target-fullpath recepientid))
-
-  (web-return!
-   (build-response
-    #:code 301
-    #:headers
-    (append web-basic-headers
-            `((Location . ,location)
-              (Cache-Control . "no-cache"))))
-   #f))
+  (cond
+   ((equal? 'error (car result))
+    (web-bad-request "error: ~a" (words->string (map ~s (cadr result)))))
+   ((and (equal? 'its (car result))
+         (equal? '= (car (cadr result))))
+    (let* ((word (cadr result))
+           (location (list-ref word 2)))
+      (web-return!
+       (build-response
+        #:code 301
+        #:headers
+        (append web-basic-headers
+                `((Location . ,location)
+                  (Cache-Control . "no-cache"))))
+       #f)))
+   (else
+    (web-bad-request "internal error"))))

@@ -45,14 +45,15 @@
        (and info (sharedinfo-recepientid info)))
 
      (define adam-info
-       (let loop ((info info))
-         (define entry (sharedinfo-entry info))
-         (define parent-vid
-           (assq-or keyword-entry-parent-directory-senderid entry))
-         (define next
-           (and parent-vid (filemap-ref-by-senderid filemap/2 parent-vid #f)))
-         (if next (loop next)
-             info)))
+       (and info
+            (let loop ((info info))
+              (define entry (sharedinfo-entry info))
+              (define parent-vid
+                (assq-or keyword-entry-parent-directory-senderid entry))
+              (define next
+                (and parent-vid (filemap-ref-by-senderid filemap/2 parent-vid #f)))
+              (if next (loop next)
+                  info))))
 
      (define toplevel-entry?
        (eq? adam-info info))
