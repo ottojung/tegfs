@@ -27,7 +27,6 @@
 %use (default-full-sharing-time) "./default-full-sharing-time.scm"
 %use (default-preview-sharing-time) "./default-preview-sharing-time.scm"
 %use (web-callcontext/p) "./web-callcontext-p.scm"
-%use (callcontext-request) "./web-callcontext.scm"
 %use (web-context/p) "./web-context-p.scm"
 %use (web-display-entries) "./web-display-entries.scm"
 %use (web-display-entry) "./web-display-entry.scm"
@@ -41,9 +40,7 @@
   (web-respond str #:status 400))
 
 (define (web-directory)
-  (define ctx (web-context/p))
   (define callctx (web-callcontext/p))
-  (define request (callcontext-request callctx))
   (define ctxq (web-get-query))
 
   (define vid
