@@ -31,8 +31,7 @@
 %use (keyword-entry-registry-path) "./keyword-entry-registry-path.scm"
 %use (keyword-target) "./keyword-target.scm"
 %use (keyword-title) "./keyword-title.scm"
-%use (query-diropen?/p query-dirpreview?/p query-split/p tegfs-key/p) "./talk-parameters.scm"
-%use (tegfs-login-by-key) "./tegfs-login-by-key.scm"
+%use (query-diropen?/p query-dirpreview?/p query-split/p tegfs-permissions/p) "./talk-parameters.scm"
 %use (tegfs-query/open) "./tegfs-query-open.scm"
 %use (context-filemap/2) "./web-context.scm"
 
@@ -69,12 +68,11 @@
                 ((_ name p default)
                  (define name (profun-default p default)))))
 
-            (define-param key (tegfs-key/p) #f)
+            (define-param perm (tegfs-permissions/p) #f)
             (define-param query (query-split/p))
             (define-param diropen? (query-diropen?/p) #f)
             (define-param dirpreview? (query-dirpreview?/p) #f)
             (define filemap/2 (context-filemap/2 context))
-            (define perm (tegfs-login-by-key context key))
 
             (define opening-properties
               (appcomp
