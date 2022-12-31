@@ -53,8 +53,6 @@
            (web-make-communicator (web-context/p))
            `(whats
              (key ,(web-get-key callctx))
-             (diropen? #t)
-             (dirpreview? #f)
              (query ,query/split)
              (entry E)
              (share-preview E ,default-preview-sharing-time _P)

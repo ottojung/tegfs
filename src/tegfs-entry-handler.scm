@@ -70,7 +70,7 @@
 
             (define-param perm (tegfs-permissions/p) #f)
             (define-param query (query-split/p))
-            (define-param diropen? (query-diropen?/p) #f)
+            (define-param diropen? (query-diropen?/p) #t)
             (define-param dirpreview? (query-dirpreview?/p) #f)
             (define filemap/2 (context-filemap/2 context))
 
