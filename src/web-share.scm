@@ -16,6 +16,7 @@
 %run guile
 
 %var web-share-query
+%var web-share-id
 
 %use (assq-or) "./euphrates/assq-or.scm"
 %use (catchu-case) "./euphrates/catchu-case.scm"
@@ -102,6 +103,24 @@
           (stringf "Bad `for-duration' value ~s" for-duration/s)))))
       default-share-expiery-time))
 
+(define (web-share-cont callctx query/encoded query/split result)
+  (if (equal? (car result) 'its)
+      (let ()
+        (define equals (cadr (cadr result)))
+        (define first-binding (car equals))
+        (define token
+          (assq-or 'K first-binding (raisu 'unexpected-result-from-backend equals)))
+        (define location
+          (stringf "/query?q=~a&key=~a" query/encoded token))
+        (define hidden-query-location
+          (stringf "/query?q=%any&key=~a" token))
+        (define text
+          (get-share-query-text callctx location hidden-query-location token))
+        (web-respond text))
+      (web-bad-request
+       "Could not share the query: ~a"
+       (words->string (map ~s result)))))
+
 (define (web-share-query query/encoded)
   (define callctx (web-callcontext/p))
   (define key (web-get-key callctx))
@@ -121,19 +140,25 @@
        more (99999)
        )))
 
-  (if (equal? (car result) 'its)
-      (let ()
-        (define equals (cadr (cadr result)))
-        (define first-binding (car equals))
-        (define token
-          (assq-or 'K first-binding (raisu 'unexpected-result-from-backend equals)))
-        (define location
-          (stringf "/query?q=~a&key=~a" query/encoded token))
-        (define hidden-query-location
-          (stringf "/query?q=%any&key=~a" token))
-        (define text
-          (get-share-query-text callctx location hidden-query-location token))
-        (web-respond text))
-      (web-bad-request
-       "Could not share the query: ~a"
-       (words->string (map ~s result)))))
+  (web-share-cont callctx query/encoded query/split result))
+
+(define (web-share-id id)
+  (define callctx (web-callcontext/p))
+  (define key (web-get-key callctx))
+  (define share-duration (get-share-duration))
+  (define query/split '("%any"))
+
+  (define result
+    (profune-communicator-handle
+     (web-make-communicator (web-context/p))
+     `(whats
+       (key ,key)
+       (make-temporary-permissions ,share-duration K)
+       (query ,query/split)
+       (entry _E)
+       (entry-field _E "id" ,id)
+       (share-entry _E K)
+       more (99999)
+       )))
+
+  (web-share-cont callctx "%any" query/split result))

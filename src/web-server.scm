@@ -90,7 +90,7 @@
 %use (web-sendfile) "./web-sendfile.scm"
 %use (web-set-cookie-header) "./web-set-cookie-header.scm"
 %use (web-share-file/new) "./web-share-file.scm"
-%use (web-share-query) "./web-share.scm"
+%use (web-share-id web-share-query) "./web-share.scm"
 %use (web-static-error-message) "./web-static-error-message.scm"
 %use (web-style) "./web-style.scm"
 %use (web-try-uri-decode) "./web-try-uri-decode.scm"
@@ -511,11 +511,12 @@
       default-share-expiery-time))
 
 (define share-query web-share-query)
+(define share-id web-share-id)
 
 (define (print-url url)
   (sxml->xml `(a (@ (href ,url)) ,url)))
 
-(define (share-id id)
+(define (share-id/old id)
   (define ctx (web-context/p))
   (define callctx (web-callcontext/p))
   (define req (callcontext-request callctx))
