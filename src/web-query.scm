@@ -36,7 +36,6 @@
 %use (web-respond) "./web-respond.scm"
 
 (define (web-query)
-  (define ctx (web-context/p))
   (define callctx (web-callcontext/p))
   (define request (callcontext-request callctx))
   (define ctxq (web-get-query))
