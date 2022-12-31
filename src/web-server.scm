@@ -28,7 +28,7 @@
 %use (file-or-directory-exists?) "./euphrates/file-or-directory-exists-q.scm"
 %use (fn) "./euphrates/fn.scm"
 %use (alist->hashmap hashmap-delete! hashmap-foreach hashmap-ref make-hashmap) "./euphrates/hashmap.scm"
-%use (hashset-add! hashset-has? list->hashset) "./euphrates/hashset.scm"
+%use (hashset-has? list->hashset) "./euphrates/hashset.scm"
 %use (list-singleton?) "./euphrates/list-singleton-q.scm"
 %use (make-directories) "./euphrates/make-directories.scm"
 %use (memconst) "./euphrates/memconst.scm"
@@ -39,7 +39,6 @@
 %use (string-split/simple) "./euphrates/string-split-simple.scm"
 %use (string-strip) "./euphrates/string-strip.scm"
 %use (string->seconds) "./euphrates/string-to-seconds.scm"
-%use (string->words) "./euphrates/string-to-words.scm"
 %use (stringf) "./euphrates/stringf.scm"
 %use (~a) "./euphrates/tilda-a.scm"
 %use (time-get-current-unixtime) "./euphrates/time-get-current-unixtime.scm"
@@ -60,7 +59,7 @@
 %use (make-permission!) "./make-permission-bang.scm"
 %use (tegfs-make-thumbnails) "./make-thumbnails.scm"
 %use (permission-still-valid?) "./permission-still-valid-huh.scm"
-%use (permission-admin? permission-filemap permission-idset permission-token) "./permission.scm"
+%use (permission-admin? permission-filemap permission-token) "./permission.scm"
 %use (sha256sum) "./sha256sum.scm"
 %use (sharedinfo-ctime sharedinfo-stime) "./sharedinfo.scm"
 %use (web-basic-headers) "./web-basic-headers.scm"
@@ -68,7 +67,6 @@
 %use (callcontext-body callcontext-ctr callcontext-request set-callcontext-key!) "./web-callcontext.scm"
 %use (web-context/p) "./web-context-p.scm"
 %use (context-filemap/2 context-passwords context-port context-sharedir context-tokens) "./web-context.scm"
-%use (web-decode-query) "./web-decode-query.scm"
 %use (web-directory) "./web-directory.scm"
 %use (web-full) "./web-full.scm"
 %use (web-get-filemap/2) "./web-get-filemap-2.scm"
@@ -85,7 +83,6 @@
 %use (parse-multipart-as-hashmap) "./web-parse-multipart.scm"
 %use (web-preview-height) "./web-preview-height.scm"
 %use (web-preview-width) "./web-preview-width.scm"
-%use (web-query/foreach) "./web-query-foreach.scm"
 %use (web-query) "./web-query.scm"
 %use (web-request-get-domainname) "./web-request-get-domainname.scm"
 %use (web-respond) "./web-respond.scm"
@@ -514,35 +511,6 @@
       default-share-expiery-time))
 
 (define share-query web-share-query)
-
-(define (share-query/old query/encoded)
-  (define ctx (web-context/p))
-  (define callctx (web-callcontext/p))
-  (define req (callcontext-request callctx))
-
-  (define query (web-decode-query query/encoded))
-  (define query/split (string->words query))
-
-  (define admin? #f)
-  (define detailsaccess? #f) ;; TODO: maybe allow sometimes
-  (define share-longer-than-view? #f) ;; TODO: maybe allow sometimes
-  (define perm
-    (make-permission! ctx (get-share-duration) admin? detailsaccess? share-longer-than-view?))
-  (define idset (permission-idset perm))
-  (define token (permission-token perm))
-  (define location
-    (stringf "/query?q=~a&key=~a" query/encoded token))
-  (define hidden-query-location
-    (stringf "/query?q=%any&key=~a" token))
-  (define text
-    (get-share-query-text location hidden-query-location token))
-  (define (add-entry entry)
-    (define id (cdr (assoc keyword-id entry)))
-    (hashset-add! idset id))
-
-  (web-query/foreach query/split add-entry)
-
-  (web-respond text))
 
 (define (print-url url)
   (sxml->xml `(a (@ (href ,url)) ,url)))
