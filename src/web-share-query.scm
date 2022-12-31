@@ -114,9 +114,9 @@
      (web-make-communicator (web-context/p))
      `(whats
        (key ,key)
+       (make-temporary-permissions ,share-duration K)
        (query ,query/split)
        (entry _E)
-       (make-temporary-permissions ,share-duration K)
        (share-entry _E K)
        more (99999)
        )))
