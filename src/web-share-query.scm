@@ -39,6 +39,7 @@
 %use (web-make-communicator) "./web-make-communicator.scm"
 %use (web-request-get-domainname) "./web-request-get-domainname.scm"
 %use (web-respond) "./web-respond.scm"
+%use (web-static-error-message) "./web-static-error-message.scm"
 
 %for (COMPILER "guile")
 
@@ -96,7 +97,7 @@
       (catchu-case
        (string->seconds for-duration/s)
        (('bad-format-for-string->seconds . args)
-        ((static-error-message
+        ((web-static-error-message
           417
           (stringf "Bad `for-duration' value ~s" for-duration/s)))))
       default-share-expiery-time))

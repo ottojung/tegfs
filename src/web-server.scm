@@ -94,6 +94,7 @@
 %use (web-set-cookie-header) "./web-set-cookie-header.scm"
 %use (web-share-file/new) "./web-share-file.scm"
 %use (web-share-query) "./web-share-query.scm"
+%use (web-static-error-message) "./web-static-error-message.scm"
 %use (web-style) "./web-style.scm"
 %use (web-try-uri-decode) "./web-try-uri-decode.scm"
 %use (web-url-icon/svg) "./web-url-icon-svg.scm"
@@ -129,16 +130,11 @@
   (define xml (web-message-template message))
   (lambda _ (web-respond xml)))
 
-(define (static-error-message status message)
-  (define xml (web-message-template message))
-  (lambda _
-    (web-respond xml #:status status)))
-
 (define (login)
   (web-respond web-login-body))
 
 (define body-not-found
-  (static-error-message 417 "Send user body"))
+  (web-static-error-message 417 "Send user body"))
 
 (define (set-user-key! key)
   (set-callcontext-key! (web-callcontext/p) key))
@@ -189,7 +185,7 @@
       (web-respond web-login-failed-body)))
 
 (define permission-denied
-  (static-error-message 401 "Permission denied"))
+  (web-static-error-message 401 "Permission denied"))
 
 (define (parse-cookies-string cookies/string)
   (define _aa
@@ -224,16 +220,16 @@
     (permission-denied)))
 
 (define (error-tags-list tags)
-  (static-error-message 400 (string-append "Some tags are ambiguous: " (~a tags))))
+  (web-static-error-message 400 (string-append "Some tags are ambiguous: " (~a tags))))
 
 (define duplicates-tags-list
-  (static-error-message 400 "Tags contain duplicates"))
+  (web-static-error-message 400 "Tags contain duplicates"))
 
 (define (upload-success-page <target>)
   (if <target>
-      (static-error-message
+      (web-static-error-message
        200 (string-append "Uploaded successfully to filename: " <target>))
-      (static-error-message 200 "Uploaded successfully")))
+      (web-static-error-message 200 "Uploaded successfully")))
 
 (define (uploadcont)
   (define callctx (web-callcontext/p))
@@ -512,7 +508,7 @@
       (catchu-case
        (string->seconds for-duration/s)
        (('bad-format-for-string->seconds . args)
-        ((static-error-message
+        ((web-static-error-message
           417
           (stringf "Bad `for-duration' value ~s" for-duration/s)))))
       default-share-expiery-time))
@@ -557,7 +553,7 @@
   (define req (callcontext-request callctx))
   (define entry
     (or (tegfs-get/cached id)
-        (static-error-message
+        (web-static-error-message
          404 "Entry with that id is not found")))
   (define target-fullpath
     (entry-target-fullpath entry))
@@ -585,7 +581,7 @@
   (cond
    (query/encoded (share-query query/encoded))
    (id (share-id id))
-   (else (static-error-message 417 "Bad arguments to share"))))
+   (else (web-static-error-message 417 "Bad arguments to share"))))
 
 (define (details)
   (define ctx (web-context/p))
