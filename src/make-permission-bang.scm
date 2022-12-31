@@ -20,11 +20,9 @@
 %use (hashmap-set!) "./euphrates/hashmap.scm"
 %use (make-permission) "./make-permission.scm"
 %use (permission-token) "./permission.scm"
-%use (web-context/p) "./web-context-p.scm"
 %use (context-tokens) "./web-context.scm"
 
-(define (make-permission! expiery-time admin? detailsaccess? share-longer-than-view?)
-  (define ctx (web-context/p))
+(define (make-permission! ctx expiery-time admin? detailsaccess? share-longer-than-view?)
   (define tokens (context-tokens ctx))
   (define perm
     (make-permission

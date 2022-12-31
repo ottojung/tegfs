@@ -180,7 +180,7 @@
   (define share-longer-than-view? #t) ;; TODO: read from the config
 
   (if registered?
-      (let* ((perm (make-permission! default-login-expiery-time admin? detailsaccess? share-longer-than-view?))
+      (let* ((perm (make-permission! ctx default-login-expiery-time admin? detailsaccess? share-longer-than-view?))
              (token (permission-token perm)))
         (web-respond
          web-login-success-body
@@ -527,7 +527,8 @@
   (define admin? #f)
   (define detailsaccess? #f) ;; TODO: maybe allow sometimes
   (define share-longer-than-view? #f) ;; TODO: maybe allow sometimes
-  (define perm (make-permission! (get-share-duration) admin? detailsaccess? share-longer-than-view?))
+  (define perm
+    (make-permission! ctx (get-share-duration) admin? detailsaccess? share-longer-than-view?))
   (define idset (permission-idset perm))
   (define token (permission-token perm))
   (define location
