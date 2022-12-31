@@ -18,8 +18,8 @@
 %var web-bad-request
 
 %use (stringf) "./euphrates/stringf.scm"
-%use (web-respond) "./web-respond.scm"
+%use (web-static-error-message) "./web-static-error-message.scm"
 
 (define (web-bad-request fmt . args)
   (define str (apply stringf (cons fmt args)))
-  (web-respond str #:status 400))
+  (web-static-error-message 400 str))
