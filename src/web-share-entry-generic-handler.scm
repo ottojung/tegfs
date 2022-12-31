@@ -59,7 +59,7 @@
         ((profun-unbound-value? sharing-time)
          (profun-request-value T-name))
         ((not (and (number? sharing-time)
-                   (> 0 sharing-time)))
+                   (< 0 sharing-time)))
          (make-profun-error
           'type-error "Sharing type must be a number greater than 0"
           sharing-time))
