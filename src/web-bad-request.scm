@@ -22,4 +22,4 @@
 
 (define (web-bad-request fmt . args)
   (define str (apply stringf (cons fmt args)))
-  (web-static-error-message 400 str))
+  ((web-static-error-message 400 str)))
