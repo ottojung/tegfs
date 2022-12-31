@@ -23,6 +23,7 @@
 %use (profune-communicator-handle) "./euphrates/profune-communicator.scm"
 %use (raisu) "./euphrates/raisu.scm"
 %use (string->seconds) "./euphrates/string-to-seconds.scm"
+%use (string->words) "./euphrates/string-to-words.scm"
 %use (stringf) "./euphrates/stringf.scm"
 %use (~s) "./euphrates/tilda-s.scm"
 %use (words->string) "./euphrates/words-to-string.scm"
@@ -32,11 +33,21 @@
 %use (web-callcontext/p) "./web-callcontext-p.scm"
 %use (callcontext-request) "./web-callcontext.scm"
 %use (web-context/p) "./web-context-p.scm"
+%use (web-decode-query) "./web-decode-query.scm"
 %use (web-get-key) "./web-get-key.scm"
 %use (web-get-query) "./web-get-query.scm"
 %use (web-make-communicator) "./web-make-communicator.scm"
 %use (web-request-get-domainname) "./web-request-get-domainname.scm"
 %use (web-respond) "./web-respond.scm"
+
+%for (COMPILER "guile")
+
+(use-modules (sxml simple))
+
+%end
+
+(define (print-url url)
+  (sxml->xml `(a (@ (href ,url)) ,url)))
 
 (define (get-share-query-text callctx location hidden-query-location token)
   (define req (callcontext-request callctx))
@@ -94,6 +105,8 @@
   (define callctx (web-callcontext/p))
   (define key (web-get-key callctx))
   (define share-duration (get-share-duration))
+  (define query (web-decode-query query/encoded))
+  (define query/split (string->words query))
 
   (define result
     (profune-communicator-handle
