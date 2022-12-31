@@ -62,10 +62,10 @@ $(TEST_ROOT): dist/exampleroot.tar
 	rm -f $(TEST_ROOT)/categorization.tegfs.txt
 	rm -f $(TEST_ROOT)/config.tegfs.lisp
 
-$(TEST_ROOT)/categorization.tegfs.txt:
+$(TEST_ROOT)/categorization.tegfs.txt: test/make-example-categorization.sh
 	TEST_ROOT=$(TEST_ROOT) sh test/make-example-categorization.sh
 
-$(TEST_ROOT)/config.tegfs.lisp:
+$(TEST_ROOT)/config.tegfs.lisp: test/make-example-config.sh
 	TEST_ROOT=$(TEST_ROOT) sh test/make-example-config.sh
 
 test-preview-daemon: dist/tegfs $(TEST_FILES)
