@@ -90,7 +90,7 @@
 %use (web-sendfile) "./web-sendfile.scm"
 %use (web-set-cookie-header) "./web-set-cookie-header.scm"
 %use (web-share-file/new) "./web-share-file.scm"
-%use (web-share-query) "./web-share-query.scm"
+%use (web-share-query) "./web-share.scm"
 %use (web-static-error-message) "./web-static-error-message.scm"
 %use (web-style) "./web-style.scm"
 %use (web-try-uri-decode) "./web-try-uri-decode.scm"
