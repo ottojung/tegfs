@@ -29,14 +29,17 @@
 %use (~s) "./euphrates/tilda-s.scm"
 %use (words->string) "./euphrates/words-to-string.scm"
 %use (default-share-expiery-time) "./default-share-expiery-time.scm"
+%use (filemap-ref-by-senderid) "./filemap.scm"
 %use (get-random-access-token) "./get-random-access-token.scm"
 %use (web-bad-request) "./web-bad-request.scm"
 %use (web-callcontext/p) "./web-callcontext-p.scm"
 %use (callcontext-request) "./web-callcontext.scm"
 %use (web-context/p) "./web-context-p.scm"
+%use (context-filemap/2) "./web-context.scm"
 %use (web-decode-query) "./web-decode-query.scm"
 %use (web-get-key) "./web-get-key.scm"
 %use (web-get-query) "./web-get-query.scm"
+%use (web-get-sharedinfo-url) "./web-get-sharedinfo-url.scm"
 %use (web-make-communicator) "./web-make-communicator.scm"
 %use (web-request-get-domainname) "./web-request-get-domainname.scm"
 %use (web-respond) "./web-respond.scm"
@@ -60,6 +63,12 @@
     (print-url url))
   (define (print-newline)
     (display "<br>\n"))
+  (define (print-line/fullink title url)
+    (display title)
+    (display ":")
+    (print-newline)
+    (print-url url)
+    (print-newline))
   (define (print-line title url)
     (display title)
     (display ":")
@@ -70,8 +79,8 @@
   (with-output-to-string
     (lambda _
       (parameterize ((current-error-port (current-output-port)))
-        (print-line "Default link" location)
-        (print-line "Hidden query link" hidden-query-location)
+        (print-line/fullink "Default link" location)
+        (print-line/fullink "Hidden query link" hidden-query-location)
         (print-newline) (print-newline)
         (display "Second then forth:")
         (print-newline)
@@ -103,17 +112,21 @@
           (stringf "Bad `for-duration' value ~s" for-duration/s)))))
       default-share-expiery-time))
 
-(define (web-share-cont callctx query/encoded query/split result)
+(define (web-share-cont ctx callctx query/encoded result)
   (if (equal? (car result) 'its)
       (let ()
+        (define req (callcontext-request callctx))
+        (define domainname (web-request-get-domainname req))
         (define equals (cadr (cadr result)))
         (define first-binding (car equals))
         (define token
           (assq-or 'K first-binding (raisu 'unexpected-result-from-backend equals)))
         (define location
-          (stringf "/query?q=~a&key=~a" query/encoded token))
+          (if query/encoded
+              (stringf "~a/query?q=~a&key=~a" domainname query/encoded token)
+              (assq-or 'FL first-binding (raisu 'unexpected-result-from-backend equals))))
         (define hidden-query-location
-          (stringf "/query?q=%any&key=~a" token))
+          (stringf "~a/query?q=%any&key=~a" domainname token))
         (define text
           (get-share-query-text callctx location hidden-query-location token))
         (web-respond text))
@@ -122,6 +135,7 @@
        (words->string (map ~s result)))))
 
 (define (web-share-query query/encoded)
+  (define ctx (web-context/p))
   (define callctx (web-callcontext/p))
   (define key (web-get-key callctx))
   (define share-duration (get-share-duration))
@@ -140,9 +154,10 @@
        more (99999)
        )))
 
-  (web-share-cont callctx query/encoded query/split result))
+  (web-share-cont ctx callctx query/encoded result))
 
 (define (web-share-id id)
+  (define ctx (web-context/p))
   (define callctx (web-callcontext/p))
   (define key (web-get-key callctx))
   (define share-duration (get-share-duration))
@@ -158,7 +173,9 @@
        (entry _E)
        (entry-field _E "id" ,id)
        (share-entry _E K)
+       (share-full _E ,share-duration _F)
+       (link-shared _F FL)
        more (99999)
        )))
 
-  (web-share-cont callctx "%any" query/split result))
+  (web-share-cont ctx callctx #f result))
