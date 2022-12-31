@@ -23,7 +23,8 @@
 %use (profun-op-value) "./euphrates/profun-op-value.scm"
 %use (profun-standard-handler) "./euphrates/profun-standard-handler.scm"
 %use (entry-field-handler) "./entry-field-handler.scm"
-%use (query-diropen?/p query-dirpreview?/p query-split/p tegfs-key/p) "./talk-parameters.scm"
+%use (query-diropen?/p query-dirpreview?/p query-split/p) "./talk-parameters.scm"
+%use (tegfs-key-handler) "./tegfs-key-handler.scm"
 %use (query-entry-handler) "./tegfs-query.scm"
 %use (web-make-context) "./web-make-context.scm"
 
@@ -31,17 +32,17 @@
   (define context (web-make-context)) ;; TODO: make a non-web context
   (tegfs-make-server-handler/c context))
 
-(define (tegfs-make-server-handler/c context)
+(define (tegfs-make-server-handler/c tegfs-context)
   (profun-handler-extend
    profun-standard-handler
 
    (value (profun-op-value '() '()))
 
-   (entry (query-entry-handler context))
+   (entry (query-entry-handler tegfs-context))
    (entry-field entry-field-handler)
 
    (query (instantiate-profun-parameter query-split/p))
-   (key (instantiate-profun-parameter tegfs-key/p))
+   (key (tegfs-key-handler tegfs-context))
    (diropen? (instantiate-profun-parameter query-diropen?/p))
    (dirpreview? (instantiate-profun-parameter query-dirpreview?/p))
 

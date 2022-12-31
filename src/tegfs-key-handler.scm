@@ -15,21 +15,25 @@
 
 %run guile
 
-%var tegfs-permissions/p
-%var query-split/p
-%var query-filemap/2/p
-%var query-diropen?/p
-%var query-dirpreview?/p
+%var tegfs-key-handler
 
-%use (make-profun-parameter) "./euphrates/profun-op-parameter.scm"
+%use (profun-set-parameter) "./euphrates/profun-accept.scm"
+%use (profun-op-envlambda) "./euphrates/profun-op-envlambda.scm"
+%use (profun-request-value) "./euphrates/profun-request-value.scm"
+%use (profun-bound-value?) "./euphrates/profun-value.scm"
+%use (tegfs-permissions/p) "./talk-parameters.scm"
+%use (tegfs-login-by-key) "./tegfs-login-by-key.scm"
 
-(define tegfs-permissions/p
-  (make-profun-parameter))
-(define query-split/p
-  (make-profun-parameter))
-(define query-filemap/2/p
-  (make-profun-parameter))
-(define query-diropen?/p
-  (make-profun-parameter))
-(define query-dirpreview?/p
-  (make-profun-parameter))
+(define tegfs-key-handler
+  (lambda (tegfs-context)
+    (profun-op-envlambda
+     (ctx env (K-name))
+
+     (define key (env K-name))
+
+     (cond
+      ((profun-bound-value? key)
+       (let ((perm (tegfs-login-by-key tegfs-context key)))
+         (profun-set-parameter (tegfs-permissions/p <- perm))))
+      (else
+       (profun-request-value K-name))))))
