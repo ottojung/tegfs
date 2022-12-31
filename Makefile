@@ -71,6 +71,12 @@ $(TEST_ROOT)/config.tegfs.lisp: test/make-example-config.sh
 test-preview-daemon: dist/tegfs $(TEST_FILES)
 	TEGFS_ROOT=$(TEST_ROOT) TEST_ROOT=$(TEST_ROOT) sh ./scripts/preview-maker-daemon.sh
 
+test-make-previews: dist/tegfs $(TEST_FILES)
+	TEGFS_ROOT=$(TEST_ROOT) TEST_ROOT=$(TEST_ROOT) sh ./scripts/make-all-previews.sh
+
+test-serve: dist/tegfs $(TEST_FILES) test-make-previews
+	$(TEST_FS) serve
+
 test1: dist/tegfs $(TEST_FILES)
 	touch $(TEST_ROOT)/hi.txt
 	echo hi | $(TEST_FS) add \
