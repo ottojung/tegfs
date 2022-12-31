@@ -45,8 +45,8 @@
             web-context perm entry generic-fullpath sharing-time))
          (define vid (and info (sharedinfo-senderid info)))
          (if info
-             (make-profun-error 'cannot-share-for-that-long)
-             (profun-set (R-name <- vid))))
+             (profun-set (R-name <- vid))
+             (make-profun-error 'cannot-share-for-that-long)))
 
        (define (try entry)
          (define target-fullpath (entry-target-fullpath entry))
