@@ -18,6 +18,7 @@
 %var web-make-server-handler
 
 %use (profun-handler-extend) "./euphrates/profun-handler.scm"
+%use (make-temporary-permissions-handler) "./make-temporary-permissions-handler.scm"
 %use (shared-entry-contains-handler) "./shared-entry-contains-handler.scm"
 %use (tegfs-make-server-handler/c) "./tegfs-server-handler.scm"
 %use (web-link-shared-handler) "./web-link-shared-handler.scm"
@@ -35,5 +36,6 @@
 
    (link-shared (web-link-shared-handler web-context))
    (shared-entry-contains (shared-entry-contains-handler web-context))
+   (make-temporary-permissions (make-temporary-permissions-handler web-context))
 
    ))
