@@ -38,22 +38,28 @@
            (profun-ctx-set iter)))
       (profun-reject)))
 
-(define (return-field-value entry field result-name)
-  (define ret
-    (bool->profun-result
-     (if (and (list? entry)
-              (list-and-map pair? entry))
-         (let ((field* (cond
-                        ((symbol? field) field)
-                        ((string? field) (string->symbol field))
-                        (else #f))))
-           (if field*
-               (assq-or field* entry (profun-reject))
-               (make-profun-error 'not-a-valid-field field)))
-         (make-profun-error 'not-a-valid-entry entry))))
+(define (get-field-value entry field)
+  (bool->profun-result
+   (if (and (list? entry)
+            (list-and-map pair? entry))
+       (let ((field* (cond
+                      ((symbol? field) field)
+                      ((string? field) (string->symbol field))
+                      (else #f))))
+         (if field*
+             (assq-or field* entry (profun-reject))
+             (make-profun-error 'not-a-valid-field field)))
+       (make-profun-error 'not-a-valid-entry entry))))
 
+(define (return-field-value entry field result-name)
+  (define ret (get-field-value entry field))
   (if (profun-answer? ret) ret
       (profun-set (result-name <- ret))))
+
+(define (check-field-value entry field result)
+  (define ret (get-field-value entry field))
+  (if (profun-answer? ret) ret
+      (bool->profun-result (equal? ret result))))
 
 (define (enumerate-fields ctx entry field-name result-name)
   (define rest (or ctx entry))
@@ -80,6 +86,11 @@
           (profun-bound-value? field)
           (profun-unbound-value? result))
      (return-field-value entry field result-name))
+
+    ((and (profun-bound-value? entry)
+          (profun-bound-value? field)
+          (profun-bound-value? result))
+     (check-field-value entry field result-name))
 
     ((and (profun-bound-value? entry)
           (profun-unbound-value? field)
