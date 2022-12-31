@@ -93,6 +93,7 @@
 %use (web-sendfile) "./web-sendfile.scm"
 %use (web-set-cookie-header) "./web-set-cookie-header.scm"
 %use (web-share-file/new) "./web-share-file.scm"
+%use (web-share-query) "./web-share-query.scm"
 %use (web-style) "./web-style.scm"
 %use (web-try-uri-decode) "./web-try-uri-decode.scm"
 %use (web-url-icon/svg) "./web-url-icon-svg.scm"
@@ -516,7 +517,9 @@
           (stringf "Bad `for-duration' value ~s" for-duration/s)))))
       default-share-expiery-time))
 
-(define (share-query query/encoded)
+(define share-query web-share-query)
+
+(define (share-query/old query/encoded)
   (define ctx (web-context/p))
   (define callctx (web-callcontext/p))
   (define req (callcontext-request callctx))
