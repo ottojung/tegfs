@@ -22,7 +22,7 @@
 %use (profun-meta-key) "./euphrates/profun-meta-key.scm"
 %use (profun-op-envlambda) "./euphrates/profun-op-envlambda.scm"
 %use (profun-request-value) "./euphrates/profun-request-value.scm"
-%use (profun-bound-value? profun-unbound-value?) "./euphrates/profun-value.scm"
+%use (profun-unbound-value?) "./euphrates/profun-value.scm"
 %use (entry-target-fullpath) "./entry-target-fullpath.scm"
 %use (permission?) "./permission.scm"
 %use (sharedinfo-senderid) "./sharedinfo.scm"
@@ -45,8 +45,10 @@
          (define info
            (web-share-file/dont-link-yet
             web-context perm entry generic-fullpath sharing-time))
-         (define vid (sharedinfo-senderid info))
-         (profun-set (R-name <- vid)))
+         (define vid (and info (sharedinfo-senderid info)))
+         (if info
+             (make-profun-error 'cannot-share-for-that-long)
+             (profun-set (R-name <- vid))))
 
        (define (try entry)
          (define target-fullpath (entry-target-fullpath entry))
