@@ -24,8 +24,8 @@
 %use (profun-standard-handler) "./euphrates/profun-standard-handler.scm"
 %use (entry-field-handler) "./entry-field-handler.scm"
 %use (query-diropen?/p query-dirpreview?/p query-split/p) "./talk-parameters.scm"
+%use (query-entry-handler) "./tegfs-entry-handler.scm"
 %use (tegfs-key-handler) "./tegfs-key-handler.scm"
-%use (query-entry-handler) "./tegfs-query.scm"
 %use (web-make-context) "./web-make-context.scm"
 
 (define (tegfs-make-server-handler)
