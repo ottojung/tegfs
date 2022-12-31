@@ -66,7 +66,7 @@
         'user-not-found
         "Cannot find a user with that key"))
       ((and id with-idset)
-       (hashset-add! idset id)
+       (hashset-add! with-idset id)
        (profun-accept))
       (else
        (raisu 'impossible-case))))))
