@@ -19,23 +19,40 @@
 
 %use (profun-set) "./euphrates/profun-accept.scm"
 %use (make-profun-error) "./euphrates/profun-error.scm"
-%use (profun-op-lambda) "./euphrates/profun-op-lambda.scm"
+%use (profun-op-envlambda) "./euphrates/profun-op-envlambda.scm"
 %use (profun-request-value) "./euphrates/profun-request-value.scm"
-%use (profun-bound-value?) "./euphrates/profun-value.scm"
+%use (profun-bound-value? profun-unbound-value?) "./euphrates/profun-value.scm"
 %use (make-permission!) "./make-permission-bang.scm"
+%use (permission-time-left) "./permission-time-left.scm"
 %use (permission-token) "./permission.scm"
+%use (tegfs-permissions/p) "./talk-parameters.scm"
 
 (define make-temporary-permissions-handler
   (lambda (web-context)
-    (profun-op-lambda
-     (ctx (D P) (D-name K-name))
+    (profun-op-envlambda
+     (ctx env (D-name K-name))
+
+     (define D (env D-name))
+     (define K (env K-name))
+     (define perm (tegfs-permissions/p))
+     (define sharing-time-cap
+       (and perm (permission-time-left perm)))
 
      (cond
-      ((profun-bound-value? P)
-       (make-profun-error 'result-variable-should-be-unbound P))
-      ((profun-bound-value? D)
+      ((profun-bound-value? K)
+       (make-profun-error 'result-variable-should-be-unbound K))
+      ((profun-unbound-value? D)
+       (profun-request-value D-name))
+      ((not (and (number? D)
+                 (< 0 D)))
+       ;; TODO: accept strings as in string->seconds
+       (make-profun-error 'type-error "Duration must be a positive number" D))
+      ((not perm)
+       (make-profun-error 'not-authorized))
+      (else
        (let ()
-         (define live-duration D)
+         (define live-duration-0 D)
+         (define live-duration (min sharing-time-cap live-duration-0))
          (define admin? #f)
          (define detailsaccess? #f) ;; TODO: maybe allow sometimes
          (define share-longer-than-view? #f) ;; TODO: maybe allow sometimes
@@ -43,6 +60,4 @@
            (make-permission! web-context live-duration admin? detailsaccess? share-longer-than-view?))
          (define its-key (permission-token perm))
          (profun-set
-          (K-name <- its-key))))
-      (else
-       (profun-request-value D-name))))))
+          (K-name <- its-key))))))))
