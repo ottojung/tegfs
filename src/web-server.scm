@@ -19,7 +19,6 @@
 
 %use (append-posix-path) "./euphrates/append-posix-path.scm"
 %use (catch-any) "./euphrates/catch-any.scm"
-%use (catchu-case) "./euphrates/catchu-case.scm"
 %use (appcomp comp) "./euphrates/comp.scm"
 %use (define-tuple) "./euphrates/define-tuple.scm"
 %use (directory-files) "./euphrates/directory-files.scm"
@@ -38,7 +37,6 @@
 %use (string-split-3) "./euphrates/string-split-3.scm"
 %use (string-split/simple) "./euphrates/string-split-simple.scm"
 %use (string-strip) "./euphrates/string-strip.scm"
-%use (string->seconds) "./euphrates/string-to-seconds.scm"
 %use (stringf) "./euphrates/stringf.scm"
 %use (~a) "./euphrates/tilda-a.scm"
 %use (time-get-current-unixtime) "./euphrates/time-get-current-unixtime.scm"
@@ -46,12 +44,10 @@
 %use (tegfs-add) "./add.scm"
 %use (current-time/p) "./current-time-p.scm"
 %use (default-login-expiery-time) "./default-login-expiery-time.scm"
-%use (default-share-expiery-time) "./default-share-expiery-time.scm"
 %use (tegfs-process-categorization-text) "./edit-tags.scm"
 %use (entry-target-fullpath) "./entry-target-fullpath.scm"
 %use (filemap-delete-by-recepientid! filemap-ref-by-recepientid) "./filemap.scm"
 %use (get-preview-path) "./get-preview-path.scm"
-%use (get-random-access-token) "./get-random-access-token.scm"
 %use (get-random-basename) "./get-random-basename.scm"
 %use (get-root) "./get-root.scm"
 %use (tegfs-get/cached) "./get.scm"
@@ -72,7 +68,6 @@
 %use (web-get-filemap/2) "./web-get-filemap-2.scm"
 %use (web-get-permissions) "./web-get-permissions.scm"
 %use (web-get-query) "./web-get-query.scm"
-%use (web-get-sharedinfo-url) "./web-get-sharedinfo-url.scm"
 %use (web-login-body) "./web-login-body.scm"
 %use (web-login-failed-body) "./web-login-failed-body.scm"
 %use (web-login-success-body) "./web-login-success-body.scm"
@@ -84,12 +79,10 @@
 %use (web-preview-height) "./web-preview-height.scm"
 %use (web-preview-width) "./web-preview-width.scm"
 %use (web-query) "./web-query.scm"
-%use (web-request-get-domainname) "./web-request-get-domainname.scm"
 %use (web-respond) "./web-respond.scm"
 %use (web-return!) "./web-return-bang.scm"
 %use (web-sendfile) "./web-sendfile.scm"
 %use (web-set-cookie-header) "./web-set-cookie-header.scm"
-%use (web-share-file/new) "./web-share-file.scm"
 %use (web-share-id web-share-query) "./web-share.scm"
 %use (web-static-error-message) "./web-static-error-message.scm"
 %use (web-style) "./web-style.scm"
@@ -457,90 +450,8 @@
        (file-delete full-name)))
    (directory-files sharedir)))
 
-(define (get-share-query-text location hidden-query-location token)
-  (define callctx (web-callcontext/p))
-  (define req (callcontext-request callctx))
-  (define domainname
-    (web-request-get-domainname req))
-  (define (print-link url0)
-    (define url (string-append domainname url0))
-    (print-url url))
-  (define (print-newline)
-    (display "<br>\n"))
-  (define (print-line title url)
-    (display title)
-    (display ":")
-    (print-newline)
-    (print-link url)
-    (print-newline))
-
-  (with-output-to-string
-    (lambda _
-      (parameterize ((current-error-port (current-output-port)))
-        (print-line "Default link" location)
-        (print-line "Hidden query link" hidden-query-location)
-        (print-newline) (print-newline)
-        (display "Second then forth:")
-        (print-newline)
-        (print-link
-         (stringf "/query?q=ll&key=~a" (get-random-access-token)))
-        (print-newline)
-        (print-link
-         (stringf "/query?q=ll&key=~a" token))
-        (print-newline)
-        (print-link
-         (stringf "/query?q=ll&key=~a" (get-random-access-token)))
-        (print-newline)
-        (print-link "/query?q=%any")
-        (print-newline)
-        (print-link
-         (stringf "/query?q=ll&key=~a" (get-random-access-token)))))))
-
-(define (get-share-duration)
-  (define ctxq (web-get-query))
-  (define for-duration/s
-    (hashmap-ref ctxq 'for-duration #f))
-
-  (if for-duration/s
-      (catchu-case
-       (string->seconds for-duration/s)
-       (('bad-format-for-string->seconds . args)
-        ((web-static-error-message
-          417
-          (stringf "Bad `for-duration' value ~s" for-duration/s)))))
-      default-share-expiery-time))
-
 (define share-query web-share-query)
 (define share-id web-share-id)
-
-(define (print-url url)
-  (sxml->xml `(a (@ (href ,url)) ,url)))
-
-(define (share-id/old id)
-  (define ctx (web-context/p))
-  (define callctx (web-callcontext/p))
-  (define req (callcontext-request callctx))
-  (define entry
-    (or (tegfs-get/cached id)
-        (web-static-error-message
-         404 "Entry with that id is not found")))
-  (define target-fullpath
-    (entry-target-fullpath entry))
-  (define for-duration
-    (get-share-duration))
-
-  (define perm (web-get-permissions))
-  (define make-symlink? #t)
-  (define info
-    (web-share-file/new ctx perm entry target-fullpath for-duration make-symlink?))
-  (define location
-    (web-get-sharedinfo-url ctx #f info))
-  (define text
-    (with-output-to-string
-      (lambda _
-        (print-url location))))
-
-  (web-respond text))
 
 (define (share)
   (define ctxq (web-get-query))
