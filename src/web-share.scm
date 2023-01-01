@@ -15,8 +15,7 @@
 
 %run guile
 
-%var web-share-query
-%var web-share-id
+%var web-share
 
 %use (assq-or) "./euphrates/assq-or.scm"
 %use (catchu-case) "./euphrates/catchu-case.scm"
@@ -30,6 +29,7 @@
 %use (words->string) "./euphrates/words-to-string.scm"
 %use (default-share-expiery-time) "./default-share-expiery-time.scm"
 %use (get-random-access-token) "./get-random-access-token.scm"
+%use (keyword-id) "./keyword-id.scm"
 %use (web-bad-request) "./web-bad-request.scm"
 %use (web-callcontext/p) "./web-callcontext-p.scm"
 %use (callcontext-request) "./web-callcontext.scm"
@@ -183,3 +183,13 @@
        )))
 
   (web-share-cont ctx callctx #f result))
+
+(define (web-share)
+  (define ctxq (web-get-query))
+  (define query/encoded (hashmap-ref ctxq 'q #f))
+  (define id (hashmap-ref ctxq keyword-id #f))
+
+  (cond
+   (query/encoded (web-share-query query/encoded))
+   (id (web-share-id id))
+   (else (web-static-error-message 417 "Bad arguments to share"))))

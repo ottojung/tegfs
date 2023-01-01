@@ -83,7 +83,7 @@
 %use (web-return!) "./web-return-bang.scm"
 %use (web-sendfile) "./web-sendfile.scm"
 %use (web-set-cookie-header) "./web-set-cookie-header.scm"
-%use (web-share-id web-share-query) "./web-share.scm"
+%use (web-share) "./web-share.scm"
 %use (web-static-error-message) "./web-static-error-message.scm"
 %use (web-style) "./web-style.scm"
 %use (web-try-uri-decode) "./web-try-uri-decode.scm"
@@ -450,19 +450,6 @@
        (file-delete full-name)))
    (directory-files sharedir)))
 
-(define share-query web-share-query)
-(define share-id web-share-id)
-
-(define (share)
-  (define ctxq (web-get-query))
-  (define query/encoded (hashmap-ref ctxq 'q #f))
-  (define id (hashmap-ref ctxq keyword-id #f))
-
-  (cond
-   (query/encoded (share-query query/encoded))
-   (id (share-id id))
-   (else (web-static-error-message 417 "Bad arguments to share"))))
-
 (define (details)
   (define ctx (web-context/p))
   (define ctxq (web-get-query))
@@ -513,7 +500,7 @@
     (/preview ,preview)
     (/previewunknown ,previewunknown)
     (/previewunknownurl ,previewunknownurl)
-    (/share ,share public)
+    (/share ,web-share public)
     ))
 
 (define handlers-funcmap
