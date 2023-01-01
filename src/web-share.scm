@@ -29,17 +29,14 @@
 %use (~s) "./euphrates/tilda-s.scm"
 %use (words->string) "./euphrates/words-to-string.scm"
 %use (default-share-expiery-time) "./default-share-expiery-time.scm"
-%use (filemap-ref-by-senderid) "./filemap.scm"
 %use (get-random-access-token) "./get-random-access-token.scm"
 %use (web-bad-request) "./web-bad-request.scm"
 %use (web-callcontext/p) "./web-callcontext-p.scm"
 %use (callcontext-request) "./web-callcontext.scm"
 %use (web-context/p) "./web-context-p.scm"
-%use (context-filemap/2) "./web-context.scm"
 %use (web-decode-query) "./web-decode-query.scm"
 %use (web-get-key) "./web-get-key.scm"
 %use (web-get-query) "./web-get-query.scm"
-%use (web-get-sharedinfo-url) "./web-get-sharedinfo-url.scm"
 %use (web-make-communicator) "./web-make-communicator.scm"
 %use (web-request-get-domainname) "./web-request-get-domainname.scm"
 %use (web-respond) "./web-respond.scm"
@@ -112,24 +109,31 @@
           (stringf "Bad `for-duration' value ~s" for-duration/s)))))
       default-share-expiery-time))
 
+(define (web-share-cont3 ctx callctx query/encoded equals)
+  (define req (callcontext-request callctx))
+  (define domainname (web-request-get-domainname req))
+  (define first-binding (car equals))
+  (define token
+    (assq-or 'K first-binding (raisu 'unexpected-result-from-backend equals)))
+  (define location
+    (if query/encoded
+        (stringf "~a/query?q=~a&key=~a" domainname query/encoded token)
+        (assq-or 'FL first-binding (raisu 'unexpected-result-from-backend equals))))
+  (define hidden-query-location
+    (stringf "~a/query?q=%any&key=~a" domainname token))
+  (define text
+    (get-share-query-text callctx location hidden-query-location token))
+  (web-respond text))
+
+(define (web-share-cont2 ctx callctx query/encoded result)
+  (define equals (cadr (cadr result)))
+  (if (null? equals)
+      (web-bad-request "Permission denied")
+      (web-share-cont3 ctx callctx query/encoded equals)))
+
 (define (web-share-cont ctx callctx query/encoded result)
   (if (equal? (car result) 'its)
-      (let ()
-        (define req (callcontext-request callctx))
-        (define domainname (web-request-get-domainname req))
-        (define equals (cadr (cadr result)))
-        (define first-binding (car equals))
-        (define token
-          (assq-or 'K first-binding (raisu 'unexpected-result-from-backend equals)))
-        (define location
-          (if query/encoded
-              (stringf "~a/query?q=~a&key=~a" domainname query/encoded token)
-              (assq-or 'FL first-binding (raisu 'unexpected-result-from-backend equals))))
-        (define hidden-query-location
-          (stringf "~a/query?q=%any&key=~a" domainname token))
-        (define text
-          (get-share-query-text callctx location hidden-query-location token))
-        (web-respond text))
+      (web-share-cont2 ctx callctx query/encoded result)
       (web-bad-request
        "Could not share the query: ~a"
        (words->string (map ~s result)))))

@@ -513,7 +513,7 @@
     (/preview ,preview)
     (/previewunknown ,previewunknown)
     (/previewunknownurl ,previewunknownurl)
-    (/share ,share)
+    (/share ,share public)
     ))
 
 (define handlers-funcmap
