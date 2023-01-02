@@ -40,7 +40,6 @@
 %use (web-make-communicator) "./web-make-communicator.scm"
 %use (web-request-get-domainname) "./web-request-get-domainname.scm"
 %use (web-respond) "./web-respond.scm"
-%use (web-static-error-message) "./web-static-error-message.scm"
 
 %for (COMPILER "guile")
 
@@ -104,9 +103,7 @@
       (catchu-case
        (string->seconds for-duration/s)
        (('bad-format-for-string->seconds . args)
-        ((web-static-error-message
-          417
-          (stringf "Bad `for-duration' value ~s" for-duration/s)))))
+        (web-bad-request "Bad `for-duration' value ~s" for-duration/s)))
       default-share-expiery-time))
 
 (define (web-share-cont3 ctx callctx query/encoded equals)
@@ -192,4 +189,4 @@
   (cond
    (query/encoded (web-share-query query/encoded))
    (id (web-share-id id))
-   (else (web-static-error-message 417 "Bad arguments to share"))))
+   (else (web-bad-request "Bad arguments to share"))))
