@@ -26,7 +26,7 @@
   (let loop ((info info))
     (define entry (sharedinfo-entry info))
     (define parent-vid
-      (assq-or keyword-entry-parent-directory-senderid entry))
+      (assq-or keyword-entry-parent-directory-senderid entry #f))
     (define next
       (and parent-vid (filemap-ref-by-senderid filemap/2 parent-vid #f)))
     (if next (loop next)
