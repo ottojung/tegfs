@@ -59,14 +59,18 @@
   (define callctx (web-callcontext/p))
   (define ctxq (web-get-query))
   (define vid (hashmap-ref ctxq 'vid #f))
+  (define id (hashmap-ref ctxq 'id #f))
   (define key (web-get-key callctx))
 
   (define result
     (profune-communicator-handle
      (web-make-communicator (web-context/p))
-     `(whats
+     `(listen
+       ((goal X) (senderid->entry ,vid X))
+       ((goal X) (query ("%any")) (entry X) (entry-field X "id" ,id))
+       whats
        (key ,key)
-       (senderid->entry ,vid E)
+       (goal E)
        )))
 
   (cond
