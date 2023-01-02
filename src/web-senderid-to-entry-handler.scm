@@ -19,7 +19,7 @@
 
 %use (profun-set) "./euphrates/profun-accept.scm"
 %use (make-profun-error) "./euphrates/profun-error.scm"
-%use (profun-op-lambda) "./euphrates/profun-op-lambda.scm"
+%use (profun-op-envlambda) "./euphrates/profun-op-envlambda.scm"
 %use (profun-reject) "./euphrates/profun-reject.scm"
 %use (profun-bound-value? profun-unbound-value?) "./euphrates/profun-value.scm"
 %use (raisu) "./euphrates/raisu.scm"
@@ -34,10 +34,10 @@
   (lambda (web-context)
     (define filemap/2 (context-filemap/2 web-context))
 
-    (profun-op-lambda
-     (ctx (senderid entry)
-          (senderid-name entry-name))
+    (profun-op-envlambda
+     (ctx env (senderid-name entry-name))
 
+     (define senderid (env senderid-name))
      (define info (filemap-ref-by-senderid filemap/2 senderid #f))
      (define perm (tegfs-permissions/p))
 
@@ -48,7 +48,7 @@
       ((profun-unbound-value? senderid)
        (make-profun-error 'type-error "Senderid must be given"))
 
-      ((profun-bound-value? entry)
+      ((profun-bound-value? (env entry-name))
        (make-profun-error 'type-error "Entry variable be free"))
 
       ((not info)
