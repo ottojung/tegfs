@@ -1,4 +1,4 @@
-;;;; Copyright (C) 2022  Otto Jung
+;;;; Copyright (C) 2023  Otto Jung
 ;;;;
 ;;;; This program is free software: you can redistribute it and/or modify
 ;;;; it under the terms of the GNU Affero General Public License as published
@@ -30,12 +30,6 @@
 %use (keyword-title) "./keyword-title.scm"
 %use (sharedinfo-entry) "./sharedinfo.scm"
 %use (context-filemap/2) "./web-context.scm"
-
-(define target-fields
-  (list keyword-target
-        keyword-title
-        keyword-entry-parent-directory ;; FIXME: remove non-target fields
-        keyword-entry-registry-path))
 
 (define web-senderid->entry-handler
   (lambda (web-context)

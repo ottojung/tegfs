@@ -1,4 +1,4 @@
-;;;; Copyright (C) 2022  Otto Jung
+;;;; Copyright (C) 2022, 2023  Otto Jung
 ;;;;
 ;;;; This program is free software: you can redistribute it and/or modify
 ;;;; it under the terms of the GNU Affero General Public License as published
@@ -24,13 +24,9 @@
 %use (profun-op-envlambda) "./euphrates/profun-op-envlambda.scm"
 %use (profun-reject) "./euphrates/profun-reject.scm"
 %use (profun-bound-value? profun-unbound-value?) "./euphrates/profun-value.scm"
-%use (has-access-for-entry-details? has-access-for-entry-target?) "./access.scm"
+%use (entry-limit-fields) "./entry-limit-fields.scm"
 %use (keyword-diropen) "./keyword-diropen.scm"
 %use (keyword-dirpreview) "./keyword-dirpreview.scm"
-%use (keyword-entry-parent-directory) "./keyword-entry-parent-directory.scm"
-%use (keyword-entry-registry-path) "./keyword-entry-registry-path.scm"
-%use (keyword-target) "./keyword-target.scm"
-%use (keyword-title) "./keyword-title.scm"
 %use (query-diropen?/p query-dirpreview?/p query-split/p tegfs-permissions/p) "./talk-parameters.scm"
 %use (tegfs-query/open) "./tegfs-query-open.scm"
 %use (context-filemap/2) "./web-context.scm"
@@ -83,15 +79,14 @@
             (define iter0 (tegfs-query/open opening-properties query))
             (define (iter)
               (define entry0 (iter0))
+              (define limited (entry-limit-fields filemap/2 perm entry0))
               (cond
                ((equal? #f entry0)
                 (values #f #f))
-               ((has-access-for-entry-details? filemap/2 perm entry0)
+               ((= (length entry0) (length limited))
                 (values entry0 #f))
-               ((has-access-for-entry-target? filemap/2 perm entry0)
-                (values
-                 (filter (lambda (p) (memq (car p) target-fields)) entry0)
-                 entry0))
+               ((not (null? limited))
+                (values limited entry0))
                (else (iter))))
 
             (cond
@@ -104,9 +99,3 @@
                     val))))
 
             ))))))
-
-(define target-fields
-  (list keyword-target
-        keyword-title
-        keyword-entry-parent-directory ;; FIXME: remove non-target fields
-        keyword-entry-registry-path))
