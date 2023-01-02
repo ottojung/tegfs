@@ -40,11 +40,11 @@
 %use (stringf) "./euphrates/stringf.scm"
 %use (~a) "./euphrates/tilda-a.scm"
 %use (time-get-current-unixtime) "./euphrates/time-get-current-unixtime.scm"
-%use (has-access-for-entry-details?) "./access.scm"
 %use (tegfs-add) "./add.scm"
 %use (current-time/p) "./current-time-p.scm"
 %use (default-login-expiery-time) "./default-login-expiery-time.scm"
 %use (tegfs-process-categorization-text) "./edit-tags.scm"
+%use (entry-limit-fields) "./entry-limit-fields.scm"
 %use (entry-target-fullpath) "./entry-target-fullpath.scm"
 %use (filemap-delete-by-recepientid! filemap-ref-by-recepientid filemap-ref-by-senderid) "./filemap.scm"
 %use (get-preview-path) "./get-preview-path.scm"
@@ -457,7 +457,10 @@
   (define info (filemap-ref-by-senderid filemap/2 vid #f))
   (define perm (web-get-permissions))
   (define entry
-    (or (and info (sharedinfo-entry info))
+    (if info
+        (entry-limit-fields
+         filemap/2 perm
+         (sharedinfo-entry info))
         (web-not-found)))
   (define table
     (with-output-to-string
