@@ -46,18 +46,17 @@
 %use (default-login-expiery-time) "./default-login-expiery-time.scm"
 %use (tegfs-process-categorization-text) "./edit-tags.scm"
 %use (entry-target-fullpath) "./entry-target-fullpath.scm"
-%use (filemap-delete-by-recepientid! filemap-ref-by-recepientid) "./filemap.scm"
+%use (filemap-delete-by-recepientid! filemap-ref-by-recepientid filemap-ref-by-senderid) "./filemap.scm"
 %use (get-preview-path) "./get-preview-path.scm"
 %use (get-random-basename) "./get-random-basename.scm"
 %use (get-root) "./get-root.scm"
 %use (tegfs-get/cached) "./get.scm"
-%use (keyword-id) "./keyword-id.scm"
 %use (make-permission!) "./make-permission-bang.scm"
 %use (tegfs-make-thumbnails) "./make-thumbnails.scm"
 %use (permission-still-valid?) "./permission-still-valid-huh.scm"
 %use (permission-admin? permission-filemap permission-token) "./permission.scm"
 %use (sha256sum) "./sha256sum.scm"
-%use (sharedinfo-ctime sharedinfo-stime) "./sharedinfo.scm"
+%use (sharedinfo-ctime sharedinfo-entry sharedinfo-stime) "./sharedinfo.scm"
 %use (web-basic-headers) "./web-basic-headers.scm"
 %use (web-callcontext/p) "./web-callcontext-p.scm"
 %use (callcontext-body callcontext-ctr callcontext-request set-callcontext-key!) "./web-callcontext.scm"
@@ -453,11 +452,12 @@
 (define (details)
   (define ctx (web-context/p))
   (define ctxq (web-get-query))
-  (define id (hashmap-ref ctxq keyword-id #f))
+  (define vid (hashmap-ref ctxq 'vid #f))
   (define filemap/2 (web-get-filemap/2))
+  (define info (filemap-ref-by-senderid filemap/2 vid #f))
   (define perm (web-get-permissions))
   (define entry
-    (or (tegfs-get/cached id)
+    (or (and info (sharedinfo-entry info))
         (web-not-found)))
   (define table
     (with-output-to-string

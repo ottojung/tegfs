@@ -43,13 +43,13 @@
         (display-preview target preview-link)
         (display "</a>")))))
 
-(define (display-title entry)
+(define (display-title maybe-full-senderid entry)
   (define id (assq-or keyword-id entry #f))
-  (define details-link? (not (not id)))
+  (define details-link? (not (not maybe-full-senderid)))
 
   (when details-link?
-    (display "<a href='/details?id=")
-    (display (uri-encode (cdr (assoc keyword-id entry))))
+    (display "<a href='/details?vid=")
+    (display maybe-full-senderid)
     (display "' style='color: white'>"))
 
   (cond
@@ -72,7 +72,7 @@
   (maybe-display-preview entry maybe-full-senderid preview-link)
   (display "</div>")
   (display "<div>")
-  (display-title entry)
+  (display-title maybe-full-senderid entry)
   (display "</div>")
   (display "</div>")
   )
