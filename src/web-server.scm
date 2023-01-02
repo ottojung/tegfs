@@ -481,8 +481,8 @@
          entry)
         (display "</table>\n"))))
 
-  (unless (has-access-for-entry-details? filemap/2 perm entry)
-    (web-not-found))
+  ;; (unless (has-access-for-entry-details? filemap/2 perm entry)
+  ;;   (web-not-found))
 
   (web-respond table))
 
