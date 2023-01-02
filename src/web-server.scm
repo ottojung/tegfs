@@ -1,4 +1,4 @@
-;;;; Copyright (C) 2022  Otto Jung
+;;;; Copyright (C) 2022, 2023  Otto Jung
 ;;;;
 ;;;; This program is free software: you can redistribute it and/or modify
 ;;;; it under the terms of the GNU Affero General Public License as published
@@ -44,9 +44,8 @@
 %use (current-time/p) "./current-time-p.scm"
 %use (default-login-expiery-time) "./default-login-expiery-time.scm"
 %use (tegfs-process-categorization-text) "./edit-tags.scm"
-%use (entry-limit-fields) "./entry-limit-fields.scm"
 %use (entry-target-fullpath) "./entry-target-fullpath.scm"
-%use (filemap-delete-by-recepientid! filemap-ref-by-recepientid filemap-ref-by-senderid) "./filemap.scm"
+%use (filemap-delete-by-recepientid! filemap-ref-by-recepientid) "./filemap.scm"
 %use (get-preview-path) "./get-preview-path.scm"
 %use (get-random-basename) "./get-random-basename.scm"
 %use (get-root) "./get-root.scm"
@@ -56,15 +55,15 @@
 %use (permission-still-valid?) "./permission-still-valid-huh.scm"
 %use (permission-admin? permission-filemap permission-token) "./permission.scm"
 %use (sha256sum) "./sha256sum.scm"
-%use (sharedinfo-ctime sharedinfo-entry sharedinfo-stime) "./sharedinfo.scm"
+%use (sharedinfo-ctime sharedinfo-stime) "./sharedinfo.scm"
 %use (web-basic-headers) "./web-basic-headers.scm"
 %use (web-callcontext/p) "./web-callcontext-p.scm"
 %use (callcontext-body callcontext-ctr callcontext-request set-callcontext-key!) "./web-callcontext.scm"
 %use (web-context/p) "./web-context-p.scm"
 %use (context-filemap/2 context-passwords context-port context-sharedir context-tokens) "./web-context.scm"
+%use (web-details) "./web-details.scm"
 %use (web-directory) "./web-directory.scm"
 %use (web-full) "./web-full.scm"
-%use (web-get-filemap/2) "./web-get-filemap-2.scm"
 %use (web-get-permissions) "./web-get-permissions.scm"
 %use (web-get-query) "./web-get-query.scm"
 %use (web-login-body) "./web-login-body.scm"
@@ -449,46 +448,6 @@
        (file-delete full-name)))
    (directory-files sharedir)))
 
-(define (details)
-  (define ctx (web-context/p))
-  (define ctxq (web-get-query))
-  (define vid (hashmap-ref ctxq 'vid #f))
-  (define filemap/2 (web-get-filemap/2))
-  (define info (filemap-ref-by-senderid filemap/2 vid #f))
-  (define perm (web-get-permissions))
-  (define entry
-    (if info
-        (entry-limit-fields
-         filemap/2 perm
-         (sharedinfo-entry info))
-        (web-not-found)))
-  (define table
-    (with-output-to-string
-      (lambda _
-        (display "<table class='styled-table subc'>\n")
-        (display "  <thead><tr><th>Prop</th><th>Value</th></tr></thead>\n")
-        (for-each
-         (lambda (row)
-           (define name (car row))
-           (define val (cdr row))
-           (display "  <tbody>\n")
-           (display "    <tr>\n")
-           (display "      <td>")
-           (display name)
-           (display "</td>\n")
-           (display "      <td>")
-           (display val)
-           (display "</td>\n")
-           (display "    </tr>\n")
-           (display "  </tbody>\n"))
-         entry)
-        (display "</table>\n"))))
-
-  ;; (unless (has-access-for-entry-details? filemap/2 perm entry)
-  ;;   (web-not-found))
-
-  (web-respond table))
-
 (define handlers-config
   `((/login ,login public)
     (/logincont ,logincont public)
@@ -496,7 +455,7 @@
     (/collectgarbage ,collectgarbage public)
     (/query ,web-query public)
     (/directory ,web-directory public)
-    (/details ,details public)
+    (/details ,web-details public)
     (/full ,web-full public)
     (/upload ,upload)
     (/uploadcont ,uploadcont)
