@@ -157,7 +157,7 @@
 
   (web-share-cont ctx callctx query/encoded result))
 
-(define (web-share-id id)
+(define (web-share-vid vid)
   (define ctx (web-context/p))
   (define callctx (web-callcontext/p))
   (define key (web-get-key callctx))
@@ -184,9 +184,9 @@
 (define (web-share)
   (define ctxq (web-get-query))
   (define query/encoded (hashmap-ref ctxq 'q #f))
-  (define id (hashmap-ref ctxq keyword-id #f))
+  (define vid (hashmap-ref ctxq 'vid #f))
 
   (cond
    (query/encoded (web-share-query query/encoded))
-   (id (web-share-id id))
+   (vid (web-share-vid vid))
    (else (web-bad-request "Bad arguments to share"))))
