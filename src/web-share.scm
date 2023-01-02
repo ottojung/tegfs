@@ -29,7 +29,6 @@
 %use (words->string) "./euphrates/words-to-string.scm"
 %use (default-share-expiery-time) "./default-share-expiery-time.scm"
 %use (get-random-access-token) "./get-random-access-token.scm"
-%use (keyword-id) "./keyword-id.scm"
 %use (web-bad-request) "./web-bad-request.scm"
 %use (web-callcontext/p) "./web-callcontext-p.scm"
 %use (callcontext-request) "./web-callcontext.scm"
@@ -157,7 +156,7 @@
 
   (web-share-cont ctx callctx query/encoded result))
 
-(define (web-share-vid vid)
+(define (web-share-vid senderid)
   (define ctx (web-context/p))
   (define callctx (web-callcontext/p))
   (define key (web-get-key callctx))
@@ -170,9 +169,7 @@
      `(whats
        (key ,key)
        (make-temporary-permissions ,share-duration K)
-       (query ,query/split)
-       (entry _E)
-       (entry-field _E "id" ,id)
+       (senderid->entry ,senderid _E)
        (share-entry _E K)
        (share-full _E ,share-duration _F)
        (link-shared _F FL)
