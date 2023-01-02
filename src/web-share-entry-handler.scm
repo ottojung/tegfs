@@ -1,4 +1,4 @@
-;;;; Copyright (C) 2022  Otto Jung
+;;;; Copyright (C) 2022, 2023  Otto Jung
 ;;;;
 ;;;; This program is free software: you can redistribute it and/or modify
 ;;;; it under the terms of the GNU Affero General Public License as published
@@ -30,8 +30,23 @@
 
 (define web-share-entry-handler
   (lambda (web-context)
+    (define filemap/2 (context-filemap/2 web-context))
+
     (profun-op-lambda
      (ctx (E W) (E-name W-name))
+
+     (define parent-senderid
+       (and (profun-bound-value? E)
+            (list? E)
+            (assq-or keyword-entry-parent-directory-senderid E #f)))
+
+     (define parent-info
+       (and parent-senderid
+            (filemap-ref-by-senderid filemap/2 parent-senderid #f)))
+
+     (define adam-info
+       (and parent-info
+            (web-get-adam-info parent-info)))
 
      (define id
        (and (profun-bound-value? E)
