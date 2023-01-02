@@ -22,7 +22,7 @@
 %use (profun-meta-key) "./euphrates/profun-meta-key.scm"
 %use (profun-op-envlambda) "./euphrates/profun-op-envlambda.scm"
 %use (profun-request-value) "./euphrates/profun-request-value.scm"
-%use (profun-unbound-value?) "./euphrates/profun-value.scm"
+%use (profun-bound-value? profun-unbound-value?) "./euphrates/profun-value.scm"
 %use (entry-target-fullpath) "./entry-target-fullpath.scm"
 %use (permission?) "./permission.scm"
 %use (sharedinfo-senderid) "./sharedinfo.scm"
@@ -49,9 +49,10 @@
              (make-profun-error 'cannot-share-for-that-long)))
 
        (define (try entry)
-         (define target-fullpath (entry-target-fullpath entry))
-         (and target-fullpath
-              (continue entry target-fullpath)))
+         (and (profun-bound-value? entry)
+              (let ((target-fullpath (entry-target-fullpath entry)))
+                (and target-fullpath
+                     (continue entry target-fullpath)))))
 
        (cond
         ((profun-unbound-value? (env E-name))
@@ -64,8 +65,8 @@
           'type-error "Sharing type must be a number greater than 0"
           sharing-time))
         ((permission? perm)
-         (or (try (env E-name))
-             (try (env (profun-meta-key E-name)))
+         (or (try (env (profun-meta-key E-name)))
+             (try (env E-name))
              (make-profun-error 'bad-entry:does-not-have-target-infos (env E-name))))
         (else
          (make-profun-error 'could-not-authorize)))))))
