@@ -19,6 +19,7 @@
 
 %use (hashmap-ref) "./euphrates/hashmap.scm"
 %use (profune-communicator-handle) "./euphrates/profune-communicator.scm"
+%use (raisu) "./euphrates/raisu.scm"
 %use (~s) "./euphrates/tilda-s.scm"
 %use (words->string) "./euphrates/words-to-string.scm"
 %use (web-bad-request) "./web-bad-request.scm"
@@ -77,6 +78,6 @@
            (entry (list-ref word 2)))
       (web-actual-details entry)))
    (else
-    (web-bad-request "internal error"))))
+    (raisu 'profun-returned-something-weird result))))
 
 
