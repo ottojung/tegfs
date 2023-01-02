@@ -15,14 +15,14 @@
 
 %run guile
 
-%var adam-info
+%var web-get-adam-info
 
 %use (assq-or) "./euphrates/assq-or.scm"
 %use (filemap-ref-by-senderid) "./filemap.scm"
 %use (keyword-entry-parent-directory-senderid) "./keyword-entry-parent-directory-senderid.scm"
 %use (sharedinfo-entry) "./sharedinfo.scm"
 
-(define (web-get-adam-info info)
+(define (web-get-adam-info filemap/2 info)
   (let loop ((info info))
     (define entry (sharedinfo-entry info))
     (define parent-vid

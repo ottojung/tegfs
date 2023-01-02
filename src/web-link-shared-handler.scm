@@ -26,7 +26,7 @@
 %use (sharedinfo-recepientid sharedinfo-sourcepath) "./sharedinfo.scm"
 %use (symlink-shared-file) "./symlink-shared-file.scm"
 %use (context-filemap/2) "./web-context.scm"
-%use (adam-info) "./web-get-adam-info.scm"
+%use (web-get-adam-info) "./web-get-adam-info.scm"
 %use (web-get-sharedinfo-url) "./web-get-sharedinfo-url.scm"
 
 (define web-link-shared-handler
@@ -44,7 +44,7 @@
        (and info (sharedinfo-recepientid info)))
 
      (define adam-info
-       (and info (web-get-adam-info info)))
+       (and info (web-get-adam-info filemap/2 info)))
 
      (define toplevel-entry?
        (eq? adam-info info))

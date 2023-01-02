@@ -31,7 +31,7 @@
 %use (sharedinfo-entry) "./sharedinfo.scm"
 %use (tegfs-login-by-key) "./tegfs-login-by-key.scm"
 %use (context-filemap/2) "./web-context.scm"
-%use (adam-info) "./web-get-adam-info.scm"
+%use (web-get-adam-info) "./web-get-adam-info.scm"
 
 (define web-share-entry-handler
   (lambda (web-context)
@@ -51,7 +51,7 @@
 
      (define adam-info
        (and parent-info
-            (web-get-adam-info parent-info)))
+            (web-get-adam-info filemap/2 parent-info)))
 
      (define adam-entry
        (and adam-info (sharedinfo-entry adam-info)))
