@@ -24,9 +24,14 @@
 %use (profun-op-lambda) "./euphrates/profun-op-lambda.scm"
 %use (profun-bound-value?) "./euphrates/profun-value.scm"
 %use (raisu) "./euphrates/raisu.scm"
+%use (filemap-ref-by-senderid) "./filemap.scm"
+%use (keyword-entry-parent-directory-senderid) "./keyword-entry-parent-directory-senderid.scm"
 %use (keyword-id) "./keyword-id.scm"
 %use (permission-idset) "./permission.scm"
+%use (sharedinfo-entry) "./sharedinfo.scm"
 %use (tegfs-login-by-key) "./tegfs-login-by-key.scm"
+%use (context-filemap/2) "./web-context.scm"
+%use (adam-info) "./web-get-adam-info.scm"
 
 (define web-share-entry-handler
   (lambda (web-context)
@@ -48,10 +53,15 @@
        (and parent-info
             (web-get-adam-info parent-info)))
 
+     (define adam-entry
+       (and adam-info (sharedinfo-entry adam-info)))
+
      (define id
-       (and (profun-bound-value? E)
-            (list? E)
-            (assq-or keyword-id E #f)))
+       (or (and adam-entry
+                (assq-or keyword-id adam-entry #f))
+           (and (profun-bound-value? E)
+                (list? E)
+                (assq-or keyword-id E #f))))
 
      (define with-key
        (and (profun-bound-value? W)
