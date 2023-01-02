@@ -23,12 +23,11 @@
 %use (profun-reject) "./euphrates/profun-reject.scm"
 %use (profun-bound-value? profun-unbound-value?) "./euphrates/profun-value.scm"
 %use (raisu) "./euphrates/raisu.scm"
+%use (entry-limit-fields) "./entry-limit-fields.scm"
 %use (filemap-ref-by-senderid) "./filemap.scm"
-%use (keyword-entry-parent-directory) "./keyword-entry-parent-directory.scm"
-%use (keyword-entry-registry-path) "./keyword-entry-registry-path.scm"
-%use (keyword-target) "./keyword-target.scm"
-%use (keyword-title) "./keyword-title.scm"
+%use (permission?) "./permission.scm"
 %use (sharedinfo-entry) "./sharedinfo.scm"
+%use (tegfs-permissions/p) "./talk-parameters.scm"
 %use (context-filemap/2) "./web-context.scm"
 
 (define web-senderid->entry-handler
@@ -40,8 +39,12 @@
           (senderid-name entry-name))
 
      (define info (filemap-ref-by-senderid filemap/2 senderid #f))
+     (define perm (tegfs-permissions/p))
 
      (cond
+      ((not (permission? perm))
+       (make-profun-error 'permission-denied "Not authorized. Missing key?"))
+
       ((profun-unbound-value? senderid)
        (make-profun-error 'type-error "Senderid must be given"))
 
@@ -54,9 +57,10 @@
       (info
        (let ()
          (define entry0 (sharedinfo-entry info))
-         (define entry
-           (filter (lambda (p) (memq (car p) target-fields)) entry0))
-         (profun-set (entry-name <- entry))))
+         (define entry (entry-limit-fields filemap/2 perm entry0))
+         (if (null? entry)
+             (profun-reject)
+             (profun-set (entry-name <- entry)))))
 
       (else
        (raisu 'impossible-case))))))
