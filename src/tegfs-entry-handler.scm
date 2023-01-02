@@ -42,18 +42,7 @@
     (profun-op-envlambda
      (ctx env (E-name))
 
-     (define (ret iter)
-       (define-values (x full) (iter))
-       (if x
-           (profun-set
-            (E-name <- x)
-            (if full
-                (profun-set-meta
-                 (E-name <- full))
-                (profun-accept)))
-           (profun-reject)))
-
-     (if ctx (ret ctx)
+     (if ctx (ctx)
          (call-with-current-continuation
           (lambda (return)
             (define (error . args) (return (make-profun-error args)))
@@ -78,22 +67,36 @@
 
             (define iter0 (tegfs-query/open opening-properties query))
             (define (iter)
+              (define-values (x full) (iter-values))
+              (if x
+                  (profun-set
+                   (E-name <- x)
+                   (if full
+                       (profun-set-meta
+                        (E-name <- full))
+                       (profun-accept)))
+                  (profun-reject)))
+
+            (define (iter-values)
               (define entry0 (iter0))
+              (if entry0
+                  (limit entry0)
+                  (values #f #f)))
+
+            (define (limit entry0)
               (define limited (entry-limit-fields filemap/2 perm entry0))
               (cond
-               ((equal? #f entry0)
-                (values #f #f))
                ((= (length entry0) (length limited))
                 (values entry0 #f))
                ((not (null? limited))
                 (values limited entry0))
-               (else (iter))))
+               (else (iter-values))))
 
             (cond
              ((profun-bound-value? (env E-name))
               (make-profun-error 'query-is-a-generator 'cannot-check-if-element-already-exists))
              (else
-              (let ((val (ret iter)))
+              (let ((val (iter)))
                 (if (profun-accept? val)
                     (profun-ctx-set iter val)
                     val))))
