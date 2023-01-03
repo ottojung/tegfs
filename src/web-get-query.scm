@@ -22,5 +22,4 @@
 
 (define (web-get-query)
   (define callctx (web-callcontext/p))
-  (define f (callcontext-query callctx))
-  (f))
+  (callcontext-query callctx))

@@ -28,10 +28,10 @@
 %use (define-type9) "./euphrates/define-type9.scm"
 
 (define-type9 <callcontext>
-  (callcontext-ctr break request query body key token) callcontext?
+  (callcontext-ctr break request queryfn body key tokenfn) callcontext?
   (break callcontext-break) ;; break handler
   (request callcontext-request) ;; client request
-  (query callcontext-query) ;; query hashmap
+  (queryfn callcontext-queryfn) ;; query hashmap
   (body callcontext-body) ;; client body
   (key callcontext-key set-callcontext-key!) ;; access key to-set to
   (tokenfn callcontext-tokenfn) ;; current token function
@@ -39,3 +39,6 @@
 
 (define (callcontext-token callctx)
   ((callcontext-tokenfn callctx)))
+
+(define (callcontext-query callctx)
+  ((callcontext-queryfn callctx)))
