@@ -23,7 +23,7 @@
 %var callcontext-body
 %var callcontext-key
 %var set-callcontext-key!
-%var callcontext-tokenfn
+%var callcontext-token
 
 %use (define-type9) "./euphrates/define-type9.scm"
 
@@ -36,3 +36,6 @@
   (key callcontext-key set-callcontext-key!) ;; access key to-set to
   (tokenfn callcontext-tokenfn) ;; current token function
   )
+
+(define (callcontext-token callctx)
+  ((callcontext-tokenfn callctx)))

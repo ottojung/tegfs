@@ -27,10 +27,10 @@
 %use (default-preview-sharing-time) "./default-preview-sharing-time.scm"
 %use (web-bad-request) "./web-bad-request.scm"
 %use (web-callcontext/p) "./web-callcontext-p.scm"
+%use (callcontext-token) "./web-callcontext.scm"
 %use (web-context/p) "./web-context-p.scm"
 %use (web-display-entries) "./web-display-entries.scm"
 %use (web-display-entry) "./web-display-entry.scm"
-%use (web-get-key) "./web-get-key.scm"
 %use (web-get-query) "./web-get-query.scm"
 %use (web-make-communicator) "./web-make-communicator.scm"
 %use (web-make-html-response) "./web-make-html-response.scm"
@@ -51,7 +51,7 @@
           (profune-communicator-handle
            (web-make-communicator (web-context/p))
            `(whats
-             (key ,(web-get-key callctx))
+             (key ,(callcontext-token callctx))
              (shared-entry-contains ,vid E)
              (share-preview E ,default-preview-sharing-time _P)
              (share-full E ,default-full-sharing-time F)

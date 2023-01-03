@@ -31,14 +31,13 @@
 %use (get-random-access-token) "./get-random-access-token.scm"
 %use (web-bad-request) "./web-bad-request.scm"
 %use (web-callcontext/p) "./web-callcontext-p.scm"
-%use (callcontext-request) "./web-callcontext.scm"
+%use (callcontext-request callcontext-token) "./web-callcontext.scm"
 %use (web-context/p) "./web-context-p.scm"
 %use (web-decode-query) "./web-decode-query.scm"
-%use (web-get-key) "./web-get-key.scm"
 %use (web-get-query) "./web-get-query.scm"
 %use (web-make-communicator) "./web-make-communicator.scm"
-%use (web-request-get-domainname) "./web-request-get-domainname.scm"
 %use (web-make-html-response) "./web-make-html-response.scm"
+%use (web-request-get-domainname) "./web-request-get-domainname.scm"
 
 %for (COMPILER "guile")
 
@@ -137,7 +136,7 @@
 (define (web-share-query query/encoded)
   (define ctx (web-context/p))
   (define callctx (web-callcontext/p))
-  (define key (web-get-key callctx))
+  (define key (callcontext-token callctx))
   (define share-duration (get-share-duration))
   (define query (web-decode-query query/encoded))
   (define query/split (string->words query))
@@ -159,7 +158,7 @@
 (define (web-share-vid senderid)
   (define ctx (web-context/p))
   (define callctx (web-callcontext/p))
-  (define key (web-get-key callctx))
+  (define key (callcontext-token callctx))
   (define share-duration (get-share-duration))
   (define query/split '("%any"))
 

@@ -39,9 +39,8 @@
 %use (web-bad-request) "./web-bad-request.scm"
 %use (web-body-not-found) "./web-body-not-found.scm"
 %use (web-callcontext/p) "./web-callcontext-p.scm"
-%use (callcontext-body callcontext-request) "./web-callcontext.scm"
+%use (callcontext-body callcontext-request callcontext-token) "./web-callcontext.scm"
 %use (web-context/p) "./web-context-p.scm"
-%use (web-get-key) "./web-get-key.scm"
 %use (web-make-communicator) "./web-make-communicator.scm"
 %use (parse-multipart-as-hashmap) "./web-parse-multipart.scm"
 %use (web-static-error-message) "./web-static-error-message.scm"
@@ -135,7 +134,7 @@
     (profune-communicator-handle
      (web-make-communicator (web-context/p))
      `(whats
-       (key ,(web-get-key callctx))
+       (key ,(callcontext-token callctx))
        (add-entry ,upload-registry-filename ,entry)
        )))
 

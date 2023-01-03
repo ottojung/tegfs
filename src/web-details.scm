@@ -24,8 +24,8 @@
 %use (words->string) "./euphrates/words-to-string.scm"
 %use (web-bad-request) "./web-bad-request.scm"
 %use (web-callcontext/p) "./web-callcontext-p.scm"
+%use (callcontext-token) "./web-callcontext.scm"
 %use (web-context/p) "./web-context-p.scm"
-%use (web-get-key) "./web-get-key.scm"
 %use (web-get-query) "./web-get-query.scm"
 %use (web-make-communicator) "./web-make-communicator.scm"
 %use (web-make-html-response) "./web-make-html-response.scm"
@@ -60,7 +60,7 @@
   (define ctxq (web-get-query))
   (define vid (hashmap-ref ctxq 'vid #f))
   (define id (hashmap-ref ctxq 'id #f))
-  (define key (web-get-key callctx))
+  (define key (callcontext-token callctx))
 
   (define result
     (profune-communicator-handle
