@@ -44,6 +44,7 @@
 %use (sha256sum) "./sha256sum.scm"
 %use (sharedinfo-ctime sharedinfo-stime) "./sharedinfo.scm"
 %use (web-basic-headers) "./web-basic-headers.scm"
+%use (web-body-not-found) "./web-body-not-found.scm"
 %use (web-callcontext/p) "./web-callcontext-p.scm"
 %use (callcontext-body callcontext-ctr callcontext-request set-callcontext-key!) "./web-callcontext.scm"
 %use (web-context/p) "./web-context-p.scm"
@@ -105,9 +106,6 @@
 (define (login)
   (web-respond web-login-body))
 
-(define body-not-found
-  (web-static-error-message 417 "Send user body"))
-
 (define (set-user-key! key)
   (set-callcontext-key! (web-callcontext/p) key))
 
@@ -116,7 +114,7 @@
 
   (define _4
     (unless body/bytes
-      (body-not-found)))
+      (web-body-not-found)))
 
   (define body
     (bytevector->string body/bytes "utf-8"))

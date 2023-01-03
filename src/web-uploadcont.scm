@@ -37,6 +37,7 @@
 %use (keyword-target) "./keyword-target.scm"
 %use (keyword-title) "./keyword-title.scm"
 %use (web-bad-request) "./web-bad-request.scm"
+%use (web-body-not-found) "./web-body-not-found.scm"
 %use (web-callcontext/p) "./web-callcontext-p.scm"
 %use (callcontext-body callcontext-request) "./web-callcontext.scm"
 %use (web-context/p) "./web-context-p.scm"
@@ -65,10 +66,8 @@
        200 (string-append "Uploaded successfully to filename: " <target>))
       (web-static-error-message 200 "Uploaded successfully")))
 
-(define (web-uploadcont)
-  (define callctx (web-callcontext/p))
+(define (web-uploadcont/2 callctx body/bytes)
   (define request (callcontext-request callctx))
-  (define body/bytes (callcontext-body callctx))
   (define body/hash (parse-multipart-as-hashmap body/bytes))
 
   (define (get-data a-key)
@@ -145,3 +144,10 @@
     (else
      (when full-filename (file-delete full-filename))
      (web-bad-request "error: ~a" (words->string (map ~s (cadr result)))))))
+
+(define (web-uploadcont)
+  (define callctx (web-callcontext/p))
+  (define body/bytes (callcontext-body callctx))
+  (if body/bytes
+      (web-uploadcont/2 callctx body/bytes)
+      (web-body-not-found)))
