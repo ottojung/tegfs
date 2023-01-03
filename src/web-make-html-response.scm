@@ -24,7 +24,6 @@
 %use (web-callcontext/p) "./web-callcontext-p.scm"
 %use (callcontext-break callcontext-key) "./web-callcontext.scm"
 %use (web-context/p) "./web-context-p.scm"
-%use (web-get-permissions) "./web-get-permissions.scm"
 %use (web-set-cookie-header) "./web-set-cookie-header.scm"
 
 %for (COMPILER "guile")
@@ -61,7 +60,6 @@
   (define callctx (web-callcontext/p))
   (define now (current-time/p))
   (define cont (callcontext-break callctx))
-  (define _perm (web-get-permissions))
   (define key (callcontext-key callctx))
   (define key-headers
     (if key (list (web-set-cookie-header "key" key)) '()))
