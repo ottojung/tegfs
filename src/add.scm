@@ -22,7 +22,6 @@
 %use (catchu-case) "./euphrates/catchu-case.scm"
 %use (file-or-directory-exists?) "./euphrates/file-or-directory-exists-q.scm"
 %use (fn-cons) "./euphrates/fn-cons.scm"
-%use (list-deduplicate) "./euphrates/list-deduplicate.scm"
 %use (list-zip) "./euphrates/list-zip.scm"
 %use (read-string-file) "./euphrates/read-string-file.scm"
 %use (string-strip) "./euphrates/string-strip.scm"
@@ -62,7 +61,7 @@
   (display "Added!\n"))
 
 (define (tegfs-add
-         <target> <title> tags0
+         <target> <title> tags
          series? key-value-pairs0
          <registry-file> <date>)
 
@@ -79,10 +78,6 @@
          (or (file-or-directory-exists? last-id-path)
              (fatal "Want series, but last-id file is not present"))
          (string-strip (read-string-file last-id-path))))
-
-  (define tags
-    (list-deduplicate
-     (map tosymbol tags0)))
 
   (define key-value-pairs
     (map (fn-cons tosymbol identity)

@@ -25,6 +25,7 @@
 %use (assoc-set-value) "./euphrates/assoc-set-value.scm"
 %use (assq-or) "./euphrates/assq-or.scm"
 %use (file-or-directory-exists?) "./euphrates/file-or-directory-exists-q.scm"
+%use (list-deduplicate/reverse) "./euphrates/list-deduplicate.scm"
 %use (make-directories) "./euphrates/make-directories.scm"
 %use (path-get-dirname) "./euphrates/path-get-dirname.scm"
 %use (raisu) "./euphrates/raisu.scm"
@@ -38,6 +39,7 @@
 %use (get-root) "./get-root.scm"
 %use (keyword-date) "./keyword-date.scm"
 %use (keyword-id) "./keyword-id.scm"
+%use (keyword-tags) "./keyword-tags.scm"
 %use (keyword-target) "./keyword-target.scm"
 %use (last-id-filename) "./last-id-filename.scm"
 
@@ -79,12 +81,20 @@
   (define id
     (generate-random-id))
 
-  (define entry
+  (define entry1
     (assoc-set-default
      keyword-date (get-date)
      (assoc-set-value
       keyword-id id
       entry0)))
+
+  (define entry
+    (let ((tags0 (assq-or keyword-tags entry1 #f)))
+      (if tags0
+         (assoc-set-value
+          keyword-tags (list-deduplicate/reverse tags0)
+          entry1)
+         entry1)))
 
   (define target
     (assq-or keyword-target entry #f))
