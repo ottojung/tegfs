@@ -57,7 +57,6 @@
 %use (web-login-failed-body) "./web-login-failed-body.scm"
 %use (web-login-success-body) "./web-login-success-body.scm"
 %use (web-make-context) "./web-make-context.scm"
-%use (web-make-upload-body) "./web-make-upload-body.scm"
 %use (web-message-template) "./web-message-template.scm"
 %use (web-not-found) "./web-not-found.scm"
 %use (web-preview-height) "./web-preview-height.scm"
@@ -70,7 +69,8 @@
 %use (web-static-error-message) "./web-static-error-message.scm"
 %use (web-style) "./web-style.scm"
 %use (web-try-uri-decode) "./web-try-uri-decode.scm"
-%use (web-uploadcont) "./web-upload.scm"
+%use (web-upload) "./web-upload.scm"
+%use (web-uploadcont) "./web-uploadcont.scm"
 %use (web-url-icon/svg) "./web-url-icon-svg.scm"
 %use (with-current-time) "./with-current-time.scm"
 
@@ -191,9 +191,6 @@
   (define perm (web-get-permissions))
   (unless (and perm (permission-admin? perm))
     (permission-denied)))
-
-(define (upload)
-  (web-respond (web-make-upload-body)))
 
 (define unavailable-image-string
   (stringf
@@ -331,7 +328,7 @@
     (/directory ,web-directory public)
     (/details ,web-details public)
     (/full ,web-full public)
-    (/upload ,upload)
+    (/upload ,web-upload)
     (/uploadcont ,web-uploadcont)
     (/previewunknown ,previewunknown)
     (/previewunknownurl ,previewunknownurl)
