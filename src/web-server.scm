@@ -18,17 +18,13 @@
 %var tegfs-serve/parse
 
 %use (comp) "./euphrates/comp.scm"
-%use (define-tuple) "./euphrates/define-tuple.scm"
 %use (directory-files) "./euphrates/directory-files.scm"
 %use (dprintln) "./euphrates/dprintln.scm"
 %use (file-delete) "./euphrates/file-delete.scm"
-%use (fn) "./euphrates/fn.scm"
 %use (alist->hashmap hashmap-delete! hashmap-foreach hashmap-ref make-hashmap) "./euphrates/hashmap.scm"
 %use (hashset-has? list->hashset) "./euphrates/hashset.scm"
-%use (list-singleton?) "./euphrates/list-singleton-q.scm"
 %use (memconst) "./euphrates/memconst.scm"
 %use (path-without-extension) "./euphrates/path-without-extension.scm"
-%use (profune-communicator-handle) "./euphrates/profune-communicator.scm"
 %use (raisu) "./euphrates/raisu.scm"
 %use (string-split-3) "./euphrates/string-split-3.scm"
 %use (string-split/simple) "./euphrates/string-split-simple.scm"
@@ -42,9 +38,8 @@
 %use (permission-admin? permission-filemap permission-token) "./permission.scm"
 %use (sharedinfo-ctime sharedinfo-stime) "./sharedinfo.scm"
 %use (web-basic-headers) "./web-basic-headers.scm"
-%use (web-body-not-found) "./web-body-not-found.scm"
 %use (web-callcontext/p) "./web-callcontext-p.scm"
-%use (callcontext-body callcontext-ctr callcontext-request set-callcontext-key!) "./web-callcontext.scm"
+%use (callcontext-ctr callcontext-request set-callcontext-key!) "./web-callcontext.scm"
 %use (web-context/p) "./web-context-p.scm"
 %use (context-filemap/2 context-port context-sharedir context-tokens) "./web-context.scm"
 %use (web-details) "./web-details.scm"
@@ -53,9 +48,7 @@
 %use (web-get-permissions) "./web-get-permissions.scm"
 %use (web-get-query) "./web-get-query.scm"
 %use (web-login-body) "./web-login-body.scm"
-%use (web-login-failed-body) "./web-login-failed-body.scm"
-%use (web-login-success-body) "./web-login-success-body.scm"
-%use (web-make-communicator) "./web-make-communicator.scm"
+%use (web-logincont) "./web-logincont.scm"
 %use (web-make-context) "./web-make-context.scm"
 %use (web-message-template) "./web-message-template.scm"
 %use (web-not-found) "./web-not-found.scm"
@@ -64,7 +57,6 @@
 %use (web-query) "./web-query.scm"
 %use (web-respond) "./web-respond.scm"
 %use (web-return!) "./web-return-bang.scm"
-%use (web-set-cookie-header) "./web-set-cookie-header.scm"
 %use (web-share) "./web-share.scm"
 %use (web-static-error-message) "./web-static-error-message.scm"
 %use (web-style) "./web-style.scm"
@@ -104,54 +96,6 @@
 
 (define (login)
   (web-respond web-login-body))
-
-(define (set-user-key! key)
-  (set-callcontext-key! (web-callcontext/p) key))
-
-(define (logincont)
-  (define body/bytes (callcontext-body (web-callcontext/p)))
-
-  (define _4
-    (unless body/bytes
-      (web-body-not-found)))
-
-  (define body
-    (bytevector->string body/bytes "utf-8"))
-
-  (define parts
-    (string-split/simple body #\&))
-
-  (define key-values
-    (map (fn string-split/simple % #\=) parts))
-
-  (define _2
-    (unless (list-singleton? key-values)
-      (raisu 'too-many-query-parameters key-values)))
-
-  (define-tuple (key password)
-    (car key-values))
-
-  (define _3
-    (unless (equal? "psw" key)
-      (raisu 'bad-query-key key)))
-
-  (define result
-    (profune-communicator-handle
-     (web-make-communicator (web-context/p))
-     `(whats
-       (login ,password)
-       (key K)
-       )))
-
-  (case (car result)
-    ((its)
-     (let* ((word (cadr result))
-            (token (list-ref word 2)))
-       (web-respond
-        web-login-success-body
-        #:extra-headers (list (web-set-cookie-header "pwdtoken" token)))))
-    (else
-     (web-respond web-login-failed-body))))
 
 (define permission-denied
   (web-static-error-message 401 "Permission denied"))
@@ -317,7 +261,7 @@
 
 (define handlers-config
   `((/login ,login public)
-    (/logincont ,logincont public)
+    (/logincont ,web-logincont public)
     (/main.css ,main.css public)
     (/collectgarbage ,collectgarbage public)
     (/query ,web-query public)
@@ -372,6 +316,9 @@
            (cons (string->symbol key) (web-try-uri-decode val)))
          split))
   (alist->hashmap key-values))
+
+(define (set-user-key! key)
+  (set-callcontext-key! (web-callcontext/p) key))
 
 (define (get-access-token)
   (or
