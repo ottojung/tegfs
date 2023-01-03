@@ -17,10 +17,8 @@
 
 %var tegfs-serve/parse
 
-%use (comp) "./euphrates/comp.scm"
 %use (dprintln) "./euphrates/dprintln.scm"
 %use (alist->hashmap hashmap-delete! hashmap-ref make-hashmap) "./euphrates/hashmap.scm"
-%use (hashset-has? list->hashset) "./euphrates/hashset.scm"
 %use (memconst) "./euphrates/memconst.scm"
 %use (raisu) "./euphrates/raisu.scm"
 %use (string-split-3) "./euphrates/string-split-3.scm"
@@ -54,7 +52,6 @@
 %use (web-return!) "./web-return-bang.scm"
 %use (web-share) "./web-share.scm"
 %use (web-static-error-message) "./web-static-error-message.scm"
-%use (web-static) "./web-static.scm"
 %use (web-style) "./web-style.scm"
 %use (web-try-uri-decode) "./web-try-uri-decode.scm"
 %use (web-upload) "./web-upload.scm"
@@ -165,20 +162,19 @@
   (web-return! unknownurl-response unknownurl-bytevector))
 
 (define handlers-config
-  `((/login ,web-login public)
-    (/logincont ,web-logincont public)
-    (/main.css ,main.css public)
-    (/collectgarbage ,web-collectgarbage public)
-    (/query ,web-query public)
-    (/directory ,web-directory public)
-    (/details ,web-details public)
-    (/full ,web-full public)
-    (/upload ,web-upload public)
-    (/uploadcont ,web-uploadcont public)
+  `((/login ,web-login)
+    (/logincont ,web-logincont)
+    (/main.css ,main.css)
+    (/collectgarbage ,web-collectgarbage)
+    (/query ,web-query)
+    (/directory ,web-directory)
+    (/details ,web-details)
+    (/full ,web-full)
+    (/upload ,web-upload)
+    (/uploadcont ,web-uploadcont)
     (/previewunknown ,previewunknown)
     (/previewunknownurl ,previewunknownurl)
-    (/share ,web-share public)
-    (/static ,web-static public)
+    (/share ,web-share)
     ))
 
 (define handlers-funcmap
@@ -186,15 +182,6 @@
    (map
     (lambda (p) (cons (~a (car p)) (cadr p)))
     handlers-config)))
-
-(define handlers-publicset
-  (list->hashset
-   (map
-    (comp car ~a)
-    (filter
-     (lambda (l) (and (= 3 (length l))
-                      (equal? 'public (caddr l))))
-     handlers-config))))
 
 (define (log-request request)
   (define uri (request-uri request))
@@ -208,10 +195,8 @@
   (define path (uri-path (request-uri request)))
 
   (let* ((target path)
-         (func (hashmap-ref handlers-funcmap target #f))
-         (public? (hashset-has? handlers-publicset target)))
+         (func (hashmap-ref handlers-funcmap target #f)))
     (unless func (web-not-found))
-    (unless public? (check-permissions))
     (func)))
 
 (define (query->hashmap query)
