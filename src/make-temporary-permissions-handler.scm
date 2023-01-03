@@ -54,10 +54,11 @@
          (define live-duration-0 D)
          (define live-duration (min sharing-time-cap live-duration-0))
          (define admin? #f)
+         (define uploadaccess? #f) ;; TODO: maybe allow sometimes
          (define detailsaccess? #f) ;; TODO: maybe allow sometimes
          (define share-longer-than-view? #f) ;; TODO: maybe allow sometimes
          (define perm
-           (make-permission! web-context live-duration admin? detailsaccess? share-longer-than-view?))
+           (make-permission! web-context live-duration admin? uploadaccess? detailsaccess? share-longer-than-view?))
          (define its-key (permission-token perm))
          (profun-set
           (K-name <- its-key))))))))

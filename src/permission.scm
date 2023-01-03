@@ -21,6 +21,7 @@
 %var permission-start
 %var permission-time
 %var permission-admin?
+%var permission-uploadaccess?
 %var permission-detailsaccess?
 %var permission-share-longer-than-view?
 %var permission-filemap
@@ -29,11 +30,12 @@
 %use (define-type9) "./euphrates/define-type9.scm"
 
 (define-type9 <permission>
-  (permission-constructor token start time admin? detailsaccess? share-longer-than-view? filemap idset) permission?
+  (permission-constructor token start time admin? uploadaccess? detailsaccess? share-longer-than-view? filemap idset) permission?
   (token permission-token) ;; token string
   (start permission-start) ;; timestamp for when this token was created
   (time permission-time) ;; duration in secods for how long this token is valid
   (admin? permission-admin?) ;; true if user is an admin
+  (uploadaccess? permission-uploadaccess?) ;; true if user can create new entries
   (detailsaccess? permission-detailsaccess?) ;; true if user has access to objects details
   (share-longer-than-view? permission-share-longer-than-view?) ;; true if user has access to objects details
   (filemap permission-filemap) ;; hashmap with `keys: target-fullpath that was shared with this permission` and `values: sharedinfos`

@@ -24,9 +24,10 @@
   (memconst
    (let ((expiery-time +inf.0)
          (admin? #t)
+         (uploadaccess? #t)
          (detailsaccess? #t)
          (share-longer-than-view? #t))
      (make-permission
       expiery-time admin?
-      detailsaccess?
+      uploadaccess? detailsaccess?
       share-longer-than-view?))))

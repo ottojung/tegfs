@@ -161,11 +161,12 @@
   (define passwords (context-passwords ctx))
   (define registered? (hashmap-ref passwords passw #f))
   (define admin? #t) ;; TODO: read from the config
+  (define uploadaccess? #t) ;; TODO: read from the config
   (define detailsaccess? #t) ;; TODO: read from the config
   (define share-longer-than-view? #t) ;; TODO: read from the config
 
   (if registered?
-      (let* ((perm (make-permission! ctx default-login-expiery-time admin? detailsaccess? share-longer-than-view?))
+      (let* ((perm (make-permission! ctx default-login-expiery-time admin? uploadaccess? detailsaccess? share-longer-than-view?))
              (token (permission-token perm)))
         (web-respond
          web-login-success-body
