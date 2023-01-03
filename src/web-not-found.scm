@@ -19,7 +19,7 @@
 
 %use (web-callcontext/p) "./web-callcontext-p.scm"
 %use (callcontext-request) "./web-callcontext.scm"
-%use (web-respond) "./web-respond.scm"
+%use (web-make-html-response) "./web-make-html-response.scm"
 
 %for (COMPILER "guile")
 
@@ -30,7 +30,7 @@
 
 (define (web-not-found)
   (define request (callcontext-request (web-callcontext/p)))
-  (web-respond
+  (web-make-html-response
    (string-append "Resource not found: "
                   (uri->string (request-uri request)))
    #:status 404))

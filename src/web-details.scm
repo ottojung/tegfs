@@ -28,7 +28,7 @@
 %use (web-get-key) "./web-get-key.scm"
 %use (web-get-query) "./web-get-query.scm"
 %use (web-make-communicator) "./web-make-communicator.scm"
-%use (web-respond) "./web-respond.scm"
+%use (web-make-html-response) "./web-make-html-response.scm"
 
 (define (web-actual-details entry)
   (define table
@@ -53,7 +53,7 @@
          entry)
         (display "</table>\n"))))
 
-  (web-respond table))
+  (web-make-html-response table))
 
 (define (web-details)
   (define callctx (web-callcontext/p))

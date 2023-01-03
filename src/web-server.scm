@@ -50,7 +50,7 @@
 %use (web-preview-height) "./web-preview-height.scm"
 %use (web-preview-width) "./web-preview-width.scm"
 %use (web-query) "./web-query.scm"
-%use (web-respond) "./web-respond.scm"
+%use (web-make-html-response) "./web-make-html-response.scm"
 %use (web-return!) "./web-return-bang.scm"
 %use (web-share) "./web-share.scm"
 %use (web-static-error-message) "./web-static-error-message.scm"
@@ -87,7 +87,7 @@
 
 (define (static-message message)
   (define xml (web-message-template message))
-  (lambda _ (web-respond xml)))
+  (lambda _ (web-make-html-response xml)))
 
 (define permission-denied
   (web-static-error-message 401 "Permission denied"))

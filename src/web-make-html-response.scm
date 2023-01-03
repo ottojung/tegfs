@@ -15,7 +15,7 @@
 
 %run guile
 
-%var web-respond
+%var web-make-html-response
 
 %use (lines->string) "./euphrates/lines-to-string.scm"
 %use (raisu) "./euphrates/raisu.scm"
@@ -48,7 +48,7 @@
     ""
     )))
 
-(define* (web-respond #:optional body #:key
+(define* (web-make-html-response #:optional body #:key
                       (status 200)
                       (title "TegFS")
                       (extra-heads '())

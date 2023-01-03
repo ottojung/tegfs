@@ -33,7 +33,7 @@
 %use (web-get-key) "./web-get-key.scm"
 %use (web-get-query) "./web-get-query.scm"
 %use (web-make-communicator) "./web-make-communicator.scm"
-%use (web-respond) "./web-respond.scm"
+%use (web-make-html-response) "./web-make-html-response.scm"
 
 (define (web-directory)
   (define callctx (web-callcontext/p))
@@ -43,7 +43,7 @@
     (or (hashmap-ref ctxq 'vid #f)
         (web-bad-request "Request query missing requiered 'd' argument")))
 
-  (web-respond
+  (web-make-html-response
    (lambda _
      (web-display-entries
       (lambda _

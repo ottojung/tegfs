@@ -38,7 +38,7 @@
 %use (web-get-query) "./web-get-query.scm"
 %use (web-make-communicator) "./web-make-communicator.scm"
 %use (web-request-get-domainname) "./web-request-get-domainname.scm"
-%use (web-respond) "./web-respond.scm"
+%use (web-make-html-response) "./web-make-html-response.scm"
 
 %for (COMPILER "guile")
 
@@ -119,7 +119,7 @@
     (stringf "~a/query?q=%any&key=~a" domainname token))
   (define text
     (get-share-query-text callctx location hidden-query-location token))
-  (web-respond text))
+  (web-make-html-response text))
 
 (define (web-share-cont2 ctx callctx query/encoded result)
   (define equals (cadr (cadr result)))

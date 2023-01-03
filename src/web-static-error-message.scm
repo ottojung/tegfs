@@ -18,9 +18,9 @@
 %var web-static-error-message
 
 %use (web-message-template) "./web-message-template.scm"
-%use (web-respond) "./web-respond.scm"
+%use (web-make-html-response) "./web-make-html-response.scm"
 
 (define (web-static-error-message status message)
   (define xml (web-message-template message))
   (lambda _
-    (web-respond xml #:status status)))
+    (web-make-html-response xml #:status status)))

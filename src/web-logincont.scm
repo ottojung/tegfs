@@ -30,7 +30,7 @@
 %use (web-login-failed-body) "./web-login-failed-body.scm"
 %use (web-login-success-body) "./web-login-success-body.scm"
 %use (web-make-communicator) "./web-make-communicator.scm"
-%use (web-respond) "./web-respond.scm"
+%use (web-make-html-response) "./web-make-html-response.scm"
 %use (web-set-cookie-header) "./web-set-cookie-header.scm"
 
 %for (COMPILER "guile")
@@ -76,8 +76,8 @@
     ((its)
      (let* ((word (cadr result))
             (token (list-ref word 2)))
-       (web-respond
+       (web-make-html-response
         web-login-success-body
         #:extra-headers (list (web-set-cookie-header "pwdtoken" token)))))
     (else
-     (web-respond web-login-failed-body))))
+     (web-make-html-response web-login-failed-body))))

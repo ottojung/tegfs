@@ -18,7 +18,7 @@
 %var web-login
 
 %use (web-login-body) "./web-login-body.scm"
-%use (web-respond) "./web-respond.scm"
+%use (web-make-html-response) "./web-make-html-response.scm"
 
 (define (web-login)
-  (web-respond web-login-body))
+  (web-make-html-response web-login-body))

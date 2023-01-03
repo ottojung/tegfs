@@ -18,7 +18,7 @@
 %var web-upload
 
 %use (web-make-upload-body) "./web-make-upload-body.scm"
-%use (web-respond) "./web-respond.scm"
+%use (web-make-html-response) "./web-make-html-response.scm"
 
 (define (web-upload)
-  (web-respond (web-make-upload-body)))
+  (web-make-html-response (web-make-upload-body)))
