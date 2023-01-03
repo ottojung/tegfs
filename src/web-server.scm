@@ -47,7 +47,7 @@
 %use (web-full) "./web-full.scm"
 %use (web-get-permissions) "./web-get-permissions.scm"
 %use (web-get-query) "./web-get-query.scm"
-%use (web-login-body) "./web-login-body.scm"
+%use (web-login) "./web-login.scm"
 %use (web-logincont) "./web-logincont.scm"
 %use (web-make-context) "./web-make-context.scm"
 %use (web-message-template) "./web-message-template.scm"
@@ -93,9 +93,6 @@
 (define (static-message message)
   (define xml (web-message-template message))
   (lambda _ (web-respond xml)))
-
-(define (login)
-  (web-respond web-login-body))
 
 (define permission-denied
   (web-static-error-message 401 "Permission denied"))
@@ -260,7 +257,7 @@
    (directory-files sharedir)))
 
 (define handlers-config
-  `((/login ,login public)
+  `((/login ,web-login public)
     (/logincont ,web-logincont public)
     (/main.css ,main.css public)
     (/collectgarbage ,collectgarbage public)
