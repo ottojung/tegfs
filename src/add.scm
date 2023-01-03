@@ -21,6 +21,7 @@
 %use (catchu-case) "./euphrates/catchu-case.scm"
 %use (fn-cons) "./euphrates/fn-cons.scm"
 %use (list-zip) "./euphrates/list-zip.scm"
+%use (raisu) "./euphrates/raisu.scm"
 %use (~a) "./euphrates/tilda-a.scm"
 %use (add-entry) "./add-entry.scm"
 %use (fatal) "./fatal.scm"
