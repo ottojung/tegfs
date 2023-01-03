@@ -22,6 +22,7 @@
 %use (profun-op-envlambda) "./euphrates/profun-op-envlambda.scm"
 %use (profun-request-value) "./euphrates/profun-request-value.scm"
 %use (profun-unbound-value?) "./euphrates/profun-value.scm"
+%use (can-upload?) "./access.scm"
 %use (add-entry) "./add-entry.scm"
 %use (permission?) "./permission.scm"
 %use (tegfs-permissions/p) "./talk-parameters.scm"
@@ -38,6 +39,8 @@
      (cond
       ((not (permission? perm))
        (make-profun-error 'permission-denied "Not authorized. Missing key?"))
+      ((not (can-upload? perm))
+       (make-profun-error 'permission-denied "This user cannot create new entries"))
       ((profun-unbound-value? registry-file)
        (profun-request-value R-name))
       ((profun-unbound-value? entry)
