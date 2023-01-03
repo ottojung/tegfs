@@ -18,7 +18,6 @@
 %var tegfs-serve/parse
 
 %use (append-posix-path) "./euphrates/append-posix-path.scm"
-%use (catch-any) "./euphrates/catch-any.scm"
 %use (appcomp comp) "./euphrates/comp.scm"
 %use (define-tuple) "./euphrates/define-tuple.scm"
 %use (directory-files) "./euphrates/directory-files.scm"
@@ -32,6 +31,7 @@
 %use (make-directories) "./euphrates/make-directories.scm"
 %use (memconst) "./euphrates/memconst.scm"
 %use (open-file-port) "./euphrates/open-file-port.scm"
+%use (path-get-dirname) "./euphrates/path-get-dirname.scm"
 %use (path-without-extension) "./euphrates/path-without-extension.scm"
 %use (raisu) "./euphrates/raisu.scm"
 %use (string-split-3) "./euphrates/string-split-3.scm"
@@ -44,14 +44,10 @@
 %use (current-time/p) "./current-time-p.scm"
 %use (default-login-expiery-time) "./default-login-expiery-time.scm"
 %use (tegfs-process-categorization-text) "./edit-tags.scm"
-%use (entry-target-fullpath) "./entry-target-fullpath.scm"
 %use (filemap-delete-by-recepientid! filemap-ref-by-recepientid) "./filemap.scm"
-%use (get-preview-path) "./get-preview-path.scm"
 %use (get-random-basename) "./get-random-basename.scm"
 %use (get-root) "./get-root.scm"
-%use (tegfs-get/cached) "./get.scm"
 %use (make-permission!) "./make-permission-bang.scm"
-%use (tegfs-make-thumbnails) "./make-thumbnails.scm"
 %use (permission-still-valid?) "./permission-still-valid-huh.scm"
 %use (permission-admin? permission-filemap permission-token) "./permission.scm"
 %use (sha256sum) "./sha256sum.scm"
@@ -79,7 +75,6 @@
 %use (web-query) "./web-query.scm"
 %use (web-respond) "./web-respond.scm"
 %use (web-return!) "./web-return-bang.scm"
-%use (web-sendfile) "./web-sendfile.scm"
 %use (web-set-cookie-header) "./web-set-cookie-header.scm"
 %use (web-share) "./web-share.scm"
 %use (web-static-error-message) "./web-static-error-message.scm"
@@ -256,7 +251,7 @@
     (if (not filename) (values #f #f)
         (let* ((f1
                 (append-posix-path (get-root)
-                                   (dirname upload-registry-filename)
+                                   (path-get-dirname upload-registry-filename)
                                    filename))
                (t
                 (if (file-or-directory-exists? f1)
@@ -264,13 +259,13 @@
                     filename))
                (f2
                 (append-posix-path (get-root)
-                                   (dirname upload-registry-filename)
+                                   (path-get-dirname upload-registry-filename)
                                    t)))
           (values t f2))))
 
   (define _44
     (when full-filename
-      (make-directories (dirname full-filename))
+      (make-directories (path-get-dirname full-filename))
       (let ((port (open-file-port full-filename "w")))
         (put-bytevector port file-content)
         (close-port port))))
