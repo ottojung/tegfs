@@ -39,15 +39,6 @@
 
 %end
 
-(define (query->hashmap query)
-  (define split (string-split/simple query #\&))
-  (define key-values
-    (map (lambda (sp)
-           (define-values (key eq val) (string-split-3 #\= sp))
-           (cons (string->symbol key) (web-try-uri-decode val)))
-         split))
-  (alist->hashmap key-values))
-
 (define (set-user-key! key)
   (set-callcontext-key! (web-callcontext/p) key))
 
@@ -78,35 +69,24 @@
          (got (and cookies (assoc name cookies))))
     (and got (cdr got))))
 
-(define (get-access-token)
+(define (get-access-token callctx)
   (or
-   (let* ((qH (web-get-query))
+   (let* ((qH (callcontext-query callctx))
           (ret (hashmap-ref qH 'key #f)))
      (when ret (set-user-key! ret))
      ret)
-   (let* ((callctx (web-callcontext/p))
-          (request (callcontext-request callctx)))
+   (let ((request (callcontext-request callctx)))
      (or (get-cookie "key" request)
          (get-cookie "pwdtoken" request)))))
 
-(define (invalidate-permission perm)
-  (define ctx (web-context/p))
-  (define tokens (context-tokens ctx))
-  (define token (permission-token perm))
-  (hashmap-delete! tokens token)
-  (values))
-
-(define (initialize-permissions)
-  (define token (get-access-token))
-  (define ctx (web-context/p))
-  (define tokens (context-tokens ctx))
-  (define existing (hashmap-ref tokens token #f))
-
-  (and existing
-       (if (permission-still-valid? existing) existing
-           (begin
-             (invalidate-permission existing)
-             #f))))
+(define (query->hashmap query)
+  (define split (string-split/simple query #\&))
+  (define key-values
+    (map (lambda (sp)
+           (define-values (key eq val) (string-split-3 #\= sp))
+           (cons (string->symbol key) (web-try-uri-decode val)))
+         split))
+  (alist->hashmap key-values))
 
 (define (initialize-query request)
   (define uri (request-uri request))
@@ -117,5 +97,7 @@
 
 (define (web-make-callcontext break request body)
   (define qH (memconst (initialize-query request)))
-  (define perm (memconst (initialize-permissions)))
-  (callcontext-ctr break request qH body #f perm))
+  (letrec
+      ((tokenfn (memconst (get-access-token callctx)))
+       (callctx (callcontext-ctr break request qH body #f tokenfn)))
+    callctx))

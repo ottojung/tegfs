@@ -23,16 +23,16 @@
 %var callcontext-body
 %var callcontext-key
 %var set-callcontext-key!
-%var callcontext-permissions
+%var callcontext-tokenfn
 
 %use (define-type9) "./euphrates/define-type9.scm"
 
 (define-type9 <callcontext>
-  (callcontext-ctr break request query body key permissions) callcontext?
+  (callcontext-ctr break request query body key token) callcontext?
   (break callcontext-break) ;; break handler
   (request callcontext-request) ;; client request
   (query callcontext-query) ;; query hashmap
   (body callcontext-body) ;; client body
   (key callcontext-key set-callcontext-key!) ;; access key to-set to
-  (permissions callcontext-permissions) ;; permissions associated with this call
+  (tokenfn callcontext-tokenfn) ;; current token function
   )
