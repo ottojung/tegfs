@@ -30,6 +30,7 @@
 %use (path-get-dirname) "./euphrates/path-get-dirname.scm"
 %use (raisu) "./euphrates/raisu.scm"
 %use (random-choice) "./euphrates/random-choice.scm"
+%use (read-string-file) "./euphrates/read-string-file.scm"
 %use (string-strip) "./euphrates/string-strip.scm"
 %use (system-re) "./euphrates/system-re.scm"
 %use (write-string-file) "./euphrates/write-string-file.scm"
@@ -88,13 +89,21 @@
       keyword-id id
       entry0)))
 
-  (define entry
+  (define entry2
     (let ((tags0 (assq-or keyword-tags entry1 #f)))
       (if tags0
          (assoc-set-value
           keyword-tags (list-deduplicate/reverse tags0)
           entry1)
          entry1)))
+
+  (define entry
+    (let ((prev0 (assq-or keyword-tags entry2 #f)))
+      (if (equal? prev0 '%LAST-ID)
+          (and (or (file-or-directory-exists? last-id-path)
+                   (raisu 'no-last-id-for-series))
+               (string-strip (read-string-file last-id-path)))
+          entry2)))
 
   (define target
     (assq-or keyword-target entry #f))

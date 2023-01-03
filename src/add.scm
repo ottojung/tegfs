@@ -18,23 +18,17 @@
 %var tegfs-add
 %var tegfs-add/parse
 
-%use (append-posix-path) "./euphrates/append-posix-path.scm"
 %use (catchu-case) "./euphrates/catchu-case.scm"
-%use (file-or-directory-exists?) "./euphrates/file-or-directory-exists-q.scm"
 %use (fn-cons) "./euphrates/fn-cons.scm"
 %use (list-zip) "./euphrates/list-zip.scm"
-%use (read-string-file) "./euphrates/read-string-file.scm"
-%use (string-strip) "./euphrates/string-strip.scm"
 %use (~a) "./euphrates/tilda-a.scm"
 %use (add-entry) "./add-entry.scm"
 %use (fatal) "./fatal.scm"
-%use (get-root) "./get-root.scm"
 %use (keyword-date) "./keyword-date.scm"
 %use (keyword-prev) "./keyword-prev.scm"
 %use (keyword-tags) "./keyword-tags.scm"
 %use (keyword-target) "./keyword-target.scm"
 %use (keyword-title) "./keyword-title.scm"
-%use (last-id-filename) "./last-id-filename.scm"
 
 (define (tegfs-add/parse
          <target> <title> <tag...>
@@ -51,6 +45,9 @@
     <target> <title> tags
     --series key-value-pairs
     <registry-file> <date>)
+
+   (('no-last-id-for-series)
+    (fatal "Want series, but last-id file is not present"))
 
    (('target-absolute-but-should-relative target)
     (fatal "Target ~s must be a path relative to the registry file, not an absolute path" target))
@@ -69,15 +66,6 @@
     (cond
      ((symbol? x) x)
      (else (string->symbol (~a x)))))
-
-  (define last-id-path
-    (append-posix-path (get-root) last-id-filename))
-
-  (define prev
-    (and series?
-         (or (file-or-directory-exists? last-id-path)
-             (fatal "Want series, but last-id file is not present"))
-         (string-strip (read-string-file last-id-path))))
 
   (define key-value-pairs
     (map (fn-cons tosymbol identity)
@@ -98,8 +86,8 @@
      (if (null? tags)
          (list)
          (list (cons keyword-tags tags)))
-     (if prev
-         (list (cons keyword-prev prev))
+     (if series?
+         (list (cons keyword-prev '%LAST-ID))
          (list))
      key-value-pairs))
 
