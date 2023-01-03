@@ -17,19 +17,14 @@
 
 %var web-make-callcontext
 
-%use (alist->hashmap hashmap-delete! hashmap-ref make-hashmap) "./euphrates/hashmap.scm"
+%use (alist->hashmap hashmap-ref make-hashmap) "./euphrates/hashmap.scm"
 %use (memconst) "./euphrates/memconst.scm"
 %use (raisu) "./euphrates/raisu.scm"
 %use (string-split-3) "./euphrates/string-split-3.scm"
 %use (string-split/simple) "./euphrates/string-split-simple.scm"
 %use (string-strip) "./euphrates/string-strip.scm"
-%use (permission-still-valid?) "./permission-still-valid-huh.scm"
-%use (permission-token) "./permission.scm"
 %use (web-callcontext/p) "./web-callcontext-p.scm"
-%use (callcontext-ctr callcontext-request set-callcontext-key!) "./web-callcontext.scm"
-%use (web-context/p) "./web-context-p.scm"
-%use (context-tokens) "./web-context.scm"
-%use (web-get-query) "./web-get-query.scm"
+%use (callcontext-ctr callcontext-query callcontext-request set-callcontext-key!) "./web-callcontext.scm"
 %use (web-try-uri-decode) "./web-try-uri-decode.scm"
 
 %for (COMPILER "guile")
