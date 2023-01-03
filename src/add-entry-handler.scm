@@ -17,6 +17,7 @@
 
 %var add-entry-handler
 
+%use (profun-accept) "./euphrates/profun-accept.scm"
 %use (profun-op-lambda) "./euphrates/profun-op-lambda.scm"
 %use (profun-request-value) "./euphrates/profun-request-value.scm"
 %use (profun-unbound-value?) "./euphrates/profun-value.scm"
