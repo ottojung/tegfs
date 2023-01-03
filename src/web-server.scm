@@ -297,16 +297,6 @@
 (define (upload)
   (web-respond (web-make-upload-body)))
 
-(define (web-make-preview target-fullpath entry)
-  (define preview-fullpath
-    (get-preview-path target-fullpath))
-
-  (and (or (file-or-directory-exists? preview-fullpath)
-           (catch-any
-            (lambda _ (tegfs-make-thumbnails target-fullpath preview-fullpath))
-            (lambda _ #f)))
-       preview-fullpath))
-
 (define unavailable-image-string
   (stringf
    "<?xml version='1.0' encoding='UTF-8' standalone='no'?>
@@ -345,20 +335,6 @@
 
 (define (previewunknownurl)
   (web-return! unknownurl-response unknownurl-bytevector))
-
-(define (preview)
-  (define ctxq (web-get-query))
-  (define target-id (hashmap-ref ctxq 't #f))
-  (define entry
-    (or (tegfs-get/cached target-id)
-        (web-not-found)))
-  (define target-fullpath (entry-target-fullpath entry))
-  (define preview-fullpath
-    (web-make-preview target-fullpath entry))
-
-  (if preview-fullpath
-      (web-sendfile web-return! 'image/jpeg preview-fullpath)
-      (previewunknown)))
 
 (define (invalidate-permission perm)
   (define ctx (web-context/p))
@@ -459,7 +435,6 @@
     (/full ,web-full public)
     (/upload ,upload)
     (/uploadcont ,uploadcont)
-    (/preview ,preview)
     (/previewunknown ,previewunknown)
     (/previewunknownurl ,previewunknownurl)
     (/share ,web-share public)
