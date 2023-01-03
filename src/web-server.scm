@@ -45,15 +45,16 @@
 %use (web-login) "./web-login.scm"
 %use (web-logincont) "./web-logincont.scm"
 %use (web-make-context) "./web-make-context.scm"
+%use (web-make-html-response) "./web-make-html-response.scm"
 %use (web-message-template) "./web-message-template.scm"
 %use (web-not-found) "./web-not-found.scm"
 %use (web-preview-height) "./web-preview-height.scm"
 %use (web-preview-width) "./web-preview-width.scm"
 %use (web-query) "./web-query.scm"
-%use (web-make-html-response) "./web-make-html-response.scm"
 %use (web-return!) "./web-return-bang.scm"
 %use (web-share) "./web-share.scm"
 %use (web-static-error-message) "./web-static-error-message.scm"
+%use (web-static) "./web-static.scm"
 %use (web-style) "./web-style.scm"
 %use (web-try-uri-decode) "./web-try-uri-decode.scm"
 %use (web-upload) "./web-upload.scm"
@@ -177,6 +178,7 @@
     (/previewunknown ,previewunknown)
     (/previewunknownurl ,previewunknownurl)
     (/share ,web-share public)
+    (/static ,web-static public)
     ))
 
 (define handlers-funcmap
