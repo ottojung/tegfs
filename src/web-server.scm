@@ -18,30 +18,21 @@
 %var tegfs-serve/parse
 
 %use (dprintln) "./euphrates/dprintln.scm"
-%use (alist->hashmap hashmap-delete! hashmap-ref make-hashmap) "./euphrates/hashmap.scm"
-%use (memconst) "./euphrates/memconst.scm"
-%use (raisu) "./euphrates/raisu.scm"
-%use (string-split-3) "./euphrates/string-split-3.scm"
-%use (string-split/simple) "./euphrates/string-split-simple.scm"
-%use (string-strip) "./euphrates/string-strip.scm"
+%use (alist->hashmap hashmap-ref) "./euphrates/hashmap.scm"
 %use (stringf) "./euphrates/stringf.scm"
 %use (~a) "./euphrates/tilda-a.scm"
 %use (time-get-current-unixtime) "./euphrates/time-get-current-unixtime.scm"
-%use (permission-still-valid?) "./permission-still-valid-huh.scm"
-%use (permission-admin? permission-token) "./permission.scm"
 %use (web-basic-headers) "./web-basic-headers.scm"
 %use (web-callcontext/p) "./web-callcontext-p.scm"
-%use (callcontext-ctr callcontext-request set-callcontext-key!) "./web-callcontext.scm"
 %use (web-collectgarbage web-collectgarbage/nocall) "./web-collectgarbage.scm"
 %use (web-context/p) "./web-context-p.scm"
-%use (context-port context-tokens) "./web-context.scm"
+%use (context-port) "./web-context.scm"
 %use (web-details) "./web-details.scm"
 %use (web-directory) "./web-directory.scm"
 %use (web-full) "./web-full.scm"
-%use (web-get-permissions) "./web-get-permissions.scm"
-%use (web-get-query) "./web-get-query.scm"
 %use (web-login) "./web-login.scm"
 %use (web-logincont) "./web-logincont.scm"
+%use (web-make-callcontext) "./web-make-callcontext.scm"
 %use (web-make-context) "./web-make-context.scm"
 %use (web-make-html-response) "./web-make-html-response.scm"
 %use (web-message-template) "./web-message-template.scm"
@@ -53,7 +44,6 @@
 %use (web-share) "./web-share.scm"
 %use (web-static-error-message) "./web-static-error-message.scm"
 %use (web-style) "./web-style.scm"
-%use (web-try-uri-decode) "./web-try-uri-decode.scm"
 %use (web-upload) "./web-upload.scm"
 %use (web-uploadcont) "./web-uploadcont.scm"
 %use (web-url-icon/svg) "./web-url-icon-svg.scm"
@@ -89,38 +79,6 @@
 
 (define permission-denied
   (web-static-error-message 401 "Permission denied"))
-
-(define (parse-cookies-string cookies/string)
-  (define _aa
-    (unless (string? cookies/string)
-      (raisu 'bad-cookies-cdr cookies/string)))
-
-  (define cookie-split-semicolon
-    (string-split/simple cookies/string #\;))
-
-  (define cookie-split
-    (map
-     (lambda (c)
-       (define-values (key eq val) (string-split-3 #\= c))
-       (unless eq
-         (raisu 'bad-cookie-split cookies/string))
-       (cons (string-strip key) val))
-     cookie-split-semicolon))
-
-  cookie-split)
-
-(define (get-cookie name request)
-  (let* ((headers (request-headers request))
-         (cookies-p (assoc 'cookie headers))
-         (cookies/string (and (pair? cookies-p) (cdr cookies-p)))
-         (cookies (and cookies/string (parse-cookies-string cookies/string)))
-         (got (and cookies (assoc name cookies))))
-    (and got (cdr got))))
-
-(define (check-permissions)
-  (define perm (web-get-permissions))
-  (unless (and perm (permission-admin? perm))
-    (permission-denied)))
 
 (define unavailable-image-string
   (stringf
@@ -199,66 +157,12 @@
     (unless func (web-not-found))
     (func)))
 
-(define (query->hashmap query)
-  (define split (string-split/simple query #\&))
-  (define key-values
-    (map (lambda (sp)
-           (define-values (key eq val) (string-split-3 #\= sp))
-           (cons (string->symbol key) (web-try-uri-decode val)))
-         split))
-  (alist->hashmap key-values))
-
-(define (set-user-key! key)
-  (set-callcontext-key! (web-callcontext/p) key))
-
-(define (get-access-token)
-  (or
-   (let* ((qH (web-get-query))
-          (ret (hashmap-ref qH 'key #f)))
-     (when ret (set-user-key! ret))
-     ret)
-   (let* ((callctx (web-callcontext/p))
-          (request (callcontext-request callctx)))
-     (or (get-cookie "key" request)
-         (get-cookie "pwdtoken" request)))))
-
-(define (invalidate-permission perm)
-  (define ctx (web-context/p))
-  (define tokens (context-tokens ctx))
-  (define token (permission-token perm))
-  (hashmap-delete! tokens token)
-  (values))
-
-(define (initialize-permissions)
-  (define token (get-access-token))
-  (define ctx (web-context/p))
-  (define tokens (context-tokens ctx))
-  (define existing (hashmap-ref tokens token #f))
-
-  (and existing
-       (if (permission-still-valid? existing) existing
-           (begin
-             (invalidate-permission existing)
-             #f))))
-
-(define (initialize-query request)
-  (define uri (request-uri request))
-  (define query/encoded (uri-query uri))
-  (if query/encoded
-      (query->hashmap query/encoded)
-      (make-hashmap)))
-
-(define (make-callcontext break request body)
-  (define qH (memconst (initialize-query request)))
-  (define perm (memconst (initialize-permissions)))
-  (callcontext-ctr break request qH body #f perm))
-
 (define (make-handler)
   (lambda (request body)
     (log-request request)
     (call-with-current-continuation
      (lambda (k)
-       (parameterize ((web-callcontext/p (make-callcontext k request body)))
+       (parameterize ((web-callcontext/p (web-make-callcontext k request body)))
          (with-current-time
           (handler request body)))))))
 
