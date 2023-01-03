@@ -221,29 +221,25 @@
   (define body/bytes (callcontext-body callctx))
   (define body/hash (parse-multipart-as-hashmap body/bytes))
 
-  (define title
-    (appcomp body/hash
-             ((fn hashmap-ref % "title" #f))
-             (assoc 'data)
-             cdr
-             ((fn bytevector->string % "utf-8"))))
-
-  (define tags
-    (appcomp body/hash
-             ((fn hashmap-ref % "tags" #f))
-             (assoc 'data)
-             cdr
-             ((fn bytevector->string % "utf-8"))))
-
-  (define file-content
-    (appcomp body/hash
-             ((fn hashmap-ref % "file" #f))
+  (define (get-data a-key)
+    (appcomp (hashmap-ref body/hash a-key #f)
              (assoc 'data)
              cdr))
 
+  (define (get-data/decode a-key)
+    (bytevector->string (get-data a-key) "utf-8"))
+
+  (define title
+    (get-data/decode "title"))
+
+  (define tags
+    (get-data/decode "tags"))
+
+  (define file-content
+    (get-data "file"))
+
   (define filename
-    (appcomp body/hash
-             ((fn hashmap-ref % "file" #f))
+    (appcomp (hashmap-ref body/hash "file" #f)
              (assoc 'Content-Disposition:filename)
              cdr))
 
