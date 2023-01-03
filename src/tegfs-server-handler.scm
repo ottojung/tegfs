@@ -40,7 +40,7 @@
 
    (entry (query-entry-handler tegfs-context))
    (entry-field entry-field-handler)
-   (add-entry add-entry-handler)
+   (add-entry (add-entry-handler tegfs-context))
 
    (query (instantiate-profun-parameter query-split/p))
    (key (tegfs-key-handler tegfs-context))

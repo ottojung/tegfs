@@ -18,22 +18,31 @@
 %var add-entry-handler
 
 %use (profun-accept) "./euphrates/profun-accept.scm"
-%use (profun-op-lambda) "./euphrates/profun-op-lambda.scm"
+%use (make-profun-error) "./euphrates/profun-error.scm"
+%use (profun-op-envlambda) "./euphrates/profun-op-envlambda.scm"
 %use (profun-request-value) "./euphrates/profun-request-value.scm"
 %use (profun-unbound-value?) "./euphrates/profun-value.scm"
 %use (add-entry) "./add-entry.scm"
+%use (permission?) "./permission.scm"
+%use (tegfs-permissions/p) "./talk-parameters.scm"
 
 (define add-entry-handler
-  (profun-op-lambda
-   (ctx (registry-file entry)
-        (R-name E-name))
+  (lambda (tegfs-context)
+    (profun-op-envlambda
+     (ctx env (R-name E-name))
 
-   (cond
-    ((profun-unbound-value? registry-file)
-     (profun-request-value R-name))
-    ((profun-unbound-value? entry)
-     (profun-request-value E-name))
+     (define registry-file (env R-name))
+     (define entry (env E-name))
+     (define perm (tegfs-permissions/p))
 
-    (else
-     (add-entry registry-file entry)
-     (profun-accept)))))
+     (cond
+      ((not (permission? perm))
+       (make-profun-error 'permission-denied "Not authorized. Missing key?"))
+      ((profun-unbound-value? registry-file)
+       (profun-request-value R-name))
+      ((profun-unbound-value? entry)
+       (profun-request-value E-name))
+
+      (else
+       (add-entry registry-file entry)
+       (profun-accept))))))
