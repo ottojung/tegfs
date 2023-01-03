@@ -18,13 +18,10 @@
 %var tegfs-serve/parse
 
 %use (comp) "./euphrates/comp.scm"
-%use (directory-files) "./euphrates/directory-files.scm"
 %use (dprintln) "./euphrates/dprintln.scm"
-%use (file-delete) "./euphrates/file-delete.scm"
-%use (alist->hashmap hashmap-delete! hashmap-foreach hashmap-ref make-hashmap) "./euphrates/hashmap.scm"
+%use (alist->hashmap hashmap-delete! hashmap-ref make-hashmap) "./euphrates/hashmap.scm"
 %use (hashset-has? list->hashset) "./euphrates/hashset.scm"
 %use (memconst) "./euphrates/memconst.scm"
-%use (path-without-extension) "./euphrates/path-without-extension.scm"
 %use (raisu) "./euphrates/raisu.scm"
 %use (string-split-3) "./euphrates/string-split-3.scm"
 %use (string-split/simple) "./euphrates/string-split-simple.scm"
@@ -32,16 +29,14 @@
 %use (stringf) "./euphrates/stringf.scm"
 %use (~a) "./euphrates/tilda-a.scm"
 %use (time-get-current-unixtime) "./euphrates/time-get-current-unixtime.scm"
-%use (current-time/p) "./current-time-p.scm"
-%use (filemap-delete-by-recepientid! filemap-ref-by-recepientid) "./filemap.scm"
 %use (permission-still-valid?) "./permission-still-valid-huh.scm"
-%use (permission-admin? permission-filemap permission-token) "./permission.scm"
-%use (sharedinfo-ctime sharedinfo-stime) "./sharedinfo.scm"
+%use (permission-admin? permission-token) "./permission.scm"
 %use (web-basic-headers) "./web-basic-headers.scm"
 %use (web-callcontext/p) "./web-callcontext-p.scm"
 %use (callcontext-ctr callcontext-request set-callcontext-key!) "./web-callcontext.scm"
+%use (web-collectgarbage web-collectgarbage/nocall) "./web-collectgarbage.scm"
 %use (web-context/p) "./web-context-p.scm"
-%use (context-filemap/2 context-port context-sharedir context-tokens) "./web-context.scm"
+%use (context-port context-tokens) "./web-context.scm"
 %use (web-details) "./web-details.scm"
 %use (web-directory) "./web-directory.scm"
 %use (web-full) "./web-full.scm"
@@ -168,99 +163,11 @@
 (define (previewunknownurl)
   (web-return! unknownurl-response unknownurl-bytevector))
 
-(define (invalidate-permission perm)
-  (define ctx (web-context/p))
-  (define tokens (context-tokens ctx))
-  (define token (permission-token perm))
-  (hashmap-delete! tokens token)
-  (values))
-
-(define sharedinfo-time-left
-  (case-lambda
-   ((info)
-    (sharedinfo-time-left info (time-get-current-unixtime)))
-   ((info current-time)
-    (define end (+ (sharedinfo-ctime info)
-                   (sharedinfo-stime info)))
-    (max 0 (- end current-time)))))
-
-(define sharedinfo-still-valid?
-  (case-lambda
-   ((info)
-    (sharedinfo-still-valid? info (time-get-current-unixtime)))
-   ((info current-time)
-    (< 0 (sharedinfo-time-left info current-time)))))
-
-(define (collectgarbage)
-  (define now (or (current-time/p)
-                  (raisu 'current-time-is-not-set)))
-
-  (collectgarbage/nocall now)
-
-  (web-return!
-   (build-response
-    #:code 200
-    #:headers
-    (append web-basic-headers
-            `((Cache-Control . "no-cache"))))
-   "ok\n"))
-
-(define (collectgarbage/nocall now)
-  (define ctx (web-context/p))
-  (define sharedir (context-sharedir ctx))
-  (define filemap/2 (context-filemap/2 ctx))
-  (define tokens (context-tokens ctx))
-  (define delayed-list '())
-  (define-syntax delayop
-    (syntax-rules ()
-      ((_ . bodies)
-       (set! delayed-list
-             (cons (lambda _ . bodies) delayed-list)))))
-
-  (hashmap-foreach
-   (lambda (recepientid info)
-     (unless (sharedinfo-still-valid? info)
-       (delayop
-        (display "UNSHARE ") (write recepientid) (newline)
-        (filemap-delete-by-recepientid! filemap/2 recepientid))))
-   (cdr filemap/2))
-
-  (hashmap-foreach
-   (lambda (token perm)
-     (if (permission-still-valid? perm now)
-         (hashmap-foreach
-          (lambda (target-fullpath info)
-            (unless (sharedinfo-still-valid? info)
-              (delayop
-               (display "UNPERM ")
-               (write target-fullpath) (newline)
-               (hashmap-delete!
-                (permission-filemap perm) target-fullpath))))
-          (permission-filemap perm))
-         (delayop
-          (hashmap-delete! tokens token))))
-   tokens)
-
-  (for-each (lambda (delayed) (delayed)) delayed-list)
-
-  (for-each
-   (lambda (namepair)
-     (define full-name (car namepair))
-     (define sharedname (cadr namepair))
-     (define recepientid (path-without-extension sharedname))
-     (define info (filemap-ref-by-recepientid filemap/2 recepientid #f))
-     (unless info
-       (display "File not shared: ")
-       (write sharedname)
-       (display " deleting...\n")
-       (file-delete full-name)))
-   (directory-files sharedir)))
-
 (define handlers-config
   `((/login ,web-login public)
     (/logincont ,web-logincont public)
     (/main.css ,main.css public)
-    (/collectgarbage ,collectgarbage public)
+    (/collectgarbage ,web-collectgarbage public)
     (/query ,web-query public)
     (/directory ,web-directory public)
     (/details ,web-details public)
@@ -328,6 +235,13 @@
      (or (get-cookie "key" request)
          (get-cookie "pwdtoken" request)))))
 
+(define (invalidate-permission perm)
+  (define ctx (web-context/p))
+  (define tokens (context-tokens ctx))
+  (define token (permission-token perm))
+  (hashmap-delete! tokens token)
+  (values))
+
 (define (initialize-permissions)
   (define token (get-access-token))
   (define ctx (web-context/p))
@@ -367,7 +281,7 @@
     (let ((port (context-port (web-context/p))))
 
       (dprintln "Collecting garbage left from the previous run...")
-      (collectgarbage/nocall (time-get-current-unixtime))
+      (web-collectgarbage/nocall (time-get-current-unixtime))
       (dprintln "Done")
 
       (run-server (make-handler) 'http `(#:port ,port)))))
