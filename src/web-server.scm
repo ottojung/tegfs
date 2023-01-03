@@ -28,6 +28,7 @@
 %use (list-singleton?) "./euphrates/list-singleton-q.scm"
 %use (memconst) "./euphrates/memconst.scm"
 %use (path-without-extension) "./euphrates/path-without-extension.scm"
+%use (profune-communicator-handle) "./euphrates/profune-communicator.scm"
 %use (raisu) "./euphrates/raisu.scm"
 %use (string-split-3) "./euphrates/string-split-3.scm"
 %use (string-split/simple) "./euphrates/string-split-simple.scm"
@@ -36,19 +37,16 @@
 %use (~a) "./euphrates/tilda-a.scm"
 %use (time-get-current-unixtime) "./euphrates/time-get-current-unixtime.scm"
 %use (current-time/p) "./current-time-p.scm"
-%use (default-login-expiery-time) "./default-login-expiery-time.scm"
 %use (filemap-delete-by-recepientid! filemap-ref-by-recepientid) "./filemap.scm"
-%use (make-permission!) "./make-permission-bang.scm"
 %use (permission-still-valid?) "./permission-still-valid-huh.scm"
 %use (permission-admin? permission-filemap permission-token) "./permission.scm"
-%use (sha256sum) "./sha256sum.scm"
 %use (sharedinfo-ctime sharedinfo-stime) "./sharedinfo.scm"
 %use (web-basic-headers) "./web-basic-headers.scm"
 %use (web-body-not-found) "./web-body-not-found.scm"
 %use (web-callcontext/p) "./web-callcontext-p.scm"
 %use (callcontext-body callcontext-ctr callcontext-request set-callcontext-key!) "./web-callcontext.scm"
 %use (web-context/p) "./web-context-p.scm"
-%use (context-filemap/2 context-passwords context-port context-sharedir context-tokens) "./web-context.scm"
+%use (context-filemap/2 context-port context-sharedir context-tokens) "./web-context.scm"
 %use (web-details) "./web-details.scm"
 %use (web-directory) "./web-directory.scm"
 %use (web-full) "./web-full.scm"
@@ -57,6 +55,7 @@
 %use (web-login-body) "./web-login-body.scm"
 %use (web-login-failed-body) "./web-login-failed-body.scm"
 %use (web-login-success-body) "./web-login-success-body.scm"
+%use (web-make-communicator) "./web-make-communicator.scm"
 %use (web-make-context) "./web-make-context.scm"
 %use (web-message-template) "./web-message-template.scm"
 %use (web-not-found) "./web-not-found.scm"
@@ -129,31 +128,30 @@
     (unless (list-singleton? key-values)
       (raisu 'too-many-query-parameters key-values)))
 
-  (define-tuple (key value)
+  (define-tuple (key password)
     (car key-values))
 
   (define _3
     (unless (equal? "psw" key)
       (raisu 'bad-query-key key)))
 
-  (define passw
-    (sha256sum value))
+  (define result
+    (profune-communicator-handle
+     (web-make-communicator (web-context/p))
+     `(whats
+       (login ,password)
+       (key K)
+       )))
 
-  (define ctx (web-context/p))
-  (define passwords (context-passwords ctx))
-  (define registered? (hashmap-ref passwords passw #f))
-  (define admin? #t) ;; TODO: read from the config
-  (define uploadaccess? #t) ;; TODO: read from the config
-  (define detailsaccess? #t) ;; TODO: read from the config
-  (define share-longer-than-view? #t) ;; TODO: read from the config
-
-  (if registered?
-      (let* ((perm (make-permission! ctx default-login-expiery-time admin? uploadaccess? detailsaccess? share-longer-than-view?))
-             (token (permission-token perm)))
-        (web-respond
-         web-login-success-body
-         #:extra-headers (list (web-set-cookie-header "pwdtoken" token))))
-      (web-respond web-login-failed-body)))
+  (case (car result)
+    ((its)
+     (let* ((word (cadr result))
+            (token (list-ref word 2)))
+       (web-respond
+        web-login-success-body
+        #:extra-headers (list (web-set-cookie-header "pwdtoken" token)))))
+    (else
+     (web-respond web-login-failed-body))))
 
 (define permission-denied
   (web-static-error-message 401 "Permission denied"))
