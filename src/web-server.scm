@@ -33,25 +33,32 @@
 %use (open-file-port) "./euphrates/open-file-port.scm"
 %use (path-get-dirname) "./euphrates/path-get-dirname.scm"
 %use (path-without-extension) "./euphrates/path-without-extension.scm"
+%use (profune-communicator-handle) "./euphrates/profune-communicator.scm"
 %use (raisu) "./euphrates/raisu.scm"
 %use (string-split-3) "./euphrates/string-split-3.scm"
 %use (string-split/simple) "./euphrates/string-split-simple.scm"
 %use (string-strip) "./euphrates/string-strip.scm"
 %use (stringf) "./euphrates/stringf.scm"
 %use (~a) "./euphrates/tilda-a.scm"
+%use (~s) "./euphrates/tilda-s.scm"
 %use (time-get-current-unixtime) "./euphrates/time-get-current-unixtime.scm"
-%use (tegfs-add) "./add.scm"
+%use (words->string) "./euphrates/words-to-string.scm"
+%use (add-entry) "./add-entry.scm"
 %use (current-time/p) "./current-time-p.scm"
 %use (default-login-expiery-time) "./default-login-expiery-time.scm"
 %use (tegfs-process-categorization-text) "./edit-tags.scm"
 %use (filemap-delete-by-recepientid! filemap-ref-by-recepientid) "./filemap.scm"
 %use (get-random-basename) "./get-random-basename.scm"
 %use (get-root) "./get-root.scm"
+%use (keyword-tags) "./keyword-tags.scm"
+%use (keyword-target) "./keyword-target.scm"
+%use (keyword-title) "./keyword-title.scm"
 %use (make-permission!) "./make-permission-bang.scm"
 %use (permission-still-valid?) "./permission-still-valid-huh.scm"
 %use (permission-admin? permission-filemap permission-token) "./permission.scm"
 %use (sha256sum) "./sha256sum.scm"
 %use (sharedinfo-ctime sharedinfo-stime) "./sharedinfo.scm"
+%use (web-bad-request) "./web-bad-request.scm"
 %use (web-basic-headers) "./web-basic-headers.scm"
 %use (web-callcontext/p) "./web-callcontext-p.scm"
 %use (callcontext-body callcontext-ctr callcontext-request set-callcontext-key!) "./web-callcontext.scm"
@@ -60,11 +67,13 @@
 %use (web-details) "./web-details.scm"
 %use (web-directory) "./web-directory.scm"
 %use (web-full) "./web-full.scm"
+%use (web-get-key) "./web-get-key.scm"
 %use (web-get-permissions) "./web-get-permissions.scm"
 %use (web-get-query) "./web-get-query.scm"
 %use (web-login-body) "./web-login-body.scm"
 %use (web-login-failed-body) "./web-login-failed-body.scm"
 %use (web-login-success-body) "./web-login-success-body.scm"
+%use (web-make-communicator) "./web-make-communicator.scm"
 %use (web-make-context) "./web-make-context.scm"
 %use (web-make-upload-body) "./web-make-upload-body.scm"
 %use (web-message-template) "./web-message-template.scm"
@@ -277,14 +286,24 @@
      (else
       (cdr (assoc 'ok tags-list-result)))))
 
-  (tegfs-add
-   <target> title tags-list
-   #f ;; TODO: accept series? flag
-   '() ;; TODO: accept key-value-pairs from the user
-   upload-registry-filename #f
-   )
+  (define entry
+    `((,keyword-target . ,<target>)
+      (,keyword-title . ,title)
+      (,keyword-tags ,@tags-list)))
 
-  ((upload-success-page <target>)))
+  (define result
+    (profune-communicator-handle
+     (web-make-communicator (web-context/p))
+     `(whats
+       (key ,(web-get-key callctx))
+       (add-entry ,upload-registry-filename ,entry)
+       )))
+
+  (case (car result)
+    ((its) ((upload-success-page <target>)))
+    (else
+     (when full-filename (file-delete full-filename))
+     (web-bad-request "error: ~a" (words->string (map ~s (cadr result)))))))
 
 (define (upload)
   (web-respond (web-make-upload-body)))
