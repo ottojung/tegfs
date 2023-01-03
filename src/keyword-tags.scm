@@ -15,6 +15,6 @@
 
 %run guile
 
-%var keyword-date
+%var keyword-tags
 
-(define keyword-date 'date)
+(define keyword-tags 'tags)

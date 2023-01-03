@@ -30,8 +30,11 @@
 %use (add-entry) "./add-entry.scm"
 %use (fatal) "./fatal.scm"
 %use (get-root) "./get-root.scm"
-%use (keyword-id) "./keyword-id.scm"
+%use (keyword-date) "./keyword-date.scm"
+%use (keyword-prev) "./keyword-prev.scm"
+%use (keyword-tags) "./keyword-tags.scm"
 %use (keyword-target) "./keyword-target.scm"
+%use (keyword-title) "./keyword-title.scm"
 %use (last-id-filename) "./last-id-filename.scm"
 
 (define (tegfs-add/parse
@@ -81,9 +84,6 @@
     (list-deduplicate
      (map tosymbol tags0)))
 
-  (define date
-    (or <date> (get-date)))
-
   (define key-value-pairs
     (map (fn-cons tosymbol identity)
          (if <target>
@@ -94,17 +94,18 @@
 
   (define entry
     (append
-     (list (cons keyword-id id))
      (if <title>
-         (list (cons 'title <title>))
+         (list (cons keyword-title <title>))
          (list))
-     (list (cons 'date date))
+     (if <date>
+         (list (cons keyword-date <date>))
+         (list))
      (if (null? tags)
          (list)
-         (list (cons 'tags tags)))
+         (list (cons keyword-tags tags)))
      (if prev
-         (list (cons 'prev prev))
+         (list (cons keyword-prev prev))
          (list))
      key-value-pairs))
 
-  (add-entry entry))
+  (add-entry <registry-file> entry))
