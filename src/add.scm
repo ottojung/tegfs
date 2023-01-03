@@ -46,6 +46,9 @@
     --series key-value-pairs
     <registry-file> <date>)
 
+   (('missing-registry-file)
+    (fatal "Parameter <registry-file> is required, but it is not set"))
+
    (('no-last-id-for-series)
     (fatal "Want series, but last-id file is not present"))
 
@@ -90,5 +93,8 @@
          (list (cons keyword-prev '%LAST-ID))
          (list))
      key-value-pairs))
+
+  (unless <registry-file>
+    (raisu 'missing-registry-file))
 
   (add-entry <registry-file> entry))

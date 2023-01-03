@@ -36,7 +36,6 @@
 %use (write-string-file) "./euphrates/write-string-file.scm"
 %use (a-weblink?) "./a-weblink-q.scm"
 %use (entry-print) "./entry-print.scm"
-%use (fatal) "./fatal.scm"
 %use (get-root) "./get-root.scm"
 %use (keyword-date) "./keyword-date.scm"
 %use (keyword-id) "./keyword-id.scm"
@@ -57,9 +56,6 @@
 
   (define (init-registry-file <registry-file>)
     (define registry-file (append-posix-path (get-root) <registry-file>))
-
-    (unless registry-file
-      (fatal "Parameter <registry-file> is required, but it is not set"))
 
     (unless (file-or-directory-exists? registry-file)
       (let ((registry-dir (dirname registry-file)))
