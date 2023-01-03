@@ -17,10 +17,11 @@
 
 %var tegfs-key-handler
 
-%use (profun-set-parameter) "./euphrates/profun-accept.scm"
+%use (profun-set profun-set-parameter) "./euphrates/profun-accept.scm"
 %use (profun-op-envlambda) "./euphrates/profun-op-envlambda.scm"
 %use (profun-request-value) "./euphrates/profun-request-value.scm"
 %use (profun-bound-value?) "./euphrates/profun-value.scm"
+%use (permission-token) "./permission.scm"
 %use (tegfs-permissions/p) "./talk-parameters.scm"
 %use (tegfs-login-by-key) "./tegfs-login-by-key.scm"
 
@@ -36,4 +37,8 @@
        (let ((perm (tegfs-login-by-key tegfs-context key)))
          (profun-set-parameter (tegfs-permissions/p <- perm))))
       (else
-       (profun-request-value K-name))))))
+       (let ((perm (tegfs-permissions/p)))
+         (if perm
+             (let ((key (permission-token perm)))
+               (profun-set (K-name <- key)))
+             (profun-request-value K-name))))))))
