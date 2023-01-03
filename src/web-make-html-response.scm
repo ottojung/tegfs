@@ -48,14 +48,15 @@
     ""
     )))
 
-(define* (web-make-html-response #:optional body #:key
-                      (status 200)
-                      (title "TegFS")
-                      (extra-heads '())
-                      (doctype "<!DOCTYPE html>\n")
-                      (content-type-params '((charset . "utf-8")))
-                      (content-type 'text/html)
-                      (extra-headers '()))
+(define* (web-make-html-response
+          body #:key
+          (status 200)
+          (title "TegFS")
+          (extra-heads '())
+          (doctype "<!DOCTYPE html>\n")
+          (content-type-params '((charset . "utf-8")))
+          (content-type 'text/html)
+          (extra-headers '()))
   (define ctx (web-context/p))
   (define callctx (web-callcontext/p))
   (define now (current-time/p))
