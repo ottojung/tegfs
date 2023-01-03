@@ -34,4 +34,5 @@
      (profun-request-value E-name))
 
     (else
-     (add-entry registry-file entry)))))
+     (add-entry registry-file entry)
+     (profun-accept)))))
