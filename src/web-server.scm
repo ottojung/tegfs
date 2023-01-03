@@ -17,48 +17,32 @@
 
 %var tegfs-serve/parse
 
-%use (append-posix-path) "./euphrates/append-posix-path.scm"
-%use (appcomp comp) "./euphrates/comp.scm"
+%use (comp) "./euphrates/comp.scm"
 %use (define-tuple) "./euphrates/define-tuple.scm"
 %use (directory-files) "./euphrates/directory-files.scm"
 %use (dprintln) "./euphrates/dprintln.scm"
 %use (file-delete) "./euphrates/file-delete.scm"
-%use (file-or-directory-exists?) "./euphrates/file-or-directory-exists-q.scm"
 %use (fn) "./euphrates/fn.scm"
 %use (alist->hashmap hashmap-delete! hashmap-foreach hashmap-ref make-hashmap) "./euphrates/hashmap.scm"
 %use (hashset-has? list->hashset) "./euphrates/hashset.scm"
 %use (list-singleton?) "./euphrates/list-singleton-q.scm"
-%use (make-directories) "./euphrates/make-directories.scm"
 %use (memconst) "./euphrates/memconst.scm"
-%use (open-file-port) "./euphrates/open-file-port.scm"
-%use (path-get-dirname) "./euphrates/path-get-dirname.scm"
 %use (path-without-extension) "./euphrates/path-without-extension.scm"
-%use (profune-communicator-handle) "./euphrates/profune-communicator.scm"
 %use (raisu) "./euphrates/raisu.scm"
 %use (string-split-3) "./euphrates/string-split-3.scm"
 %use (string-split/simple) "./euphrates/string-split-simple.scm"
 %use (string-strip) "./euphrates/string-strip.scm"
 %use (stringf) "./euphrates/stringf.scm"
 %use (~a) "./euphrates/tilda-a.scm"
-%use (~s) "./euphrates/tilda-s.scm"
 %use (time-get-current-unixtime) "./euphrates/time-get-current-unixtime.scm"
-%use (words->string) "./euphrates/words-to-string.scm"
-%use (add-entry) "./add-entry.scm"
 %use (current-time/p) "./current-time-p.scm"
 %use (default-login-expiery-time) "./default-login-expiery-time.scm"
-%use (tegfs-process-categorization-text) "./edit-tags.scm"
 %use (filemap-delete-by-recepientid! filemap-ref-by-recepientid) "./filemap.scm"
-%use (get-random-basename) "./get-random-basename.scm"
-%use (get-root) "./get-root.scm"
-%use (keyword-tags) "./keyword-tags.scm"
-%use (keyword-target) "./keyword-target.scm"
-%use (keyword-title) "./keyword-title.scm"
 %use (make-permission!) "./make-permission-bang.scm"
 %use (permission-still-valid?) "./permission-still-valid-huh.scm"
 %use (permission-admin? permission-filemap permission-token) "./permission.scm"
 %use (sha256sum) "./sha256sum.scm"
 %use (sharedinfo-ctime sharedinfo-stime) "./sharedinfo.scm"
-%use (web-bad-request) "./web-bad-request.scm"
 %use (web-basic-headers) "./web-basic-headers.scm"
 %use (web-callcontext/p) "./web-callcontext-p.scm"
 %use (callcontext-body callcontext-ctr callcontext-request set-callcontext-key!) "./web-callcontext.scm"
@@ -67,18 +51,15 @@
 %use (web-details) "./web-details.scm"
 %use (web-directory) "./web-directory.scm"
 %use (web-full) "./web-full.scm"
-%use (web-get-key) "./web-get-key.scm"
 %use (web-get-permissions) "./web-get-permissions.scm"
 %use (web-get-query) "./web-get-query.scm"
 %use (web-login-body) "./web-login-body.scm"
 %use (web-login-failed-body) "./web-login-failed-body.scm"
 %use (web-login-success-body) "./web-login-success-body.scm"
-%use (web-make-communicator) "./web-make-communicator.scm"
 %use (web-make-context) "./web-make-context.scm"
 %use (web-make-upload-body) "./web-make-upload-body.scm"
 %use (web-message-template) "./web-message-template.scm"
 %use (web-not-found) "./web-not-found.scm"
-%use (parse-multipart-as-hashmap) "./web-parse-multipart.scm"
 %use (web-preview-height) "./web-preview-height.scm"
 %use (web-preview-width) "./web-preview-width.scm"
 %use (web-query) "./web-query.scm"
@@ -89,6 +70,7 @@
 %use (web-static-error-message) "./web-static-error-message.scm"
 %use (web-style) "./web-style.scm"
 %use (web-try-uri-decode) "./web-try-uri-decode.scm"
+%use (web-uploadcont) "./web-upload.scm"
 %use (web-url-icon/svg) "./web-url-icon-svg.scm"
 %use (with-current-time) "./with-current-time.scm"
 
@@ -105,8 +87,6 @@
 (use-modules (ice-9 binary-ports))
 
 %end
-
-(define upload-registry-filename "upload/upload.tegfs.reg.lisp")
 
 (define (main.css)
   (web-return!
@@ -211,99 +191,6 @@
   (define perm (web-get-permissions))
   (unless (and perm (permission-admin? perm))
     (permission-denied)))
-
-(define (error-tags-list tags)
-  (web-static-error-message 400 (string-append "Some tags are ambiguous: " (~a tags))))
-
-(define duplicates-tags-list
-  (web-static-error-message 400 "Tags contain duplicates"))
-
-(define (upload-success-page <target>)
-  (if <target>
-      (web-static-error-message
-       200 (string-append "Uploaded successfully to filename: " <target>))
-      (web-static-error-message 200 "Uploaded successfully")))
-
-(define (uploadcont)
-  (define callctx (web-callcontext/p))
-  (define request (callcontext-request callctx))
-  (define body/bytes (callcontext-body callctx))
-  (define body/hash (parse-multipart-as-hashmap body/bytes))
-
-  (define (get-data a-key)
-    (appcomp (hashmap-ref body/hash a-key #f)
-             (assoc 'data)
-             cdr))
-
-  (define (get-data/decode a-key)
-    (bytevector->string (get-data a-key) "utf-8"))
-
-  (define title
-    (get-data/decode "title"))
-
-  (define tags
-    (get-data/decode "tags"))
-
-  (define file-content
-    (get-data "file"))
-
-  (define filename
-    (appcomp (hashmap-ref body/hash "file" #f)
-             (assoc 'Content-Disposition:filename)
-             cdr))
-
-  (define-values (<target> full-filename)
-    (if (not filename) (values #f #f)
-        (let* ((f1
-                (append-posix-path (get-root)
-                                   (path-get-dirname upload-registry-filename)
-                                   filename))
-               (t
-                (if (file-or-directory-exists? f1)
-                    (string-append (get-random-basename) "-" filename)
-                    filename))
-               (f2
-                (append-posix-path (get-root)
-                                   (path-get-dirname upload-registry-filename)
-                                   t)))
-          (values t f2))))
-
-  (define _44
-    (when full-filename
-      (make-directories (path-get-dirname full-filename))
-      (let ((port (open-file-port full-filename "w")))
-        (put-bytevector port file-content)
-        (close-port port))))
-
-  (define tags-list-result
-    (tegfs-process-categorization-text tags))
-
-  ;; TODO: edit the categorization file
-  (define tags-list
-    (cond
-     ((assoc 'ambiguous tags-list-result)
-      (error-tags-list (cdr (assoc 'ambiguous tags-list-result))))
-     (else
-      (cdr (assoc 'ok tags-list-result)))))
-
-  (define entry
-    `((,keyword-target . ,<target>)
-      (,keyword-title . ,title)
-      (,keyword-tags ,@tags-list)))
-
-  (define result
-    (profune-communicator-handle
-     (web-make-communicator (web-context/p))
-     `(whats
-       (key ,(web-get-key callctx))
-       (add-entry ,upload-registry-filename ,entry)
-       )))
-
-  (case (car result)
-    ((its) ((upload-success-page <target>)))
-    (else
-     (when full-filename (file-delete full-filename))
-     (web-bad-request "error: ~a" (words->string (map ~s (cadr result)))))))
 
 (define (upload)
   (web-respond (web-make-upload-body)))
@@ -445,7 +332,7 @@
     (/details ,web-details public)
     (/full ,web-full public)
     (/upload ,upload)
-    (/uploadcont ,uploadcont)
+    (/uploadcont ,web-uploadcont)
     (/previewunknown ,previewunknown)
     (/previewunknownurl ,previewunknownurl)
     (/share ,web-share public)
