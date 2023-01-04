@@ -17,8 +17,8 @@
 
 %var CLI-query
 
-%use (assq-or) "./euphrates/assq-or.scm"
 %use (comp) "./euphrates/comp.scm"
+%use (fn-alist) "./euphrates/fn-alist.scm"
 %use (printf) "./euphrates/printf.scm"
 %use (profune-communicator-handle) "./euphrates/profune-communicator.scm"
 %use (entry-print/formatted) "./entry-print-formatted.scm"
@@ -45,13 +45,11 @@
        )))
 
   (define equals (cadr (cadr result)))
-
   (for-each
-   (lambda (bindings)
-     (define entry
-       (assq-or 'E bindings (fatal "Unexpected result from backend")))
-     (print-func entry)
-     (newline))
+   (fn-alist
+    (E)
+    (print-func E)
+    (newline))
    equals)
 
   (parameterize ((current-output-port (current-error-port)))
