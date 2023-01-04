@@ -17,7 +17,6 @@
 
 %var web-share-entry-generic-handler
 
-%use (file-or-directory-exists?) "./euphrates/file-or-directory-exists-q.scm"
 %use (profun-set) "./euphrates/profun-accept.scm"
 %use (make-profun-error) "./euphrates/profun-error.scm"
 %use (profun-meta-key) "./euphrates/profun-meta-key.scm"
@@ -41,7 +40,7 @@
 
        (define (continue entry target-fullpath)
          (define generic-fullpath (get-shared-path target-fullpath))
-         (if (and generic-fullpath (file-or-directory-exists? generic-fullpath))
+         (if generic-fullpath
              (let ()
                (define info
                  (web-share-file/dont-link-yet

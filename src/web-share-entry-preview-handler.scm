@@ -17,8 +17,12 @@
 
 %var web-share-entry-preview-handler
 
+%use (file-or-directory-exists?) "./euphrates/file-or-directory-exists-q.scm"
 %use (get-preview-path) "./get-preview-path.scm"
 %use (web-share-entry-generic-handler) "./web-share-entry-generic-handler.scm"
 
 (define web-share-entry-preview-handler
-  (web-share-entry-generic-handler get-preview-path))
+  (web-share-entry-generic-handler
+   (lambda (target-fullpath)
+     (define ret (get-preview-path target-fullpath))
+     (and ret (file-or-directory-exists? ret) ret))))
