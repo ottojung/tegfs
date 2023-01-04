@@ -86,15 +86,8 @@
             (else (raisu 'unknown-content-type content))))
          (lambda _ (web-respond-with-a-file type bv)))))))
 
-(define (main.css)
-  (web-return!
-   (build-response
-    #:code 200
-    #:headers
-    (append web-basic-headers
-            `((content-type . (text/css))
-              (Cache-Control . "max-age=3600, public, private"))))
-   web-style))
+(define-web-static-file main.css
+  '(text/css) web-style)
 
 (define unavailable-image-string
   (stringf
