@@ -1,4 +1,4 @@
-;;;; Copyright (C) 2022  Otto Jung
+;;;; Copyright (C) 2022, 2023  Otto Jung
 ;;;;
 ;;;; This program is free software: you can redistribute it and/or modify
 ;;;; it under the terms of the GNU Affero General Public License as published
@@ -19,15 +19,11 @@
 
 %use (hashmap-ref) "./euphrates/hashmap.scm"
 %use (profune-communicator-handle) "./euphrates/profune-communicator.scm"
-%use (raisu) "./euphrates/raisu.scm"
-%use (~s) "./euphrates/tilda-s.scm"
-%use (words->string) "./euphrates/words-to-string.scm"
-%use (web-bad-request) "./web-bad-request.scm"
 %use (web-basic-headers) "./web-basic-headers.scm"
 %use (web-context/p) "./web-context-p.scm"
 %use (web-get-query) "./web-get-query.scm"
+%use (web-iterate-profun-results) "./web-iterate-profun-results.scm"
 %use (web-make-communicator) "./web-make-communicator.scm"
-%use (web-return!) "./web-return-bang.scm"
 
 %for (COMPILER "guile")
 
@@ -46,20 +42,14 @@
        (link-shared ,senderid L)
        )))
 
-  (cond
-   ((equal? 'error (car result))
-    (web-bad-request "error: ~a" (words->string (map ~s (cadr result)))))
-   ((and (equal? 'its (car result))
-         (equal? '= (car (cadr result))))
-    (let* ((word (cadr result))
-           (location (list-ref word 2)))
-      (web-return!
-       (build-response
-        #:code 301
-        #:headers
-        (append web-basic-headers
-                `((Location . ,location)
-                  (Cache-Control . "no-cache"))))
-       #f)))
-   (else
-    (raisu 'profun-returned-something-weird result))))
+  (web-iterate-profun-results
+   result (L)
+
+   (values
+    (build-response
+     #:code 301
+     #:headers
+     (append web-basic-headers
+             `((Location . ,L)
+               (Cache-Control . "no-cache"))))
+    #f)))
