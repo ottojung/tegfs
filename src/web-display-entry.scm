@@ -28,7 +28,7 @@
 
 (define (display-preview target preview-link)
   (define default-preview
-    (if (a-weblink? target) "/previewunknownurl" "/previewunknown"))
+    (if (a-weblink? target) "/static/previewunknownurl.svg" "/static/previewunknown.svg"))
 
   (display "<img src=")
   (write (or preview-link default-preview))

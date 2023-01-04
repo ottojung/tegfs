@@ -61,9 +61,10 @@
     (/upload ,web-upload)
     (/uploadcont ,web-uploadcont)
     (/share ,web-share)
-    (/main.css ,web-main.css)
-    (/previewunknown ,web-previewunknown)
-    (/previewunknownurl ,web-previewunknownurl)
+
+    (/static/main.css ,web-main.css)
+    (/static/previewunknown.svg ,web-previewunknown)
+    (/static/previewunknownurl.svg ,web-previewunknownurl)
     ))
 
 (define handlers-funcmap

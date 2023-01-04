@@ -84,7 +84,7 @@
          (display "  <title>")
          (display title)
          (display "</title>\n"))
-       (display "  <link rel='stylesheet' href='/main.css'>")
+       (display "  <link rel='stylesheet' href='/static/main.css'>")
        (for-each display extra-heads)
        (display "</head>\n")
        (display "<body>\n")
