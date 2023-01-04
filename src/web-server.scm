@@ -65,12 +65,13 @@
 %end
 
 (define (web-respond-with-a-file type bv)
-  (build-response
-   #:code 200
-   #:headers
-   (append `((content-type . ,type)
-             (Cache-Control . "max-age=3600, public, private"))
-           web-basic-headers)
+  (values
+   (build-response
+    #:code 200
+    #:headers
+    (append web-basic-headers
+            `((content-type . ,type)
+              (Cache-Control . "max-age=3600, public, private"))))
    bv))
 
 (define-syntax define-web-static-file
@@ -103,19 +104,8 @@
    web-preview-width web-preview-height
    ))
 
-(define unavailable-bytevector
-  (string->utf8 unavailable-image-string))
-
-(define unavailable-response
-  (build-response
-   #:code 200
-   #:headers
-   (append web-basic-headers
-           `((content-type . (image/svg+xml))
-             (Cache-Control . "max-age=3600, public, private")))))
-
-(define (previewunknown)
-  (web-return! unavailable-response unavailable-bytevector))
+(define-web-static-file previewunknown
+  '(image/svg+xml) unavailable-image-string)
 
 (define (preview-unknownurl)
   (web-return! unknownurl-response unknownurl-bytevector))
