@@ -19,22 +19,22 @@
 
 %use (assq-or) "./euphrates/assq-or.scm"
 %use (raisu) "./euphrates/raisu.scm"
-%use (web-display-entries) "./web-display-entries.scm"
 %use (web-display-entry) "./web-display-entry.scm"
 %use (web-make-html-response) "./web-make-html-response.scm"
 
 (define (web-query-display-results equals)
   (web-make-html-response
    (lambda _
-     (web-display-entries
-      (lambda _
-        (for-each
-         (lambda (bindings)
-           (define entry
-             (assq-or 'E bindings (raisu 'unexpected-result-from-backend bindings)))
-           (define maybe-full-senderid
-             (assq-or 'F bindings (raisu 'unexpected-result-from-backend bindings)))
-           (define preview-link
-             (assq-or 'PL bindings (raisu 'unexpected-result-from-backend bindings)))
-           (web-display-entry entry maybe-full-senderid preview-link))
-         equals))))))
+     (display "<div class='cards'>")
+     (for-each
+      (lambda (bindings)
+        (define entry
+          (assq-or 'E bindings (raisu 'unexpected-result-from-backend bindings)))
+        (define maybe-full-senderid
+          (assq-or 'F bindings (raisu 'unexpected-result-from-backend bindings)))
+        (define preview-link
+          (assq-or 'PL bindings (raisu 'unexpected-result-from-backend bindings)))
+        (web-display-entry entry maybe-full-senderid preview-link))
+      equals)
+     (display "</div>"))))
+
