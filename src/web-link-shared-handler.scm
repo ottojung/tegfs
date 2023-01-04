@@ -54,6 +54,8 @@
      (cond
       ((profun-unbound-value? R)
        (profun-request-value R-name))
+      ((not senderid)
+       (profun-set (L-name <- #f)))
       ((not (string? senderid))
        (make-profun-error 'type-error 'expected-string-for-senderid senderid))
       ((not info)

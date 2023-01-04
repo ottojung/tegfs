@@ -17,6 +17,7 @@
 
 %var web-share-entry-generic-handler
 
+%use (file-or-directory-exists?) "./euphrates/file-or-directory-exists-q.scm"
 %use (profun-set) "./euphrates/profun-accept.scm"
 %use (make-profun-error) "./euphrates/profun-error.scm"
 %use (profun-meta-key) "./euphrates/profun-meta-key.scm"
@@ -26,8 +27,8 @@
 %use (entry-target-fullpath) "./entry-target-fullpath.scm"
 %use (permission?) "./permission.scm"
 %use (sharedinfo-senderid) "./sharedinfo.scm"
-%use (webcore::permissions/p) "./webcore-parameters.scm"
 %use (web-share-file/dont-link-yet) "./web-share-file.scm"
+%use (webcore::permissions/p) "./webcore-parameters.scm"
 
 (define web-share-entry-generic-handler
   (lambda (get-shared-path)
@@ -40,13 +41,16 @@
 
        (define (continue entry target-fullpath)
          (define generic-fullpath (get-shared-path target-fullpath))
-         (define info
-           (web-share-file/dont-link-yet
-            web-context perm entry generic-fullpath sharing-time))
-         (define vid (and info (sharedinfo-senderid info)))
-         (if info
-             (profun-set (R-name <- vid))
-             (make-profun-error 'cannot-share-for-that-long)))
+         (if (and generic-fullpath (file-or-directory-exists? generic-fullpath))
+             (let ()
+               (define info
+                 (web-share-file/dont-link-yet
+                  web-context perm entry generic-fullpath sharing-time))
+               (define vid (and info (sharedinfo-senderid info)))
+               (if info
+                   (profun-set (R-name <- vid))
+                   (make-profun-error 'cannot-share-for-that-long)))
+             (profun-set (R-name <- #f))))
 
        (define (try entry)
          (and (profun-bound-value? entry)
