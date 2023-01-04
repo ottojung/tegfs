@@ -23,8 +23,8 @@
 %use (web-basic-headers) "./web-basic-headers.scm"
 %use (web-callcontext/p) "./web-callcontext-p.scm"
 %use (callcontext-break callcontext-key) "./web-callcontext.scm"
-%use (web-context/p) "./web-context-p.scm"
 %use (web-set-cookie-header) "./web-set-cookie-header.scm"
+%use (webcore::current-communicator/p) "./webcore-current-communicator-p.scm"
 
 %for (COMPILER "guile")
 
@@ -56,7 +56,7 @@
           (content-type-params '((charset . "utf-8")))
           (content-type 'text/html)
           (extra-headers '()))
-  (define ctx (web-context/p))
+  (define comm (webcore::current-communicator/p))
   (define callctx (web-callcontext/p))
   (define now (current-time/p))
   (define cont (callcontext-break callctx))
@@ -93,7 +93,7 @@
         ((pair? body) (sxml->xml body port))
         ((procedure? body)
          (parameterize ((web-callcontext/p callctx)
-                        (web-context/p ctx)
+                        (webcore::current-communicator/p comm)
                         (current-time/p now))
            (body)))
         (else (raisu 'unknown-body-type body)))
