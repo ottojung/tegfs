@@ -19,11 +19,10 @@
 
 %use (dprintln) "./euphrates/dprintln.scm"
 %use (alist->hashmap hashmap-ref) "./euphrates/hashmap.scm"
-%use (raisu) "./euphrates/raisu.scm"
 %use (stringf) "./euphrates/stringf.scm"
 %use (~a) "./euphrates/tilda-a.scm"
 %use (time-get-current-unixtime) "./euphrates/time-get-current-unixtime.scm"
-%use (web-basic-headers) "./web-basic-headers.scm"
+%use (define-web-static-file) "./define-web-static-file.scm"
 %use (web-callcontext/p) "./web-callcontext-p.scm"
 %use (web-collectgarbage web-collectgarbage/nocall) "./web-collectgarbage.scm"
 %use (web-context/p) "./web-context-p.scm"
@@ -35,15 +34,11 @@
 %use (web-logincont) "./web-logincont.scm"
 %use (web-make-callcontext) "./web-make-callcontext.scm"
 %use (web-make-context) "./web-make-context.scm"
-%use (web-make-html-response) "./web-make-html-response.scm"
-%use (web-message-template) "./web-message-template.scm"
 %use (web-not-found) "./web-not-found.scm"
 %use (web-preview-height) "./web-preview-height.scm"
 %use (web-preview-width) "./web-preview-width.scm"
 %use (web-query) "./web-query.scm"
-%use (web-return!) "./web-return-bang.scm"
 %use (web-share) "./web-share.scm"
-%use (web-static-error-message) "./web-static-error-message.scm"
 %use (web-style) "./web-style.scm"
 %use (web-upload) "./web-upload.scm"
 %use (web-uploadcont) "./web-uploadcont.scm"
@@ -63,28 +58,6 @@
 (use-modules (ice-9 binary-ports))
 
 %end
-
-(define (web-respond-with-a-file type bv)
-  (values
-   (build-response
-    #:code 200
-    #:headers
-    (append web-basic-headers
-            `((content-type . ,type)
-              (Cache-Control . "max-age=3600, public, private"))))
-   bv))
-
-(define-syntax define-web-static-file
-  (syntax-rules ()
-    ((_ name type content)
-     (define name
-       (let ()
-         (define bv
-           (cond
-            ((bytevector? content) content)
-            ((string? content) (string->utf8 content))
-            (else (raisu 'unknown-content-type content))))
-         (lambda _ (web-respond-with-a-file type bv)))))))
 
 (define-web-static-file main.css
   '(text/css) web-style)
