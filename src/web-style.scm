@@ -28,7 +28,10 @@
 }
 
 form {
-  border: 3px solid #f1f1f1;
+  border: 2px solid #f1f1f1;
+  border-radius: 10px;
+  padding: 20px;
+  box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);
 }
 
 .subc input[type=text], .subc input[type=password] {
