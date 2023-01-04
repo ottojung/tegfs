@@ -105,7 +105,7 @@
   (define comm (web-make-communicator webcore-context))
 
   (dprintln "Starting the server")
-  (parameterize ((web-context/p (web-make-context))
+  (parameterize ((web-context/p webcore-context)
                  (webcore::current-communicator/p comm))
     (let ((port (context-port (web-context/p))))
 
