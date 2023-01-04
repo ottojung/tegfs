@@ -15,7 +15,7 @@
 
 %run guile
 
-%var entry-field-handler
+%var core::entry-field
 
 %use (assq-or) "./euphrates/assq-or.scm"
 %use (bool->profun-result) "./euphrates/bool-to-profun-result.scm"
@@ -76,7 +76,7 @@
                   (result-name <- result)
                   (profun-ctx-set (cdr rest))))))))))
 
-(define entry-field-handler
+(define core::entry-field
   (profun-op-lambda
    (ctx (entry field result)
         (entry-name field-name result-name))

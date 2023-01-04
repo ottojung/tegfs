@@ -1,4 +1,4 @@
-;;;; Copyright (C) 2022  Otto Jung
+;;;; Copyright (C) 2022, 2023  Otto Jung
 ;;;;
 ;;;; This program is free software: you can redistribute it and/or modify
 ;;;; it under the terms of the GNU Affero General Public License as published
@@ -15,21 +15,15 @@
 
 %run guile
 
-%var tegfs-permissions/p
-%var query-split/p
-%var query-filemap/2/p
-%var query-diropen?/p
-%var query-dirpreview?/p
+%var core::query/p
+%var core::diropen?/p
+%var core::dirpreview?/p
 
 %use (make-profun-parameter) "./euphrates/profun-op-parameter.scm"
 
-(define tegfs-permissions/p
+(define core::query/p
   (make-profun-parameter))
-(define query-split/p
+(define core::diropen?/p
   (make-profun-parameter))
-(define query-filemap/2/p
-  (make-profun-parameter))
-(define query-diropen?/p
-  (make-profun-parameter))
-(define query-dirpreview?/p
+(define core::dirpreview?/p
   (make-profun-parameter))

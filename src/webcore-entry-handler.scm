@@ -15,21 +15,21 @@
 
 %run guile
 
-%var webcore-entry-handler
+%var webcore::entry
 
 %use (profun-accept profun-set profun-set-meta) "./euphrates/profun-accept.scm"
 %use (profun-reject) "./euphrates/profun-reject.scm"
 %use (profun-unbound-value?) "./euphrates/profun-value.scm"
-%use (core-entry-handler/generic) "./core-entry-handler-generic.scm"
+%use (core::entry/generic) "./core-entry-handler-generic.scm"
 %use (entry-limit-fields) "./entry-limit-fields.scm"
-%use (tegfs-permissions/p) "./talk-parameters.scm"
+%use (webcore::permissions/p) "./webcore-parameters.scm"
 %use (tegfs-query/open) "./tegfs-query-open.scm"
 %use (context-filemap/2) "./web-context.scm"
 
 (define (webcore-entry-handler-get-iter web-context)
   (lambda (opening-properties query E-name)
     (define filemap/2 (context-filemap/2 web-context))
-    (define perm (tegfs-permissions/p))
+    (define perm (webcore::permissions/p))
     (define iter0 (tegfs-query/open opening-properties query))
     (define (iter)
       (define-values (x full) (iter-values))
@@ -62,6 +62,6 @@
       (lambda _ (profun-reject)))
      (else iter))))
 
-(define webcore-entry-handler
+(define webcore::entry
   (lambda (web-context)
-    (core-entry-handler/generic (webcore-entry-handler-get-iter web-context))))
+    (core::entry/generic (webcore-entry-handler-get-iter web-context))))

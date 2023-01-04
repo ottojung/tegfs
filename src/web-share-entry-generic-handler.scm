@@ -26,7 +26,7 @@
 %use (entry-target-fullpath) "./entry-target-fullpath.scm"
 %use (permission?) "./permission.scm"
 %use (sharedinfo-senderid) "./sharedinfo.scm"
-%use (tegfs-permissions/p) "./talk-parameters.scm"
+%use (webcore::permissions/p) "./webcore-parameters.scm"
 %use (web-share-file/dont-link-yet) "./web-share-file.scm"
 
 (define web-share-entry-generic-handler
@@ -36,7 +36,7 @@
        (ctx env (E-name T-name R-name))
 
        (define sharing-time (env T-name))
-       (define perm (tegfs-permissions/p))
+       (define perm (webcore::permissions/p))
 
        (define (continue entry target-fullpath)
          (define generic-fullpath (get-shared-path target-fullpath))

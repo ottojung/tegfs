@@ -15,7 +15,7 @@
 
 %run guile
 
-%var core-entry-handler/generic
+%var core::entry/generic
 
 %use (appcomp comp) "./euphrates/comp.scm"
 %use (curry-if) "./euphrates/curry-if.scm"
@@ -25,20 +25,20 @@
 %use (make-profun-error) "./euphrates/profun-error.scm"
 %use (profun-op-envlambda) "./euphrates/profun-op-envlambda.scm"
 %use (profun-bound-value? profun-unbound-value?) "./euphrates/profun-value.scm"
+%use (core::diropen?/p core::dirpreview?/p core::query/p) "./core-paremeters.scm"
 %use (keyword-diropen) "./keyword-diropen.scm"
 %use (keyword-dirpreview) "./keyword-dirpreview.scm"
-%use (query-diropen?/p query-dirpreview?/p query-split/p) "./talk-parameters.scm"
 
-(define core-entry-handler/generic
+(define core::entry/generic
   (lambda (get-iter)
     (profun-op-envlambda
      (ctx env (E-name))
 
      (if ctx (ctx)
          (let ()
-            (define query (query-split/p))
-            (define diropen? (profun-default (query-diropen?/p) #t))
-            (define dirpreview? (profun-default (query-dirpreview?/p) #f))
+            (define query (core::query/p))
+            (define diropen? (profun-default (core::diropen?/p) #t))
+            (define dirpreview? (profun-default (core::dirpreview?/p) #f))
 
             (define opening-properties
               (appcomp

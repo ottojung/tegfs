@@ -23,21 +23,21 @@
 %use (profun-standard-handler) "./euphrates/profun-standard-handler.scm"
 %use (add-entry) "./add-entry.scm"
 %use (core::add-entry) "./core-add-entry.scm"
+%use (core::entry-field) "./core-entry-field.scm"
 %use (core::entry) "./core-entry.scm"
-%use (entry-field-handler) "./entry-field-handler.scm"
-%use (query-diropen?/p query-dirpreview?/p query-split/p) "./talk-parameters.scm"
+%use (core::diropen?/p core::dirpreview?/p core::query/p) "./core-paremeters.scm"
 
 (define (core::make-server-handler)
   (profun-handler-extend
    profun-standard-handler
 
    (entry core::entry)
-   (entry-field entry-field-handler)
+   (entry-field core::entry-field)
    (add-entry core::add-entry)
 
-   (query (instantiate-profun-parameter query-split/p))
-   (diropen? (instantiate-profun-parameter query-diropen?/p))
-   (dirpreview? (instantiate-profun-parameter query-dirpreview?/p))
+   (query (instantiate-profun-parameter core::query/p))
+   (diropen? (instantiate-profun-parameter core::diropen?/p))
+   (dirpreview? (instantiate-profun-parameter core::dirpreview?/p))
 
    (value (profun-op-value '() '()))
 

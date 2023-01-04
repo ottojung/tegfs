@@ -25,7 +25,7 @@
 %use (make-permission!) "./make-permission-bang.scm"
 %use (permission-time-left) "./permission-time-left.scm"
 %use (permission-token) "./permission.scm"
-%use (tegfs-permissions/p) "./talk-parameters.scm"
+%use (webcore::permissions/p) "./webcore-parameters.scm"
 
 (define make-temporary-permissions-handler
   (lambda (web-context)
@@ -34,7 +34,7 @@
 
      (define D (env D-name))
      (define K (env K-name))
-     (define perm (tegfs-permissions/p))
+     (define perm (webcore::permissions/p))
      (define sharing-time-cap
        (and perm (permission-time-left perm)))
 

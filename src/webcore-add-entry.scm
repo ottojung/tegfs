@@ -25,7 +25,7 @@
 %use (can-upload?) "./access.scm"
 %use (add-entry) "./add-entry.scm"
 %use (permission?) "./permission.scm"
-%use (tegfs-permissions/p) "./talk-parameters.scm"
+%use (webcore::permissions/p) "./webcore-parameters.scm"
 
 (define webcore::add-entry
   (profun-op-envlambda
@@ -33,7 +33,7 @@
 
    (define registry-file (env R-name))
    (define entry (env E-name))
-   (define perm (tegfs-permissions/p))
+   (define perm (webcore::permissions/p))
 
    (cond
     ((not (permission? perm))

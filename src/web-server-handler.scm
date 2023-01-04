@@ -19,11 +19,11 @@
 
 %use (profun-handler-extend) "./euphrates/profun-handler.scm"
 %use (add-entry) "./add-entry.scm"
+%use (core::make-server-handler) "./core-server-handler.scm"
 %use (login-handler) "./login-handler.scm"
 %use (make-temporary-permissions-handler) "./make-temporary-permissions-handler.scm"
 %use (shared-entry-contains-handler) "./shared-entry-contains-handler.scm"
 %use (tegfs-key-handler) "./tegfs-key-handler.scm"
-%use (core::make-server-handler) "./core-server-handler.scm"
 %use (web-collectgarbage-handler) "./web-collectgarbage-handler.scm"
 %use (web-link-shared-handler) "./web-link-shared-handler.scm"
 %use (web-senderid->entry-handler) "./web-senderid-to-entry-handler.scm"
@@ -31,7 +31,7 @@
 %use (web-share-entry-handler) "./web-share-entry-handler.scm"
 %use (web-share-entry-preview-handler) "./web-share-entry-preview-handler.scm"
 %use (webcore::add-entry) "./webcore-add-entry.scm"
-%use (webcore-entry-handler) "./webcore-entry-handler.scm"
+%use (webcore::entry) "./webcore-entry-handler.scm"
 
 (define (web-make-server-handler web-context)
   (profun-handler-extend
@@ -39,7 +39,7 @@
 
    (login (login-handler web-context))
    (key (tegfs-key-handler web-context))
-   (entry (webcore-entry-handler web-context)) ;; OVERRIDES
+   (entry (webcore::entry web-context)) ;; OVERRIDES
    (add-entry webcore::add-entry) ;; OVERRIDES
    (share-preview (web-share-entry-preview-handler web-context))
    (share-full (web-share-entry-full-handler web-context))

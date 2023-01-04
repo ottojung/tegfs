@@ -22,7 +22,7 @@
 %use (profun-request-value) "./euphrates/profun-request-value.scm"
 %use (profun-bound-value?) "./euphrates/profun-value.scm"
 %use (permission-token) "./permission.scm"
-%use (tegfs-permissions/p) "./talk-parameters.scm"
+%use (webcore::permissions/p) "./webcore-parameters.scm"
 %use (tegfs-login-by-key) "./tegfs-login-by-key.scm"
 
 (define tegfs-key-handler
@@ -35,9 +35,9 @@
      (cond
       ((profun-bound-value? key)
        (let ((perm (tegfs-login-by-key tegfs-context key)))
-         (profun-set-parameter (tegfs-permissions/p <- perm))))
+         (profun-set-parameter (webcore::permissions/p <- perm))))
       (else
-       (let ((perm (tegfs-permissions/p)))
+       (let ((perm (webcore::permissions/p)))
          (if perm
              (let ((key (permission-token perm)))
                (profun-set (K-name <- key)))

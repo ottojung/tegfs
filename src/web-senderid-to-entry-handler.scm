@@ -27,7 +27,7 @@
 %use (filemap-ref-by-senderid) "./filemap.scm"
 %use (permission?) "./permission.scm"
 %use (sharedinfo-entry) "./sharedinfo.scm"
-%use (tegfs-permissions/p) "./talk-parameters.scm"
+%use (webcore::permissions/p) "./webcore-parameters.scm"
 %use (context-filemap/2) "./web-context.scm"
 
 (define web-senderid->entry-handler
@@ -39,7 +39,7 @@
 
      (define senderid (env senderid-name))
      (define info (filemap-ref-by-senderid filemap/2 senderid #f))
-     (define perm (tegfs-permissions/p))
+     (define perm (webcore::permissions/p))
 
      (cond
       ((not (permission? perm))

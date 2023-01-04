@@ -26,7 +26,7 @@
 %use (default-login-expiery-time) "./default-login-expiery-time.scm"
 %use (make-permission!) "./make-permission-bang.scm"
 %use (sha256sum) "./sha256sum.scm"
-%use (tegfs-permissions/p) "./talk-parameters.scm"
+%use (webcore::permissions/p) "./webcore-parameters.scm"
 %use (context-passwords) "./web-context.scm"
 
 (define login-handler
@@ -65,4 +65,4 @@
               uploadaccess?
               detailsaccess?
               share-longer-than-view?))
-           (profun-set-parameter (tegfs-permissions/p <- perm))))))))
+           (profun-set-parameter (webcore::permissions/p <- perm))))))))
