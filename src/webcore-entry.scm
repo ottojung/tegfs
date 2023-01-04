@@ -52,7 +52,7 @@
       (define limited (entry-limit-fields filemap/2 perm entry0))
       (cond
        ((= (length entry0) (length limited))
-        (values entry0 #f))
+        (values entry0 entry0))
        ((not (null? limited))
         (values limited entry0))
        (else (iter-values))))

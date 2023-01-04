@@ -69,7 +69,7 @@
           sharing-time))
         ((permission? perm)
          (or (try (env (profun-meta-key E-name)))
-             (try (env E-name))
+             ;; (try (env E-name)) ;; NOTE: uncommenting allows forging of entries
              (make-profun-error 'bad-entry:does-not-have-target-infos (env E-name))))
         (else
          (make-profun-error 'could-not-authorize)))))))
