@@ -16,10 +16,13 @@
 %run guile
 
 %var query-entry-handler
+%var query-entry-handler/fn
 
 %use (appcomp comp) "./euphrates/comp.scm"
 %use (curry-if) "./euphrates/curry-if.scm"
+%use (make-profun-RFC) "./euphrates/profun-RFC.scm"
 %use (profun-accept profun-accept? profun-ctx-set profun-set profun-set-meta) "./euphrates/profun-accept.scm"
+%use (profun-default) "./euphrates/profun-default.scm"
 %use (make-profun-error) "./euphrates/profun-error.scm"
 %use (profun-op-envlambda) "./euphrates/profun-op-envlambda.scm"
 %use (profun-reject) "./euphrates/profun-reject.scm"
@@ -32,11 +35,40 @@
 %use (tegfs-query/open) "./tegfs-query-open.scm"
 %use (context-filemap/2) "./web-context.scm"
 
-(define-syntax profun-default
-  (syntax-rules ()
-    ((_ value default)
-     (let ((val value))
-       (if (profun-unbound-value? val) default val)))))
+(define (query-entry-handler-get-iter web-context opening-properties query E-name)
+  (define filemap/2 (context-filemap/2 web-context))
+  (define perm (tegfs-permissions/p))
+  (define iter0 (tegfs-query/open opening-properties query))
+  (define (iter)
+    (define-values (x full) (iter-values))
+    (if x
+        (profun-set
+         (E-name <- x)
+         (if full
+             (profun-set-meta
+              (E-name <- full))
+             (profun-accept)))
+        (profun-reject)))
+
+  (define (iter-values)
+    (define entry0 (iter0))
+    (if entry0
+        (limit entry0)
+        (values #f #f)))
+
+  (define (limit entry0)
+    (define limited (entry-limit-fields filemap/2 perm entry0))
+    (cond
+     ((= (length entry0) (length limited))
+      (values entry0 #f))
+     ((not (null? limited))
+      (values limited entry0))
+     (else (iter-values))))
+
+  (cond
+   ((profun-unbound-value? perm) ;; NOTE: optimization
+    (lambda _ (profun-reject)))
+   (else iter)))
 
 (define query-entry-handler
   (lambda (context)
@@ -44,21 +76,10 @@
      (ctx env (E-name))
 
      (if ctx (ctx)
-         (call-with-current-continuation
-          (lambda (return)
-            (define (error . args) (return (make-profun-error args)))
-            (define-syntax define-param
-              (syntax-rules ()
-                ((_ name p)
-                 (define-param name p (error 'missing-parameter (quote name))))
-                ((_ name p default)
-                 (define name (profun-default p default)))))
-
-            (define-param perm (tegfs-permissions/p) #f)
-            (define-param query (query-split/p))
-            (define-param diropen? (query-diropen?/p) #t)
-            (define-param dirpreview? (query-dirpreview?/p) #f)
-            (define filemap/2 (context-filemap/2 context))
+         (let ()
+            (define query (query-split/p))
+            (define diropen? (profun-default (query-diropen?/p) #t))
+            (define dirpreview? (profun-default (query-dirpreview?/p) #f))
 
             (define opening-properties
               (appcomp
@@ -66,42 +87,16 @@
                ((curry-if (const diropen?) (comp (cons keyword-diropen))))
                ((curry-if (const dirpreview?) (comp (cons keyword-dirpreview))))))
 
-            (define iter0 (tegfs-query/open opening-properties query))
-            (define (iter)
-              (define-values (x full) (iter-values))
-              (if x
-                  (profun-set
-                   (E-name <- x)
-                   (if full
-                       (profun-set-meta
-                        (E-name <- full))
-                       (profun-accept)))
-                  (profun-reject)))
-
-            (define (iter-values)
-              (define entry0 (iter0))
-              (if entry0
-                  (limit entry0)
-                  (values #f #f)))
-
-            (define (limit entry0)
-              (define limited (entry-limit-fields filemap/2 perm entry0))
-              (cond
-               ((= (length entry0) (length limited))
-                (values entry0 #f))
-               ((not (null? limited))
-                (values limited entry0))
-               (else (iter-values))))
-
             (cond
-             ((not (permission? perm))
-              (profun-reject)) ;; NOTE: optimization
+             ((profun-unbound-value? query)
+              (make-profun-RFC `((query _))))
              ((profun-bound-value? (env E-name))
               (make-profun-error 'query-is-a-generator 'cannot-check-if-element-already-exists))
              (else
-              (let ((val (iter)))
+              (let* ((iter (query-entry-handler-get-iter context opening-properties query E-name))
+                     (val (iter)))
                 (if (profun-accept? val)
                     (profun-ctx-set iter val)
                     val))))
 
-            ))))))
+            )))))
