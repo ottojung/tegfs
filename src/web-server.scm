@@ -21,7 +21,6 @@
 %use (alist->hashmap hashmap-ref) "./euphrates/hashmap.scm"
 %use (stringf) "./euphrates/stringf.scm"
 %use (~a) "./euphrates/tilda-a.scm"
-%use (time-get-current-unixtime) "./euphrates/time-get-current-unixtime.scm"
 %use (define-web-static-file) "./define-web-static-file.scm"
 %use (web-callcontext/p) "./web-callcontext-p.scm"
 %use (web-collectgarbage web-collectgarbage/nocall) "./web-collectgarbage.scm"
@@ -132,7 +131,7 @@
     (let ((port (context-port (web-context/p))))
 
       (dprintln "Collecting garbage left from the previous run...")
-      (web-collectgarbage/nocall (time-get-current-unixtime))
+      (with-current-time (web-collectgarbage/nocall))
       (dprintln "Done")
 
       (run-server (make-handler) 'http `(#:port ,port)))))

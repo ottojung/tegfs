@@ -55,11 +55,7 @@
     (< 0 (sharedinfo-time-left info current-time)))))
 
 (define (web-collectgarbage)
-  (define now (or (current-time/p)
-                  (raisu 'current-time-is-not-set)))
-
-  (web-collectgarbage/nocall now)
-
+  (web-collectgarbage/nocall)
   (web-return!
    (build-response
     #:code 200
@@ -68,7 +64,9 @@
             `((Cache-Control . "no-cache"))))
    "ok\n"))
 
-(define (web-collectgarbage/nocall now)
+(define (web-collectgarbage/nocall)
+  (define now (or (current-time/p)
+                  (raisu 'current-time-is-not-set)))
   (define ctx (web-context/p))
   (define sharedir (context-sharedir ctx))
   (define filemap/2 (context-filemap/2 ctx))
