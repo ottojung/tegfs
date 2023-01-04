@@ -16,6 +16,7 @@
 %run guile
 
 %var web-handle-profun-results
+%var web-handle-profun-results/or
 
 %use (comp) "./euphrates/comp.scm"
 %use (raisu) "./euphrates/raisu.scm"
@@ -45,13 +46,18 @@
     (raisu 'unexpected-its-from-backend-61253123543))))
 
 (define (web-handle-profun-results results fun)
+  (web-handle-profun-results/or results fun identity))
+
+(define (web-handle-profun-results/or results fun fail-fun)
   (case (car results)
     ((its)
      (web-handle-profun-results/2 (cdr results) fun))
     ((error)
+     (fail-fun results)
      ;; TODO: handle authorization errors differently
      (web-bad-request
       "Error: ~a"
       (words->string (map ~s (cadr results)))))
     (else
+     (fail-fun results)
      (raisu 'unexpected-results-from-backend-87156243510))))
