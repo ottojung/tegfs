@@ -15,7 +15,7 @@
 
 %run guile
 
-%var tegfs-make-server-handler
+%var core::make-server-handler
 
 %use (profun-handler-extend) "./euphrates/profun-handler.scm"
 %use (instantiate-profun-parameter) "./euphrates/profun-op-parameter.scm"
@@ -27,7 +27,7 @@
 %use (entry-field-handler) "./entry-field-handler.scm"
 %use (query-diropen?/p query-dirpreview?/p query-split/p) "./talk-parameters.scm"
 
-(define (tegfs-make-server-handler)
+(define (core::make-server-handler)
   (profun-handler-extend
    profun-standard-handler
 
