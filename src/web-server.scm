@@ -34,15 +34,13 @@
 %use (web-make-callcontext) "./web-make-callcontext.scm"
 %use (web-make-context) "./web-make-context.scm"
 %use (web-not-found) "./web-not-found.scm"
-%use (web-preview-height) "./web-preview-height.scm"
-%use (web-preview-width) "./web-preview-width.scm"
 %use (web-previewunknown) "./web-previewunknown.scm"
+%use (web-previewunknownurl) "./web-previewunknownurl.scm"
 %use (web-query) "./web-query.scm"
 %use (web-share) "./web-share.scm"
 %use (web-style) "./web-style.scm"
 %use (web-upload) "./web-upload.scm"
 %use (web-uploadcont) "./web-uploadcont.scm"
-%use (web-url-icon/svg) "./web-url-icon-svg.scm"
 %use (with-current-time) "./with-current-time.scm"
 
 %for (COMPILER "guile")
@@ -62,12 +60,6 @@
 (define-web-static-file main.css
   '(text/css) web-style)
 
-(define unknownurl-image-string
-  (web-url-icon/svg web-preview-width web-preview-height))
-
-(define-web-static-file previewunknownurl
-  '(image/svg+xml) unknownurl-image-string)
-
 (define handlers-config
   `((/login ,web-login)
     (/logincont ,web-logincont)
@@ -80,7 +72,7 @@
     (/upload ,web-upload)
     (/uploadcont ,web-uploadcont)
     (/previewunknown ,web-previewunknown)
-    (/previewunknownurl ,previewunknownurl)
+    (/previewunknownurl ,web-previewunknownurl)
     (/share ,web-share)
     ))
 
