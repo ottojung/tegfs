@@ -1,4 +1,4 @@
-;;;; Copyright (C) 2022  Otto Jung
+;;;; Copyright (C) 2022, 2023  Otto Jung
 ;;;;
 ;;;; This program is free software: you can redistribute it and/or modify
 ;;;; it under the terms of the GNU Affero General Public License as published
@@ -28,7 +28,7 @@
 %use (tegfs-query/noopen) "./tegfs-query-noopen.scm"
 
 (define (tegfs-query/open opening-properties <query...>)
-  (define iter (tegfs-query/noopen <query...>))
+  (define iter #f)
   (define iter/open #f)
 
   (define (handle entry)
@@ -49,6 +49,9 @@
         entry))
 
   (define (next)
+    (unless iter
+      (set! iter (tegfs-query/noopen <query...>)))
+
     (if iter/open
         (let ((entry (iter/open)))
           (or entry
