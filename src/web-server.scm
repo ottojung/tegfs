@@ -32,6 +32,7 @@
 %use (web-logincont) "./web-logincont.scm"
 %use (web-main.css) "./web-main-css.scm"
 %use (web-make-callcontext) "./web-make-callcontext.scm"
+%use (web-make-communicator) "./web-make-communicator.scm"
 %use (web-make-context) "./web-make-context.scm"
 %use (web-not-found) "./web-not-found.scm"
 %use (web-previewunknown) "./web-previewunknown.scm"
@@ -40,6 +41,7 @@
 %use (web-share) "./web-share.scm"
 %use (web-upload) "./web-upload.scm"
 %use (web-uploadcont) "./web-uploadcont.scm"
+%use (webcore::current-communicator/p) "./webcore-current-communicator-p.scm"
 %use (with-current-time) "./with-current-time.scm"
 
 %for (COMPILER "guile")
@@ -99,8 +101,12 @@
           (handler request body)))))))
 
 (define (tegfs-serve/parse)
+  (define webcore-context (web-make-context))
+  (define comm (web-make-communicator webcore-context))
+
   (dprintln "Starting the server")
-  (parameterize ((web-context/p (web-make-context)))
+  (parameterize ((web-context/p (web-make-context))
+                 (webcore::current-communicator/p comm))
     (let ((port (context-port (web-context/p))))
 
       (dprintln "Collecting garbage left from the previous run...")
