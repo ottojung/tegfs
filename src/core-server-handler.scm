@@ -23,7 +23,7 @@
 %use (profun-standard-handler) "./euphrates/profun-standard-handler.scm"
 %use (add-entry) "./add-entry.scm"
 %use (core::add-entry) "./core-add-entry.scm"
-%use (core-entry-handler) "./core-entry-handler.scm"
+%use (core::entry) "./core-entry.scm"
 %use (entry-field-handler) "./entry-field-handler.scm"
 %use (query-diropen?/p query-dirpreview?/p query-split/p) "./talk-parameters.scm"
 
@@ -31,7 +31,7 @@
   (profun-handler-extend
    profun-standard-handler
 
-   (entry core-entry-handler)
+   (entry core::entry)
    (entry-field entry-field-handler)
    (add-entry core::add-entry)
 

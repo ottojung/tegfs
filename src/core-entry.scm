@@ -15,14 +15,14 @@
 
 %run guile
 
-%var core-entry-handler
+%var core::entry
 
 %use (profun-set) "./euphrates/profun-accept.scm"
 %use (profun-reject) "./euphrates/profun-reject.scm"
 %use (core-entry-handler/generic) "./core-entry-handler-generic.scm"
 %use (tegfs-query/open) "./tegfs-query-open.scm"
 
-(define (core-entry-handler-get-iter opening-properties query E-name)
+(define (core::entry-get-iter opening-properties query E-name)
   (define iter0 (tegfs-query/open opening-properties query))
   (define (iter)
     (define x (iter0))
@@ -31,5 +31,5 @@
         (profun-reject)))
   iter)
 
-(define core-entry-handler
-  (core-entry-handler/generic core-entry-handler-get-iter))
+(define core::entry
+  (core-entry-handler/generic core::entry-get-iter))
