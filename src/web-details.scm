@@ -19,14 +19,11 @@
 
 %use (hashmap-ref) "./euphrates/hashmap.scm"
 %use (profune-communicator-handle) "./euphrates/profune-communicator.scm"
-%use (raisu) "./euphrates/raisu.scm"
-%use (~s) "./euphrates/tilda-s.scm"
-%use (words->string) "./euphrates/words-to-string.scm"
-%use (web-bad-request) "./web-bad-request.scm"
 %use (web-callcontext/p) "./web-callcontext-p.scm"
 %use (callcontext-token) "./web-callcontext.scm"
 %use (web-context/p) "./web-context-p.scm"
 %use (web-get-query) "./web-get-query.scm"
+%use (web-iterate-profun-results) "./web-iterate-profun-results.scm"
 %use (web-make-communicator) "./web-make-communicator.scm"
 %use (web-make-html-response) "./web-make-html-response.scm"
 
@@ -73,15 +70,6 @@
        (goal E)
        )))
 
-  (cond
-   ((equal? 'error (car result))
-    (web-bad-request "error: ~a" (words->string (map ~s (cadr result)))))
-   ((and (equal? 'its (car result))
-         (equal? '= (car (cadr result))))
-    (let* ((word (cadr result))
-           (entry (list-ref word 2)))
-      (web-actual-details entry)))
-   (else
-    (raisu 'profun-returned-something-weird result))))
-
-
+  (web-iterate-profun-results
+   result (E)
+   (web-actual-details E)))
