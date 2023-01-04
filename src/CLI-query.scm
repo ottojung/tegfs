@@ -1,4 +1,4 @@
-;;;; Copyright (C) 2022  Otto Jung
+;;;; Copyright (C) 2022, 2023  Otto Jung
 ;;;;
 ;;;; This program is free software: you can redistribute it and/or modify
 ;;;; it under the terms of the GNU Affero General Public License as published
@@ -24,7 +24,6 @@
 %use (entry-print/formatted) "./entry-print-formatted.scm"
 %use (entry-print) "./entry-print.scm"
 %use (fatal) "./fatal.scm"
-%use (get-admin-permissions) "./get-admin-permissions.scm"
 %use (tegfs-make-communicator) "./tegfs-make-communicator.scm"
 
 (define (CLI-query --diropen --dirpreview --entries <query-format> <query...>)
@@ -34,13 +33,10 @@
      (<query-format> (comp (entry-print/formatted <query-format>)))
      (else (fatal "Unexpected mode: both --entries and <query-format> were not set"))))
 
-  (fatal "FIXME: the authorization")
-
   (define result
     (profune-communicator-handle
      (tegfs-make-communicator)
      `(whats
-       (permissions ,(get-admin-permissions))
        (diropen? ,--diropen)
        (dirpreview? ,--dirpreview)
        (query ,<query...>)
