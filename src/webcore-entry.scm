@@ -20,7 +20,7 @@
 %use (profun-accept profun-set profun-set-meta) "./euphrates/profun-accept.scm"
 %use (profun-reject) "./euphrates/profun-reject.scm"
 %use (profun-unbound-value?) "./euphrates/profun-value.scm"
-%use (core::entry/generic) "./core-entry-handler-generic.scm"
+%use (core::entry/generic) "./core-entry-generic.scm"
 %use (entry-limit-fields) "./entry-limit-fields.scm"
 %use (webcore::permissions/p) "./webcore-parameters.scm"
 %use (tegfs-query/open) "./tegfs-query-open.scm"

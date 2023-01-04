@@ -31,7 +31,7 @@
 %use (web-share-entry-handler) "./web-share-entry-handler.scm"
 %use (web-share-entry-preview-handler) "./web-share-entry-preview-handler.scm"
 %use (webcore::add-entry) "./webcore-add-entry.scm"
-%use (webcore::entry) "./webcore-entry-handler.scm"
+%use (webcore::entry) "./webcore-entry.scm"
 
 (define (web-make-server-handler web-context)
   (profun-handler-extend

@@ -19,7 +19,7 @@
 
 %use (profun-set) "./euphrates/profun-accept.scm"
 %use (profun-reject) "./euphrates/profun-reject.scm"
-%use (core::entry/generic) "./core-entry-handler-generic.scm"
+%use (core::entry/generic) "./core-entry-generic.scm"
 %use (tegfs-query/open) "./tegfs-query-open.scm"
 
 (define (core::entry-get-iter opening-properties query E-name)
