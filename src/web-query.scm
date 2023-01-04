@@ -17,10 +17,8 @@
 
 %var web-query
 
-%use (assq-or) "./euphrates/assq-or.scm"
 %use (hashmap-ref) "./euphrates/hashmap.scm"
 %use (profune-communicator-handle) "./euphrates/profune-communicator.scm"
-%use (raisu) "./euphrates/raisu.scm"
 %use (string->words) "./euphrates/string-to-words.scm"
 %use (default-full-sharing-time) "./default-full-sharing-time.scm"
 %use (default-preview-sharing-time) "./default-preview-sharing-time.scm"
@@ -28,12 +26,10 @@
 %use (callcontext-request callcontext-token) "./web-callcontext.scm"
 %use (web-context/p) "./web-context-p.scm"
 %use (web-decode-query) "./web-decode-query.scm"
-%use (web-display-entries) "./web-display-entries.scm"
-%use (web-display-entry) "./web-display-entry.scm"
 %use (web-get-query) "./web-get-query.scm"
 %use (web-handle-profun-results) "./web-handle-profun-results.scm"
 %use (web-make-communicator) "./web-make-communicator.scm"
-%use (web-make-html-response) "./web-make-html-response.scm"
+%use (web-query-display-results) "./web-query-display-results.scm"
 
 (define (web-query)
   (define callctx (web-callcontext/p))
@@ -60,17 +56,4 @@
   (web-handle-profun-results result web-query-handle-results))
 
 (define (web-query-handle-results equals)
-  (web-make-html-response
-   (lambda _
-     (web-display-entries
-      (lambda _
-        (for-each
-         (lambda (bindings)
-           (define entry
-             (assq-or 'E bindings (raisu 'unexpected-result-from-backend bindings)))
-           (define maybe-full-senderid
-             (assq-or 'F bindings (raisu 'unexpected-result-from-backend bindings)))
-           (define preview-link
-             (assq-or 'PL bindings (raisu 'unexpected-result-from-backend bindings)))
-           (web-display-entry entry maybe-full-senderid preview-link))
-         equals))))))
+  (web-query-display-results equals))
