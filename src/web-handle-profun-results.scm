@@ -33,7 +33,7 @@
    (else
     (raisu 'unexpected-its-from-backend-61253123543))))
 
-(define (web-handle-profun-results results then)
+(define (web-handle-profun-results results fun)
   (case (car results)
     ((its)
      (web-handle-profun-results/2 (cadr results) fun))
