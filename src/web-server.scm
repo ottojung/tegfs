@@ -20,7 +20,6 @@
 %use (dprintln) "./euphrates/dprintln.scm"
 %use (alist->hashmap hashmap-ref) "./euphrates/hashmap.scm"
 %use (~a) "./euphrates/tilda-a.scm"
-%use (define-web-static-file) "./define-web-static-file.scm"
 %use (web-callcontext/p) "./web-callcontext-p.scm"
 %use (web-collectgarbage/nocall) "./web-collectgarbage-nocall.scm"
 %use (web-collectgarbage) "./web-collectgarbage.scm"
@@ -31,6 +30,7 @@
 %use (web-full) "./web-full.scm"
 %use (web-login) "./web-login.scm"
 %use (web-logincont) "./web-logincont.scm"
+%use (web-main.css) "./web-main-css.scm"
 %use (web-make-callcontext) "./web-make-callcontext.scm"
 %use (web-make-context) "./web-make-context.scm"
 %use (web-not-found) "./web-not-found.scm"
@@ -38,7 +38,6 @@
 %use (web-previewunknownurl) "./web-previewunknownurl.scm"
 %use (web-query) "./web-query.scm"
 %use (web-share) "./web-share.scm"
-%use (web-style) "./web-style.scm"
 %use (web-upload) "./web-upload.scm"
 %use (web-uploadcont) "./web-uploadcont.scm"
 %use (with-current-time) "./with-current-time.scm"
@@ -57,13 +56,9 @@
 
 %end
 
-(define-web-static-file main.css
-  '(text/css) web-style)
-
 (define handlers-config
   `((/login ,web-login)
     (/logincont ,web-logincont)
-    (/main.css ,main.css)
     (/collectgarbage ,web-collectgarbage)
     (/query ,web-query)
     (/directory ,web-directory)
@@ -71,9 +66,10 @@
     (/full ,web-full)
     (/upload ,web-upload)
     (/uploadcont ,web-uploadcont)
+    (/share ,web-share)
+    (/main.css ,web-main.css)
     (/previewunknown ,web-previewunknown)
     (/previewunknownurl ,web-previewunknownurl)
-    (/share ,web-share)
     ))
 
 (define handlers-funcmap
