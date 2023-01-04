@@ -45,7 +45,7 @@
        (read-sentence))))
 
   (define comm
-    (if --web ;; FIXME: remove after testing
+    (if --web
         (web-make-communicator (web-make-context))
         (tegfs-make-communicator)))
 
