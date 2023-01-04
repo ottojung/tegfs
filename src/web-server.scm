@@ -107,22 +107,11 @@
 (define-web-static-file previewunknown
   '(image/svg+xml) unavailable-image-string)
 
-(define (preview-unknownurl)
-  (web-return! unknownurl-response unknownurl-bytevector))
+(define unknownurl-image-string
+  (web-url-icon/svg web-preview-width web-preview-height))
 
-(define unknownurl-bytevector
-  (string->utf8 (web-url-icon/svg web-preview-width web-preview-height)))
-
-(define unknownurl-response
-  (build-response
-   #:code 200
-   #:headers
-   (append web-basic-headers
-           `((content-type . (image/svg+xml))
-             (Cache-Control . "max-age=3600, public, private")))))
-
-(define (previewunknownurl)
-  (web-return! unknownurl-response unknownurl-bytevector))
+(define-web-static-file previewunknownurl
+  '(image/svg+xml) unknownurl-image-string)
 
 (define handlers-config
   `((/login ,web-login)
