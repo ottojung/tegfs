@@ -22,8 +22,11 @@
 %use (profune-communicator-handle) "./euphrates/profune-communicator.scm"
 %use (raisu) "./euphrates/raisu.scm"
 %use (string->words) "./euphrates/string-to-words.scm"
+%use (~s) "./euphrates/tilda-s.scm"
+%use (words->string) "./euphrates/words-to-string.scm"
 %use (default-full-sharing-time) "./default-full-sharing-time.scm"
 %use (default-preview-sharing-time) "./default-preview-sharing-time.scm"
+%use (web-bad-request) "./web-bad-request.scm"
 %use (web-callcontext/p) "./web-callcontext-p.scm"
 %use (callcontext-request callcontext-token) "./web-callcontext.scm"
 %use (web-context/p) "./web-context-p.scm"
@@ -43,31 +46,33 @@
   (define query (web-decode-query query/encoded))
   (define query/split (string->words query))
 
-  (web-make-html-response
-   (lambda _
-     (web-display-entries
-      (lambda _
-        (define result
-          (profune-communicator-handle
-           (web-make-communicator (web-context/p))
-           `(whats
-             (key ,(callcontext-token callctx))
-             (query ,query/split)
-             (entry E)
-             (share-preview E ,default-preview-sharing-time _P)
-             (share-full E ,default-full-sharing-time F)
-             (link-shared _P PL)
-             more (99999)
-             )))
+  (define result
+    (profune-communicator-handle
+     (web-make-communicator (web-context/p))
+     `(whats
+       (key ,(callcontext-token callctx))
+       (query ,query/split)
+       (entry E)
+       (share-preview E ,default-preview-sharing-time _P)
+       (share-full E ,default-full-sharing-time F)
+       (link-shared _P PL)
+       more (99999)
+       )))
 
-        (define equals (cadr (cadr result)))
-        (for-each
-         (lambda (bindings)
-           (define entry
-             (assq-or 'E bindings (raisu 'unexpected-result-from-backend bindings)))
-           (define maybe-full-senderid
-             (assq-or 'F bindings (raisu 'unexpected-result-from-backend bindings)))
-           (define preview-link
-             (assq-or 'PL bindings (raisu 'unexpected-result-from-backend bindings)))
-           (web-display-entry entry maybe-full-senderid preview-link))
-         equals))))))
+  (if (equal? 'error (car result))
+      (web-bad-request "error: ~a" (words->string (map ~s (cadr result))))
+      (web-make-html-response
+       (lambda _
+         (web-display-entries
+          (lambda _
+            (define equals (cadr (cadr result)))
+            (for-each
+             (lambda (bindings)
+               (define entry
+                 (assq-or 'E bindings (raisu 'unexpected-result-from-backend bindings)))
+               (define maybe-full-senderid
+                 (assq-or 'F bindings (raisu 'unexpected-result-from-backend bindings)))
+               (define preview-link
+                 (assq-or 'PL bindings (raisu 'unexpected-result-from-backend bindings)))
+               (web-display-entry entry maybe-full-senderid preview-link))
+             equals)))))))

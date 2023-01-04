@@ -43,32 +43,32 @@
     (or (hashmap-ref ctxq 'vid #f)
         (web-bad-request "Request query missing requiered 'd' argument")))
 
-  (web-make-html-response
-   (lambda _
-     (web-display-entries
-      (lambda _
-        (define result
-          (profune-communicator-handle
-           (web-make-communicator (web-context/p))
-           `(whats
-             (key ,(callcontext-token callctx))
-             (shared-entry-contains ,vid E)
-             (share-preview E ,default-preview-sharing-time _P)
-             (share-full E ,default-full-sharing-time F)
-             (link-shared _P PL)
-             more (99999)
-             )))
+  (define result
+    (profune-communicator-handle
+     (web-make-communicator (web-context/p))
+     `(whats
+       (key ,(callcontext-token callctx))
+       (shared-entry-contains ,vid E)
+       (share-preview E ,default-preview-sharing-time _P)
+       (share-full E ,default-full-sharing-time F)
+       (link-shared _P PL)
+       more (99999)
+       )))
 
-        (if (equal? 'error (car result))
-            (web-bad-request "error: ~a" (words->string (map ~s (cadr result))))
-            (let ((equals (cadr (cadr result))))
-              (for-each
-               (lambda (bindings)
-                 (define entry
-                   (assq-or 'E bindings (raisu 'unexpected-result-from-backend bindings)))
-                 (define maybe-full-senderid
-                   (assq-or 'F bindings (raisu 'unexpected-result-from-backend bindings)))
-                 (define preview-link
-                   (assq-or 'PL bindings (raisu 'unexpected-result-from-backend bindings)))
-                 (web-display-entry entry maybe-full-senderid preview-link))
-               equals))))))))
+  (if (equal? 'error (car result))
+      (web-bad-request "error: ~a" (words->string (map ~s (cadr result))))
+      (web-make-html-response
+       (lambda _
+         (web-display-entries
+          (lambda _
+            (define equals (cadr (cadr result)))
+            (for-each
+             (lambda (bindings)
+               (define entry
+                 (assq-or 'E bindings (raisu 'unexpected-result-from-backend bindings)))
+               (define maybe-full-senderid
+                 (assq-or 'F bindings (raisu 'unexpected-result-from-backend bindings)))
+               (define preview-link
+                 (assq-or 'PL bindings (raisu 'unexpected-result-from-backend bindings)))
+               (web-display-entry entry maybe-full-senderid preview-link))
+             equals)))))))

@@ -34,9 +34,6 @@
 
 %end
 
-(define (set-user-key! key)
-  (set-callcontext-key! (web-callcontext/p) key))
-
 (define (parse-cookies-string cookies/string)
   (define _aa
     (unless (string? cookies/string)
@@ -64,10 +61,11 @@
          (got (and cookies (assoc name cookies))))
     (and got (cdr got))))
 
-(define (get-access-token qH request)
+(define (get-access-token callctx qH request)
   (or
    (let ((ret (hashmap-ref qH 'key #f)))
-     (when ret (set-user-key! ret))
+     (when ret
+       (set-callcontext-key! callctx ret))
      ret)
    (or (get-cookie "key" request)
        (get-cookie "pwdtoken" request))))
@@ -90,5 +88,7 @@
 
 (define (web-make-callcontext break request body)
   (define qH (memconst (initialize-query request)))
-  (define tokenfn (memconst (get-access-token (qH) request)))
-  (callcontext-ctr break request qH body #f tokenfn))
+  (letrec
+      ((tokenfn (memconst (get-access-token callctx (qH) request)))
+       (callctx (callcontext-ctr break request qH body #f tokenfn)))
+    callctx))
