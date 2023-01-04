@@ -53,16 +53,18 @@
 
       (else
        (let ()
-           (define admin? #t) ;; TODO: read from the config
-           (define uploadaccess? #t) ;; TODO: read from the config
-           (define detailsaccess? #t) ;; TODO: read from the config
-           (define share-longer-than-view? #t) ;; TODO: read from the config
-           (define perm
-             (make-permission!
-              tegfs-context
-              default-login-expiery-time
-              admin?
-              uploadaccess?
-              detailsaccess?
-              share-longer-than-view?))
-           (profun-set-parameter (webcore::permissions/p <- perm))))))))
+         (define admin? #t) ;; TODO: read from the config
+         (define maybepassword password)
+         (define uploadaccess? #t) ;; TODO: read from the config
+         (define detailsaccess? #t) ;; TODO: read from the config
+         (define share-longer-than-view? #t) ;; TODO: read from the config
+         (define perm
+           (make-permission!
+            tegfs-context
+            default-login-expiery-time
+            admin?
+            maybepassword
+            uploadaccess?
+            detailsaccess?
+            share-longer-than-view?))
+         (profun-set-parameter (webcore::permissions/p <- perm))))))))

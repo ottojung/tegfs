@@ -21,6 +21,7 @@
 %var permission-start
 %var permission-time
 %var permission-admin?
+%var permission-maybepassword
 %var permission-uploadaccess?
 %var permission-detailsaccess?
 %var permission-share-longer-than-view?
@@ -40,6 +41,9 @@
   (filemap permission-filemap) ;; hashmap with `keys: target-fullpath that was shared with this permission` and `values: sharedinfos`
   (idset permission-idset) ;; hashset with `values: id of entry that is shared with this permission`
   )
+
+(define (permission-maybepassword perm)
+  (assq-or 'maybepassword (permission-dynamic perm)))
 
 (define (permission-uploadaccess? perm) ;; true if user can create new entries
   (assq-or 'uploadaccess? (permission-dynamic perm)))
