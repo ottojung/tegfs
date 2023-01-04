@@ -20,13 +20,11 @@
 %use (profun-accept) "./euphrates/profun-accept.scm"
 %use (profun-op-lambda) "./euphrates/profun-op-lambda.scm"
 %use (web-collectgarbage/nocall) "./web-collectgarbage-nocall.scm"
-%use (web-context/p) "./web-context-p.scm"
 
 (define web-collectgarbage-handler
   (lambda (web-context)
     (profun-op-lambda
      (ctx env ())
 
-     (parameterize ((web-context/p web-context))
-       (web-collectgarbage/nocall)
-       (profun-accept)))))
+     (web-collectgarbage/nocall web-context)
+     (profun-accept))))

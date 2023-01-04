@@ -28,7 +28,6 @@
 %use (permission-still-valid?) "./permission-still-valid-huh.scm"
 %use (permission-filemap) "./permission.scm"
 %use (sharedinfo-ctime sharedinfo-stime) "./sharedinfo.scm"
-%use (web-context/p) "./web-context-p.scm"
 %use (context-filemap/2 context-sharedir context-tokens) "./web-context.scm"
 
 (define sharedinfo-time-left
@@ -47,10 +46,9 @@
    ((info current-time)
     (< 0 (sharedinfo-time-left info current-time)))))
 
-(define (web-collectgarbage/nocall)
+(define (web-collectgarbage/nocall ctx)
   (define now (or (current-time/p)
                   (raisu 'current-time-is-not-set)))
-  (define ctx (web-context/p))
   (define sharedir (context-sharedir ctx))
   (define filemap/2 (context-filemap/2 ctx))
   (define tokens (context-tokens ctx))
