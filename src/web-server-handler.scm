@@ -21,7 +21,6 @@
 %use (login-handler) "./login-handler.scm"
 %use (make-temporary-permissions-handler) "./make-temporary-permissions-handler.scm"
 %use (shared-entry-contains-handler) "./shared-entry-contains-handler.scm"
-%use (query-entry-handler) "./tegfs-entry-handler.scm"
 %use (tegfs-key-handler) "./tegfs-key-handler.scm"
 %use (tegfs-make-server-handler/c) "./tegfs-server-handler.scm"
 %use (web-collectgarbage-handler) "./web-collectgarbage-handler.scm"
@@ -30,6 +29,7 @@
 %use (web-share-entry-full-handler) "./web-share-entry-full-handler.scm"
 %use (web-share-entry-handler) "./web-share-entry-handler.scm"
 %use (web-share-entry-preview-handler) "./web-share-entry-preview-handler.scm"
+%use (webcore-entry-handler) "./webcore-entry-handler.scm"
 
 (define (web-make-server-handler web-context)
   (profun-handler-extend
@@ -37,7 +37,7 @@
 
    (login (login-handler web-context))
    (key (tegfs-key-handler web-context))
-   (entry (query-entry-handler web-context)) ;; OVERRIDES
+   (entry (webcore-entry-handler web-context)) ;; OVERRIDES
    (share-preview (web-share-entry-preview-handler web-context))
    (share-full (web-share-entry-full-handler web-context))
    (share-entry (web-share-entry-handler web-context))

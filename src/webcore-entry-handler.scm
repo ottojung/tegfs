@@ -15,7 +15,7 @@
 
 %run guile
 
-%var query-entry-handler
+%var webcore-entry-handler
 
 %use (profun-accept profun-set profun-set-meta) "./euphrates/profun-accept.scm"
 %use (profun-reject) "./euphrates/profun-reject.scm"
@@ -26,7 +26,7 @@
 %use (tegfs-query/open) "./tegfs-query-open.scm"
 %use (context-filemap/2) "./web-context.scm"
 
-(define (query-entry-handler-get-iter web-context)
+(define (webcore-entry-handler-get-iter web-context)
   (lambda (opening-properties query E-name)
     (define filemap/2 (context-filemap/2 web-context))
     (define perm (tegfs-permissions/p))
@@ -62,6 +62,6 @@
       (lambda _ (profun-reject)))
      (else iter))))
 
-(define query-entry-handler
+(define webcore-entry-handler
   (lambda (web-context)
-    (core-entry-handler/generic (query-entry-handler-get-iter web-context))))
+    (core-entry-handler/generic (webcore-entry-handler-get-iter web-context))))
