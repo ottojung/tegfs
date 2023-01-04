@@ -19,7 +19,6 @@
 
 %use (hashmap-ref) "./euphrates/hashmap.scm"
 %use (permission-filemap) "./permission.scm"
-%use (web-context/p) "./web-context-p.scm"
 %use (context-filemap/2) "./web-context.scm"
 
 (define (get-sharedinfo-for-perm ctx perm target-fullpath)

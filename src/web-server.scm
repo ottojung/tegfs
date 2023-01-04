@@ -21,7 +21,6 @@
 %use (alist->hashmap hashmap-ref) "./euphrates/hashmap.scm"
 %use (~a) "./euphrates/tilda-a.scm"
 %use (web-callcontext/p) "./web-callcontext-p.scm"
-%use (web-collectgarbage/nocall) "./web-collectgarbage-nocall.scm"
 %use (web-collectgarbage) "./web-collectgarbage.scm"
 %use (web-context/p) "./web-context-p.scm"
 %use (context-port) "./web-context.scm"
@@ -41,6 +40,7 @@
 %use (web-share) "./web-share.scm"
 %use (web-upload) "./web-upload.scm"
 %use (web-uploadcont) "./web-uploadcont.scm"
+%use (webcore::ask) "./webcore-ask.scm"
 %use (webcore::current-communicator/p) "./webcore-current-communicator-p.scm"
 %use (with-current-time) "./with-current-time.scm"
 
@@ -110,7 +110,8 @@
     (let ((port (context-port (web-context/p))))
 
       (dprintln "Collecting garbage left from the previous run...")
-      (with-current-time (web-collectgarbage/nocall))
+      (with-current-time
+       (webcore::ask `(whats (collectgarbage))))
       (dprintln "Done")
 
       (run-server (make-handler) 'http `(#:port ,port)))))

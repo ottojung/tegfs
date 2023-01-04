@@ -22,7 +22,6 @@
 %use (catch-any) "./euphrates/catch-any.scm"
 %use (file-or-directory-exists?) "./euphrates/file-or-directory-exists-q.scm"
 %use (get-current-directory) "./euphrates/get-current-directory.scm"
-%use (web-context/p) "./web-context-p.scm"
 %use (context-sharedir) "./web-context.scm"
 %use (web-get-shared-fullpath) "./web-get-shared-fullpath.scm"
 
