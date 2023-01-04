@@ -19,7 +19,6 @@
 
 %use (dprintln) "./euphrates/dprintln.scm"
 %use (alist->hashmap hashmap-ref) "./euphrates/hashmap.scm"
-%use (stringf) "./euphrates/stringf.scm"
 %use (~a) "./euphrates/tilda-a.scm"
 %use (define-web-static-file) "./define-web-static-file.scm"
 %use (web-callcontext/p) "./web-callcontext-p.scm"
@@ -37,6 +36,7 @@
 %use (web-not-found) "./web-not-found.scm"
 %use (web-preview-height) "./web-preview-height.scm"
 %use (web-preview-width) "./web-preview-width.scm"
+%use (web-previewunknown) "./web-previewunknown.scm"
 %use (web-query) "./web-query.scm"
 %use (web-share) "./web-share.scm"
 %use (web-style) "./web-style.scm"
@@ -62,17 +62,6 @@
 (define-web-static-file main.css
   '(text/css) web-style)
 
-(define unavailable-image-string
-  (stringf
-   "<?xml version='1.0' encoding='UTF-8' standalone='no'?>
-    <!DOCTYPE svg PUBLIC '-//W3C//DTD SVG 1.1//EN' 'http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd'>
-    <svg width='~apx' height='~apx' viewBox='0 0 24 24' fill='none' xmlns='http://www.w3.org/2000/svg'><path fill-rule='evenodd' clip-rule='evenodd' d='M18.364 5.63604C21.8787 9.15076 21.8787 14.8492 18.364 18.364C14.8492 21.8787 9.15076 21.8787 5.63604 18.364C2.12132 14.8492 2.12132 9.15076 5.63604 5.63604C9.15076 2.12132 14.8492 2.12132 18.364 5.63604ZM16.1925 17.6067L6.39327 7.80749C4.33767 10.5493 4.55666 14.4562 7.05025 16.9497C9.54384 19.4433 13.4507 19.6623 16.1925 17.6067ZM16.9497 7.05025C19.4433 9.54384 19.6623 13.4507 17.6067 16.1925L7.80749 6.39327C10.5493 4.33767 14.4562 4.55666 16.9497 7.05025Z' fill='black'/></svg>"
-   web-preview-width web-preview-height
-   ))
-
-(define-web-static-file previewunknown
-  '(image/svg+xml) unavailable-image-string)
-
 (define unknownurl-image-string
   (web-url-icon/svg web-preview-width web-preview-height))
 
@@ -90,7 +79,7 @@
     (/full ,web-full)
     (/upload ,web-upload)
     (/uploadcont ,web-uploadcont)
-    (/previewunknown ,previewunknown)
+    (/previewunknown ,web-previewunknown)
     (/previewunknownurl ,previewunknownurl)
     (/share ,web-share)
     ))
