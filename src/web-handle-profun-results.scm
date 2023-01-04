@@ -25,8 +25,8 @@
 (define (web-handle-profun-results/2 res fun)
   (cond
    ((and (= 2 (length res))
-         (equal? 'equals (cadr res)))
-    (let ((equals (cadr (cadr res))))
+         (equal? 'equals (car res)))
+    (let ((equals (cadr res)))
       (fun equals)))
    ((equal? '(true) res) (fun))
    ((equal? '(false) res) (raisu 'unexpected-false-from-backend-812731632))
