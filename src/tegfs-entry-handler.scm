@@ -27,6 +27,7 @@
 %use (entry-limit-fields) "./entry-limit-fields.scm"
 %use (keyword-diropen) "./keyword-diropen.scm"
 %use (keyword-dirpreview) "./keyword-dirpreview.scm"
+%use (permission?) "./permission.scm"
 %use (query-diropen?/p query-dirpreview?/p query-split/p tegfs-permissions/p) "./talk-parameters.scm"
 %use (tegfs-query/open) "./tegfs-query-open.scm"
 %use (context-filemap/2) "./web-context.scm"
@@ -93,6 +94,8 @@
                (else (iter-values))))
 
             (cond
+             ((not (permission? perm))
+              (profun-reject)) ;; NOTE: optimization
              ((profun-bound-value? (env E-name))
               (make-profun-error 'query-is-a-generator 'cannot-check-if-element-already-exists))
              (else
