@@ -29,7 +29,6 @@
 %use (web-bad-request) "./web-bad-request.scm"
 %use (web-callcontext/p) "./web-callcontext-p.scm"
 %use (callcontext-request callcontext-token) "./web-callcontext.scm"
-%use (web-context/p) "./web-context-p.scm"
 %use (web-decode-query) "./web-decode-query.scm"
 %use (web-get-query) "./web-get-query.scm"
 %use (web-handle-profun-results) "./web-handle-profun-results.scm"
@@ -102,7 +101,7 @@
         (web-bad-request "Bad `for-duration' value ~s" for-duration/s)))
       default-share-expiery-time))
 
-(define (web-share-cont ctx callctx query/encoded)
+(define (web-share-cont callctx query/encoded)
   (lambda (equals)
     (define req (callcontext-request callctx))
     (define domainname (web-request-get-domainname req))
@@ -120,7 +119,6 @@
     (web-make-html-response text)))
 
 (define (web-share-query query/encoded)
-  (define ctx (web-context/p))
   (define callctx (web-callcontext/p))
   (define key (callcontext-token callctx))
   (define share-duration (get-share-duration))
@@ -139,10 +137,9 @@
        )))
 
   (web-handle-profun-results
-   result (web-share-cont ctx callctx query/encoded)))
+   result (web-share-cont callctx query/encoded)))
 
 (define (web-share-vid senderid)
-  (define ctx (web-context/p))
   (define callctx (web-callcontext/p))
   (define key (callcontext-token callctx))
   (define share-duration (get-share-duration))
@@ -160,7 +157,7 @@
        )))
 
   (web-handle-profun-results
-   result (web-share-cont ctx callctx #f)))
+   result (web-share-cont callctx #f)))
 
 (define (web-share)
   (define ctxq (web-get-query))
