@@ -95,13 +95,6 @@
               (Cache-Control . "max-age=3600, public, private"))))
    web-style))
 
-(define (static-message message)
-  (define xml (web-message-template message))
-  (lambda _ (web-make-html-response xml)))
-
-(define permission-denied
-  (web-static-error-message 401 "Permission denied"))
-
 (define unavailable-image-string
   (stringf
    "<?xml version='1.0' encoding='UTF-8' standalone='no'?>
