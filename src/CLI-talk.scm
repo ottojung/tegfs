@@ -24,7 +24,6 @@
 %use (deserialize/short serialize/short) "./euphrates/serialization-short.scm"
 %use (~s) "./euphrates/tilda-s.scm"
 %use (words->string) "./euphrates/words-to-string.scm"
-%use (get-admin-permissions) "./get-admin-permissions.scm"
 %use (tegfs-make-communicator) "./tegfs-make-communicator.scm"
 %use (web-make-communicator) "./web-make-communicator.scm"
 %use (with-current-time) "./with-current-time.scm"
@@ -69,9 +68,6 @@
             (display (words->string (map ~s (serialize/short answer))))
             (newline)
             #t))))
-
-  (send-to-server
-   #t (const `(listen ((admin-permissions ,(get-admin-permissions))))))
 
   (let loop ()
     (when (send-to-server #f read-sentence)
