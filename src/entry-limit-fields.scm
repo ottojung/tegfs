@@ -18,16 +18,12 @@
 %var entry-limit-fields
 
 %use (has-access-for-entry-details? has-access-for-entry-target?) "./access.scm"
-%use (keyword-entry-parent-directory) "./keyword-entry-parent-directory.scm"
-%use (keyword-entry-registry-path) "./keyword-entry-registry-path.scm"
 %use (keyword-target) "./keyword-target.scm"
 %use (keyword-title) "./keyword-title.scm"
 
 (define target-fields
   (list keyword-target
-        keyword-title
-        keyword-entry-parent-directory ;; FIXME: remove non-target fields
-        keyword-entry-registry-path))
+        keyword-title))
 
 (define (entry-limit-fields filemap/2 perm entry0)
   (cond
