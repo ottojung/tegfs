@@ -1,4 +1,4 @@
-;;;; Copyright (C) 2022  Otto Jung
+;;;; Copyright (C) 2023  Otto Jung
 ;;;;
 ;;;; This program is free software: you can redistribute it and/or modify
 ;;;; it under the terms of the GNU Affero General Public License as published
@@ -18,35 +18,11 @@
 %var web-iterate-profun-results
 
 %use (fn-alist) "./euphrates/fn-alist.scm"
-%use (raisu) "./euphrates/raisu.scm"
-%use (~s) "./euphrates/tilda-s.scm"
-%use (words->string) "./euphrates/words-to-string.scm"
-%use (web-bad-request) "./web-bad-request.scm"
-
-(define (web-iterate-profun-results/2 res fun)
-  (cond
-   ((and (= 2 (length res))
-         (equal? 'equals (cadr res)))
-    (let ((equals (cadr (cadr res))))
-      (for-each fun equals)))
-   ((equal? '(true) res) (fun))
-   ((equal? '(false) res) (raisu 'unexpected-false-from-backend-812731632))
-   (else
-    (raisu 'unexpected-its-from-backend-61253123543))))
-
-(define (web-iterate-profun-results/fun results fun)
-  (case (car result)
-    ((its)
-     (web-iterate-profun-results/2 (cadr result) fun))
-    ((error)
-     (web-bad-request
-      "Error: ~a"
-      (words->string (map ~s (cadr result)))))
-    (else
-     (raisu 'unexpected-result-from-backend-87156243510))))
+%use (web-handle-profun-results) "./web-handle-profun-results.scm"
 
 (define-syntax web-iterate-profun-results
   (syntax-rules ()
     ((_ results (name . names) . bodies)
-     (let ((fun (fn-alist (name . names) . bodies)))
-       (web-iterate-profun-results/fun results fun)))))
+     (let* ((fun (fn-alist (name . names) . bodies))
+            (fun* (lambda (equals) (for-each fun equals))))
+       (web-handle-profun-results results fun*)))))
