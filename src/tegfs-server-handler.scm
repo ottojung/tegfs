@@ -1,4 +1,4 @@
-;;;; Copyright (C) 2022  Otto Jung
+;;;; Copyright (C) 2022, 2023  Otto Jung
 ;;;;
 ;;;; This program is free software: you can redistribute it and/or modify
 ;;;; it under the terms of the GNU Affero General Public License as published
@@ -24,9 +24,9 @@
 %use (profun-standard-handler) "./euphrates/profun-standard-handler.scm"
 %use (add-entry-handler) "./add-entry-handler.scm"
 %use (add-entry) "./add-entry.scm"
+%use (core-entry-handler) "./core-entry-handler.scm"
 %use (entry-field-handler) "./entry-field-handler.scm"
 %use (query-diropen?/p query-dirpreview?/p query-split/p) "./talk-parameters.scm"
-%use (query-entry-handler) "./tegfs-entry-handler.scm"
 %use (web-make-context) "./web-make-context.scm"
 
 (define (tegfs-make-server-handler)
@@ -37,7 +37,7 @@
   (profun-handler-extend
    profun-standard-handler
 
-   (entry (query-entry-handler tegfs-context))
+   (entry core-entry-handler)
    (entry-field entry-field-handler)
    (add-entry (add-entry-handler tegfs-context))
 
