@@ -27,8 +27,6 @@
 %use (path-get-dirname) "./euphrates/path-get-dirname.scm"
 %use (profune-communicator-handle) "./euphrates/profune-communicator.scm"
 %use (~a) "./euphrates/tilda-a.scm"
-%use (~s) "./euphrates/tilda-s.scm"
-%use (words->string) "./euphrates/words-to-string.scm"
 %use (add-entry) "./add-entry.scm"
 %use (tegfs-process-categorization-text) "./edit-tags.scm"
 %use (get-random-basename) "./get-random-basename.scm"
@@ -36,11 +34,11 @@
 %use (keyword-tags) "./keyword-tags.scm"
 %use (keyword-target) "./keyword-target.scm"
 %use (keyword-title) "./keyword-title.scm"
-%use (web-bad-request) "./web-bad-request.scm"
 %use (web-body-not-found) "./web-body-not-found.scm"
 %use (web-callcontext/p) "./web-callcontext-p.scm"
 %use (callcontext-body callcontext-request callcontext-token) "./web-callcontext.scm"
 %use (web-context/p) "./web-context-p.scm"
+%use (web-handle-profun-results/or) "./web-handle-profun-results.scm"
 %use (web-make-communicator) "./web-make-communicator.scm"
 %use (parse-multipart-as-hashmap) "./web-parse-multipart.scm"
 %use (web-static-error-message) "./web-static-error-message.scm"
@@ -138,11 +136,10 @@
        (add-entry ,upload-registry-filename ,entry)
        )))
 
-  (case (car result)
-    ((its) ((upload-success-page <target>)))
-    (else
-     (when full-filename (file-delete full-filename))
-     (web-bad-request "error: ~a" (words->string (map ~s (cadr result)))))))
+  (web-handle-profun-results/or
+   result
+   (lambda _ ((upload-success-page <target>)))
+   (lambda _ (when full-filename (file-delete full-filename)))))
 
 (define (web-uploadcont)
   (define callctx (web-callcontext/p))
