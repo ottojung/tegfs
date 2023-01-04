@@ -19,6 +19,7 @@
 
 %use (dprintln) "./euphrates/dprintln.scm"
 %use (alist->hashmap hashmap-ref) "./euphrates/hashmap.scm"
+%use (raisu) "./euphrates/raisu.scm"
 %use (stringf) "./euphrates/stringf.scm"
 %use (~a) "./euphrates/tilda-a.scm"
 %use (time-get-current-unixtime) "./euphrates/time-get-current-unixtime.scm"
@@ -62,6 +63,27 @@
 (use-modules (ice-9 binary-ports))
 
 %end
+
+(define (web-respond-with-a-file type bv)
+  (build-response
+   #:code 200
+   #:headers
+   (append `((content-type . ,type)
+             (Cache-Control . "max-age=3600, public, private"))
+           web-basic-headers)
+   bv))
+
+(define-syntax define-web-static-file
+  (syntax-rules ()
+    ((_ name type content)
+     (define name
+       (let ()
+         (define bv
+           (cond
+            ((bytevector? content) content)
+            ((string? content) (string->utf8 content))
+            (else (raisu 'unknown-content-type content))))
+         (lambda _ (web-respond-with-a-file type bv)))))))
 
 (define (main.css)
   (web-return!
