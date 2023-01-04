@@ -1,4 +1,4 @@
-;;;; Copyright (C) 2022  Otto Jung
+;;;; Copyright (C) 2022, 2023  Otto Jung
 ;;;;
 ;;;; This program is free software: you can redistribute it and/or modify
 ;;;; it under the terms of the GNU Affero General Public License as published
@@ -15,7 +15,7 @@
 
 %run guile
 
-%var add-entry-handler
+%var webcore::add-entry
 
 %use (profun-accept) "./euphrates/profun-accept.scm"
 %use (make-profun-error) "./euphrates/profun-error.scm"
@@ -27,25 +27,24 @@
 %use (permission?) "./permission.scm"
 %use (tegfs-permissions/p) "./talk-parameters.scm"
 
-(define add-entry-handler
-  (lambda (tegfs-context)
-    (profun-op-envlambda
-     (ctx env (R-name E-name))
+(define webcore::add-entry
+  (profun-op-envlambda
+   (ctx env (R-name E-name))
 
-     (define registry-file (env R-name))
-     (define entry (env E-name))
-     (define perm (tegfs-permissions/p))
+   (define registry-file (env R-name))
+   (define entry (env E-name))
+   (define perm (tegfs-permissions/p))
 
-     (cond
-      ((not (permission? perm))
-       (make-profun-error 'permission-denied "Not authorized. Missing key?"))
-      ((not (can-upload? perm))
-       (make-profun-error 'permission-denied "This user cannot create new entries"))
-      ((profun-unbound-value? registry-file)
-       (profun-request-value R-name))
-      ((profun-unbound-value? entry)
-       (profun-request-value E-name))
+   (cond
+    ((not (permission? perm))
+     (make-profun-error 'permission-denied "Not authorized. Missing key?"))
+    ((not (can-upload? perm))
+     (make-profun-error 'permission-denied "This user cannot create new entries"))
+    ((profun-unbound-value? registry-file)
+     (profun-request-value R-name))
+    ((profun-unbound-value? entry)
+     (profun-request-value E-name))
 
-      (else
-       (add-entry registry-file entry)
-       (profun-accept))))))
+    (else
+     (add-entry registry-file entry)
+     (profun-accept)))))

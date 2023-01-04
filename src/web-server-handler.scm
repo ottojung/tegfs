@@ -1,4 +1,4 @@
-;;;; Copyright (C) 2022  Otto Jung
+;;;; Copyright (C) 2022, 2023  Otto Jung
 ;;;;
 ;;;; This program is free software: you can redistribute it and/or modify
 ;;;; it under the terms of the GNU Affero General Public License as published
@@ -18,6 +18,7 @@
 %var web-make-server-handler
 
 %use (profun-handler-extend) "./euphrates/profun-handler.scm"
+%use (add-entry) "./add-entry.scm"
 %use (login-handler) "./login-handler.scm"
 %use (make-temporary-permissions-handler) "./make-temporary-permissions-handler.scm"
 %use (shared-entry-contains-handler) "./shared-entry-contains-handler.scm"
@@ -29,6 +30,7 @@
 %use (web-share-entry-full-handler) "./web-share-entry-full-handler.scm"
 %use (web-share-entry-handler) "./web-share-entry-handler.scm"
 %use (web-share-entry-preview-handler) "./web-share-entry-preview-handler.scm"
+%use (webcore::add-entry) "./webcore-add-entry.scm"
 %use (webcore-entry-handler) "./webcore-entry-handler.scm"
 
 (define (web-make-server-handler web-context)
@@ -38,6 +40,7 @@
    (login (login-handler web-context))
    (key (tegfs-key-handler web-context))
    (entry (webcore-entry-handler web-context)) ;; OVERRIDES
+   (add-entry webcore::add-entry) ;; OVERRIDES
    (share-preview (web-share-entry-preview-handler web-context))
    (share-full (web-share-entry-full-handler web-context))
    (share-entry (web-share-entry-handler web-context))

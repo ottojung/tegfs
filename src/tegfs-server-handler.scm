@@ -22,8 +22,8 @@
 %use (instantiate-profun-parameter) "./euphrates/profun-op-parameter.scm"
 %use (profun-op-value) "./euphrates/profun-op-value.scm"
 %use (profun-standard-handler) "./euphrates/profun-standard-handler.scm"
-%use (add-entry-handler) "./add-entry-handler.scm"
 %use (add-entry) "./add-entry.scm"
+%use (core::add-entry) "./core-add-entry.scm"
 %use (core-entry-handler) "./core-entry-handler.scm"
 %use (entry-field-handler) "./entry-field-handler.scm"
 %use (query-diropen?/p query-dirpreview?/p query-split/p) "./talk-parameters.scm"
@@ -39,7 +39,7 @@
 
    (entry core-entry-handler)
    (entry-field entry-field-handler)
-   (add-entry (add-entry-handler tegfs-context))
+   (add-entry core::add-entry)
 
    (query (instantiate-profun-parameter query-split/p))
    (diropen? (instantiate-profun-parameter query-diropen?/p))
