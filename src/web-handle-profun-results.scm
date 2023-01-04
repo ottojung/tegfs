@@ -17,26 +17,37 @@
 
 %var web-handle-profun-results
 
+%use (comp) "./euphrates/comp.scm"
 %use (raisu) "./euphrates/raisu.scm"
 %use (~s) "./euphrates/tilda-s.scm"
 %use (words->string) "./euphrates/words-to-string.scm"
 %use (web-bad-request) "./web-bad-request.scm"
 
-(define (web-handle-profun-results/2 res fun)
+(define (web-handle-profun-results/2 results fun)
+  (define head
+    (if (null? results) (raisu 'unexpected-result-from-backend-7126363)
+        (car results)))
+
   (cond
-   ((and (= 2 (length res))
-         (equal? 'equals (car res)))
-    (let ((equals (cadr res)))
+   ((and (= 2 (length head))
+         (equal? 'equals (car head)))
+    (let ((equals (cadr head)))
       (fun equals)))
-   ((equal? '(true) res) (fun))
-   ((equal? '(false) res) (raisu 'unexpected-false-from-backend-812731632))
+
+   ((and (= 3 (length head))
+         (equal? '= (car head)))
+    (let ((equals (list (map (comp (apply (lambda (EQ A B) (cons A B)))) results))))
+      (fun equals)))
+
+   ((equal? '((true)) results) (fun))
+   ((equal? '((false)) results) (raisu 'unexpected-false-from-backend-812731632))
    (else
     (raisu 'unexpected-its-from-backend-61253123543))))
 
 (define (web-handle-profun-results results fun)
   (case (car results)
     ((its)
-     (web-handle-profun-results/2 (cadr results) fun))
+     (web-handle-profun-results/2 (cdr results) fun))
     ((error)
      ;; TODO: handle authorization errors differently
      (web-bad-request

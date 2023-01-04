@@ -18,11 +18,16 @@
 %var web-iterate-profun-results
 
 %use (fn-alist) "./euphrates/fn-alist.scm"
+%use (list-singleton?) "./euphrates/list-singleton-q.scm"
 %use (web-handle-profun-results) "./web-handle-profun-results.scm"
 
 (define-syntax web-iterate-profun-results
   (syntax-rules ()
     ((_ results (name . names) . bodies)
      (let* ((fun (fn-alist (name . names) . bodies))
-            (fun* (lambda (equals) (for-each fun equals))))
+            (fun*
+             (lambda (equals)
+               (if (list-singleton? equals)
+                   (fun (car equals))
+                   (for-each fun equals)))))
        (web-handle-profun-results results fun*)))))
