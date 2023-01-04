@@ -24,7 +24,7 @@
 %use (string-split/simple) "./euphrates/string-split-simple.scm"
 %use (string-strip) "./euphrates/string-strip.scm"
 %use (web-callcontext/p) "./web-callcontext-p.scm"
-%use (callcontext-ctr callcontext-query callcontext-request set-callcontext-key!) "./web-callcontext.scm"
+%use (callcontext-ctr set-callcontext-key!) "./web-callcontext.scm"
 %use (web-try-uri-decode) "./web-try-uri-decode.scm"
 
 %for (COMPILER "guile")
@@ -64,15 +64,13 @@
          (got (and cookies (assoc name cookies))))
     (and got (cdr got))))
 
-(define (get-access-token callctx)
+(define (get-access-token qH request)
   (or
-   (let* ((qH (callcontext-query callctx))
-          (ret (hashmap-ref qH 'key #f)))
+   (let ((ret (hashmap-ref qH 'key #f)))
      (when ret (set-user-key! ret))
      ret)
-   (let ((request (callcontext-request callctx)))
-     (or (get-cookie "key" request)
-         (get-cookie "pwdtoken" request)))))
+   (or (get-cookie "key" request)
+       (get-cookie "pwdtoken" request))))
 
 (define (query->hashmap query)
   (define split (string-split/simple query #\&))
@@ -92,7 +90,5 @@
 
 (define (web-make-callcontext break request body)
   (define qH (memconst (initialize-query request)))
-  (letrec
-      ((tokenfn (memconst (get-access-token callctx)))
-       (callctx (callcontext-ctr break request qH body #f tokenfn)))
-    callctx))
+  (define tokenfn (memconst (get-access-token (qH) request)))
+  (callcontext-ctr break request qH body #f tokenfn))
