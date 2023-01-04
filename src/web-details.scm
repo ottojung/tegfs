@@ -18,14 +18,12 @@
 %var web-details
 
 %use (hashmap-ref) "./euphrates/hashmap.scm"
-%use (profune-communicator-handle) "./euphrates/profune-communicator.scm"
 %use (web-callcontext/p) "./web-callcontext-p.scm"
 %use (callcontext-token) "./web-callcontext.scm"
-%use (web-context/p) "./web-context-p.scm"
 %use (web-get-query) "./web-get-query.scm"
 %use (web-iterate-profun-results) "./web-iterate-profun-results.scm"
-%use (web-make-communicator) "./web-make-communicator.scm"
 %use (web-make-html-response) "./web-make-html-response.scm"
+%use (webcore::ask) "./webcore-ask.scm"
 
 (define (web-actual-details entry)
   (define table
@@ -60,8 +58,7 @@
   (define key (callcontext-token callctx))
 
   (define result
-    (profune-communicator-handle
-     (web-make-communicator (web-context/p))
+    (webcore::ask
      `(listen
        ((goal X) (senderid->entry ,vid X))
        ((goal X) (query ("%any")) (entry X) (entry-field X "id" ,id))

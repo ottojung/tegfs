@@ -21,7 +21,7 @@
 %use (web-basic-headers) "./web-basic-headers.scm"
 %use (web-get-query) "./web-get-query.scm"
 %use (web-iterate-profun-results) "./web-iterate-profun-results.scm"
-%use (webcore-ask) "./webcore-ask.scm"
+%use (webcore::ask) "./webcore-ask.scm"
 
 %for (COMPILER "guile")
 
@@ -34,7 +34,7 @@
   (define senderid (hashmap-ref ctxq 'vid #f))
 
   (define result
-    (webcore-ask
+    (webcore::ask
      `(whats
        (link-shared ,senderid L)
        )))

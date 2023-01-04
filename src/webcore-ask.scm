@@ -15,12 +15,12 @@
 
 %run guile
 
-%var webcore-ask
+%var webcore::ask
 
 %use (profune-communicator-handle) "./euphrates/profune-communicator.scm"
 %use (webcore::current-communicator/p) "./webcore-current-communicator-p.scm"
 
-(define (webcore-ask sentence)
+(define (webcore::ask sentence)
   (profune-communicator-handle
    (webcore::current-communicator/p)
-   sentence))
+   (cons 'reset sentence)))

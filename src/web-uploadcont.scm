@@ -25,7 +25,6 @@
 %use (make-directories) "./euphrates/make-directories.scm"
 %use (open-file-port) "./euphrates/open-file-port.scm"
 %use (path-get-dirname) "./euphrates/path-get-dirname.scm"
-%use (profune-communicator-handle) "./euphrates/profune-communicator.scm"
 %use (~a) "./euphrates/tilda-a.scm"
 %use (add-entry) "./add-entry.scm"
 %use (tegfs-process-categorization-text) "./edit-tags.scm"
@@ -37,11 +36,10 @@
 %use (web-body-not-found) "./web-body-not-found.scm"
 %use (web-callcontext/p) "./web-callcontext-p.scm"
 %use (callcontext-body callcontext-request callcontext-token) "./web-callcontext.scm"
-%use (web-context/p) "./web-context-p.scm"
 %use (web-handle-profun-results/or) "./web-handle-profun-results.scm"
-%use (web-make-communicator) "./web-make-communicator.scm"
 %use (parse-multipart-as-hashmap) "./web-parse-multipart.scm"
 %use (web-static-error-message) "./web-static-error-message.scm"
+%use (webcore::ask) "./webcore-ask.scm"
 
 %for (COMPILER "guile")
 (use-modules (ice-9 iconv))
@@ -129,8 +127,7 @@
       (,keyword-tags ,@tags-list)))
 
   (define result
-    (profune-communicator-handle
-     (web-make-communicator (web-context/p))
+    (webcore::ask
      `(whats
        (key ,(callcontext-token callctx))
        (add-entry ,upload-registry-filename ,entry)

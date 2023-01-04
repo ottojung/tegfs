@@ -17,20 +17,16 @@
 
 %var web-collectgarbage
 
-%use (profune-communicator-handle) "./euphrates/profune-communicator.scm"
 %use (web-basic-headers) "./web-basic-headers.scm"
-%use (web-context/p) "./web-context-p.scm"
-%use (web-make-communicator) "./web-make-communicator.scm"
 %use (web-return!) "./web-return-bang.scm"
+%use (webcore::ask) "./webcore-ask.scm"
 
 %for (COMPILER "guile")
 (use-modules (web response))
 %end
 
 (define (web-collectgarbage)
-  (profune-communicator-handle
-   (web-make-communicator (web-context/p))
-   `(whats (collectgarbage)))
+  (webcore::ask `(whats (collectgarbage)))
 
   (web-return!
    (build-response

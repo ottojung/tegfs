@@ -18,18 +18,16 @@
 %var web-query
 
 %use (hashmap-ref) "./euphrates/hashmap.scm"
-%use (profune-communicator-handle) "./euphrates/profune-communicator.scm"
 %use (string->words) "./euphrates/string-to-words.scm"
 %use (default-full-sharing-time) "./default-full-sharing-time.scm"
 %use (default-preview-sharing-time) "./default-preview-sharing-time.scm"
 %use (web-callcontext/p) "./web-callcontext-p.scm"
 %use (callcontext-request callcontext-token) "./web-callcontext.scm"
-%use (web-context/p) "./web-context-p.scm"
 %use (web-decode-query) "./web-decode-query.scm"
 %use (web-get-query) "./web-get-query.scm"
 %use (web-handle-profun-results) "./web-handle-profun-results.scm"
-%use (web-make-communicator) "./web-make-communicator.scm"
 %use (web-query-display-results) "./web-query-display-results.scm"
+%use (webcore::ask) "./webcore-ask.scm"
 
 (define (web-query)
   (define callctx (web-callcontext/p))
@@ -41,8 +39,7 @@
   (define query/split (string->words query))
 
   (define result
-    (profune-communicator-handle
-     (web-make-communicator (web-context/p))
+    (webcore::ask
      `(whats
        (key ,(callcontext-token callctx))
        (query ,query/split)

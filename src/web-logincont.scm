@@ -20,18 +20,16 @@
 %use (define-tuple) "./euphrates/define-tuple.scm"
 %use (fn) "./euphrates/fn.scm"
 %use (list-singleton?) "./euphrates/list-singleton-q.scm"
-%use (profune-communicator-handle) "./euphrates/profune-communicator.scm"
 %use (raisu) "./euphrates/raisu.scm"
 %use (string-split/simple) "./euphrates/string-split-simple.scm"
 %use (web-body-not-found) "./web-body-not-found.scm"
 %use (web-callcontext/p) "./web-callcontext-p.scm"
 %use (callcontext-body) "./web-callcontext.scm"
-%use (web-context/p) "./web-context-p.scm"
 %use (web-login-failed-body) "./web-login-failed-body.scm"
 %use (web-login-success-body) "./web-login-success-body.scm"
-%use (web-make-communicator) "./web-make-communicator.scm"
 %use (web-make-html-response) "./web-make-html-response.scm"
 %use (web-set-cookie-header) "./web-set-cookie-header.scm"
+%use (webcore::ask) "./webcore-ask.scm"
 
 %for (COMPILER "guile")
 (use-modules (ice-9 iconv))
@@ -65,8 +63,7 @@
       (raisu 'bad-query-key key)))
 
   (define result
-    (profune-communicator-handle
-     (web-make-communicator (web-context/p))
+    (webcore::ask
      `(whats
        (login ,password)
        (key K)

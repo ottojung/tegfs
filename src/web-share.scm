@@ -20,7 +20,6 @@
 %use (assq-or) "./euphrates/assq-or.scm"
 %use (catchu-case) "./euphrates/catchu-case.scm"
 %use (hashmap-ref) "./euphrates/hashmap.scm"
-%use (profune-communicator-handle) "./euphrates/profune-communicator.scm"
 %use (raisu) "./euphrates/raisu.scm"
 %use (string->seconds) "./euphrates/string-to-seconds.scm"
 %use (string->words) "./euphrates/string-to-words.scm"
@@ -34,9 +33,9 @@
 %use (web-decode-query) "./web-decode-query.scm"
 %use (web-get-query) "./web-get-query.scm"
 %use (web-handle-profun-results) "./web-handle-profun-results.scm"
-%use (web-make-communicator) "./web-make-communicator.scm"
 %use (web-make-html-response) "./web-make-html-response.scm"
 %use (web-request-get-domainname) "./web-request-get-domainname.scm"
+%use (webcore::ask) "./webcore-ask.scm"
 
 %for (COMPILER "guile")
 
@@ -129,8 +128,7 @@
   (define query/split (string->words query))
 
   (define result
-    (profune-communicator-handle
-     (web-make-communicator (web-context/p))
+    (webcore::ask
      `(whats
        (key ,key)
        (make-temporary-permissions ,share-duration K)
@@ -150,8 +148,7 @@
   (define share-duration (get-share-duration))
 
   (define result
-    (profune-communicator-handle
-     (web-make-communicator (web-context/p))
+    (webcore::ask
      `(whats
        (key ,key)
        (make-temporary-permissions ,share-duration K)
