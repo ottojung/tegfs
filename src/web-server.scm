@@ -44,15 +44,9 @@
 
 %for (COMPILER "guile")
 
-(use-modules (web server)
-             (web request)
-             (web response)
-             (web uri)
-             (sxml simple))
-
-(use-modules (ice-9 iconv))
-(use-modules (rnrs bytevectors))
-(use-modules (ice-9 binary-ports))
+(use-modules (web server))
+(use-modules (web request))
+(use-modules (web uri))
 
 %end
 
