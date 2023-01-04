@@ -148,7 +148,6 @@
   (define callctx (web-callcontext/p))
   (define key (callcontext-token callctx))
   (define share-duration (get-share-duration))
-  (define query/split '("%any"))
 
   (define result
     (profune-communicator-handle
