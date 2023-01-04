@@ -34,8 +34,8 @@
   (profun-handler-extend
    (tegfs-make-server-handler/c web-context)
 
-   (login (login-handler tegfs-context))
-   (key (tegfs-key-handler tegfs-context))
+   (login (login-handler web-context))
+   (key (tegfs-key-handler web-context))
    (share-preview (web-share-entry-preview-handler web-context))
    (share-full (web-share-entry-full-handler web-context))
    (share-entry (web-share-entry-handler web-context))
