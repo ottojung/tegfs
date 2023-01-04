@@ -17,13 +17,14 @@
 
 %var tegfs-serve/parse
 
+%use (assq-or) "./euphrates/assq-or.scm"
 %use (dprintln) "./euphrates/dprintln.scm"
 %use (alist->hashmap hashmap-ref) "./euphrates/hashmap.scm"
 %use (~a) "./euphrates/tilda-a.scm"
+%use (get-config) "./get-config.scm"
+%use (keyword-config-port) "./keyword-config-port.scm"
 %use (web-callcontext/p) "./web-callcontext-p.scm"
 %use (web-collectgarbage) "./web-collectgarbage.scm"
-%use (web-context/p) "./web-context-p.scm"
-%use (context-port) "./web-context.scm"
 %use (web-details) "./web-details.scm"
 %use (web-directory) "./web-directory.scm"
 %use (web-full) "./web-full.scm"
@@ -32,7 +33,6 @@
 %use (web-main.css) "./web-main-css.scm"
 %use (web-make-callcontext) "./web-make-callcontext.scm"
 %use (web-make-communicator) "./web-make-communicator.scm"
-%use (web-make-context) "./web-make-context.scm"
 %use (web-not-found) "./web-not-found.scm"
 %use (web-previewunknown) "./web-previewunknown.scm"
 %use (web-previewunknownurl) "./web-previewunknownurl.scm"
@@ -101,17 +101,15 @@
           (handler request body)))))))
 
 (define (tegfs-serve/parse)
-  (define webcore-context (web-make-context))
-  (define comm (web-make-communicator webcore-context))
+  (define config (get-config))
+  (define port (car (assq-or keyword-config-port config '(33470))))
+  (define comm (web-make-communicator))
 
   (dprintln "Starting the server")
-  (parameterize ((web-context/p webcore-context)
-                 (webcore::current-communicator/p comm))
-    (let ((port (context-port (web-context/p))))
+  (parameterize ((webcore::current-communicator/p comm))
+    (dprintln "Collecting garbage left from the previous run...")
+    (with-current-time
+     (webcore::ask `(whats (collectgarbage))))
+    (dprintln "Done")
 
-      (dprintln "Collecting garbage left from the previous run...")
-      (with-current-time
-       (webcore::ask `(whats (collectgarbage))))
-      (dprintln "Done")
-
-      (run-server (make-handler) 'http `(#:port ,port)))))
+    (run-server (make-handler) 'http `(#:port ,port))))

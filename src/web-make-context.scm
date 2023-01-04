@@ -24,6 +24,7 @@
 %use (~a) "./euphrates/tilda-a.scm"
 %use (filemap-make/empty) "./filemap.scm"
 %use (get-config) "./get-config.scm"
+%use (keyword-config-port) "./keyword-config-port.scm"
 %use (context-ctr) "./web-context.scm"
 
 (define (web-make-context)
@@ -53,7 +54,7 @@
          (raisu 'no-fileserver "Variable 'sharedir is not set by the config"))))
   (define port/string
     (cadr
-     (or (assoc 'port config)
+     (or (assoc keyword-config-port config)
          (raisu 'no-port "Variable 'port is not set by the config"))))
   (define port
     (or (string->number (~a port/string))

@@ -27,7 +27,6 @@
 %use (get-admin-permissions) "./get-admin-permissions.scm"
 %use (tegfs-make-communicator) "./tegfs-make-communicator.scm"
 %use (web-make-communicator) "./web-make-communicator.scm"
-%use (web-make-context) "./web-make-context.scm"
 %use (with-current-time) "./with-current-time.scm"
 
 (define (CLI-talk --web)
@@ -46,7 +45,7 @@
 
   (define comm
     (if --web
-        (web-make-communicator (web-make-context))
+        (web-make-communicator)
         (tegfs-make-communicator)))
 
   (define (send-to-server echo? read-sentence)

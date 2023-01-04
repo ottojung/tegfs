@@ -19,12 +19,16 @@
 
 %use (profun-create-database) "./euphrates/profun.scm"
 %use (make-profune-communicator) "./euphrates/profune-communicator.scm"
+%use (web-make-context) "./web-make-context.scm"
 %use (web-make-server-handler) "./web-server-handler.scm"
 
-(define (web-make-communicator web-context)
+(define (web-make-communicator)
+  (define webcore-context
+    (web-make-context))
+
   (define db
     (profun-create-database
-     (web-make-server-handler web-context)
+     (web-make-server-handler webcore-context)
      '()))
 
   (define comm

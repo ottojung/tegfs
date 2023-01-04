@@ -1,4 +1,4 @@
-;;;; Copyright (C) 2022  Otto Jung
+;;;; Copyright (C) 2023  Otto Jung
 ;;;;
 ;;;; This program is free software: you can redistribute it and/or modify
 ;;;; it under the terms of the GNU Affero General Public License as published
@@ -15,7 +15,7 @@
 
 %run guile
 
-%var web-context/p
+%var keyword-config-port
 
-(define web-context/p
-  (make-parameter #f))
+(define keyword-config-port 'port)
+
