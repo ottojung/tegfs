@@ -38,6 +38,7 @@
     ((its)
      (web-handle-profun-results/2 (cadr results) fun))
     ((error)
+     ;; TODO: handle authorization errors differently
      (web-bad-request
       "Error: ~a"
       (words->string (map ~s (cadr results)))))
