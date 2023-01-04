@@ -25,7 +25,7 @@
 
 (define (make-permission expiery-time admin? maybepassword uploadaccess? detailsaccess? share-longer-than-view?)
   (define token (get-random-access-token))
-  (define start (time-get-current-unixtime))
+  (define start (time-get-current-unixtime)) ;; FIXME: use current-time/p
   (define time expiery-time)
   (define dynamic
     `((maybepassword ,maybepassword)

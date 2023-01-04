@@ -42,7 +42,7 @@
   (idset permission-idset) ;; hashset with `values: id of entry that is shared with this permission`
   )
 
-(define (permission-maybepassword perm)
+(define (permission-maybepassword perm) ;; *hashed* password, or #f.
   (assq-or 'maybepassword (permission-dynamic perm)))
 
 (define (permission-uploadaccess? perm) ;; true if user can create new entries

@@ -31,4 +31,6 @@
      share-longer-than-view?))
   (define token (permission-token perm))
   (hashmap-set! tokens token perm)
+  (when maybepassword
+    (hashmap-set! tokens maybepassword perm))
   perm)

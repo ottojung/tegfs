@@ -26,12 +26,13 @@
 %use (default-login-expiery-time) "./default-login-expiery-time.scm"
 %use (make-permission!) "./make-permission-bang.scm"
 %use (sha256sum) "./sha256sum.scm"
+%use (context-passwords context-tokens) "./web-context.scm"
 %use (webcore::permissions/p) "./webcore-parameters.scm"
-%use (context-passwords) "./web-context.scm"
 
 (define login-handler
-  (lambda (tegfs-context)
-    (define passwords (context-passwords tegfs-context))
+  (lambda (webcore::context)
+    (define passwords (context-passwords webcore::context))
+    (define tokens (context-tokens webcore::context))
 
     (profun-op-envlambda
      (ctx env (P-name))
@@ -43,10 +44,16 @@
      (define registered?
        (and hashed
             (hashmap-ref passwords hashed #f)))
+     (define temporary
+       (and hashed
+            (hashmap-ref tokens hashed #f)))
 
      (cond
       ((profun-unbound-value? password)
        (profun-request-value P-name))
+
+      (temporary
+       (profun-set-parameter (webcore::permissions/p <- temporary)))
 
       ((not registered?)
        (make-profun-error 'not-authorized "Bad password here"))
@@ -54,13 +61,13 @@
       (else
        (let ()
          (define admin? #t) ;; TODO: read from the config
-         (define maybepassword password)
+         (define maybepassword hashed)
          (define uploadaccess? #t) ;; TODO: read from the config
          (define detailsaccess? #t) ;; TODO: read from the config
          (define share-longer-than-view? #t) ;; TODO: read from the config
          (define perm
            (make-permission!
-            tegfs-context
+            webcore::context
             default-login-expiery-time
             admin?
             maybepassword

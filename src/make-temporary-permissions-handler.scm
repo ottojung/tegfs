@@ -22,17 +22,22 @@
 %use (profun-op-envlambda) "./euphrates/profun-op-envlambda.scm"
 %use (profun-request-value) "./euphrates/profun-request-value.scm"
 %use (profun-bound-value? profun-unbound-value?) "./euphrates/profun-value.scm"
+%use (get-random-network-name) "./get-random-network-name.scm"
 %use (make-permission!) "./make-permission-bang.scm"
 %use (permission-time-left) "./permission-time-left.scm"
 %use (permission-token) "./permission.scm"
 %use (webcore::permissions/p) "./webcore-parameters.scm"
 
+(define (generate-random-password)
+  (get-random-network-name))
+
 (define make-temporary-permissions-handler
   (lambda (web-context)
     (profun-op-envlambda
-     (ctx env (D-name K-name))
+     (ctx env (D-name P-name K-name))
 
      (define D (env D-name))
+     (define P0 (env P-name))
      (define K (env K-name))
      (define perm (webcore::permissions/p))
      (define sharing-time-cap
@@ -43,6 +48,9 @@
        (make-profun-error 'result-variable-should-be-unbound K))
       ((profun-unbound-value? D)
        (profun-request-value D-name))
+      ((and (profun-bound-value? P0)
+            (not (or (string? P0) (not P0))))
+       (make-profun-error 'type-error "Password must be either a string or #f"))
       ((not (and (number? D)
                  (< 0 D)))
        ;; TODO: accept strings as in string->seconds
@@ -54,12 +62,19 @@
          (define live-duration-0 D)
          (define live-duration (min sharing-time-cap live-duration-0))
          (define admin? #f)
-         (define maybepassword #f) ;; TODO: generate one
+         (define maybepassword
+           (if (profun-bound-value? P0) P0
+               (generate-random-password)))
          (define uploadaccess? #f) ;; TODO: maybe allow sometimes
          (define detailsaccess? #f) ;; TODO: maybe allow sometimes
          (define share-longer-than-view? #f) ;; TODO: maybe allow sometimes
          (define perm
            (make-permission! web-context live-duration admin? maybepassword uploadaccess? detailsaccess? share-longer-than-view?))
          (define its-key (permission-token perm))
-         (profun-set
-          (K-name <- its-key))))))))
+
+         (define r0
+           (profun-set
+            (K-name <- its-key)))
+
+         (if (profun-bound-value? P0) r0
+             (profun-set (P-name <- maybepassword) r0))))))))
