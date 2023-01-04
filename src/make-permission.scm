@@ -1,4 +1,4 @@
-;;;; Copyright (C) 2022  Otto Jung
+;;;; Copyright (C) 2022, 2023  Otto Jung
 ;;;;
 ;;;; This program is free software: you can redistribute it and/or modify
 ;;;; it under the terms of the GNU Affero General Public License as published
@@ -27,9 +27,12 @@
   (define token (get-random-access-token))
   (define start (time-get-current-unixtime))
   (define time expiery-time)
-  (define perm
-    (permission-constructor
-     token start time
-     admin? uploadaccess? detailsaccess? share-longer-than-view?
-     (make-hashmap) (make-hashset)))
-  perm)
+  (define dynamic
+    `((uploadaccess? ,uploadaccess?)
+      (detailsaccess? ,detailsaccess?)
+      (share-longer-than-view? ,share-longer-than-view?)))
+
+  (permission-constructor
+   token start time
+   admin? dynamic
+   (make-hashmap) (make-hashset)))

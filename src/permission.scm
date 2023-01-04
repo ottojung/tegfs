@@ -1,4 +1,4 @@
-;;;; Copyright (C) 2022  Otto Jung
+;;;; Copyright (C) 2022, 2023  Otto Jung
 ;;;;
 ;;;; This program is free software: you can redistribute it and/or modify
 ;;;; it under the terms of the GNU Affero General Public License as published
@@ -27,17 +27,25 @@
 %var permission-filemap
 %var permission-idset
 
+%use (assq-or) "./euphrates/assq-or.scm"
 %use (define-type9) "./euphrates/define-type9.scm"
 
 (define-type9 <permission>
-  (permission-constructor token start time admin? uploadaccess? detailsaccess? share-longer-than-view? filemap idset) permission?
+  (permission-constructor token start time admin? dynamic filemap idset) permission?
   (token permission-token) ;; token string
   (start permission-start) ;; timestamp for when this token was created
   (time permission-time) ;; duration in secods for how long this token is valid
-  (admin? permission-admin?) ;; true if user is an admin
-  (uploadaccess? permission-uploadaccess?) ;; true if user can create new entries
-  (detailsaccess? permission-detailsaccess?) ;; true if user has access to objects details
-  (share-longer-than-view? permission-share-longer-than-view?) ;; true if user has access to objects details
+  (admin? permission-admin?) ;; true for superuser users
+  (dynamic permission-dynamic) ;; alist of particular permissions, i.e. if can upload new entries
   (filemap permission-filemap) ;; hashmap with `keys: target-fullpath that was shared with this permission` and `values: sharedinfos`
   (idset permission-idset) ;; hashset with `values: id of entry that is shared with this permission`
   )
+
+(define (permission-uploadaccess? perm) ;; true if user can create new entries
+  (assq-or 'uploadaccess? (permission-dynamic perm)))
+
+(define (permission-detailsaccess? perm) ;; true if user has access to objects details
+  (assq-or 'detailsaccess? (permission-dynamic perm)))
+
+(define (permission-share-longer-than-view? perm) ;; true if user can share entries for longer than viewing allows. useful for admins
+  (assq-or 'sharelonger-than-view? (permission-dynamic perm)))
