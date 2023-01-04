@@ -23,7 +23,6 @@
 %use (string-split-3) "./euphrates/string-split-3.scm"
 %use (string-split/simple) "./euphrates/string-split-simple.scm"
 %use (string-strip) "./euphrates/string-strip.scm"
-%use (web-callcontext/p) "./web-callcontext-p.scm"
 %use (callcontext-ctr set-callcontext-key!) "./web-callcontext.scm"
 %use (web-try-uri-decode) "./web-try-uri-decode.scm"
 
