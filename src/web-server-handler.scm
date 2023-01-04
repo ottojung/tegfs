@@ -18,8 +18,10 @@
 %var web-make-server-handler
 
 %use (profun-handler-extend) "./euphrates/profun-handler.scm"
+%use (login-handler) "./login-handler.scm"
 %use (make-temporary-permissions-handler) "./make-temporary-permissions-handler.scm"
 %use (shared-entry-contains-handler) "./shared-entry-contains-handler.scm"
+%use (tegfs-key-handler) "./tegfs-key-handler.scm"
 %use (tegfs-make-server-handler/c) "./tegfs-server-handler.scm"
 %use (web-collectgarbage-handler) "./web-collectgarbage-handler.scm"
 %use (web-link-shared-handler) "./web-link-shared-handler.scm"
@@ -32,6 +34,8 @@
   (profun-handler-extend
    (tegfs-make-server-handler/c web-context)
 
+   (login (login-handler tegfs-context))
+   (key (tegfs-key-handler tegfs-context))
    (share-preview (web-share-entry-preview-handler web-context))
    (share-full (web-share-entry-full-handler web-context))
    (share-entry (web-share-entry-handler web-context))

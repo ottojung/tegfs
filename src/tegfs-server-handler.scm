@@ -25,10 +25,8 @@
 %use (add-entry-handler) "./add-entry-handler.scm"
 %use (add-entry) "./add-entry.scm"
 %use (entry-field-handler) "./entry-field-handler.scm"
-%use (login-handler) "./login-handler.scm"
 %use (query-diropen?/p query-dirpreview?/p query-split/p) "./talk-parameters.scm"
 %use (query-entry-handler) "./tegfs-entry-handler.scm"
-%use (tegfs-key-handler) "./tegfs-key-handler.scm"
 %use (web-make-context) "./web-make-context.scm"
 
 (define (tegfs-make-server-handler)
@@ -42,10 +40,8 @@
    (entry (query-entry-handler tegfs-context))
    (entry-field entry-field-handler)
    (add-entry (add-entry-handler tegfs-context))
-   (login (login-handler tegfs-context))
 
    (query (instantiate-profun-parameter query-split/p))
-   (key (tegfs-key-handler tegfs-context))
    (diropen? (instantiate-profun-parameter query-diropen?/p))
    (dirpreview? (instantiate-profun-parameter query-dirpreview?/p))
 
