@@ -15,27 +15,18 @@
 
 %run guile
 
-%var web-collectgarbage
+%var web-collectgarbage-handler
 
-%use (profune-communicator-handle) "./euphrates/profune-communicator.scm"
-%use (web-basic-headers) "./web-basic-headers.scm"
+%use (profun-accept) "./euphrates/profun-accept.scm"
+%use (profun-op-lambda) "./euphrates/profun-op-lambda.scm"
+%use (web-collectgarbage/nocall) "./web-collectgarbage-nocall.scm"
 %use (web-context/p) "./web-context-p.scm"
-%use (web-make-communicator) "./web-make-communicator.scm"
-%use (web-return!) "./web-return-bang.scm"
 
-%for (COMPILER "guile")
-(use-modules (web response))
-%end
+(define web-collectgarbage-handler
+  (lambda (web-context)
+    (profun-op-lambda
+     (ctx env ())
 
-(define (web-collectgarbage)
-  (profune-communicator-handle
-   (web-make-communicator (web-context/p))
-   `(whats (collectgarbage)))
-
-  (web-return!
-   (build-response
-    #:code 200
-    #:headers
-    (append web-basic-headers
-            `((Cache-Control . "no-cache"))))
-   "ok\n"))
+     (parameterize ((web-context/p web-context))
+       (web-collectgarbage/nocall)
+       (profun-accept)))))
