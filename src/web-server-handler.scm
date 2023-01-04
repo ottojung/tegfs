@@ -23,7 +23,7 @@
 %use (make-temporary-permissions-handler) "./make-temporary-permissions-handler.scm"
 %use (shared-entry-contains-handler) "./shared-entry-contains-handler.scm"
 %use (tegfs-key-handler) "./tegfs-key-handler.scm"
-%use (tegfs-make-server-handler/c) "./tegfs-server-handler.scm"
+%use (tegfs-make-server-handler) "./tegfs-server-handler.scm"
 %use (web-collectgarbage-handler) "./web-collectgarbage-handler.scm"
 %use (web-link-shared-handler) "./web-link-shared-handler.scm"
 %use (web-senderid->entry-handler) "./web-senderid-to-entry-handler.scm"
@@ -35,7 +35,7 @@
 
 (define (web-make-server-handler web-context)
   (profun-handler-extend
-   (tegfs-make-server-handler/c web-context)
+   (tegfs-make-server-handler)
 
    (login (login-handler web-context))
    (key (tegfs-key-handler web-context))

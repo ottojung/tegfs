@@ -16,7 +16,6 @@
 %run guile
 
 %var tegfs-make-server-handler
-%var tegfs-make-server-handler/c
 
 %use (profun-handler-extend) "./euphrates/profun-handler.scm"
 %use (instantiate-profun-parameter) "./euphrates/profun-op-parameter.scm"
@@ -27,13 +26,8 @@
 %use (core-entry-handler) "./core-entry-handler.scm"
 %use (entry-field-handler) "./entry-field-handler.scm"
 %use (query-diropen?/p query-dirpreview?/p query-split/p) "./talk-parameters.scm"
-%use (web-make-context) "./web-make-context.scm"
 
 (define (tegfs-make-server-handler)
-  (define context (web-make-context)) ;; TODO: make a non-web context
-  (tegfs-make-server-handler/c context))
-
-(define (tegfs-make-server-handler/c tegfs-context)
   (profun-handler-extend
    profun-standard-handler
 
