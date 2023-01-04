@@ -48,7 +48,7 @@
        ;; TODO: accept strings as in string->seconds
        (make-profun-error 'type-error "Duration must be a positive number" D))
       ((not perm)
-       (make-profun-error 'not-authorized))
+       (make-profun-error 'permission-denied "Not authorized to create temporary users"))
       (else
        (let ()
          (define live-duration-0 D)
