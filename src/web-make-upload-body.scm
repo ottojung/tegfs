@@ -35,9 +35,9 @@
        (with-output-to-string
          (lambda _
            (printf "
-    <input type='text' placeholder='Enter title' name='title' >
-    <input type='file' name='file' >
+    <input type='file' name='file' autofocus>
     <textarea style='maxwidth: 100%; width: 100%;' rows='10' cols='120' name='tags'>~a</textarea>
+    <input type='text' placeholder='Enter title' name='title' >
     <button type='submit'>Upload</button>"
                    tags-value))))
 
