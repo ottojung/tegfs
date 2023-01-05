@@ -23,7 +23,7 @@
 %use (profun-accept? profun-ctx-set) "./euphrates/profun-accept.scm"
 %use (profun-default) "./euphrates/profun-default.scm"
 %use (make-profun-error) "./euphrates/profun-error.scm"
-%use (profun-op-envlambda) "./euphrates/profun-op-envlambda.scm"
+%use (profun-op-lambda) "./euphrates/profun-op-lambda.scm"
 %use (profun-bound-value? profun-unbound-value?) "./euphrates/profun-value.scm"
 %use (core::diropen?/p core::dirpreview?/p core::query/p) "./core-paremeters.scm"
 %use (keyword-diropen) "./keyword-diropen.scm"
@@ -31,8 +31,9 @@
 
 (define core::entry/generic
   (lambda (get-iter)
-    (profun-op-envlambda
-     (ctx env (E-name))
+    (profun-op-lambda
+     :with-env
+     (ctx (entry/out) (E-name))
 
      (if ctx (ctx)
          (let ()
@@ -49,7 +50,7 @@
             (cond
              ((profun-unbound-value? query)
               (make-profun-RFC `((query _))))
-             ((profun-bound-value? (env E-name))
+             ((profun-bound-value? entry/out)
               (make-profun-error 'query-is-a-generator 'cannot-check-if-element-already-exists))
              (else
               (let* ((iter (get-iter opening-properties query E-name))

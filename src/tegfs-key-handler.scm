@@ -18,19 +18,18 @@
 %var tegfs-key-handler
 
 %use (profun-set profun-set-parameter) "./euphrates/profun-accept.scm"
-%use (profun-op-envlambda) "./euphrates/profun-op-envlambda.scm"
+%use (profun-op-lambda) "./euphrates/profun-op-lambda.scm"
 %use (profun-request-value) "./euphrates/profun-request-value.scm"
 %use (profun-bound-value?) "./euphrates/profun-value.scm"
 %use (permission-token) "./permission.scm"
-%use (webcore::permissions/p) "./webcore-parameters.scm"
 %use (tegfs-login-by-key) "./tegfs-login-by-key.scm"
+%use (webcore::permissions/p) "./webcore-parameters.scm"
 
 (define tegfs-key-handler
   (lambda (tegfs-context)
-    (profun-op-envlambda
-     (ctx env (K-name))
-
-     (define key (env K-name))
+    (profun-op-lambda
+     :with-env
+     (ctx (key) (K-name))
 
      (cond
       ((profun-bound-value? key)

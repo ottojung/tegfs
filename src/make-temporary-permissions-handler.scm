@@ -19,7 +19,7 @@
 
 %use (profun-set) "./euphrates/profun-accept.scm"
 %use (make-profun-error) "./euphrates/profun-error.scm"
-%use (profun-op-envlambda) "./euphrates/profun-op-envlambda.scm"
+%use (profun-op-lambda) "./euphrates/profun-op-lambda.scm"
 %use (profun-request-value) "./euphrates/profun-request-value.scm"
 %use (profun-bound-value? profun-unbound-value?) "./euphrates/profun-value.scm"
 %use (get-random-network-name) "./get-random-network-name.scm"
@@ -33,12 +33,10 @@
 
 (define make-temporary-permissions-handler
   (lambda (web-context)
-    (profun-op-envlambda
-     (ctx env (D-name P-name K-name))
+    (profun-op-lambda
+     :with-env
+     (ctx (D P0 K) (D-name P-name K-name))
 
-     (define D (env D-name))
-     (define P0 (env P-name))
-     (define K (env K-name))
      (define perm (webcore::permissions/p))
      (define sharing-time-cap
        (and perm (permission-time-left perm)))

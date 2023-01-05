@@ -19,7 +19,7 @@
 
 %use (profun-accept) "./euphrates/profun-accept.scm"
 %use (make-profun-error) "./euphrates/profun-error.scm"
-%use (profun-op-envlambda) "./euphrates/profun-op-envlambda.scm"
+%use (profun-op-lambda) "./euphrates/profun-op-lambda.scm"
 %use (profun-request-value) "./euphrates/profun-request-value.scm"
 %use (profun-unbound-value?) "./euphrates/profun-value.scm"
 %use (can-upload?) "./access.scm"
@@ -28,11 +28,10 @@
 %use (webcore::permissions/p) "./webcore-parameters.scm"
 
 (define webcore::add-entry
-  (profun-op-envlambda
-   (ctx env (R-name E-name))
+  (profun-op-lambda
+   :with-env
+   (ctx (registry-file entry) (R-name E-name))
 
-   (define registry-file (env R-name))
-   (define entry (env E-name))
    (define perm (webcore::permissions/p))
 
    (cond

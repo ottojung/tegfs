@@ -20,7 +20,7 @@
 %use (profun-set) "./euphrates/profun-accept.scm"
 %use (make-profun-error) "./euphrates/profun-error.scm"
 %use (profun-meta-key) "./euphrates/profun-meta-key.scm"
-%use (profun-op-envlambda) "./euphrates/profun-op-envlambda.scm"
+%use (profun-op-lambda) "./euphrates/profun-op-lambda.scm"
 %use (profun-request-value) "./euphrates/profun-request-value.scm"
 %use (profun-bound-value? profun-unbound-value?) "./euphrates/profun-value.scm"
 %use (entry-target-fullpath) "./entry-target-fullpath.scm"
@@ -32,10 +32,11 @@
 (define web-share-entry-generic-handler
   (lambda (get-shared-path)
     (lambda (web-context)
-      (profun-op-envlambda
-       (ctx env (E-name T-name R-name))
+      (profun-op-lambda
+       :with-env env
+       (ctx (entry sharing-time senderid)
+            (E-name T-name R-name))
 
-       (define sharing-time (env T-name))
        (define perm (webcore::permissions/p))
 
        (define (continue entry target-fullpath)
@@ -58,7 +59,9 @@
                      (continue entry target-fullpath)))))
 
        (cond
-        ((profun-unbound-value? (env E-name))
+        ((profun-bound-value? senderid)
+         (make-profun-error 'type-error "Senderid is the return value and must not be set"))
+        ((profun-unbound-value? entry)
          (profun-request-value E-name))
         ((profun-unbound-value? sharing-time)
          (profun-request-value T-name))
@@ -70,6 +73,6 @@
         ((permission? perm)
          (or (try (env (profun-meta-key E-name)))
              ;; (try (env E-name)) ;; NOTE: uncommenting allows forging of entries
-             (make-profun-error 'bad-entry:does-not-have-target-infos (env E-name))))
+             (make-profun-error 'bad-entry:does-not-have-target-infos entry)))
         (else
          (make-profun-error 'could-not-authorize)))))))

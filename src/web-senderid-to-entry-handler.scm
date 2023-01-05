@@ -19,7 +19,7 @@
 
 %use (profun-set) "./euphrates/profun-accept.scm"
 %use (make-profun-error) "./euphrates/profun-error.scm"
-%use (profun-op-envlambda) "./euphrates/profun-op-envlambda.scm"
+%use (profun-op-lambda) "./euphrates/profun-op-lambda.scm"
 %use (profun-reject) "./euphrates/profun-reject.scm"
 %use (profun-bound-value? profun-unbound-value?) "./euphrates/profun-value.scm"
 %use (raisu) "./euphrates/raisu.scm"
@@ -27,17 +27,17 @@
 %use (filemap-ref-by-senderid) "./filemap.scm"
 %use (permission?) "./permission.scm"
 %use (sharedinfo-entry) "./sharedinfo.scm"
-%use (webcore::permissions/p) "./webcore-parameters.scm"
 %use (context-filemap/2) "./web-context.scm"
+%use (webcore::permissions/p) "./webcore-parameters.scm"
 
 (define web-senderid->entry-handler
   (lambda (web-context)
     (define filemap/2 (context-filemap/2 web-context))
 
-    (profun-op-envlambda
-     (ctx env (senderid-name entry-name))
+    (profun-op-lambda
+     :with-env
+     (ctx (senderid entry/out) (senderid-name entry-name))
 
-     (define senderid (env senderid-name))
      (define info (filemap-ref-by-senderid filemap/2 senderid #f))
      (define perm (webcore::permissions/p))
 
@@ -48,8 +48,8 @@
       ((profun-unbound-value? senderid)
        (make-profun-error 'type-error "Senderid must be given"))
 
-      ((profun-bound-value? (env entry-name))
-       (make-profun-error 'type-error "Entry variable be free"))
+      ((profun-bound-value? entry/out)
+       (make-profun-error 'type-error "Entry variable must be free"))
 
       ((not info)
        (profun-reject))

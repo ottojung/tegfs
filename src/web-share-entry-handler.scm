@@ -22,7 +22,7 @@
 %use (profun-accept) "./euphrates/profun-accept.scm"
 %use (make-profun-error) "./euphrates/profun-error.scm"
 %use (profun-meta-key) "./euphrates/profun-meta-key.scm"
-%use (profun-op-envlambda) "./euphrates/profun-op-envlambda.scm"
+%use (profun-op-lambda) "./euphrates/profun-op-lambda.scm"
 %use (profun-bound-value?) "./euphrates/profun-value.scm"
 %use (raisu) "./euphrates/raisu.scm"
 %use (filemap-ref-by-senderid) "./filemap.scm"
@@ -38,11 +38,11 @@
   (lambda (web-context)
     (define filemap/2 (context-filemap/2 web-context))
 
-    (profun-op-envlambda
-     (ctx env (E-name W-name))
+    (profun-op-lambda
+     :with-env env
+     (ctx (E0 W) (E-name W-name))
 
      (define E (env (profun-meta-key E-name)))
-     (define W (env W-name))
 
      (define parent-senderid
        (and (profun-bound-value? E)

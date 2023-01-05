@@ -20,7 +20,7 @@
 %use (hashmap-ref) "./euphrates/hashmap.scm"
 %use (profun-set-parameter) "./euphrates/profun-accept.scm"
 %use (make-profun-error) "./euphrates/profun-error.scm"
-%use (profun-op-envlambda) "./euphrates/profun-op-envlambda.scm"
+%use (profun-op-lambda) "./euphrates/profun-op-lambda.scm"
 %use (profun-request-value) "./euphrates/profun-request-value.scm"
 %use (profun-unbound-value?) "./euphrates/profun-value.scm"
 %use (default-login-expiery-time) "./default-login-expiery-time.scm"
@@ -34,10 +34,10 @@
     (define passwords (context-passwords webcore::context))
     (define tokens (context-tokens webcore::context))
 
-    (profun-op-envlambda
-     (ctx env (P-name))
+    (profun-op-lambda
+     :with-env
+     (ctx (password) (P-name))
 
-     (define password (env P-name))
      (define hashed
        (and (string? password)
             (sha256sum password)))
