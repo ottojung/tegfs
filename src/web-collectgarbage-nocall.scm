@@ -22,7 +22,6 @@
 %use (hashmap-delete! hashmap-foreach) "./euphrates/hashmap.scm"
 %use (path-without-extension) "./euphrates/path-without-extension.scm"
 %use (raisu) "./euphrates/raisu.scm"
-%use (time-get-current-unixtime) "./euphrates/time-get-current-unixtime.scm"
 %use (current-time/p) "./current-time-p.scm"
 %use (filemap-delete-by-recepientid! filemap-ref-by-recepientid) "./filemap.scm"
 %use (permission-still-valid?) "./permission-still-valid-huh.scm"
@@ -33,7 +32,7 @@
 (define sharedinfo-time-left
   (case-lambda
    ((info)
-    (sharedinfo-time-left info (time-get-current-unixtime)))
+    (sharedinfo-time-left info (current-time/p)))
    ((info current-time)
     (define end (+ (sharedinfo-ctime info)
                    (sharedinfo-stime info)))
@@ -42,7 +41,7 @@
 (define sharedinfo-still-valid?
   (case-lambda
    ((info)
-    (sharedinfo-still-valid? info (time-get-current-unixtime)))
+    (sharedinfo-still-valid? info (current-time/p)))
    ((info current-time)
     (< 0 (sharedinfo-time-left info current-time)))))
 

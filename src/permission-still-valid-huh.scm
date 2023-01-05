@@ -17,12 +17,12 @@
 
 %var permission-still-valid?
 
-%use (time-get-current-unixtime) "./euphrates/time-get-current-unixtime.scm"
+%use (current-time/p) "./current-time-p.scm"
 %use (permission-time-left) "./permission-time-left.scm"
 
 (define permission-still-valid?
   (case-lambda
    ((perm)
-    (permission-still-valid? perm (time-get-current-unixtime)))
+    (permission-still-valid? perm (current-time/p)))
    ((perm current-time)
     (< 0 (permission-time-left perm current-time)))))

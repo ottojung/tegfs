@@ -17,13 +17,13 @@
 
 %var permission-time-left
 
-%use (time-get-current-unixtime) "./euphrates/time-get-current-unixtime.scm"
+%use (current-time/p) "./current-time-p.scm"
 %use (permission-start permission-time) "./permission.scm"
 
 (define permission-time-left
   (case-lambda
    ((perm)
-    (permission-time-left perm (time-get-current-unixtime)))
+    (permission-time-left perm (current-time/p)))
    ((perm current-time)
     (define end (+ (permission-start perm)
                    (permission-time perm)))

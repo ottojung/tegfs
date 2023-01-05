@@ -19,13 +19,13 @@
 
 %use (make-hashmap) "./euphrates/hashmap.scm"
 %use (make-hashset) "./euphrates/hashset.scm"
-%use (time-get-current-unixtime) "./euphrates/time-get-current-unixtime.scm"
+%use (current-time/p) "./current-time-p.scm"
 %use (get-random-access-token) "./get-random-access-token.scm"
 %use (permission-constructor) "./permission.scm"
 
 (define (make-permission expiery-time admin? maybepassword uploadaccess? detailsaccess? share-longer-than-view?)
   (define token (get-random-access-token))
-  (define start (time-get-current-unixtime)) ;; FIXME: use current-time/p
+  (define start (current-time/p))
   (define time expiery-time)
   (define dynamic
     `((maybepassword ,maybepassword)
