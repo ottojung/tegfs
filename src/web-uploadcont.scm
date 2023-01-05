@@ -103,11 +103,14 @@
           (values t f2))))
 
   (define _44
-    (when full-filename
-      (make-directories (path-get-dirname full-filename))
-      (let ((port (open-file-port full-filename "w")))
-        (put-bytevector port file-content)
-        (close-port port))))
+    (begin
+      (when full-filename
+        (make-directories (path-get-dirname full-filename))
+        (let ((port (open-file-port full-filename "w")))
+          (put-bytevector port file-content)
+          (close-port port)))
+      (set! file-content #f)
+      (set! body/hash #f)))
 
   (define tags-list-result
     ;; TODO: edit the categorization file
