@@ -129,7 +129,7 @@
     (webcore::ask
      `(whats
        (key ,key)
-       (make-temporary-permissions ,share-duration _P K)
+       (make-temporary-permissions ,share-duration _AD P K)
        (query ,query/split)
        (entry _E)
        (share-entry _E K)
@@ -148,7 +148,7 @@
     (webcore::ask
      `(whats
        (key ,key)
-       (make-temporary-permissions ,share-duration K)
+       (make-temporary-permissions ,share-duration _AD P K)
        (senderid->entry ,senderid _E)
        (share-entry _E K)
        (share-full _E ,share-duration _F)

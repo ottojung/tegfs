@@ -25,7 +25,7 @@
 %use (get-random-network-name) "./get-random-network-name.scm"
 %use (make-permission!) "./make-permission-bang.scm"
 %use (permission-time-left) "./permission-time-left.scm"
-%use (permission-token) "./permission.scm"
+%use (permission-time permission-token) "./permission.scm"
 %use (webcore::permissions/p) "./webcore-parameters.scm"
 
 (define (generate-random-password)
@@ -35,44 +35,54 @@
   (lambda (web-context)
     (profun-op-lambda
      :with-env
-     (ctx (D P0 K) (D-name P-name K-name))
+     (ctx (live-duration actual-duration password key) (live-duration-name actual-duration-name password-name key-name))
 
      (define perm (webcore::permissions/p))
      (define sharing-time-cap
        (and perm (permission-time-left perm)))
 
      (cond
-      ((profun-bound-value? K)
-       (make-profun-error 'type-error "Key is the result and should not be set" K-name))
-      ((profun-unbound-value? D)
-       (profun-request-value D-name))
-      ((and (profun-bound-value? P0)
-            (not (or (string? P0) (not P0))))
+      ((profun-bound-value? key)
+       (make-profun-error 'type-error "Key is the result and should not be set" key-name))
+      ((profun-unbound-value? live-duration)
+       (profun-request-value live-duration-name))
+      ((and (profun-bound-value? password)
+            (not (or (string? password) (not password))))
        (make-profun-error 'type-error "Password must be either a string or #f"))
-      ((not (and (number? D)
-                 (< 0 D)))
+      ((not (and (number? live-duration)
+                 (< 0 live-duration)))
        ;; TODO: accept strings as in string->seconds
-       (make-profun-error 'type-error "Duration must be a positive number" D))
+       (make-profun-error 'type-error "Duration must be a positive number" live-duration-name live-duration))
       ((not perm)
        (make-profun-error 'permission-denied "Not authorized to create temporary users"))
       (else
        (let ()
-         (define live-duration-0 D)
-         (define live-duration (min sharing-time-cap live-duration-0))
+         (define live-duration* (min sharing-time-cap live-duration))
          (define admin? #f)
          (define maybepassword
-           (if (profun-bound-value? P0) P0
+           (if (profun-bound-value? password) password
                (generate-random-password)))
          (define uploadaccess? #f) ;; TODO: maybe allow sometimes
          (define detailsaccess? #f) ;; TODO: maybe allow sometimes
          (define share-longer-than-view? #f) ;; TODO: maybe allow sometimes
          (define perm
-           (make-permission! web-context live-duration admin? maybepassword uploadaccess? detailsaccess? share-longer-than-view?))
+           (make-permission! web-context live-duration* admin? maybepassword uploadaccess? detailsaccess? share-longer-than-view?))
          (define its-key (permission-token perm))
+         (define actual (permission-time perm))
 
          (define r0
            (profun-set
-            (K-name <- its-key)))
+            (key-name <- its-key)))
 
-         (if (profun-bound-value? P0) r0
-             (profun-set (P-name <- maybepassword) r0))))))))
+         (define r1
+           (if (profun-bound-value? password) r0
+               (profun-set (password-name <- maybepassword) r0)))
+
+         (define r2
+           (if (profun-bound-value? actual-duration)
+               (if (equal? actual actual-duration) r1
+                   (make-profun-error 'permission-denied "Cannot create user that lives for that long"))
+               (profun-set
+                (actual-duration-name <- actual) r1)))
+
+         r2))))))
