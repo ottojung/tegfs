@@ -24,9 +24,12 @@
 %use (words->string) "./euphrates/words-to-string.scm"
 %use (web-bad-request) "./web-bad-request.scm"
 
-(define (web-handle-profun-results/2 results fun)
+(define (web-handle-profun-results/2 results fun fail-fun)
   (define head
-    (if (null? results) (raisu 'unexpected-result-from-backend-7126363)
+    (if (null? results)
+        (begin
+          (fail-fun (cons 'its results))
+          (raisu 'unexpected-null-from-backend-7126363))
         (car results)))
 
   (cond
@@ -41,7 +44,9 @@
       (fun equals)))
 
    ((equal? '((true)) results) (fun))
-   ((equal? '((false)) results) (raisu 'unexpected-false-from-backend-812731632))
+   ((equal? '((false)) results)
+    (fail-fun (cons 'its results))
+    (raisu 'unexpected-false-from-backend-812731632))
    (else
     (raisu 'unexpected-its-from-backend-61253123543 results))))
 
@@ -51,7 +56,7 @@
 (define (web-handle-profun-results/or results fun fail-fun)
   (case (car results)
     ((its)
-     (web-handle-profun-results/2 (cdr results) fun))
+     (web-handle-profun-results/2 (cdr results) fun fail-fun))
     ((error)
      (fail-fun results)
      ;; TODO: handle authorization errors differently
