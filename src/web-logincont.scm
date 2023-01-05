@@ -37,44 +37,42 @@
 
 (define (web-logincont)
   (define body/bytes (callcontext-body (web-callcontext/p)))
+  (if (not body/bytes)
+      (web-body-not-found)
+      (let ()
+        (define body
+          (bytevector->string body/bytes "utf-8"))
 
-  (define _4
-    (unless body/bytes
-      (web-body-not-found)))
+        (define parts
+          (string-split/simple body #\&))
 
-  (define body
-    (bytevector->string body/bytes "utf-8"))
+        (define key-values
+          (map (fn string-split/simple % #\=) parts))
 
-  (define parts
-    (string-split/simple body #\&))
+        (define _2
+          (unless (list-singleton? key-values)
+            (raisu 'too-many-query-parameters key-values)))
 
-  (define key-values
-    (map (fn string-split/simple % #\=) parts))
+        (define-tuple (key password)
+          (car key-values))
 
-  (define _2
-    (unless (list-singleton? key-values)
-      (raisu 'too-many-query-parameters key-values)))
+        (define _3
+          (unless (equal? "psw" key)
+            (raisu 'bad-query-key key)))
 
-  (define-tuple (key password)
-    (car key-values))
+        (define result
+          (webcore::ask
+           `(whats
+             (login ,password)
+             (key K)
+             )))
 
-  (define _3
-    (unless (equal? "psw" key)
-      (raisu 'bad-query-key key)))
-
-  (define result
-    (webcore::ask
-     `(whats
-       (login ,password)
-       (key K)
-       )))
-
-  (case (car result)
-    ((its)
-     (let* ((word (cadr result))
-            (token (list-ref word 2)))
-       (web-make-html-response
-        web-login-success-body
-        #:extra-headers (list (web-set-cookie-header "pwdtoken" token)))))
-    (else
-     (web-make-html-response web-login-failed-body))))
+        (case (car result)
+          ((its)
+           (let* ((word (cadr result))
+                  (token (list-ref word 2)))
+             (web-make-html-response
+              web-login-success-body
+              #:extra-headers (list (web-set-cookie-header "pwdtoken" token)))))
+          (else
+           (web-make-html-response web-login-failed-body))))))
