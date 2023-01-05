@@ -43,7 +43,7 @@
 
      (cond
       ((profun-bound-value? K)
-       (make-profun-error 'result-variable-should-be-unbound K))
+       (make-profun-error 'type-error "Key is the result and should not be set" K-name))
       ((profun-unbound-value? D)
        (profun-request-value D-name))
       ((and (profun-bound-value? P0)

@@ -65,7 +65,7 @@
 
        (cond
         ((profun-bound-value? senderid)
-         (make-profun-error 'type-error "Senderid is the return value and must not be set"))
+         (make-profun-error 'type-error "Senderid is the return value and must not be set" R-name))
         ((profun-unbound-value? entry)
          (profun-request-value E-name))
         ((profun-unbound-value? max-sharing-time)
