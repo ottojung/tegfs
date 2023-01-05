@@ -111,32 +111,30 @@
         (close-port port))))
 
   (define tags-list-result
+    ;; TODO: edit the categorization file
     (tegfs-process-categorization-text tags))
 
-  ;; TODO: edit the categorization file
-  (define tags-list
-    (cond
-     ((assoc 'ambiguous tags-list-result)
-      (error-tags-list (cdr (assoc 'ambiguous tags-list-result))))
-     (else
-      (cdr (assoc 'ok tags-list-result)))))
+  (cond
+   ((assoc 'ambiguous tags-list-result)
+    (error-tags-list (cdr (assoc 'ambiguous tags-list-result))))
+   (else
+    (let ((tags-list (cdr (assoc 'ok tags-list-result))))
+      (define entry
+        `((,keyword-target . ,<target>)
+          (,keyword-title . ,title)
+          (,keyword-tags ,@tags-list)))
 
-  (define entry
-    `((,keyword-target . ,<target>)
-      (,keyword-title . ,title)
-      (,keyword-tags ,@tags-list)))
+      (define result
+        (webcore::ask
+         `(whats
+           (key ,(callcontext-token callctx))
+           (add-entry ,upload-registry-filename ,entry)
+           )))
 
-  (define result
-    (webcore::ask
-     `(whats
-       (key ,(callcontext-token callctx))
-       (add-entry ,upload-registry-filename ,entry)
-       )))
-
-  (web-handle-profun-results/or
-   result
-   (lambda _ ((upload-success-page <target>)))
-   (lambda _ (when full-filename (file-delete full-filename)))))
+      (web-handle-profun-results/or
+       result
+       (lambda _ ((upload-success-page <target>)))
+       (lambda _ (when full-filename (file-delete full-filename))))))))
 
 (define (web-uploadcont)
   (define callctx (web-callcontext/p))
