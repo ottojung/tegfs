@@ -85,9 +85,9 @@
       (query->hashmap query/encoded)
       (make-hashmap)))
 
-(define (web-make-callcontext break request body)
+(define (web-make-callcontext request body)
   (define qH (memconst (initialize-query request)))
   (letrec
       ((tokenfn (memconst (get-access-token callctx (qH) request)))
-       (callctx (callcontext-ctr break request qH body #f tokenfn)))
+       (callctx (callcontext-ctr request qH body #f tokenfn)))
     callctx))

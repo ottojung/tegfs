@@ -94,11 +94,9 @@
 (define (make-handler)
   (lambda (request body)
     (log-request request)
-    (call-with-current-continuation
-     (lambda (k)
-       (parameterize ((web-callcontext/p (web-make-callcontext k request body)))
-         (with-current-time
-          (handler request body)))))))
+    (parameterize ((web-callcontext/p (web-make-callcontext request body)))
+      (with-current-time
+       (handler request body)))))
 
 (define (tegfs-serve/parse)
   (define config (get-config))

@@ -1,4 +1,4 @@
-;;;; Copyright (C) 2022  Otto Jung
+;;;; Copyright (C) 2022, 2023  Otto Jung
 ;;;;
 ;;;; This program is free software: you can redistribute it and/or modify
 ;;;; it under the terms of the GNU Affero General Public License as published
@@ -22,7 +22,7 @@
 %use (current-time/p) "./current-time-p.scm"
 %use (web-basic-headers) "./web-basic-headers.scm"
 %use (web-callcontext/p) "./web-callcontext-p.scm"
-%use (callcontext-break callcontext-key) "./web-callcontext.scm"
+%use (callcontext-key) "./web-callcontext.scm"
 %use (web-set-cookie-header) "./web-set-cookie-header.scm"
 %use (webcore::current-communicator/p) "./webcore-current-communicator-p.scm"
 
@@ -59,12 +59,11 @@
   (define comm (webcore::current-communicator/p))
   (define callctx (web-callcontext/p))
   (define now (current-time/p))
-  (define cont (callcontext-break callctx))
   (define key (callcontext-key callctx))
   (define key-headers
     (if key (list (web-set-cookie-header "key" key)) '()))
 
-  (cont
+  (values
    (build-response
     #:code status
     ;; most of these settings come from here: https://cheatsheetseries.owasp.org/cheatsheets/HTTP_Headers_Cheat_Sheet.html

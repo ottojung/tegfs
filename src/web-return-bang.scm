@@ -1,4 +1,4 @@
-;;;; Copyright (C) 2022  Otto Jung
+;;;; Copyright (C) 2022, 2023  Otto Jung
 ;;;;
 ;;;; This program is free software: you can redistribute it and/or modify
 ;;;; it under the terms of the GNU Affero General Public License as published
@@ -17,10 +17,5 @@
 
 %var web-return!
 
-%use (web-callcontext/p) "./web-callcontext-p.scm"
-%use (callcontext-break) "./web-callcontext.scm"
-
 (define (web-return! stats body)
-  (define callctx (web-callcontext/p))
-  (define cont (callcontext-break callctx))
-  (cont stats body))
+  (values stats body))
