@@ -28,12 +28,12 @@
 %use (get-random-access-token) "./get-random-access-token.scm"
 %use (web-bad-request) "./web-bad-request.scm"
 %use (web-callcontext/p) "./web-callcontext-p.scm"
-%use (callcontext-request callcontext-token) "./web-callcontext.scm"
+%use (callcontext-token) "./web-callcontext.scm"
 %use (web-decode-query) "./web-decode-query.scm"
+%use (web-get-domainname) "./web-get-domainname.scm"
 %use (web-get-query) "./web-get-query.scm"
 %use (web-handle-profun-results) "./web-handle-profun-results.scm"
 %use (web-make-html-response) "./web-make-html-response.scm"
-%use (web-request-get-domainname) "./web-request-get-domainname.scm"
 %use (webcore::ask) "./webcore-ask.scm"
 
 %for (COMPILER "guile")
@@ -46,9 +46,7 @@
   (sxml->xml `(a (@ (href ,url)) ,url)))
 
 (define (get-share-query-text callctx location hidden-query-location token)
-  (define req (callcontext-request callctx))
-  (define domainname
-    (web-request-get-domainname req))
+  (define domainname (web-get-domainname callctx))
   (define (print-link url0)
     (define url (string-append domainname url0))
     (print-url url))
@@ -103,8 +101,7 @@
 
 (define (web-share-cont callctx query/encoded)
   (lambda (equals)
-    (define req (callcontext-request callctx))
-    (define domainname (web-request-get-domainname req))
+    (define domainname (web-get-domainname callctx))
     (define first-binding (car equals))
     (define token
       (assq-or 'K first-binding (raisu 'unexpected-result-from-backend equals)))

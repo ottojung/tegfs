@@ -52,22 +52,21 @@
 
   cookie-split)
 
-(define (get-cookie name request)
-  (let* ((headers (request-headers request))
-         (cookies-p (assoc 'cookie headers))
+(define (get-cookie name headers)
+  (let* ((cookies-p (assoc 'cookie headers))
          (cookies/string (and (pair? cookies-p) (cdr cookies-p)))
          (cookies (and cookies/string (parse-cookies-string cookies/string)))
          (got (and cookies (assoc name cookies))))
     (and got (cdr got))))
 
-(define (get-access-token callctx qH request)
+(define (get-access-token callctx qH headers)
   (or
    (let ((ret (hashmap-ref qH 'key #f)))
      (when ret
        (set-callcontext-key! callctx ret))
      ret)
-   (or (get-cookie "key" request)
-       (get-cookie "pwdtoken" request))))
+   (or (get-cookie "key" headers)
+       (get-cookie "pwdtoken" headers))))
 
 (define (query->hashmap query)
   (define split (string-split/simple query #\&))
@@ -78,16 +77,18 @@
          split))
   (alist->hashmap key-values))
 
-(define (initialize-query request)
-  (define uri (request-uri request))
+(define (initialize-query uri)
   (define query/encoded (uri-query uri))
   (if query/encoded
       (query->hashmap query/encoded)
       (make-hashmap)))
 
-(define (web-make-callcontext request body)
-  (define qH (memconst (initialize-query request)))
+(define (web-make-callcontext req body)
+  (define uri (request-uri req))
+  (define url (uri->string uri))
+  (define headers (request-headers req))
+  (define qH (memconst (initialize-query uri)))
   (letrec
-      ((tokenfn (memconst (get-access-token callctx (qH) request)))
-       (callctx (callcontext-ctr request qH body #f tokenfn)))
+      ((tokenfn (memconst (get-access-token callctx (qH) headers)))
+       (callctx (callcontext-ctr url headers qH body #f tokenfn)))
     callctx))

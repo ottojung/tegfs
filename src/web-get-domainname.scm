@@ -15,18 +15,13 @@
 
 %run guile
 
-%var web-request-get-domainname
+%var web-get-domainname
 
 %use (~a) "./euphrates/tilda-a.scm"
+%use (callcontext-headers) "./web-callcontext.scm"
 
-%for (COMPILER "guile")
-
-(use-modules (web request))
-
-%end
-
-(define (web-request-get-domainname req)
-  (define headers (request-headers req))
+(define (web-get-domainname callctx)
+  (define headers (callcontext-headers callctx))
   (define host/get (assoc 'host headers))
   (and host/get
        (let* ((host/pair (cdr host/get))
