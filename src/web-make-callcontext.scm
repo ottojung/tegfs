@@ -17,6 +17,7 @@
 
 %var web-make-callcontext
 
+%use (debugs) "./euphrates/debugs.scm"
 %use (alist->hashmap hashmap-ref make-hashmap) "./euphrates/hashmap.scm"
 %use (memconst) "./euphrates/memconst.scm"
 %use (raisu) "./euphrates/raisu.scm"
@@ -88,6 +89,7 @@
   (define url (uri->string uri))
   (define headers (request-headers req))
   (define qH (memconst (initialize-query uri)))
+  (debugs url)
   (letrec
       ((tokenfn (memconst (get-access-token callctx (qH) headers)))
        (callctx (callcontext-ctr url headers qH body #f tokenfn)))

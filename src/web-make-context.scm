@@ -22,6 +22,7 @@
 %use (make-directories) "./euphrates/make-directories.scm"
 %use (raisu) "./euphrates/raisu.scm"
 %use (~a) "./euphrates/tilda-a.scm"
+%use (default-web-port) "./default-web-port.scm"
 %use (filemap-make/empty) "./filemap.scm"
 %use (get-config) "./get-config.scm"
 %use (keyword-config-port) "./keyword-config-port.scm"
@@ -55,7 +56,7 @@
   (define port/string
     (cadr
      (or (assoc keyword-config-port config)
-         (raisu 'no-port "Variable 'port is not set by the config"))))
+         (list (number->string default-web-port)))))
   (define port
     (or (string->number (~a port/string))
         (raisu 'port-is-not-a-number "Variable 'port must be a number" port/string)))

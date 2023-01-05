@@ -21,6 +21,7 @@
 %use (dprintln) "./euphrates/dprintln.scm"
 %use (alist->hashmap hashmap-ref) "./euphrates/hashmap.scm"
 %use (~a) "./euphrates/tilda-a.scm"
+%use (default-web-port) "./default-web-port.scm"
 %use (get-config) "./get-config.scm"
 %use (keyword-config-port) "./keyword-config-port.scm"
 %use (web-callcontext/p) "./web-callcontext-p.scm"
@@ -101,7 +102,7 @@
 
 (define (tegfs-serve/parse)
   (define config (get-config))
-  (define port (car (assq-or keyword-config-port config '(33470))))
+  (define port (car (assq-or keyword-config-port config '(,default-web-port))))
   (define comm (web-make-communicator))
 
   (dprintln "Starting the server")
@@ -110,5 +111,5 @@
     (with-current-time
      (webcore::ask `(whats (collectgarbage))))
     (dprintln "Done")
-
+    (dprintln "Listening on port ~s" port)
     (run-server (make-handler) 'http `(#:port ,port))))
