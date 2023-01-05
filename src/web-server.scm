@@ -88,8 +88,9 @@
 
   (let* ((target path)
          (func (hashmap-ref handlers-funcmap target #f)))
-    (unless func (web-not-found))
-    (func)))
+    (if func
+        (func)
+        (web-not-found))))
 
 (define (make-handler)
   (lambda (request body)
