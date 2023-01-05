@@ -25,7 +25,7 @@
 %use (profun-bound-value? profun-unbound-value?) "./euphrates/profun-value.scm"
 %use (entry-target-fullpath) "./entry-target-fullpath.scm"
 %use (permission?) "./permission.scm"
-%use (sharedinfo-senderid) "./sharedinfo.scm"
+%use (sharedinfo-senderid sharedinfo-stime) "./sharedinfo.scm"
 %use (web-share-file/dont-link-yet) "./web-share-file.scm"
 %use (webcore::permissions/p) "./webcore-parameters.scm"
 
@@ -34,8 +34,8 @@
     (lambda (web-context)
       (profun-op-lambda
        :with-env env
-       (ctx (entry sharing-time senderid)
-            (E-name T-name R-name))
+       (ctx (entry max-sharing-time actual-sharing-time senderid)
+            (E-name MT-name AT-name R-name))
 
        (define perm (webcore::permissions/p))
 
@@ -45,11 +45,16 @@
              (let ()
                (define info
                  (web-share-file/dont-link-yet
-                  web-context perm entry generic-fullpath sharing-time))
+                  web-context perm entry generic-fullpath max-sharing-time))
                (define vid (and info (sharedinfo-senderid info)))
-               (if info
-                   (profun-set (R-name <- vid))
-                   (make-profun-error 'cannot-share-for-that-long)))
+               (define actual (if info (sharedinfo-stime info) 0))
+               (if (profun-bound-value? actual-sharing-time)
+                   (if (equal? actual actual-sharing-time)
+                       (profun-set (R-name <- vid))
+                       (make-profun-error 'cannot-share-for-that-long))
+                   (profun-set
+                    (AT-name <- actual)
+                    (profun-set (R-name <- vid)))))
              (profun-set (R-name <- #f))))
 
        (define (try entry)
@@ -63,13 +68,13 @@
          (make-profun-error 'type-error "Senderid is the return value and must not be set"))
         ((profun-unbound-value? entry)
          (profun-request-value E-name))
-        ((profun-unbound-value? sharing-time)
-         (profun-request-value T-name))
-        ((not (and (number? sharing-time)
-                   (< 0 sharing-time)))
+        ((profun-unbound-value? max-sharing-time)
+         (profun-request-value MT-name))
+        ((not (and (number? max-sharing-time)
+                   (< 0 max-sharing-time)))
          (make-profun-error
           'type-error "Sharing type must be a number greater than 0"
-          sharing-time))
+          max-sharing-time))
         ((permission? perm)
          (or (try (env (profun-meta-key E-name)))
              ;; (try (env E-name)) ;; NOTE: uncommenting allows forging of entries

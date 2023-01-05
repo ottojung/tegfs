@@ -41,8 +41,8 @@
      `(whats
        (key ,(callcontext-token callctx))
        (shared-entry-contains ,vid E)
-       (share-preview E ,default-preview-sharing-time _P)
-       (share-full E ,default-full-sharing-time F)
+       (share-preview E ,default-preview-sharing-time _ATP _P)
+       (share-full E ,default-full-sharing-time _ATF F)
        (link-shared _P PL)
        more (99999)
        )))
