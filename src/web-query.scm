@@ -22,7 +22,7 @@
 %use (default-full-sharing-time) "./default-full-sharing-time.scm"
 %use (default-preview-sharing-time) "./default-preview-sharing-time.scm"
 %use (web-callcontext/p) "./web-callcontext-p.scm"
-%use (callcontext-request callcontext-token) "./web-callcontext.scm"
+%use (callcontext-token) "./web-callcontext.scm"
 %use (web-decode-query) "./web-decode-query.scm"
 %use (web-get-query) "./web-get-query.scm"
 %use (web-handle-profun-results) "./web-handle-profun-results.scm"
@@ -31,7 +31,6 @@
 
 (define (web-query)
   (define callctx (web-callcontext/p))
-  (define request (callcontext-request callctx))
   (define ctxq (web-get-query))
 
   (define query/encoded (hashmap-ref ctxq 'q ""))

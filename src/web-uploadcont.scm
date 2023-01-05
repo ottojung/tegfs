@@ -35,7 +35,7 @@
 %use (keyword-title) "./keyword-title.scm"
 %use (web-body-not-found) "./web-body-not-found.scm"
 %use (web-callcontext/p) "./web-callcontext-p.scm"
-%use (callcontext-body callcontext-request callcontext-token) "./web-callcontext.scm"
+%use (callcontext-body callcontext-token) "./web-callcontext.scm"
 %use (web-handle-profun-results/or) "./web-handle-profun-results.scm"
 %use (parse-multipart-as-hashmap) "./web-parse-multipart.scm"
 %use (web-static-error-message) "./web-static-error-message.scm"
@@ -62,7 +62,6 @@
       (web-static-error-message 200 "Uploaded successfully")))
 
 (define (web-uploadcont/2 callctx body/bytes)
-  (define request (callcontext-request callctx))
   (define body/hash (parse-multipart-as-hashmap body/bytes))
 
   (define (get-data a-key)
