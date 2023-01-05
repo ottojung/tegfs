@@ -43,7 +43,7 @@
    ((equal? '((true)) results) (fun))
    ((equal? '((false)) results) (raisu 'unexpected-false-from-backend-812731632))
    (else
-    (raisu 'unexpected-its-from-backend-61253123543))))
+    (raisu 'unexpected-its-from-backend-61253123543 results))))
 
 (define (web-handle-profun-results results fun)
   (web-handle-profun-results/or results fun identity))
@@ -60,4 +60,4 @@
       (words->string (map ~s (cadr results)))))
     (else
      (fail-fun results)
-     (raisu 'unexpected-results-from-backend-87156243510))))
+     (raisu 'unexpected-results-from-backend-87156243510 results))))
