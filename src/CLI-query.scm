@@ -15,7 +15,7 @@
 
 %run guile
 
-%var CLI-query
+%var CLI::query
 
 %use (comp) "./euphrates/comp.scm"
 %use (fn-alist) "./euphrates/fn-alist.scm"
@@ -26,7 +26,7 @@
 %use (fatal) "./fatal.scm"
 %use (tegfs-make-communicator) "./tegfs-make-communicator.scm"
 
-(define (CLI-query --diropen --dirpreview --entries <query-format> <query...>)
+(define (CLI::query --diropen --dirpreview --entries <query-format> <query...>)
   (define print-func
     (cond
      (--entries (lambda (entry) (entry-print entry) (newline)))

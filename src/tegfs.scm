@@ -19,8 +19,8 @@
 %use (define-cli:show-help with-cli) "./euphrates/define-cli.scm"
 %use (stringf) "./euphrates/stringf.scm"
 %use (with-randomizer-seed) "./euphrates/with-randomizer-seed.scm"
-%use (CLI-query) "./CLI-query.scm"
-%use (CLI-talk) "./CLI-talk.scm"
+%use (CLI::query) "./CLI-query.scm"
+%use (CLI::talk) "./CLI-talk.scm"
 %use (tegfs-add/parse) "./add.scm"
 %use (tegfs-categorize/parse) "./categorize.scm"
 %use (tegfs-config/parse) "./config.scm"
@@ -119,9 +119,9 @@
          (categorize (tegfs-categorize/parse))
          (serve (tegfs-serve/parse))
          (prolog (tegfs-prolog/parse))
-         (query (CLI-query --diropen --dirpreview --entries <query-format> <query...>))
+         (query (CLI::query --diropen --dirpreview --entries <query-format> <query...>))
          ((and get <getid>) (tegfs-get/parse <get-format> <getid>))
-         (talk (CLI-talk --web))
+         (talk (CLI::talk --web))
          (make-thumbnails (tegfs-make-thumbnails/parse <target> <output>))
          (config (tegfs-config/parse get set <name> <value>))
          (dump-clipboard (tegfs-dump-clipboard/parse))

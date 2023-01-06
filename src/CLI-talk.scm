@@ -15,7 +15,7 @@
 
 %run guile
 
-%var CLI-talk
+%var CLI::talk
 
 %use (catch-any) "./euphrates/catch-any.scm"
 %use (profune-communicator-handle) "./euphrates/profune-communicator.scm"
@@ -28,7 +28,7 @@
 %use (web::make-communicator) "./web-make-communicator.scm"
 %use (with-current-time) "./with-current-time.scm"
 
-(define (CLI-talk --web)
+(define (CLI::talk --web)
 
   (define (read-sentence)
     (catch-any
