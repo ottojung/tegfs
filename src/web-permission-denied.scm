@@ -20,4 +20,4 @@
 %use (web::return) "./web-return.scm"
 
 (define (web::permission-denied)
-  (web::return 401 "Permission denied" #f))
+  (web::return 401 '() "Permission denied"))
