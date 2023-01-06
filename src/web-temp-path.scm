@@ -15,18 +15,17 @@
 
 %run guile
 
-%var web::temp-path-make
+%var web::temp-path-ctr
 %var web::temp-path?
 %var web::temp-path-tempid
 %var web::temp-path-destination
 %var web::temp-path-start
 %var web::temp-path-stime
-%var web::temp-path-public
 
 %use (define-type9) "./euphrates/define-type9.scm"
 
 (define-type9 <web::temp-path>
-  (web::temp-path-make tempid destination/raw start stime) web::temp-path?
+  (web::temp-path-ctr tempid destination/raw start stime) web::temp-path?
   (tempid web::temp-path-tempid)
   (destination/raw web::temp-path-destination/raw)
   (start web::temp-path-start) ;; when this was created
@@ -36,8 +35,5 @@
 (define (web::temp-path-destination tpath)
   (define raw (web::temp-path-destination/raw tpath))
   (if (procedure? raw)
-      ((raw))
+      (raw)
       raw))
-
-(define (web::temp-path-public tpath)
-  (string-append "/" (web::temp-path-tempid tpath)))

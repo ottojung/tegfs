@@ -22,18 +22,19 @@
 %use (current-time/p) "./current-time-p.scm"
 %use (get-random-network-name) "./get-random-network-name.scm"
 %use (web::current-temp-paths-table/p) "./web-current-temp-paths-table-p.scm"
-%use (web::temp-path-make) "./web-temp-path.scm"
+%use (web::temp-path-ctr) "./web-temp-path.scm"
 
 (define (web::create-temp-path stime destination/0)
   (define now (current-time/p))
   (define table (web::current-temp-paths-table/p))
-  (define tempid (get-random-network-name))
+  (define tempid
+    (string-append "/" (get-random-network-name)))
   (define destination
     (if (procedure? destination/0)
-        (memconst (destination/0))
-        destination))
-  (define path (web::temp-path-make tempid destination now stime))
+        (memconst (destination/0 tempid))
+        destination/0))
+  (define tpath (web::temp-path-ctr tempid destination now stime))
 
-  (hashmap-set! table tempid path)
+  (hashmap-set! table tempid tpath)
 
   tempid)
