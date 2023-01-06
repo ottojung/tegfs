@@ -54,13 +54,7 @@
       ((profun-unbound-value? password)
        (profun-request-value P-name))
 
-      (temporary
-       (profun-set-parameter (webcore::permissions/p <- temporary)))
-
-      ((not registered?)
-       (make-profun-error 'not-authorized "Bad password here"))
-
-      (else
+      (registered?
        (let ()
          (define admin? #t) ;; TODO: read from the config
          (define maybepassword password)
@@ -76,4 +70,10 @@
             uploadaccess?
             detailsaccess?
             share-longer-than-view?))
-         (profun-set-parameter (webcore::permissions/p <- perm))))))))
+         (profun-set-parameter (webcore::permissions/p <- perm))))
+
+      (temporary
+       (profun-set-parameter (webcore::permissions/p <- temporary)))
+
+      (else
+       (make-profun-error 'permission-denied "Bad password here"))))))
