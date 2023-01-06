@@ -1,4 +1,4 @@
-;;;; Copyright (C) 2022, 2023  Otto Jung
+;;;; Copyright (C) 2023  Otto Jung
 ;;;;
 ;;;; This program is free software: you can redistribute it and/or modify
 ;;;; it under the terms of the GNU Affero General Public License as published
@@ -15,15 +15,20 @@
 
 %run guile
 
-%var web::collectgarbage
+%var web::return
 
-%use (web::return) "./web-return.scm"
-%use (webcore::ask) "./webcore-ask.scm"
+%use (web::basic-headers) "./web-basic-headers.scm"
 
-(define (web::collectgarbage)
-  (webcore::ask `(whats (collectgarbage)))
+%for (COMPILER "guile")
+(use-modules (web response))
+%end
 
-  (web::return
-   200
-   `((Cache-Control . "no-cache"))
-   "ok\n"))
+(define (web::return status-code additional-headers maybe-body)
+  (values
+   (build-response
+    #:code status-code
+    #:headers
+    (if additional-headers
+        (append additional-headers web::basic-headers)
+        web::basic-headers))
+   maybe-body))
