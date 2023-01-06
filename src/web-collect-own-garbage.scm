@@ -1,4 +1,4 @@
-;;;; Copyright (C) 2022, 2023  Otto Jung
+;;;; Copyright (C) 2023  Otto Jung
 ;;;;
 ;;;; This program is free software: you can redistribute it and/or modify
 ;;;; it under the terms of the GNU Affero General Public License as published
@@ -15,17 +15,18 @@
 
 %run guile
 
-%var web::collectgarbage
+%var web::collect-own-garbage
 
-%use (web::collect-own-garbage) "./web-collect-own-garbage.scm"
-%use (web::return) "./web-return.scm"
-%use (webcore::ask) "./webcore-ask.scm"
+%use (hashmap-delete! hashmap-foreach) "./euphrates/hashmap.scm"
+%use (current-time/p) "./current-time-p.scm"
+%use (web::current-temp-paths-table/p) "./web-current-temp-paths-table-p.scm"
+%use (web::temp-path-still-valid?) "./web-temp-path-still-valid-huh.scm"
 
-(define (web::collectgarbage)
-  (webcore::ask `(whats (collectgarbage)))
-  (web::collect-own-garbage)
-
-  (web::return
-   200
-   `((Cache-Control . "no-cache"))
-   "ok\n"))
+(define (web::collect-own-garbage)
+  (define table (web::current-temp-paths-table/p))
+  (define now (current-time/p))
+  (hashmap-foreach
+   (lambda (tempid tpath)
+     (unless (web::temp-path-still-valid? tpath)
+       (hashmap-delete! table tempid)))
+   table))

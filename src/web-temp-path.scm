@@ -19,13 +19,15 @@
 %var web::temp-path?
 %var web::temp-path-tempid
 %var web::temp-path-destination
-%var web::temp-path-live-duration
+%var web::temp-path-start
+%var web::temp-path-stime
 
 %use (define-type9) "./euphrates/define-type9.scm"
 
 (define-type9 <web::temp-path>
-  (web::temp-path-make tempid destination live-duration) web::temp-path?
+  (web::temp-path-make tempid destination start stime) web::temp-path?
   (tempid web::temp-path-tempid)
   (destination web::temp-path-destination)
-  (live-duration web::temp-path-live-duration)
+  (start web::temp-path-start) ;; when this was created
+  (stime web::temp-path-stime) ;; for how long this should live
   )

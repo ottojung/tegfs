@@ -18,14 +18,16 @@
 %var web::create-temp-path
 
 %use (hashmap-set!) "./euphrates/hashmap.scm"
+%use (current-time/p) "./current-time-p.scm"
 %use (get-random-network-name) "./get-random-network-name.scm"
 %use (web::current-temp-paths-table/p) "./web-current-temp-paths-table-p.scm"
 %use (web::temp-path-make) "./web-temp-path.scm"
 
-(define (web::create-temp-path destination live-duration)
+(define (web::create-temp-path destination stime)
+  (define now (current-time/p))
   (define table (web::current-temp-paths-table/p))
   (define tempid (get-random-network-name))
-  (define path (web::temp-path-make tempid destination live-duration))
+  (define path (web::temp-path-make tempid destination now stime))
 
   (hashmap-set! table tempid path)
 

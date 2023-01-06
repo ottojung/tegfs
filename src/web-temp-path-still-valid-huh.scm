@@ -1,4 +1,4 @@
-;;;; Copyright (C) 2022, 2023  Otto Jung
+;;;; Copyright (C) 2023  Otto Jung
 ;;;;
 ;;;; This program is free software: you can redistribute it and/or modify
 ;;;; it under the terms of the GNU Affero General Public License as published
@@ -15,17 +15,14 @@
 
 %run guile
 
-%var web::collectgarbage
+%var web::temp-path-still-valid?
 
-%use (web::collect-own-garbage) "./web-collect-own-garbage.scm"
-%use (web::return) "./web-return.scm"
-%use (webcore::ask) "./webcore-ask.scm"
+%use (current-time/p) "./current-time-p.scm"
+%use (web::temp-path-time-left) "./web-temp-path-time-left.scm"
 
-(define (web::collectgarbage)
-  (webcore::ask `(whats (collectgarbage)))
-  (web::collect-own-garbage)
-
-  (web::return
-   200
-   `((Cache-Control . "no-cache"))
-   "ok\n"))
+(define web::temp-path-still-valid?
+  (case-lambda
+   ((tpath)
+    (web::temp-path-still-valid? tpath (current-time/p)))
+   ((tpath current-time)
+    (< 0 (web::temp-path-time-left tpath current-time)))))
