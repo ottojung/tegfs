@@ -30,16 +30,15 @@
            (string-append
             s "=" (uri-encode name) "&"))))))
 
-(define (web::get-auth-body failed? yes no expected)
+(define (web::get-auth-body failed? yes expected)
   (define top
     (if failed?
         "<label><b>Bad password</b></label>"
         ""))
 
   (web::form-template
-   (stringf "action='authcont?~a~a~a' enctype='application/x-www-form-urlencoded'"
+   (stringf "action='authcont?~a~a' enctype='application/x-www-form-urlencoded'"
             (web::auth-encode-arg yes)
-            (web::auth-encode-arg no)
             (web::auth-encode-arg expected))
    (stringf
     "
