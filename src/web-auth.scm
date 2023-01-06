@@ -49,8 +49,9 @@
   (define key (callcontext-token callctx))
   (define query (callcontext-query callctx))
   (define yes-continue (hashmap-ref query 'yes #f))
-  (define no-continue (hashmap-ref query 'no #f))
   (define expected-key (hashmap-ref query 'expected #f))
+  (define no-continue
+    (stringf "/authfail?yes=~a&expected=~a" yes-continue expected-key))
 
   (web::make-html-response
    (web::get-auth-body yes-continue no-continue expected-key)))
