@@ -34,6 +34,7 @@
 %use (web-get-query) "./web-get-query.scm"
 %use (web-handle-profun-results) "./web-handle-profun-results.scm"
 %use (web-make-html-response) "./web-make-html-response.scm"
+%use (web-not-found) "./web-not-found.scm"
 %use (webcore::ask) "./webcore-ask.scm"
 
 %for (COMPILER "guile")
@@ -99,21 +100,25 @@
         (web-bad-request "Bad `for-duration' value ~s" for-duration/s)))
       default-share-expiery-time))
 
+(define (web-share-cont/2 callctx query/encoded first-binding)
+  (define domainname (web-get-domainname callctx))
+  (define token
+    (assq-or 'K first-binding (raisu 'unexpected-result-from-backend first-binding)))
+  (define location
+    (if query/encoded
+        (stringf "~a/query?q=~a&key=~a" domainname query/encoded token)
+        (assq-or 'FL first-binding (raisu 'unexpected-result-from-backend first-binding))))
+  (define hidden-query-location
+    (stringf "~a/query?q=%any&key=~a" domainname token))
+  (define text
+    (get-share-query-text callctx location hidden-query-location token))
+  (web-make-html-response text))
+
 (define (web-share-cont callctx query/encoded)
   (lambda (equals)
-    (define domainname (web-get-domainname callctx))
-    (define first-binding (car equals))
-    (define token
-      (assq-or 'K first-binding (raisu 'unexpected-result-from-backend equals)))
-    (define location
-      (if query/encoded
-          (stringf "~a/query?q=~a&key=~a" domainname query/encoded token)
-          (assq-or 'FL first-binding (raisu 'unexpected-result-from-backend equals))))
-    (define hidden-query-location
-      (stringf "~a/query?q=%any&key=~a" domainname token))
-    (define text
-      (get-share-query-text callctx location hidden-query-location token))
-    (web-make-html-response text)))
+    (if (null? equals)
+        (web-not-found)
+        (web-share-cont/2 callctx query/encoded (car equals)))))
 
 (define (web-share-query query/encoded)
   (define callctx (web-callcontext/p))
@@ -145,10 +150,10 @@
     (webcore::ask
      `(whats
        (key ,key)
-       (make-temporary-permissions ,share-duration _AD P K)
+       (make-temporary-permissions ,share-duration _1 P K)
        (senderid->entry ,senderid _E)
        (share-entry _E K)
-       (share-full _E ,share-duration _F)
+       (share-full _E ,share-duration _2 _F)
        (link-shared _F FL)
        more (99999)
        )))
