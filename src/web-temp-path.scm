@@ -25,9 +25,15 @@
 %use (define-type9) "./euphrates/define-type9.scm"
 
 (define-type9 <web::temp-path>
-  (web::temp-path-make tempid destination start stime) web::temp-path?
+  (web::temp-path-make tempid destination/raw start stime) web::temp-path?
   (tempid web::temp-path-tempid)
-  (destination web::temp-path-destination)
+  (destination/raw web::temp-path-destination/raw)
   (start web::temp-path-start) ;; when this was created
   (stime web::temp-path-stime) ;; for how long this should live
   )
+
+(define (web::temp-path-destination tpath)
+  (define raw (web::temp-path-destination/raw tpath))
+  (if (procedure? raw)
+      ((raw))
+      raw))
