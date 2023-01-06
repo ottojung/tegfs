@@ -25,6 +25,7 @@
 %use (profun-unbound-value?) "./euphrates/profun-value.scm"
 %use (default-login-expiery-time) "./default-login-expiery-time.scm"
 %use (make-permission!) "./make-permission-bang.scm"
+%use (password->tokenlike) "./password-to-tokenlike.scm"
 %use (sha256sum) "./sha256sum.scm"
 %use (context-passwords context-tokens) "./web-context.scm"
 %use (webcore::permissions/p) "./webcore-parameters.scm"
@@ -46,7 +47,8 @@
             (hashmap-ref passwords hashed #f)))
      (define temporary
        (and hashed
-            (hashmap-ref tokens hashed #f)))
+            (let ((tokenlike (password->tokenlike password)))
+              (hashmap-ref tokens tokenlike #f))))
 
      (cond
       ((profun-unbound-value? password)
