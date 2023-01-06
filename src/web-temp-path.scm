@@ -21,6 +21,7 @@
 %var web::temp-path-destination
 %var web::temp-path-start
 %var web::temp-path-stime
+%var web::temp-path-public
 
 %use (define-type9) "./euphrates/define-type9.scm"
 
@@ -37,3 +38,6 @@
   (if (procedure? raw)
       ((raw))
       raw))
+
+(define (web::temp-path-public tpath)
+  (string-append "/" (web::temp-path-tempid tpath)))
