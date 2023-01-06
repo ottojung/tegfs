@@ -17,7 +17,7 @@
 
 %var web-senderid->entry-handler
 
-%use (profun-set) "./euphrates/profun-accept.scm"
+%use (profun-set profun-set-meta) "./euphrates/profun-accept.scm"
 %use (make-profun-error) "./euphrates/profun-error.scm"
 %use (profun-op-lambda) "./euphrates/profun-op-lambda.scm"
 %use (profun-reject) "./euphrates/profun-reject.scm"
@@ -60,7 +60,9 @@
          (define entry (entry-limit-fields filemap/2 perm entry0))
          (if (null? entry)
              (profun-reject)
-             (profun-set (entry-name <- entry)))))
+             (profun-set-meta
+              (entry-name <- entry0)
+              (profun-set (entry-name <- entry))))))
 
       (else
        (raisu 'impossible-case))))))
