@@ -17,8 +17,7 @@
 
 %var make-permission!
 
-%use (hashmap-ref hashmap-set!) "./euphrates/hashmap.scm"
-%use (raisu) "./euphrates/raisu.scm"
+%use (hashmap-set!) "./euphrates/hashmap.scm"
 %use (make-permission) "./make-permission.scm"
 %use (password->tokenlike) "./password-to-tokenlike.scm"
 %use (permission-token) "./permission.scm"
@@ -35,7 +34,5 @@
   (hashmap-set! tokens token perm)
   (when maybepassword
     (let ((tokenlike (password->tokenlike maybepassword)))
-      (when (hashmap-ref tokens tokenlike #f)
-        (raisu 'such-password-already-exists)) ;; NOTE: incompatible with multi-user system
       (hashmap-set! tokens tokenlike perm)))
   perm)
