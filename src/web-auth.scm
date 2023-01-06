@@ -32,7 +32,7 @@
          (let* ((q (quote name))
                 (s (symbol->string q)))
            (string-append
-            s "=" (uri-encode q) "&"))))))
+            s "=" (uri-encode name) "&"))))))
 
 (define (web::get-auth-body yes no expected)
   (web::form-template

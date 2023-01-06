@@ -30,6 +30,10 @@
 %use (web::return) "./web-return.scm"
 %use (webcore::ask) "./webcore-ask.scm"
 
+%for (COMPILER "guile")
+(use-modules (ice-9 iconv))
+%end
+
 (define (web::authcont)
   (define callctx (web::callcontext/p))
   (define key (callcontext-token callctx))
