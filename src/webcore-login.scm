@@ -63,7 +63,7 @@
       (else
        (let ()
          (define admin? #t) ;; TODO: read from the config
-         (define maybepassword hashed)
+         (define maybepassword password)
          (define uploadaccess? #t) ;; TODO: read from the config
          (define detailsaccess? #t) ;; TODO: read from the config
          (define share-longer-than-view? #t) ;; TODO: read from the config
