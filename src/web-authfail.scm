@@ -15,7 +15,7 @@
 
 %run guile
 
-%var web::auth
+%var web::authfail
 
 %use (hashmap-ref) "./euphrates/hashmap.scm"
 %use (web::callcontext/p) "./web-callcontext-p.scm"
@@ -23,9 +23,9 @@
 %use (web::get-auth-body) "./web-get-auth-body.scm"
 %use (web::make-html-response) "./web-make-html-response.scm"
 
-(define (web::auth)
+(define (web::authfail)
   (define callctx (web::callcontext/p))
-  (define failed? #f)
+  (define failed? #t)
   (define key (callcontext-token callctx))
   (define query (callcontext-query callctx))
   (define yes-continue (hashmap-ref query 'yes #f))

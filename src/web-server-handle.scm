@@ -52,6 +52,7 @@
     (/share ,web::share)
     (/auth ,web::auth)
     (/authcont ,web::authcont)
+    (/authfail ,web::authcont)
     (/keygate ,web::keygate)
 
     (/static/main.css ,web::main.css)
