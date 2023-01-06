@@ -40,6 +40,7 @@
   (define key (callcontext-token callctx))
   (define query (callcontext-query callctx))
   (define yes-continue (hashmap-ref query 'yes #f))
+  (define no-continue (hashmap-ref query 'no #f))
   (define expected-key (hashmap-ref query 'expected #f))
   (define body/bytes (callcontext-body callctx))
 
@@ -48,6 +49,8 @@
     (web::body-not-found))
    ((not yes-continue)
     (web::bad-request "Missing query argument ~s" "yes"))
+   ((not no-continue)
+    (web::bad-request "Missing query argument ~s" "no"))
    ((not expected-key) ;; TODO: allow skipping this?
     (web::bad-request "Missing query argument ~s" "expected"))
    (else
