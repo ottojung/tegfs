@@ -23,7 +23,7 @@
 %use (web::current-temp-paths-table/p) "./web-current-temp-paths-table-p.scm"
 %use (web::temp-path-make) "./web-temp-path.scm"
 
-(define (web::create-temp-path destination stime)
+(define (web::create-temp-path stime destination)
   (define now (current-time/p))
   (define table (web::current-temp-paths-table/p))
   (define tempid (get-random-network-name))
