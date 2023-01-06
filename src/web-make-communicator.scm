@@ -23,12 +23,12 @@
 %use (web::make-server-handler) "./web-server-handler.scm"
 
 (define (web::make-communicator)
-  (define webcore-context
+  (define webcore::context
     (web::make-context))
 
   (define db
     (profun-create-database
-     (web::make-server-handler webcore-context)
+     (web::make-server-handler webcore::context)
      '()))
 
   (define comm

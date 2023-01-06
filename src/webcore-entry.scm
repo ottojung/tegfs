@@ -22,11 +22,11 @@
 %use (profun-unbound-value?) "./euphrates/profun-value.scm"
 %use (core::entry/generic) "./core-entry-generic.scm"
 %use (entry-limit-fields) "./entry-limit-fields.scm"
-%use (webcore::permissions/p) "./webcore-parameters.scm"
 %use (tegfs-query/open) "./tegfs-query-open.scm"
 %use (context-filemap/2) "./web-context.scm"
+%use (webcore::permissions/p) "./webcore-parameters.scm"
 
-(define (webcore-entry-handler-get-iter web::context)
+(define (webcore::entry-get-iter web::context)
   (lambda (opening-properties query E-name)
     (define filemap/2 (context-filemap/2 web::context))
     (define perm (webcore::permissions/p))
@@ -64,4 +64,4 @@
 
 (define webcore::entry
   (lambda (web::context)
-    (core::entry/generic (webcore-entry-handler-get-iter web::context))))
+    (core::entry/generic (webcore::entry-get-iter web::context))))
