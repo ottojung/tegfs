@@ -25,7 +25,6 @@
 %use (string->seconds) "./euphrates/string-to-seconds.scm"
 %use (string->words) "./euphrates/string-to-words.scm"
 %use (stringf) "./euphrates/stringf.scm"
-%use (uri-encode) "./euphrates/uri-encode.scm"
 %use (default-share-expiery-time) "./default-share-expiery-time.scm"
 %use (get-random-access-token) "./get-random-access-token.scm"
 %use (web::bad-request) "./web-bad-request.scm"
@@ -118,12 +117,11 @@
 ;;   (web::make-html-response text))
 
 (define (web::share-cont/2 callctx query/encoded first-binding)
-  (define domainname (web::get-domainname callctx))
   (define token
     (assq-or 'K first-binding (raisu 'unexpected-result-from-backend first-binding)))
   (define location
     (if query/encoded
-        (stringf "/query?q=~a&key=~a" domainname query/encoded token)
+        (stringf "/query?q=~a&key=~a" query/encoded token)
         (assq-or 'FL first-binding (raisu 'unexpected-result-from-backend first-binding))))
   (define share-time
     (assq-or 'AD first-binding (raisu 'unexpected-result-from-backend first-binding)))
@@ -131,9 +129,7 @@
     (assq-or 'P first-binding (raisu 'unexpected-result-from-backend first-binding)))
 
   (define yes-continue
-    (web::create-temp-path
-     share-time
-     (uri-encode location)))
+    (web::create-temp-path share-time location))
   (define no-continue
     (web::create-temp-path
      share-time
