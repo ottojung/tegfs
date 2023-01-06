@@ -18,9 +18,11 @@
 %var web::redirect
 
 %use (url-get-path) "./euphrates/url-get-path.scm"
+%use (url-get-protocol) "./euphrates/url-get-protocol.scm"
 %use (url-get-query) "./euphrates/url-get-query.scm"
 %use (callcontext-headers) "./web-callcontext.scm"
 %use (web::make-callcontext/raw) "./web-make-callcontext.scm"
+%use (web::return) "./web-return.scm"
 %use (webcore::server-current/p) "./web-server-current-handler-p.scm"
 
 (define (web::redirect callctx new-url new-body)
@@ -33,4 +35,10 @@
      new-url new-path new-query/encoded old-headers
      new-body))
 
-  (handler new-callctx))
+  (if (string-null? (url-get-protocol new-url))
+      (handler new-callctx)
+      (web::return
+       301
+       `((Location . ,new-url)
+         (Cache-Control . "no-cache"))
+       #f)))
