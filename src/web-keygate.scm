@@ -32,9 +32,9 @@
   (define continue (hashmap-ref query 'continue #f))
 
   (if (not expected-key)
-      (web::bad-request "Missing expected query argument ~s" "expected")
+      (web::bad-request "Missing query argument ~s" "expected")
       (if (not continue)
-          (web::bad-request "Missing expected query argument ~s" "continue")
+          (web::bad-request "Missing query argument ~s" "continue")
           (if (equal? key expected-key)
               (web::return
                301
