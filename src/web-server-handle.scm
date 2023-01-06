@@ -17,7 +17,6 @@
 
 %var web::server-handle
 
-%use (debugs) "./euphrates/debugs.scm"
 %use (alist->hashmap hashmap-ref) "./euphrates/hashmap.scm"
 %use (~a) "./euphrates/tilda-a.scm"
 %use (web-callcontext/p) "./web-callcontext-p.scm"
