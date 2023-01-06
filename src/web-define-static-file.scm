@@ -19,24 +19,20 @@
 
 
 %use (raisu) "./euphrates/raisu.scm"
-%use (web::basic-headers) "./web-basic-headers.scm"
+%use (web::return) "./web-return.scm"
 
 %for (COMPILER "guile")
 
-(use-modules (web response))
 (use-modules (ice-9 iconv))
 (use-modules (rnrs bytevectors))
 
 %end
 
 (define (web::respond-with-a-file type bv)
-  (values
-   (build-response
-    #:code 200
-    #:headers
-    (append web::basic-headers
-            `((content-type . ,type)
-              (Cache-Control . "max-age=3600, public, private"))))
+  (web::return
+   200
+   `((content-type . ,type)
+     (Cache-Control . "max-age=3600, public, private"))
    bv))
 
 (define-syntax web::define-static-file

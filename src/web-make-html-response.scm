@@ -20,16 +20,15 @@
 %use (lines->string) "./euphrates/lines-to-string.scm"
 %use (raisu) "./euphrates/raisu.scm"
 %use (current-time/p) "./current-time-p.scm"
-%use (web::basic-headers) "./web-basic-headers.scm"
 %use (web::callcontext/p) "./web-callcontext-p.scm"
 %use (callcontext-key) "./web-callcontext.scm"
+%use (web::return) "./web-return.scm"
 %use (web::set-cookie-header) "./web-set-cookie-header.scm"
 %use (webcore::current-communicator/p) "./webcore-current-communicator-p.scm"
 
 %for (COMPILER "guile")
 
-(use-modules (web response)
-             (sxml simple))
+(use-modules (sxml simple))
 
 %end
 
@@ -63,16 +62,13 @@
   (define key-headers
     (if key (list (web::set-cookie-header "key" key)) '()))
 
-  (values
-   (build-response
-    #:code status
-    ;; most of these settings come from here: https://cheatsheetseries.owasp.org/cheatsheets/HTTP_Headers_Cheat_Sheet.html
-    #:headers
-    (append web::basic-headers
-            `((content-type . (,content-type ,@content-type-params))
-              (Cache-Control . "no-cache")
-              ,@key-headers
-              ,@extra-headers)))
+  (web::return
+   status
+   ;; most of these settings come from here: https://cheatsheetseries.owasp.org/cheatsheets/HTTP_Headers_Cheat_Sheet.html
+   `((content-type . (,content-type ,@content-type-params))
+     (Cache-Control . "no-cache")
+     ,@key-headers
+     ,@extra-headers)
    (lambda (port)
      (parameterize ((current-output-port port))
        (when doctype (display doctype))

@@ -18,16 +18,10 @@
 %var web::full
 
 %use (hashmap-ref) "./euphrates/hashmap.scm"
-%use (web::basic-headers) "./web-basic-headers.scm"
 %use (web::get-query) "./web-get-query.scm"
 %use (web::iterate-profun-results) "./web-iterate-profun-results.scm"
+%use (web::return) "./web-return.scm"
 %use (webcore::ask) "./webcore-ask.scm"
-
-%for (COMPILER "guile")
-
-(use-modules (web response))
-
-%end
 
 (define (web::full)
   (define ctxq (web::get-query))
@@ -42,11 +36,8 @@
   (web::iterate-profun-results
    result (L)
 
-   (values
-    (build-response
-     #:code 301
-     #:headers
-     (append web::basic-headers
-             `((Location . ,L)
-               (Cache-Control . "no-cache"))))
+   (web::return
+    301
+    `((Location . ,L)
+      (Cache-Control . "no-cache"))
     #f)))
