@@ -25,6 +25,7 @@
 %use (web::details) "./web-details.scm"
 %use (web::directory) "./web-directory.scm"
 %use (web::full) "./web-full.scm"
+%use (web::keygate) "./web-keygate.scm"
 %use (web::login) "./web-login.scm"
 %use (web::logincont) "./web-logincont.scm"
 %use (web::main.css) "./web-main-css.scm"
@@ -47,6 +48,7 @@
     (/upload ,web::upload)
     (/uploadcont ,web::uploadcont)
     (/share ,web::share)
+    (/keygate ,web::keygate)
 
     (/static/main.css ,web::main.css)
     (/static/previewunknown.svg ,web::previewunknown)
