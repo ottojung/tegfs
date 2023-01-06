@@ -31,23 +31,20 @@
 (define (web::directory)
   (define callctx (web::callcontext/p))
   (define ctxq (web::get-query))
-
-  (define vid
-    (or (hashmap-ref ctxq 'vid #f)
-        (web::bad-request "Request query missing requiered 'd' argument")))
-
-  (define result
-    (webcore::ask
-     `(whats
-       (key ,(callcontext-token callctx))
-       (shared-entry-contains ,vid E)
-       (share-preview E ,default-preview-sharing-time _ATP _P)
-       (share-full E ,default-full-sharing-time _ATF F)
-       (link-shared _P PL)
-       more (99999)
-       )))
-
-  (web::handle-profun-results result web::directory-handle))
+  (define vid (hashmap-ref ctxq 'vid #f))
+  (if (not vid)
+      (web::bad-request "Request query missing requiered 'd' argument")
+      (web::handle-profun-results
+       (webcore::ask
+        `(whats
+          (key ,(callcontext-token callctx))
+          (shared-entry-contains ,vid E)
+          (share-preview E ,default-preview-sharing-time _ATP _P)
+          (share-full E ,default-full-sharing-time _ATF F)
+          (link-shared _P PL)
+          more (99999)
+          ))
+       web::directory-handle)))
 
 (define (web::directory-handle equals)
   (web::query-display-results equals))
