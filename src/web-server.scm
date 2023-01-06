@@ -19,10 +19,10 @@
 
 %use (assq-or) "./euphrates/assq-or.scm"
 %use (dprintln) "./euphrates/dprintln.scm"
-%use (web::default-port) "./web-default-port.scm"
 %use (get-config) "./get-config.scm"
 %use (keyword-config-port) "./keyword-config-port.scm"
 %use (web::current-temp-paths-table/p) "./web-current-temp-paths-table-p.scm"
+%use (web::default-port) "./web-default-port.scm"
 %use (web::make-callcontext) "./web-make-callcontext.scm"
 %use (web::make-communicator) "./web-make-communicator.scm"
 %use (web::make-temp-paths-table) "./web-make-temp-paths-table.scm"
@@ -57,15 +57,14 @@
   (define port (car (assq-or keyword-config-port config '(,web::default-port))))
   (define comm (web::make-communicator))
   (define tptable (web::make-temp-paths-table))
-  (define handler (make-handler))
 
   (dprintln "Starting the server")
   (parameterize ((webcore::current-communicator/p comm)
                  (web::current-temp-paths-table/p tptable)
-                 (web::server-current-handler/p handler))
+                 (web::server-current-handler/p web::server-handle))
     (dprintln "Collecting garbage left from the previous run...")
     (with-current-time
      (webcore::ask `(whats (collectgarbage))))
     (dprintln "Done")
     (dprintln "Listening on port ~s" port)
-    (run-server handler 'http `(#:port ,port))))
+    (run-server (make-handler) 'http `(#:port ,port))))

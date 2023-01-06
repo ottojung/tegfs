@@ -17,12 +17,14 @@
 
 %var web::server-handle-temp-path
 
+%use (string-strip) "./euphrates/string-strip.scm"
 %use (web::not-found) "./web-not-found.scm"
 %use (web::redirect) "./web-redirect.scm"
 %use (web::temp-path-get) "./web-temp-path-get.scm"
 %use (web::temp-path-destination) "./web-temp-path.scm"
 
-(define (web::server-handle-temp-path callctx tempid)
+(define (web::server-handle-temp-path callctx tempid/0)
+  (define tempid (string-strip tempid/0 "/"))
   (define path (web::temp-path-get tempid))
   (define destination (and path (web::temp-path-destination path)))
   (if destination
