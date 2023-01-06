@@ -19,16 +19,19 @@
 
 %use (assq-or) "./euphrates/assq-or.scm"
 %use (catchu-case) "./euphrates/catchu-case.scm"
+%use (debugs) "./euphrates/debugs.scm"
 %use (hashmap-ref) "./euphrates/hashmap.scm"
 %use (raisu) "./euphrates/raisu.scm"
 %use (string->seconds) "./euphrates/string-to-seconds.scm"
 %use (string->words) "./euphrates/string-to-words.scm"
 %use (stringf) "./euphrates/stringf.scm"
+%use (uri-encode) "./euphrates/uri-encode.scm"
 %use (default-share-expiery-time) "./default-share-expiery-time.scm"
 %use (get-random-access-token) "./get-random-access-token.scm"
 %use (web::bad-request) "./web-bad-request.scm"
 %use (web::callcontext/p) "./web-callcontext-p.scm"
 %use (callcontext-token) "./web-callcontext.scm"
+%use (web::create-temp-path) "./web-create-temp-path.scm"
 %use (web::decode-query) "./web-decode-query.scm"
 %use (web::get-domainname) "./web-get-domainname.scm"
 %use (web::get-query) "./web-get-query.scm"
@@ -100,6 +103,20 @@
         (web::bad-request "Bad `for-duration' value ~s" for-duration/s)))
       default-share-expiery-time))
 
+;; (define (web::share-cont/2/old callctx query/encoded first-binding)
+;;   (define domainname (web::get-domainname callctx))
+;;   (define token
+;;     (assq-or 'K first-binding (raisu 'unexpected-result-from-backend first-binding)))
+;;   (define location
+;;     (if query/encoded
+;;         (stringf "~a/query?q=~a&key=~a" domainname query/encoded token)
+;;         (assq-or 'FL first-binding (raisu 'unexpected-result-from-backend first-binding))))
+;;   (define hidden-query-location
+;;     (stringf "~a/query?q=%any&key=~a" domainname token))
+;;   (define text
+;;     (get-share-query-text callctx location hidden-query-location token))
+;;   (web::make-html-response text))
+
 (define (web::share-cont/2 callctx query/encoded first-binding)
   (define domainname (web::get-domainname callctx))
   (define token
@@ -108,11 +125,47 @@
     (if query/encoded
         (stringf "~a/query?q=~a&key=~a" domainname query/encoded token)
         (assq-or 'FL first-binding (raisu 'unexpected-result-from-backend first-binding))))
-  (define hidden-query-location
-    (stringf "~a/query?q=%any&key=~a" domainname token))
+  (define share-time
+    (assq-or 'AD first-binding (raisu 'unexpected-result-from-backend first-binding)))
+  (define password
+    (assq-or 'P first-binding (raisu 'unexpected-result-from-backend first-binding)))
+
+  (define yes-continue
+    (web::create-temp-path
+     share-time
+     (uri-encode location)))
+  (define no-continue
+    (web::create-temp-path
+     share-time
+     (lambda (tempid)
+       (stringf "/authfail?yes=~a&no=~a&expected=~a"
+                yes-continue
+                tempid
+                token))))
+
+  (define initial
+    (web::create-temp-path
+     share-time
+     (stringf "/auth?yes=~a&no=~a&expected=~a"
+              yes-continue
+              no-continue
+              token)))
+
   (define text
-    (get-share-query-text callctx location hidden-query-location token))
+    (stringf "<br><br>~a<br><br>~a"
+             initial password))
+
+  (debugs yes-continue)
+  (debugs no-continue)
+  (debugs initial)
+
   (web::make-html-response text))
+
+  ;; (define hidden-query-location
+  ;;   (stringf "~a/query?q=%any&key=~a" domainname token))
+  ;; (define text
+  ;;   (get-share-query-text callctx location hidden-query-location token))
+  ;; (web::make-html-response text))
 
 (define (web::share-cont callctx query/encoded)
   (lambda (equals)
@@ -131,7 +184,7 @@
     (webcore::ask
      `(whats
        (key ,key)
-       (make-temporary-permissions ,share-duration _AD P K)
+       (make-temporary-permissions ,share-duration AD P K)
        (query ,query/split)
        (entry _E)
        (share-entry _E K)
@@ -150,7 +203,7 @@
     (webcore::ask
      `(whats
        (key ,key)
-       (make-temporary-permissions ,share-duration _1 P K)
+       (make-temporary-permissions ,share-duration AD P K)
        (senderid->entry ,senderid _E)
        (share-entry _E K)
        (share-full _E ,share-duration _2 _F)
