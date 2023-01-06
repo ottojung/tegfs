@@ -21,6 +21,7 @@
 %use (dprintln) "./euphrates/dprintln.scm"
 %use (get-config) "./get-config.scm"
 %use (keyword-config-port) "./keyword-config-port.scm"
+%use (web::collectgarbage) "./web-collectgarbage.scm"
 %use (web::current-temp-paths-table/p) "./web-current-temp-paths-table-p.scm"
 %use (web::default-port) "./web-default-port.scm"
 %use (web::make-callcontext) "./web-make-callcontext.scm"
@@ -28,7 +29,6 @@
 %use (web::make-temp-paths-table) "./web-make-temp-paths-table.scm"
 %use (web::server-current-handler/p) "./web-server-current-handler-p.scm"
 %use (web::server-handle) "./web-server-handle.scm"
-%use (webcore::ask) "./webcore-ask.scm"
 %use (webcore::current-communicator/p) "./webcore-current-communicator-p.scm"
 %use (with-current-time) "./with-current-time.scm"
 
@@ -63,8 +63,7 @@
                  (web::current-temp-paths-table/p tptable)
                  (web::server-current-handler/p web::server-handle))
     (dprintln "Collecting garbage left from the previous run...")
-    (with-current-time
-     (webcore::ask `(whats (collectgarbage))))
+    (with-current-time (web::collectgarbage))
     (dprintln "Done")
     (dprintln "Listening on port ~s" port)
     (run-server (make-handler) 'http `(#:port ,port))))
