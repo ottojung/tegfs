@@ -16,8 +16,8 @@
 %run guile
 
 %var web-make-callcontext
+%var web-make-callcontext/raw
 
-%use (debugs) "./euphrates/debugs.scm"
 %use (alist->hashmap hashmap-ref make-hashmap) "./euphrates/hashmap.scm"
 %use (memconst) "./euphrates/memconst.scm"
 %use (raisu) "./euphrates/raisu.scm"
@@ -78,19 +78,22 @@
          split))
   (alist->hashmap key-values))
 
-(define (initialize-query uri)
-  (define query/encoded (uri-query uri))
+(define (initialize-query query/encoded)
   (if query/encoded
       (query->hashmap query/encoded)
       (make-hashmap)))
 
 (define (web-make-callcontext req body)
   (define uri (request-uri req))
+  (define path (uri-path uri))
   (define url (uri->string uri))
+  (define query/encoded (uri-query uri))
   (define headers (request-headers req))
-  (define qH (memconst (initialize-query uri)))
-  (debugs url)
+  (web-make-callcontext/raw url path query/encoded headers body))
+
+(define (web-make-callcontext/raw url path query/encoded headers body)
+  (define qH (memconst (initialize-query query/encoded)))
   (letrec
       ((tokenfn (memconst (get-access-token callctx (qH) headers)))
-       (callctx (callcontext-ctr url headers qH body #f tokenfn)))
+       (callctx (callcontext-ctr url path headers qH body #f tokenfn)))
     callctx))

@@ -1,4 +1,4 @@
-;;;; Copyright (C) 2022  Otto Jung
+;;;; Copyright (C) 2022, 2023  Otto Jung
 ;;;;
 ;;;; This program is free software: you can redistribute it and/or modify
 ;;;; it under the terms of the GNU Affero General Public License as published
@@ -18,6 +18,7 @@
 %var callcontext-ctr
 %var callcontext?
 %var callcontext-url
+%var callcontext-path
 %var callcontext-headers
 %var callcontext-query
 %var callcontext-body
@@ -28,8 +29,9 @@
 %use (define-type9) "./euphrates/define-type9.scm"
 
 (define-type9 <callcontext>
-  (callcontext-ctr url headers queryfn body key tokenfn) callcontext?
+  (callcontext-ctr url path headers queryfn body key tokenfn) callcontext?
   (url callcontext-url) ;; request url
+  (path callcontext-path) ;; path part of the url
   (headers callcontext-headers) ;; request headers
   (queryfn callcontext-queryfn) ;; query hashmap
   (body callcontext-body) ;; client body
