@@ -21,6 +21,7 @@
 %use (~a) "./euphrates/tilda-a.scm"
 %use (web::auth) "./web-auth.scm"
 %use (web::authcont) "./web-authcont.scm"
+%use (web::authfail) "./web-authfail.scm"
 %use (web::callcontext/p) "./web-callcontext-p.scm"
 %use (callcontext-path) "./web-callcontext.scm"
 %use (web::collectgarbage) "./web-collectgarbage.scm"
@@ -51,7 +52,7 @@
     (/share ,web::share)
     (/auth ,web::auth)
     (/authcont ,web::authcont)
-    (/authfail ,web::authcont)
+    (/authfail ,web::authfail)
 
     (/static/main.css ,web::main.css)
     (/static/previewunknown.svg ,web::previewunknown)
