@@ -17,7 +17,7 @@
 
 %var entry-limit-fields
 
-%use (has-access-for-entry-details? has-access-for-entry-target?) "./access.scm"
+%use (has-access-for-entry-details? has-access-for-entry-target?) "./webcore-access.scm"
 %use (keyword-target) "./keyword-target.scm"
 %use (keyword-title) "./keyword-title.scm"
 

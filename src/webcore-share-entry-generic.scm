@@ -15,7 +15,7 @@
 
 %run guile
 
-%var web::share-entry-generic-handler
+%var webcore::share-entry-generic
 
 %use (profun-set) "./euphrates/profun-accept.scm"
 %use (make-profun-error) "./euphrates/profun-error.scm"
@@ -29,7 +29,7 @@
 %use (web::share-file/dont-link-yet) "./web-share-file.scm"
 %use (webcore::permissions/p) "./webcore-parameters.scm"
 
-(define web::share-entry-generic-handler
+(define webcore::share-entry-generic
   (lambda (get-shared-path)
     (lambda (web::context)
       (profun-op-lambda

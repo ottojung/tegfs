@@ -15,7 +15,7 @@
 
 %run guile
 
-%var web::senderid->entry-handler
+%var webcore::senderid->entry
 
 %use (profun-set profun-set-meta) "./euphrates/profun-accept.scm"
 %use (make-profun-error) "./euphrates/profun-error.scm"
@@ -30,7 +30,7 @@
 %use (context-filemap/2) "./web-context.scm"
 %use (webcore::permissions/p) "./webcore-parameters.scm"
 
-(define web::senderid->entry-handler
+(define webcore::senderid->entry
   (lambda (web::context)
     (define filemap/2 (context-filemap/2 web::context))
 

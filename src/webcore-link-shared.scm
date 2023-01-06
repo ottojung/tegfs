@@ -15,7 +15,7 @@
 
 %run guile
 
-%var web::link-shared-handler
+%var webcore::link-shared
 
 %use (profun-set) "./euphrates/profun-accept.scm"
 %use (make-profun-error) "./euphrates/profun-error.scm"
@@ -29,7 +29,7 @@
 %use (web::get-adam-info) "./web-get-adam-info.scm"
 %use (web::get-sharedinfo-url) "./web-get-sharedinfo-url.scm"
 
-(define web::link-shared-handler
+(define webcore::link-shared
   (lambda (web::context)
     (profun-op-lambda
      (ctx (R L) (R-name L-name))

@@ -15,7 +15,7 @@
 
 %run guile
 
-%var web::share-entry-handler
+%var webcore::share-entry
 
 %use (assq-or) "./euphrates/assq-or.scm"
 %use (hashset-add!) "./euphrates/hashset.scm"
@@ -34,7 +34,7 @@
 %use (context-filemap/2) "./web-context.scm"
 %use (web::get-adam-info) "./web-get-adam-info.scm"
 
-(define web::share-entry-handler
+(define webcore::share-entry
   (lambda (web::context)
     (define filemap/2 (context-filemap/2 web::context))
 

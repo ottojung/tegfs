@@ -15,7 +15,7 @@
 
 %run guile
 
-%var tegfs-key-handler
+%var webcore::key
 
 %use (profun-set profun-set-parameter) "./euphrates/profun-accept.scm"
 %use (profun-op-lambda) "./euphrates/profun-op-lambda.scm"
@@ -25,7 +25,7 @@
 %use (tegfs-login-by-key) "./tegfs-login-by-key.scm"
 %use (webcore::permissions/p) "./webcore-parameters.scm"
 
-(define tegfs-key-handler
+(define webcore::key
   (lambda (tegfs-context)
     (profun-op-lambda
      :with-env

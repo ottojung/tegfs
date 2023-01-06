@@ -21,10 +21,10 @@
 %use (url-get-query) "./euphrates/url-get-query.scm"
 %use (callcontext-headers) "./web-callcontext.scm"
 %use (web::make-callcontext/raw) "./web-make-callcontext.scm"
-%use (web::server-current-handler/p) "./web-server-current-handler-p.scm"
+%use (webcore::server-current/p) "./web-server-current-handler-p.scm"
 
 (define (web::redirect callctx new-url new-body)
-  (define handler (web::server-current-handler/p))
+  (define handler (webcore::server-current/p))
   (define old-headers (callcontext-headers callctx))
   (define new-path (url-get-path new-url))
   (define new-query/encoded (url-get-query new-url))

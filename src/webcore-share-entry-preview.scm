@@ -1,4 +1,4 @@
-;;;; Copyright (C) 2022, 2023  Otto Jung
+;;;; Copyright (C) 2022  Otto Jung
 ;;;;
 ;;;; This program is free software: you can redistribute it and/or modify
 ;;;; it under the terms of the GNU Affero General Public License as published
@@ -15,16 +15,14 @@
 
 %run guile
 
-%var web::collectgarbage-handler
+%var webcore::share-entry-preview
 
-%use (profun-accept) "./euphrates/profun-accept.scm"
-%use (profun-op-lambda) "./euphrates/profun-op-lambda.scm"
-%use (web::collectgarbage/nocall) "./web-collectgarbage-nocall.scm"
+%use (file-or-directory-exists?) "./euphrates/file-or-directory-exists-q.scm"
+%use (get-preview-path) "./get-preview-path.scm"
+%use (webcore::share-entry-generic) "./webcore-share-entry-generic.scm"
 
-(define web::collectgarbage-handler
-  (lambda (web::context)
-    (profun-op-lambda
-     (ctx env ())
-
-     (web::collectgarbage/nocall web::context)
-     (profun-accept))))
+(define webcore::share-entry-preview
+  (webcore::share-entry-generic
+   (lambda (target-fullpath)
+     (define ret (get-preview-path target-fullpath))
+     (and ret (file-or-directory-exists? ret) ret))))

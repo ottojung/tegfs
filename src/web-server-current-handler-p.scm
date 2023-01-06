@@ -15,7 +15,7 @@
 
 %run guile
 
-%var web::server-current-handler/p
+%var webcore::server-current/p
 
-(define web::server-current-handler/p
+(define webcore::server-current/p
   (make-parameter #f))

@@ -15,7 +15,7 @@
 
 %run guile
 
-%var login-handler
+%var webcore::login
 
 %use (hashmap-ref) "./euphrates/hashmap.scm"
 %use (profun-set-parameter) "./euphrates/profun-accept.scm"
@@ -29,7 +29,7 @@
 %use (context-passwords context-tokens) "./web-context.scm"
 %use (webcore::permissions/p) "./webcore-parameters.scm"
 
-(define login-handler
+(define webcore::login
   (lambda (webcore::context)
     (define passwords (context-passwords webcore::context))
     (define tokens (context-tokens webcore::context))

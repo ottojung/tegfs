@@ -1,4 +1,4 @@
-;;;; Copyright (C) 2022  Otto Jung
+;;;; Copyright (C) 2022, 2023  Otto Jung
 ;;;;
 ;;;; This program is free software: you can redistribute it and/or modify
 ;;;; it under the terms of the GNU Affero General Public License as published
@@ -15,9 +15,16 @@
 
 %run guile
 
-%var web::share-entry-full-handler
+%var webcore::collectgarbage
 
-%use (web::share-entry-generic-handler) "./web-share-entry-generic-handler.scm"
+%use (profun-accept) "./euphrates/profun-accept.scm"
+%use (profun-op-lambda) "./euphrates/profun-op-lambda.scm"
+%use (web::collectgarbage/nocall) "./web-collectgarbage-nocall.scm"
 
-(define web::share-entry-full-handler
-  (web::share-entry-generic-handler identity))
+(define webcore::collectgarbage
+  (lambda (web::context)
+    (profun-op-lambda
+     (ctx env ())
+
+     (web::collectgarbage/nocall web::context)
+     (profun-accept))))

@@ -15,7 +15,7 @@
 
 %run guile
 
-%var shared-entry-contains-handler
+%var webcore::shared-entry-contains
 
 %use (directory-files-depth-iter) "./euphrates/directory-files-depth-iter.scm"
 %use (profun-accept? profun-ctx-set profun-set profun-set-meta) "./euphrates/profun-accept.scm"
@@ -29,7 +29,7 @@
 %use (standalone-file->entry/prefixed) "./standalone-file-to-entry.scm"
 %use (context-filemap/2) "./web-context.scm"
 
-(define shared-entry-contains-handler
+(define webcore::shared-entry-contains
   (lambda (web::context)
     (define filemap/2 (context-filemap/2 web::context))
 

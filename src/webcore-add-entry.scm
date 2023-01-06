@@ -22,7 +22,7 @@
 %use (profun-op-lambda) "./euphrates/profun-op-lambda.scm"
 %use (profun-request-value) "./euphrates/profun-request-value.scm"
 %use (profun-unbound-value?) "./euphrates/profun-value.scm"
-%use (can-upload?) "./access.scm"
+%use (can-upload?) "./webcore-access.scm"
 %use (add-entry) "./add-entry.scm"
 %use (permission?) "./permission.scm"
 %use (webcore::permissions/p) "./webcore-parameters.scm"

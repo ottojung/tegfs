@@ -27,7 +27,7 @@
 %use (web::make-callcontext) "./web-make-callcontext.scm"
 %use (web::make-communicator) "./web-make-communicator.scm"
 %use (web::make-temp-paths-table) "./web-make-temp-paths-table.scm"
-%use (web::server-current-handler/p) "./web-server-current-handler-p.scm"
+%use (webcore::server-current/p) "./web-server-current-handler-p.scm"
 %use (web::server-handle) "./web-server-handle.scm"
 %use (webcore::current-communicator/p) "./webcore-current-communicator-p.scm"
 %use (with-current-time) "./with-current-time.scm"
@@ -61,7 +61,7 @@
   (dprintln "Starting the server")
   (parameterize ((webcore::current-communicator/p comm)
                  (web::current-temp-paths-table/p tptable)
-                 (web::server-current-handler/p web::server-handle))
+                 (webcore::server-current/p web::server-handle))
     (dprintln "Collecting garbage left from the previous run...")
     (with-current-time (web::collectgarbage))
     (dprintln "Done")

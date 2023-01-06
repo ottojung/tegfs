@@ -15,7 +15,7 @@
 
 %run guile
 
-%var make-temporary-permissions-handler
+%var webcore::make-temporary-permissions
 
 %use (profun-set) "./euphrates/profun-accept.scm"
 %use (make-profun-error) "./euphrates/profun-error.scm"
@@ -31,7 +31,7 @@
 (define (generate-random-password)
   (get-random-network-name))
 
-(define make-temporary-permissions-handler
+(define webcore::make-temporary-permissions
   (lambda (web::context)
     (profun-op-lambda
      :with-env
