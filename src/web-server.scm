@@ -26,6 +26,7 @@
 %use (keyword-config-port) "./keyword-config-port.scm"
 %use (web-callcontext/p) "./web-callcontext-p.scm"
 %use (web-collectgarbage) "./web-collectgarbage.scm"
+%use (web::current-temp-paths-table/p) "./web-current-temp-paths-table-p.scm"
 %use (web-details) "./web-details.scm"
 %use (web-directory) "./web-directory.scm"
 %use (web-full) "./web-full.scm"
@@ -34,6 +35,7 @@
 %use (web-main.css) "./web-main-css.scm"
 %use (web-make-callcontext) "./web-make-callcontext.scm"
 %use (web-make-communicator) "./web-make-communicator.scm"
+%use (web::make-temp-paths-table) "./web-make-temp-paths-table.scm"
 %use (web-not-found) "./web-not-found.scm"
 %use (web-previewunknown) "./web-previewunknown.scm"
 %use (web-previewunknownurl) "./web-previewunknownurl.scm"
@@ -104,9 +106,11 @@
   (define config (get-config))
   (define port (car (assq-or keyword-config-port config '(,default-web-port))))
   (define comm (web-make-communicator))
+  (define tptable (web::make-temp-paths-table))
 
   (dprintln "Starting the server")
-  (parameterize ((webcore::current-communicator/p comm))
+  (parameterize ((webcore::current-communicator/p comm)
+                 (web::current-temp-paths-table/p tptable))
     (dprintln "Collecting garbage left from the previous run...")
     (with-current-time
      (webcore::ask `(whats (collectgarbage))))
