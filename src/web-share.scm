@@ -123,7 +123,7 @@
     (assq-or 'K first-binding (raisu 'unexpected-result-from-backend first-binding)))
   (define location
     (if query/encoded
-        (stringf "~a/query?q=~a&key=~a" domainname query/encoded token)
+        (stringf "/query?q=~a&key=~a" domainname query/encoded token)
         (assq-or 'FL first-binding (raisu 'unexpected-result-from-backend first-binding))))
   (define share-time
     (assq-or 'AD first-binding (raisu 'unexpected-result-from-backend first-binding)))
