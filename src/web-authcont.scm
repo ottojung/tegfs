@@ -23,7 +23,6 @@
 %use (list-singleton?) "./euphrates/list-singleton-q.scm"
 %use (raisu) "./euphrates/raisu.scm"
 %use (string-split/simple) "./euphrates/string-split-simple.scm"
-%use (web::authfail) "./web-authfail.scm"
 %use (web::bad-request) "./web-bad-request.scm"
 %use (web::body-not-found) "./web-body-not-found.scm"
 %use (web::callcontext/p) "./web-callcontext-p.scm"
@@ -81,19 +80,19 @@
            (login ,password)
            (key K))))
 
-      (define (goto-fail)
-        (web::authfail))
+      (define cont
+        (case (car result)
+          ((its)
+           (let ()
+             (define word (cadr result))
+             (define token (list-ref word 2))
+             (if (equal? token expected-key)
+                 yes-continue
+                 no-continue)))
+          (else no-continue)))
 
-      (case (car result)
-        ((its)
-         (let ()
-           (define word (cadr result))
-           (define token (list-ref word 2))
-           (if (equal? token expected-key)
-               (web::return
-                301
-                `((Location . ,yes-continue)
-                  (Cache-Control . "no-cache"))
-                #f)
-               (goto-fail))))
-        (else (goto-fail)))))))
+      (web::return
+       301
+       `((Location . ,cont)
+         (Cache-Control . "no-cache"))
+       #f)))))
