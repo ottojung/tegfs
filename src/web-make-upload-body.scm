@@ -15,7 +15,7 @@
 
 %run guile
 
-%var web-make-upload-body
+%var web::make-upload-body
 
 %use (append-posix-path) "./euphrates/append-posix-path.scm"
 %use (memconst) "./euphrates/memconst.scm"
@@ -23,9 +23,9 @@
 %use (read-string-file) "./euphrates/read-string-file.scm"
 %use (categorization-filename) "./categorization-filename.scm"
 %use (get-root) "./get-root.scm"
-%use (web-form-template) "./web-form-template.scm"
+%use (web::form-template) "./web-form-template.scm"
 
-(define web-make-upload-body
+(define web::make-upload-body
   (memconst
    (let ()
      (define categorization-file (append-posix-path (get-root) categorization-filename))
@@ -41,4 +41,4 @@
     <button type='submit'>Upload</button>"
                    tags-value))))
 
-     (web-form-template "action='uploadcont' enctype='multipart/form-data'" inner))))
+     (web::form-template "action='uploadcont' enctype='multipart/form-data'" inner))))

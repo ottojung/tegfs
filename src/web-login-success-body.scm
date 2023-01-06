@@ -15,9 +15,9 @@
 
 %run guile
 
-%var web-login-success-body
+%var web::login-success-body
 
-%use (web-form-template) "./web-form-template.scm"
+%use (web::form-template) "./web-form-template.scm"
 
-(define web-login-success-body
-  (web-form-template #f "<label><b>Loged in just fine</b></label>"))
+(define web::login-success-body
+  (web::form-template #f "<label><b>Loged in just fine</b></label>"))

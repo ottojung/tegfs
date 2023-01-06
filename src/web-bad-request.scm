@@ -15,11 +15,11 @@
 
 %run guile
 
-%var web-bad-request
+%var web::bad-request
 
 %use (stringf) "./euphrates/stringf.scm"
-%use (web-static-error-message) "./web-static-error-message.scm"
+%use (web::static-error-message) "./web-static-error-message.scm"
 
-(define (web-bad-request fmt . args)
+(define (web::bad-request fmt . args)
   (define str (apply stringf (cons fmt args)))
-  ((web-static-error-message 400 str)))
+  ((web::static-error-message 400 str)))

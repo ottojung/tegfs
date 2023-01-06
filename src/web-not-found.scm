@@ -15,11 +15,11 @@
 
 %run guile
 
-%var web-not-found
+%var web::not-found
 
-%use (web-callcontext/p) "./web-callcontext-p.scm"
+%use (web::callcontext/p) "./web-callcontext-p.scm"
 %use (callcontext-url) "./web-callcontext.scm"
-%use (web-make-html-response) "./web-make-html-response.scm"
+%use (web::make-html-response) "./web-make-html-response.scm"
 
 %for (COMPILER "guile")
 
@@ -28,8 +28,8 @@
 
 %end
 
-(define (web-not-found)
-  (define url (callcontext-url (web-callcontext/p)))
-  (web-make-html-response
+(define (web::not-found)
+  (define url (callcontext-url (web::callcontext/p)))
+  (web::make-html-response
    (string-append "Resource not found: " url)
    #:status 404))

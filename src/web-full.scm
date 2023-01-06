@@ -15,12 +15,12 @@
 
 %run guile
 
-%var web-full
+%var web::full
 
 %use (hashmap-ref) "./euphrates/hashmap.scm"
-%use (web-basic-headers) "./web-basic-headers.scm"
-%use (web-get-query) "./web-get-query.scm"
-%use (web-iterate-profun-results) "./web-iterate-profun-results.scm"
+%use (web::basic-headers) "./web-basic-headers.scm"
+%use (web::get-query) "./web-get-query.scm"
+%use (web::iterate-profun-results) "./web-iterate-profun-results.scm"
 %use (webcore::ask) "./webcore-ask.scm"
 
 %for (COMPILER "guile")
@@ -29,8 +29,8 @@
 
 %end
 
-(define (web-full)
-  (define ctxq (web-get-query))
+(define (web::full)
+  (define ctxq (web::get-query))
   (define senderid (hashmap-ref ctxq 'vid #f))
 
   (define result
@@ -39,14 +39,14 @@
        (link-shared ,senderid L)
        )))
 
-  (web-iterate-profun-results
+  (web::iterate-profun-results
    result (L)
 
    (values
     (build-response
      #:code 301
      #:headers
-     (append web-basic-headers
+     (append web::basic-headers
              `((Location . ,L)
                (Cache-Control . "no-cache"))))
     #f)))

@@ -15,12 +15,12 @@
 
 %run guile
 
-%var web-login-failed-body
+%var web::login-failed-body
 
-%use (web-form-template) "./web-form-template.scm"
+%use (web::form-template) "./web-form-template.scm"
 
-(define web-login-failed-body
-  (web-form-template #f "
+(define web::login-failed-body
+  (web::form-template #f "
        <label><b>You are a failure</b></label>
        <input type='password' placeholder='Enter Password' name='psw' required autofocus>
        <button type='submit'>Login</button>"))

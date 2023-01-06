@@ -15,9 +15,9 @@
 
 %run guile
 
-%var web-body-not-found
+%var web::body-not-found
 
-%use (web-static-error-message) "./web-static-error-message.scm"
+%use (web::static-error-message) "./web-static-error-message.scm"
 
-(define web-body-not-found
-  (web-static-error-message 417 "Send user body"))
+(define web::body-not-found
+  (web::static-error-message 417 "Send user body"))

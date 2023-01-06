@@ -15,7 +15,7 @@
 
 %run guile
 
-%var web-share
+%var web::share
 
 %use (assq-or) "./euphrates/assq-or.scm"
 %use (catchu-case) "./euphrates/catchu-case.scm"
@@ -26,15 +26,15 @@
 %use (stringf) "./euphrates/stringf.scm"
 %use (default-share-expiery-time) "./default-share-expiery-time.scm"
 %use (get-random-access-token) "./get-random-access-token.scm"
-%use (web-bad-request) "./web-bad-request.scm"
-%use (web-callcontext/p) "./web-callcontext-p.scm"
+%use (web::bad-request) "./web-bad-request.scm"
+%use (web::callcontext/p) "./web-callcontext-p.scm"
 %use (callcontext-token) "./web-callcontext.scm"
-%use (web-decode-query) "./web-decode-query.scm"
-%use (web-get-domainname) "./web-get-domainname.scm"
-%use (web-get-query) "./web-get-query.scm"
-%use (web-handle-profun-results) "./web-handle-profun-results.scm"
-%use (web-make-html-response) "./web-make-html-response.scm"
-%use (web-not-found) "./web-not-found.scm"
+%use (web::decode-query) "./web-decode-query.scm"
+%use (web::get-domainname) "./web-get-domainname.scm"
+%use (web::get-query) "./web-get-query.scm"
+%use (web::handle-profun-results) "./web-handle-profun-results.scm"
+%use (web::make-html-response) "./web-make-html-response.scm"
+%use (web::not-found) "./web-not-found.scm"
 %use (webcore::ask) "./webcore-ask.scm"
 
 %for (COMPILER "guile")
@@ -47,7 +47,7 @@
   (sxml->xml `(a (@ (href ,url)) ,url)))
 
 (define (get-share-query-text callctx location hidden-query-location token)
-  (define domainname (web-get-domainname callctx))
+  (define domainname (web::get-domainname callctx))
   (define (print-link url0)
     (define url (string-append domainname url0))
     (print-url url))
@@ -89,7 +89,7 @@
          (stringf "/query?q=ll&key=~a" (get-random-access-token)))))))
 
 (define (get-share-duration)
-  (define ctxq (web-get-query))
+  (define ctxq (web::get-query))
   (define for-duration/s
     (hashmap-ref ctxq 'for-duration #f))
 
@@ -97,11 +97,11 @@
       (catchu-case
        (string->seconds for-duration/s)
        (('bad-format-for-string->seconds . args)
-        (web-bad-request "Bad `for-duration' value ~s" for-duration/s)))
+        (web::bad-request "Bad `for-duration' value ~s" for-duration/s)))
       default-share-expiery-time))
 
-(define (web-share-cont/2 callctx query/encoded first-binding)
-  (define domainname (web-get-domainname callctx))
+(define (web::share-cont/2 callctx query/encoded first-binding)
+  (define domainname (web::get-domainname callctx))
   (define token
     (assq-or 'K first-binding (raisu 'unexpected-result-from-backend first-binding)))
   (define location
@@ -112,19 +112,19 @@
     (stringf "~a/query?q=%any&key=~a" domainname token))
   (define text
     (get-share-query-text callctx location hidden-query-location token))
-  (web-make-html-response text))
+  (web::make-html-response text))
 
-(define (web-share-cont callctx query/encoded)
+(define (web::share-cont callctx query/encoded)
   (lambda (equals)
     (if (null? equals)
-        (web-not-found)
-        (web-share-cont/2 callctx query/encoded (car equals)))))
+        (web::not-found)
+        (web::share-cont/2 callctx query/encoded (car equals)))))
 
-(define (web-share-query query/encoded)
-  (define callctx (web-callcontext/p))
+(define (web::share-query query/encoded)
+  (define callctx (web::callcontext/p))
   (define key (callcontext-token callctx))
   (define share-duration (get-share-duration))
-  (define query (web-decode-query query/encoded))
+  (define query (web::decode-query query/encoded))
   (define query/split (string->words query))
 
   (define result
@@ -138,11 +138,11 @@
        more (99999)
        )))
 
-  (web-handle-profun-results
-   result (web-share-cont callctx query/encoded)))
+  (web::handle-profun-results
+   result (web::share-cont callctx query/encoded)))
 
-(define (web-share-vid senderid)
-  (define callctx (web-callcontext/p))
+(define (web::share-vid senderid)
+  (define callctx (web::callcontext/p))
   (define key (callcontext-token callctx))
   (define share-duration (get-share-duration))
 
@@ -158,15 +158,15 @@
        more (99999)
        )))
 
-  (web-handle-profun-results
-   result (web-share-cont callctx #f)))
+  (web::handle-profun-results
+   result (web::share-cont callctx #f)))
 
-(define (web-share)
-  (define ctxq (web-get-query))
+(define (web::share)
+  (define ctxq (web::get-query))
   (define query/encoded (hashmap-ref ctxq 'q #f))
   (define vid (hashmap-ref ctxq 'vid #f))
 
   (cond
-   (query/encoded (web-share-query query/encoded))
-   (vid (web-share-vid vid))
-   (else (web-bad-request "Bad arguments to share"))))
+   (query/encoded (web::share-query query/encoded))
+   (vid (web::share-vid vid))
+   (else (web::bad-request "Bad arguments to share"))))

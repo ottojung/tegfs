@@ -15,6 +15,6 @@
 
 %run guile
 
-%var web-preview-height
+%var web::preview-height
 
-(define web-preview-height 225)
+(define web::preview-height 225)

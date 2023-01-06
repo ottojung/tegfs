@@ -20,7 +20,7 @@
 %use (url-get-path) "./euphrates/url-get-path.scm"
 %use (url-get-query) "./euphrates/url-get-query.scm"
 %use (callcontext-headers) "./web-callcontext.scm"
-%use (web-make-callcontext/raw) "./web-make-callcontext.scm"
+%use (web::make-callcontext/raw) "./web-make-callcontext.scm"
 %use (web::server-current-handler/p) "./web-server-current-handler-p.scm"
 
 (define (web::redirect callctx new-url new-body)
@@ -29,7 +29,7 @@
   (define new-path (url-get-path new-url))
   (define new-query/encoded (url-get-query new-url))
   (define new-callctx
-    (web-make-callcontext/raw
+    (web::make-callcontext/raw
      new-url new-path new-query/encoded old-headers
      new-body))
 

@@ -15,6 +15,6 @@
 
 %run guile
 
-%var default-web-port
+%var web::default-port
 
-(define default-web-port 33470)
+(define web::default-port 33470)

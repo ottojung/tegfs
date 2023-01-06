@@ -15,17 +15,17 @@
 
 %run guile
 
-%var web-details
+%var web::details
 
 %use (hashmap-ref) "./euphrates/hashmap.scm"
-%use (web-callcontext/p) "./web-callcontext-p.scm"
+%use (web::callcontext/p) "./web-callcontext-p.scm"
 %use (callcontext-token) "./web-callcontext.scm"
-%use (web-get-query) "./web-get-query.scm"
-%use (web-iterate-profun-results) "./web-iterate-profun-results.scm"
-%use (web-make-html-response) "./web-make-html-response.scm"
+%use (web::get-query) "./web-get-query.scm"
+%use (web::iterate-profun-results) "./web-iterate-profun-results.scm"
+%use (web::make-html-response) "./web-make-html-response.scm"
 %use (webcore::ask) "./webcore-ask.scm"
 
-(define (web-actual-details entry)
+(define (web::actual-details entry)
   (define table
     (with-output-to-string
       (lambda _
@@ -48,11 +48,11 @@
          entry)
         (display "</table>\n"))))
 
-  (web-make-html-response table))
+  (web::make-html-response table))
 
-(define (web-details)
-  (define callctx (web-callcontext/p))
-  (define ctxq (web-get-query))
+(define (web::details)
+  (define callctx (web::callcontext/p))
+  (define ctxq (web::get-query))
   (define vid (hashmap-ref ctxq 'vid #f))
   (define id (hashmap-ref ctxq 'id #f))
   (define key (callcontext-token callctx))
@@ -67,6 +67,6 @@
        (goal E)
        )))
 
-  (web-iterate-profun-results
+  (web::iterate-profun-results
    result (E)
-   (web-actual-details E)))
+   (web::actual-details E)))

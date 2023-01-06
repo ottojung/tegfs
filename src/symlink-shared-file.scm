@@ -23,12 +23,12 @@
 %use (file-or-directory-exists?) "./euphrates/file-or-directory-exists-q.scm"
 %use (get-current-directory) "./euphrates/get-current-directory.scm"
 %use (context-sharedir) "./web-context.scm"
-%use (web-get-shared-fullpath) "./web-get-shared-fullpath.scm"
+%use (web::get-shared-fullpath) "./web-get-shared-fullpath.scm"
 
 (define (symlink-shared-file ctx target-fullpath recepientid)
   (define sharedir (context-sharedir ctx))
   (define shared-fullpath
-    (web-get-shared-fullpath
+    (web::get-shared-fullpath
      sharedir target-fullpath recepientid))
   (define target-fullpath/abs
     (if (absolute-posix-path? target-fullpath) target-fullpath

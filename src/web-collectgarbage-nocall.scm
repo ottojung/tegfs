@@ -15,7 +15,7 @@
 
 %run guile
 
-%var web-collectgarbage/nocall
+%var web::collectgarbage/nocall
 
 %use (directory-files) "./euphrates/directory-files.scm"
 %use (file-delete) "./euphrates/file-delete.scm"
@@ -45,7 +45,7 @@
    ((info current-time)
     (< 0 (sharedinfo-time-left info current-time)))))
 
-(define (web-collectgarbage/nocall ctx)
+(define (web::collectgarbage/nocall ctx)
   (define now (or (current-time/p)
                   (raisu 'current-time-is-not-set)))
   (define sharedir (context-sharedir ctx))

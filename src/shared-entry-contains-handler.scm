@@ -30,8 +30,8 @@
 %use (context-filemap/2) "./web-context.scm"
 
 (define shared-entry-contains-handler
-  (lambda (web-context)
-    (define filemap/2 (context-filemap/2 web-context))
+  (lambda (web::context)
+    (define filemap/2 (context-filemap/2 web::context))
 
     (profun-op-lambda
      (ctx (vid file)

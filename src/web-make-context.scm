@@ -15,20 +15,20 @@
 
 %run guile
 
-%var web-make-context
+%var web::make-context
 
 %use (file-or-directory-exists?) "./euphrates/file-or-directory-exists-q.scm"
 %use (hashmap-set! make-hashmap) "./euphrates/hashmap.scm"
 %use (make-directories) "./euphrates/make-directories.scm"
 %use (raisu) "./euphrates/raisu.scm"
 %use (~a) "./euphrates/tilda-a.scm"
-%use (default-web-port) "./default-web-port.scm"
+%use (web::default-port) "./web-default-port.scm"
 %use (filemap-make/empty) "./filemap.scm"
 %use (get-config) "./get-config.scm"
 %use (keyword-config-port) "./keyword-config-port.scm"
 %use (context-ctr) "./web-context.scm"
 
-(define (web-make-context)
+(define (web::make-context)
   (define passwords (make-hashmap))
   (define tokens (make-hashmap))
 
@@ -56,7 +56,7 @@
   (define port/string
     (cadr
      (or (assoc keyword-config-port config)
-         (list (number->string default-web-port)))))
+         (list (number->string web::default-port)))))
   (define port
     (or (string->number (~a port/string))
         (raisu 'port-is-not-a-number "Variable 'port must be a number" port/string)))

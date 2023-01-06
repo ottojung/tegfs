@@ -15,7 +15,7 @@
 
 %run guile
 
-%var web-get-sharedinfo-url
+%var web::get-sharedinfo-url
 
 %use (append-posix-path) "./euphrates/append-posix-path.scm"
 %use (file-is-directory?/no-readlink) "./euphrates/file-is-directory-q-no-readlink.scm"
@@ -27,9 +27,9 @@
 %use (a-weblink?) "./a-weblink-q.scm"
 %use (sharedinfo-recepientid sharedinfo-senderid sharedinfo-sourcepath) "./sharedinfo.scm"
 %use (context-fileserver) "./web-context.scm"
-%use (web-get-shared-link) "./web-get-shared-link.scm"
+%use (web::get-shared-link) "./web-get-shared-link.scm"
 
-(define (web-get-sharedinfo-url ctx container-info info)
+(define (web::get-sharedinfo-url ctx container-info info)
   (define vid (sharedinfo-senderid info))
   (define target-fullpath (sharedinfo-sourcepath info))
   (define recepientid (sharedinfo-recepientid info))
@@ -54,7 +54,7 @@
     (append-posix-path fileserver relative-path))
 
   (define (share-toplevel)
-    (web-get-shared-link fileserver target-fullpath recepientid))
+    (web::get-shared-link fileserver target-fullpath recepientid))
 
   (cond
    ((a-weblink? target-fullpath)

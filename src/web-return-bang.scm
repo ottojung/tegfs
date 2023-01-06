@@ -15,7 +15,7 @@
 
 %run guile
 
-%var web-return!
+%var web::return!
 
-(define (web-return! stats body)
+(define (web::return! stats body)
   (values stats body))

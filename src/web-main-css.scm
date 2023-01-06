@@ -15,10 +15,10 @@
 
 %run guile
 
-%var web-main.css
+%var web::main.css
 
-%use (define-web-static-file) "./define-web-static-file.scm"
-%use (web-style) "./web-style.scm"
+%use (web::define-static-file) "./web-define-static-file.scm"
+%use (web::style) "./web-style.scm"
 
-(define-web-static-file web-main.css
-  '(text/css) web-style)
+(web::define-static-file web::main.css
+  '(text/css) web::style)

@@ -15,11 +15,11 @@
 
 %run guile
 
-%var define-web-static-file
+%var web::define-static-file
 
 
 %use (raisu) "./euphrates/raisu.scm"
-%use (web-basic-headers) "./web-basic-headers.scm"
+%use (web::basic-headers) "./web-basic-headers.scm"
 
 %for (COMPILER "guile")
 
@@ -29,17 +29,17 @@
 
 %end
 
-(define (web-respond-with-a-file type bv)
+(define (web::respond-with-a-file type bv)
   (values
    (build-response
     #:code 200
     #:headers
-    (append web-basic-headers
+    (append web::basic-headers
             `((content-type . ,type)
               (Cache-Control . "max-age=3600, public, private"))))
    bv))
 
-(define-syntax define-web-static-file
+(define-syntax web::define-static-file
   (syntax-rules ()
     ((_ name type content)
      (define name
@@ -49,4 +49,4 @@
             ((bytevector? content) content)
             ((string? content) (string->utf8 content))
             (else (raisu 'unknown-content-type content))))
-         (lambda _ (web-respond-with-a-file type bv)))))))
+         (lambda _ (web::respond-with-a-file type bv)))))))

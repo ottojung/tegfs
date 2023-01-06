@@ -15,7 +15,7 @@
 
 %run guile
 
-%var web-display-entry
+%var web::display-entry
 
 %use (assq-or) "./euphrates/assq-or.scm"
 %use (path-get-basename) "./euphrates/path-get-basename.scm"
@@ -24,7 +24,7 @@
 %use (keyword-id) "./keyword-id.scm"
 %use (keyword-target) "./keyword-target.scm"
 %use (keyword-title) "./keyword-title.scm"
-%use (web-get-full-link) "./web-get-full-link.scm"
+%use (web::get-full-link) "./web-get-full-link.scm"
 
 (define (display-preview target preview-link)
   (define default-preview
@@ -37,7 +37,7 @@
 (define (maybe-display-preview entry maybe-full-senderid preview-link)
   (define target (assq-or keyword-target entry #f))
   (when target
-    (let ((full-link (web-get-full-link entry target maybe-full-senderid)))
+    (let ((full-link (web::get-full-link entry target maybe-full-senderid)))
       (when full-link
         (display "<a href=") (write full-link) (display ">")
         (display-preview target preview-link)
@@ -66,7 +66,7 @@
     (display "</a>"))
   )
 
-(define (web-display-entry entry maybe-full-senderid preview-link)
+(define (web::display-entry entry maybe-full-senderid preview-link)
   (display "<div class='card'>")
   (display "<div>")
   (maybe-display-preview entry maybe-full-senderid preview-link)

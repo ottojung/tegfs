@@ -15,14 +15,14 @@
 
 %run guile
 
-%var web-query-display-results
+%var web::query-display-results
 
 %use (fn-alist) "./euphrates/fn-alist.scm"
-%use (web-display-entry) "./web-display-entry.scm"
-%use (web-make-html-response) "./web-make-html-response.scm"
+%use (web::display-entry) "./web-display-entry.scm"
+%use (web::make-html-response) "./web-make-html-response.scm"
 
-(define (web-query-display-results equals)
-  (web-make-html-response
+(define (web::query-display-results equals)
+  (web::make-html-response
    (lambda _
      (display "<div class='cards'>")
      (for-each
@@ -31,7 +31,7 @@
        (define entry E)
        (define maybe-full-senderid F)
        (define preview-link PL)
-       (web-display-entry entry maybe-full-senderid preview-link))
+       (web::display-entry entry maybe-full-senderid preview-link))
       equals)
      (display "</div>"))))
 

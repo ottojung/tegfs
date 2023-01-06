@@ -15,10 +15,10 @@
 
 %run guile
 
-%var web-upload
+%var web::upload
 
-%use (web-make-upload-body) "./web-make-upload-body.scm"
-%use (web-make-html-response) "./web-make-html-response.scm"
+%use (web::make-upload-body) "./web-make-upload-body.scm"
+%use (web::make-html-response) "./web-make-html-response.scm"
 
-(define (web-upload)
-  (web-make-html-response (web-make-upload-body)))
+(define (web::upload)
+  (web::make-html-response (web::make-upload-body)))

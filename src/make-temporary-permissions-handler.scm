@@ -32,7 +32,7 @@
   (get-random-network-name))
 
 (define make-temporary-permissions-handler
-  (lambda (web-context)
+  (lambda (web::context)
     (profun-op-lambda
      :with-env
      (ctx (live-duration actual-duration password key) (live-duration-name actual-duration-name password-name key-name))
@@ -66,7 +66,7 @@
          (define detailsaccess? #f) ;; TODO: maybe allow sometimes
          (define share-longer-than-view? #f) ;; TODO: maybe allow sometimes
          (define perm
-           (make-permission! web-context live-duration* admin? maybepassword uploadaccess? detailsaccess? share-longer-than-view?))
+           (make-permission! web::context live-duration* admin? maybepassword uploadaccess? detailsaccess? share-longer-than-view?))
          (define its-key (permission-token perm))
          (define actual (permission-time perm))
 

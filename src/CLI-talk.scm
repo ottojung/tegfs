@@ -25,7 +25,7 @@
 %use (~s) "./euphrates/tilda-s.scm"
 %use (words->string) "./euphrates/words-to-string.scm"
 %use (tegfs-make-communicator) "./tegfs-make-communicator.scm"
-%use (web-make-communicator) "./web-make-communicator.scm"
+%use (web::make-communicator) "./web-make-communicator.scm"
 %use (with-current-time) "./with-current-time.scm"
 
 (define (CLI-talk --web)
@@ -44,7 +44,7 @@
 
   (define comm
     (if --web
-        (web-make-communicator)
+        (web::make-communicator)
         (tegfs-make-communicator)))
 
   (define (send-to-server echo? read-sentence)

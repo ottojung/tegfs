@@ -15,7 +15,7 @@
 
 %run guile
 
-%var web-link-shared-handler
+%var web::link-shared-handler
 
 %use (profun-set) "./euphrates/profun-accept.scm"
 %use (make-profun-error) "./euphrates/profun-error.scm"
@@ -26,17 +26,17 @@
 %use (sharedinfo-recepientid sharedinfo-sourcepath) "./sharedinfo.scm"
 %use (symlink-shared-file) "./symlink-shared-file.scm"
 %use (context-filemap/2) "./web-context.scm"
-%use (web-get-adam-info) "./web-get-adam-info.scm"
-%use (web-get-sharedinfo-url) "./web-get-sharedinfo-url.scm"
+%use (web::get-adam-info) "./web-get-adam-info.scm"
+%use (web::get-sharedinfo-url) "./web-get-sharedinfo-url.scm"
 
-(define web-link-shared-handler
-  (lambda (web-context)
+(define web::link-shared-handler
+  (lambda (web::context)
     (profun-op-lambda
      (ctx (R L) (R-name L-name))
 
      (define senderid R)
 
-     (define filemap/2 (context-filemap/2 web-context))
+     (define filemap/2 (context-filemap/2 web::context))
      (define info (filemap-ref-by-senderid filemap/2 senderid #f))
      (define target-fullpath
        (and info (sharedinfo-sourcepath info)))
@@ -44,7 +44,7 @@
        (and info (sharedinfo-recepientid info)))
 
      (define adam-info
-       (and info (web-get-adam-info filemap/2 info)))
+       (and info (web::get-adam-info filemap/2 info)))
 
      (define toplevel-entry?
        (eq? adam-info info))
@@ -62,8 +62,8 @@
        (make-profun-error 'bad-senderid senderid))
       (else
        (if target-fullpath
-           (let ((location (web-get-sharedinfo-url web-context container-info info)))
+           (let ((location (web::get-sharedinfo-url web::context container-info info)))
              (symlink-shared-file
-              web-context target-fullpath recepientid)
+              web::context target-fullpath recepientid)
              (profun-set (L-name <- location)))
            (profun-set (L-name <- #f))))))))

@@ -26,9 +26,9 @@
 %use (tegfs-query/open) "./tegfs-query-open.scm"
 %use (context-filemap/2) "./web-context.scm"
 
-(define (webcore-entry-handler-get-iter web-context)
+(define (webcore-entry-handler-get-iter web::context)
   (lambda (opening-properties query E-name)
-    (define filemap/2 (context-filemap/2 web-context))
+    (define filemap/2 (context-filemap/2 web::context))
     (define perm (webcore::permissions/p))
     (define iter0 (tegfs-query/open opening-properties query))
     (define (iter)
@@ -63,5 +63,5 @@
      (else iter))))
 
 (define webcore::entry
-  (lambda (web-context)
-    (core::entry/generic (webcore-entry-handler-get-iter web-context))))
+  (lambda (web::context)
+    (core::entry/generic (webcore-entry-handler-get-iter web::context))))

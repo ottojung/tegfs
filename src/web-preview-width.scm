@@ -15,6 +15,6 @@
 
 %run guile
 
-%var web-preview-width
+%var web::preview-width
 
-(define web-preview-width 400)
+(define web::preview-width 400)

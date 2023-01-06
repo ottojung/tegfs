@@ -15,7 +15,7 @@
 
 %run guile
 
-%var web-share-entry-generic-handler
+%var web::share-entry-generic-handler
 
 %use (profun-set) "./euphrates/profun-accept.scm"
 %use (make-profun-error) "./euphrates/profun-error.scm"
@@ -26,12 +26,12 @@
 %use (entry-target-fullpath) "./entry-target-fullpath.scm"
 %use (permission?) "./permission.scm"
 %use (sharedinfo-senderid sharedinfo-stime) "./sharedinfo.scm"
-%use (web-share-file/dont-link-yet) "./web-share-file.scm"
+%use (web::share-file/dont-link-yet) "./web-share-file.scm"
 %use (webcore::permissions/p) "./webcore-parameters.scm"
 
-(define web-share-entry-generic-handler
+(define web::share-entry-generic-handler
   (lambda (get-shared-path)
-    (lambda (web-context)
+    (lambda (web::context)
       (profun-op-lambda
        :with-env env
        (ctx (entry max-sharing-time actual-sharing-time senderid)
@@ -44,8 +44,8 @@
          (if generic-fullpath
              (let ()
                (define info
-                 (web-share-file/dont-link-yet
-                  web-context perm entry generic-fullpath max-sharing-time))
+                 (web::share-file/dont-link-yet
+                  web::context perm entry generic-fullpath max-sharing-time))
                (define vid (and info (sharedinfo-senderid info)))
                (define actual (if info (sharedinfo-stime info) 0))
                (if (profun-bound-value? actual-sharing-time)

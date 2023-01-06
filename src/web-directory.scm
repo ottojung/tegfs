@@ -15,26 +15,26 @@
 
 %run guile
 
-%var web-directory
+%var web::directory
 
 %use (hashmap-ref) "./euphrates/hashmap.scm"
 %use (default-full-sharing-time) "./default-full-sharing-time.scm"
 %use (default-preview-sharing-time) "./default-preview-sharing-time.scm"
-%use (web-bad-request) "./web-bad-request.scm"
-%use (web-callcontext/p) "./web-callcontext-p.scm"
+%use (web::bad-request) "./web-bad-request.scm"
+%use (web::callcontext/p) "./web-callcontext-p.scm"
 %use (callcontext-token) "./web-callcontext.scm"
-%use (web-get-query) "./web-get-query.scm"
-%use (web-handle-profun-results) "./web-handle-profun-results.scm"
-%use (web-query-display-results) "./web-query-display-results.scm"
+%use (web::get-query) "./web-get-query.scm"
+%use (web::handle-profun-results) "./web-handle-profun-results.scm"
+%use (web::query-display-results) "./web-query-display-results.scm"
 %use (webcore::ask) "./webcore-ask.scm"
 
-(define (web-directory)
-  (define callctx (web-callcontext/p))
-  (define ctxq (web-get-query))
+(define (web::directory)
+  (define callctx (web::callcontext/p))
+  (define ctxq (web::get-query))
 
   (define vid
     (or (hashmap-ref ctxq 'vid #f)
-        (web-bad-request "Request query missing requiered 'd' argument")))
+        (web::bad-request "Request query missing requiered 'd' argument")))
 
   (define result
     (webcore::ask
@@ -47,7 +47,7 @@
        more (99999)
        )))
 
-  (web-handle-profun-results result web-directory-handle))
+  (web::handle-profun-results result web::directory-handle))
 
-(define (web-directory-handle equals)
-  (web-query-display-results equals))
+(define (web::directory-handle equals)
+  (web::query-display-results equals))

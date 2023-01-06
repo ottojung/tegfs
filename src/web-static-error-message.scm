@@ -15,12 +15,12 @@
 
 %run guile
 
-%var web-static-error-message
+%var web::static-error-message
 
-%use (web-message-template) "./web-message-template.scm"
-%use (web-make-html-response) "./web-make-html-response.scm"
+%use (web::message-template) "./web-message-template.scm"
+%use (web::make-html-response) "./web-make-html-response.scm"
 
-(define (web-static-error-message status message)
-  (define xml (web-message-template message))
+(define (web::static-error-message status message)
+  (define xml (web::message-template message))
   (lambda _
-    (web-make-html-response xml #:status status)))
+    (web::make-html-response xml #:status status)))

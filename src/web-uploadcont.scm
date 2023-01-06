@@ -15,7 +15,7 @@
 
 %run guile
 
-%var web-uploadcont
+%var web::uploadcont
 
 %use (append-posix-path) "./euphrates/append-posix-path.scm"
 %use (appcomp) "./euphrates/comp.scm"
@@ -33,12 +33,12 @@
 %use (keyword-tags) "./keyword-tags.scm"
 %use (keyword-target) "./keyword-target.scm"
 %use (keyword-title) "./keyword-title.scm"
-%use (web-body-not-found) "./web-body-not-found.scm"
-%use (web-callcontext/p) "./web-callcontext-p.scm"
+%use (web::body-not-found) "./web-body-not-found.scm"
+%use (web::callcontext/p) "./web-callcontext-p.scm"
 %use (callcontext-body callcontext-token) "./web-callcontext.scm"
-%use (web-handle-profun-results/or) "./web-handle-profun-results.scm"
+%use (web::handle-profun-results/or) "./web-handle-profun-results.scm"
 %use (parse-multipart-as-hashmap) "./web-parse-multipart.scm"
-%use (web-static-error-message) "./web-static-error-message.scm"
+%use (web::static-error-message) "./web-static-error-message.scm"
 %use (webcore::ask) "./webcore-ask.scm"
 
 %for (COMPILER "guile")
@@ -50,18 +50,18 @@
 (define upload-registry-filename "upload/upload.tegfs.reg.lisp")
 
 (define (error-tags-list tags)
-  (web-static-error-message 400 (string-append "Some tags are ambiguous: " (~a tags))))
+  (web::static-error-message 400 (string-append "Some tags are ambiguous: " (~a tags))))
 
 (define duplicates-tags-list
-  (web-static-error-message 400 "Tags contain duplicates"))
+  (web::static-error-message 400 "Tags contain duplicates"))
 
 (define (upload-success-page <target>)
   (if <target>
-      (web-static-error-message
+      (web::static-error-message
        200 (string-append "Uploaded successfully to filename: " <target>))
-      (web-static-error-message 200 "Uploaded successfully")))
+      (web::static-error-message 200 "Uploaded successfully")))
 
-(define (web-uploadcont/2 callctx body/bytes)
+(define (web::uploadcont/2 callctx body/bytes)
   (define body/hash (parse-multipart-as-hashmap body/bytes))
 
   (define (get-data a-key)
@@ -133,14 +133,14 @@
            (add-entry ,upload-registry-filename ,entry)
            )))
 
-      (web-handle-profun-results/or
+      (web::handle-profun-results/or
        result
        (lambda _ ((upload-success-page <target>)))
        (lambda _ (when full-filename (file-delete full-filename))))))))
 
-(define (web-uploadcont)
-  (define callctx (web-callcontext/p))
+(define (web::uploadcont)
+  (define callctx (web::callcontext/p))
   (define body/bytes (callcontext-body callctx))
   (if body/bytes
-      (web-uploadcont/2 callctx body/bytes)
-      (web-body-not-found)))
+      (web::uploadcont/2 callctx body/bytes)
+      (web::body-not-found)))

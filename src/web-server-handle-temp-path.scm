@@ -17,7 +17,7 @@
 
 %var web::server-handle-temp-path
 
-%use (web-not-found) "./web-not-found.scm"
+%use (web::not-found) "./web-not-found.scm"
 %use (web::redirect) "./web-redirect.scm"
 %use (web::temp-path-get) "./web-temp-path-get.scm"
 %use (web::temp-path-destination) "./web-temp-path.scm"
@@ -27,4 +27,4 @@
   (define destination (and path (web::temp-path-destination path)))
   (if destination
       (web::redirect callctx destination #f)
-      (web-not-found)))
+      (web::not-found)))

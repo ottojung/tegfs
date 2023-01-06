@@ -15,30 +15,30 @@
 
 %run guile
 
-%var web-logincont
+%var web::logincont
 
 %use (define-tuple) "./euphrates/define-tuple.scm"
 %use (fn) "./euphrates/fn.scm"
 %use (list-singleton?) "./euphrates/list-singleton-q.scm"
 %use (raisu) "./euphrates/raisu.scm"
 %use (string-split/simple) "./euphrates/string-split-simple.scm"
-%use (web-body-not-found) "./web-body-not-found.scm"
-%use (web-callcontext/p) "./web-callcontext-p.scm"
+%use (web::body-not-found) "./web-body-not-found.scm"
+%use (web::callcontext/p) "./web-callcontext-p.scm"
 %use (callcontext-body) "./web-callcontext.scm"
-%use (web-login-failed-body) "./web-login-failed-body.scm"
-%use (web-login-success-body) "./web-login-success-body.scm"
-%use (web-make-html-response) "./web-make-html-response.scm"
-%use (web-set-cookie-header) "./web-set-cookie-header.scm"
+%use (web::login-failed-body) "./web-login-failed-body.scm"
+%use (web::login-success-body) "./web-login-success-body.scm"
+%use (web::make-html-response) "./web-make-html-response.scm"
+%use (web::set-cookie-header) "./web-set-cookie-header.scm"
 %use (webcore::ask) "./webcore-ask.scm"
 
 %for (COMPILER "guile")
 (use-modules (ice-9 iconv))
 %end
 
-(define (web-logincont)
-  (define body/bytes (callcontext-body (web-callcontext/p)))
+(define (web::logincont)
+  (define body/bytes (callcontext-body (web::callcontext/p)))
   (if (not body/bytes)
-      (web-body-not-found)
+      (web::body-not-found)
       (let ()
         (define body
           (bytevector->string body/bytes "utf-8"))
@@ -71,8 +71,8 @@
           ((its)
            (let* ((word (cadr result))
                   (token (list-ref word 2)))
-             (web-make-html-response
-              web-login-success-body
-              #:extra-headers (list (web-set-cookie-header "pwdtoken" token)))))
+             (web::make-html-response
+              web::login-success-body
+              #:extra-headers (list (web::set-cookie-header "pwdtoken" token)))))
           (else
-           (web-make-html-response web-login-failed-body))))))
+           (web::make-html-response web::login-failed-body))))))

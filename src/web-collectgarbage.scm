@@ -15,23 +15,23 @@
 
 %run guile
 
-%var web-collectgarbage
+%var web::collectgarbage
 
-%use (web-basic-headers) "./web-basic-headers.scm"
-%use (web-return!) "./web-return-bang.scm"
+%use (web::basic-headers) "./web-basic-headers.scm"
+%use (web::return!) "./web-return-bang.scm"
 %use (webcore::ask) "./webcore-ask.scm"
 
 %for (COMPILER "guile")
 (use-modules (web response))
 %end
 
-(define (web-collectgarbage)
+(define (web::collectgarbage)
   (webcore::ask `(whats (collectgarbage)))
 
-  (web-return!
+  (web::return!
    (build-response
     #:code 200
     #:headers
-    (append web-basic-headers
+    (append web::basic-headers
             `((Cache-Control . "no-cache"))))
    "ok\n"))

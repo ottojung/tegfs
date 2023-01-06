@@ -15,11 +15,11 @@
 
 %run guile
 
-%var web-set-cookie-header
+%var web::set-cookie-header
 
 %use (~a) "./euphrates/tilda-a.scm"
 
-(define (web-set-cookie-header key value)
+(define (web::set-cookie-header key value)
   ;; TODO: make cookies expire!!!!!
   (cons 'set-cookie
         (string-append (~a key) "=" (~a value)

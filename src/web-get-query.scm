@@ -15,11 +15,11 @@
 
 %run guile
 
-%var web-get-query
+%var web::get-query
 
-%use (web-callcontext/p) "./web-callcontext-p.scm"
+%use (web::callcontext/p) "./web-callcontext-p.scm"
 %use (callcontext-query) "./web-callcontext.scm"
 
-(define (web-get-query)
-  (define callctx (web-callcontext/p))
+(define (web::get-query)
+  (define callctx (web::callcontext/p))
   (callcontext-query callctx))

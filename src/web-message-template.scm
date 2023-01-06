@@ -15,9 +15,9 @@
 
 %run guile
 
-%var web-message-template
+%var web::message-template
 
-%use (web-form-template) "./web-form-template.scm"
+%use (web::form-template) "./web-form-template.scm"
 
 %for (COMPILER "guile")
 
@@ -25,9 +25,9 @@
 
 %end
 
-(define (web-message-template message)
+(define (web::message-template message)
   (define xml
     (with-output-to-string
       (lambda _
         (sxml->xml `(label (b ,message))))))
-  (web-form-template #f xml))
+  (web::form-template #f xml))

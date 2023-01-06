@@ -15,7 +15,7 @@
 
 %run guile
 
-%var web-try-uri-decode
+%var web::try-uri-decode
 
 %use (catch-any) "./euphrates/catch-any.scm"
 %use (raisu) "./euphrates/raisu.scm"
@@ -26,7 +26,7 @@
 
 %end
 
-(define (web-try-uri-decode url)
+(define (web::try-uri-decode url)
   (cond
    ((string? url)
     (catch-any

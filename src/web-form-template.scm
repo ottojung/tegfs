@@ -15,9 +15,9 @@
 
 %run guile
 
-%var web-form-template
+%var web::form-template
 
-(define (web-form-template form-params insides)
+(define (web::form-template form-params insides)
   (string-append
    "<div class='root1'><div class='subc'><form "
    (or form-params "")

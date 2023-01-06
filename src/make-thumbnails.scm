@@ -40,8 +40,8 @@
 %use (fatal) "./fatal.scm"
 %use (file-is-image?) "./file-is-image-q.scm"
 %use (file-is-video?) "./file-is-video-q.scm"
-%use (web-preview-height) "./web-preview-height.scm"
-%use (web-preview-width) "./web-preview-width.scm"
+%use (web::preview-height) "./web-preview-height.scm"
+%use (web::preview-width) "./web-preview-width.scm"
 
 (define (tegfs-make-thumbnails/parse <input> <output>)
   (catchu-case
@@ -49,7 +49,7 @@
 
    (('could-not-recognize-filetype)
     (fatal "Could not recognize the file type"))
-   (('no-web-thumbnails)
+   (('no-web::thumbnails)
     (fatal "The webpage does not have a thumbnail"))
    (('could-not-convert-image)
     (fatal "Image conversion failed"))
@@ -121,7 +121,7 @@
     (file-delete temp))
 
   (when (string-null? link2)
-    (raisu 'no-web-thumbnails))
+    (raisu 'no-web::thumbnails))
 
   (let* ((link/full
           (url-goto <input> link2))
@@ -146,8 +146,8 @@
            " ~a "
            )
           <input>
-          (* web-preview-width web-preview-height)
-          web-preview-width web-preview-height
+          (* web::preview-width web::preview-height)
+          web::preview-width web::preview-height
           <output>))
       'could-not-convert-image))
 
@@ -200,8 +200,8 @@
            " -extent ~ax~a "
            " ~a/*.png"
            " ~a ")
-          web-preview-width web-preview-height
-          web-preview-width web-preview-height
+          web::preview-width web::preview-height
+          web::preview-width web::preview-height
           dir
           <output>)))
     (system-fmt "rm -rf ~a" dir)

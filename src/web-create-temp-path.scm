@@ -18,9 +18,9 @@
 %var web::create-temp-path
 
 (define (web::create-temp-path destination live-duration)
-  (define table (web-temp-paths-table/p))
+  (define table (web::temp-paths-table/p))
   (define tempid (get-random-network-name))
-  (define path (web-temp-path-make tempid destination live-duration))
+  (define path (web::temp-path-make tempid destination live-duration))
 
   (hashmap-set! table tempid path)
 

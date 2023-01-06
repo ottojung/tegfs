@@ -15,15 +15,15 @@
 
 %run guile
 
-%var web-previewunknownurl
+%var web::previewunknownurl
 
-%use (define-web-static-file) "./define-web-static-file.scm"
-%use (web-preview-height) "./web-preview-height.scm"
-%use (web-preview-width) "./web-preview-width.scm"
-%use (web-url-icon/svg) "./web-url-icon-svg.scm"
+%use (web::define-static-file) "./web-define-static-file.scm"
+%use (web::preview-height) "./web-preview-height.scm"
+%use (web::preview-width) "./web-preview-width.scm"
+%use (web::url-icon/svg) "./web-url-icon-svg.scm"
 
 (define unknownurl-image-string
-  (web-url-icon/svg web-preview-width web-preview-height))
+  (web::url-icon/svg web::preview-width web::preview-height))
 
-(define-web-static-file web-previewunknownurl
+(web::define-static-file web::previewunknownurl
   '(image/svg+xml) unknownurl-image-string)

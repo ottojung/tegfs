@@ -15,8 +15,8 @@
 
 %run guile
 
-%var web-make-callcontext
-%var web-make-callcontext/raw
+%var web::make-callcontext
+%var web::make-callcontext/raw
 
 %use (alist->hashmap hashmap-ref make-hashmap) "./euphrates/hashmap.scm"
 %use (memconst) "./euphrates/memconst.scm"
@@ -25,7 +25,7 @@
 %use (string-split/simple) "./euphrates/string-split-simple.scm"
 %use (string-strip) "./euphrates/string-strip.scm"
 %use (callcontext-ctr set-callcontext-key!) "./web-callcontext.scm"
-%use (web-try-uri-decode) "./web-try-uri-decode.scm"
+%use (web::try-uri-decode) "./web-try-uri-decode.scm"
 
 %for (COMPILER "guile")
 
@@ -74,7 +74,7 @@
   (define key-values
     (map (lambda (sp)
            (define-values (key eq val) (string-split-3 #\= sp))
-           (cons (string->symbol key) (web-try-uri-decode val)))
+           (cons (string->symbol key) (web::try-uri-decode val)))
          split))
   (alist->hashmap key-values))
 
@@ -83,15 +83,15 @@
       (query->hashmap query/encoded)
       (make-hashmap)))
 
-(define (web-make-callcontext req body)
+(define (web::make-callcontext req body)
   (define uri (request-uri req))
   (define path (uri-path uri))
   (define url (uri->string uri))
   (define query/encoded (uri-query uri))
   (define headers (request-headers req))
-  (web-make-callcontext/raw url path query/encoded headers body))
+  (web::make-callcontext/raw url path query/encoded headers body))
 
-(define (web-make-callcontext/raw url path query/encoded headers body)
+(define (web::make-callcontext/raw url path query/encoded headers body)
   (define qH (memconst (initialize-query query/encoded)))
   (letrec
       ((tokenfn (memconst (get-access-token callctx (qH) headers)))

@@ -15,11 +15,11 @@
 
 %run guile
 
-%var web-login-body
+%var web::login-body
 
-%use (web-form-template) "./web-form-template.scm"
+%use (web::form-template) "./web-form-template.scm"
 
-(define web-login-body
-  (web-form-template "action='logincont' enctype='application/x-www-form-urlencoded'" "
+(define web::login-body
+  (web::form-template "action='logincont' enctype='application/x-www-form-urlencoded'" "
     <input type='password' placeholder='Enter Password' name='psw' required autofocus>
     <button type='submit'>Login</button>"))

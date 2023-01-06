@@ -15,9 +15,9 @@
 
 %run guile
 
-%var web-style
+%var web::style
 
-(define web-style
+(define web::style
   "
 .subc {
   position: absolute;

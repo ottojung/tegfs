@@ -15,12 +15,12 @@
 
 %run guile
 
-%var web-get-shared-link
+%var web::get-shared-link
 
 %use (append-posix-path) "./euphrates/append-posix-path.scm"
 %use (get-sharedname) "./get-sharedname.scm"
 
-(define (web-get-shared-link fileserver target-fullpath recepientid)
+(define (web::get-shared-link fileserver target-fullpath recepientid)
   (define sharedname (get-sharedname target-fullpath recepientid))
   (append-posix-path fileserver sharedname))
 

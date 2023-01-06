@@ -15,9 +15,9 @@
 
 %run guile
 
-%var web-share-entry-full-handler
+%var web::share-entry-full-handler
 
-%use (web-share-entry-generic-handler) "./web-share-entry-generic-handler.scm"
+%use (web::share-entry-generic-handler) "./web-share-entry-generic-handler.scm"
 
-(define web-share-entry-full-handler
-  (web-share-entry-generic-handler identity))
+(define web::share-entry-full-handler
+  (web::share-entry-generic-handler identity))

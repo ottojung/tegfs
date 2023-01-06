@@ -19,38 +19,38 @@
 
 %use (alist->hashmap hashmap-ref) "./euphrates/hashmap.scm"
 %use (~a) "./euphrates/tilda-a.scm"
-%use (web-callcontext/p) "./web-callcontext-p.scm"
+%use (web::callcontext/p) "./web-callcontext-p.scm"
 %use (callcontext-path) "./web-callcontext.scm"
-%use (web-collectgarbage) "./web-collectgarbage.scm"
-%use (web-details) "./web-details.scm"
-%use (web-directory) "./web-directory.scm"
-%use (web-full) "./web-full.scm"
-%use (web-login) "./web-login.scm"
-%use (web-logincont) "./web-logincont.scm"
-%use (web-main.css) "./web-main-css.scm"
-%use (web-previewunknown) "./web-previewunknown.scm"
-%use (web-previewunknownurl) "./web-previewunknownurl.scm"
-%use (web-query) "./web-query.scm"
+%use (web::collectgarbage) "./web-collectgarbage.scm"
+%use (web::details) "./web-details.scm"
+%use (web::directory) "./web-directory.scm"
+%use (web::full) "./web-full.scm"
+%use (web::login) "./web-login.scm"
+%use (web::logincont) "./web-logincont.scm"
+%use (web::main.css) "./web-main-css.scm"
+%use (web::previewunknown) "./web-previewunknown.scm"
+%use (web::previewunknownurl) "./web-previewunknownurl.scm"
+%use (web::query) "./web-query.scm"
 %use (web::server-handle-temp-path) "./web-server-handle-temp-path.scm"
-%use (web-share) "./web-share.scm"
-%use (web-upload) "./web-upload.scm"
-%use (web-uploadcont) "./web-uploadcont.scm"
+%use (web::share) "./web-share.scm"
+%use (web::upload) "./web-upload.scm"
+%use (web::uploadcont) "./web-uploadcont.scm"
 
 (define handlers-config
-  `((/login ,web-login)
-    (/logincont ,web-logincont)
-    (/collectgarbage ,web-collectgarbage)
-    (/query ,web-query)
-    (/directory ,web-directory)
-    (/details ,web-details)
-    (/full ,web-full)
-    (/upload ,web-upload)
-    (/uploadcont ,web-uploadcont)
-    (/share ,web-share)
+  `((/login ,web::login)
+    (/logincont ,web::logincont)
+    (/collectgarbage ,web::collectgarbage)
+    (/query ,web::query)
+    (/directory ,web::directory)
+    (/details ,web::details)
+    (/full ,web::full)
+    (/upload ,web::upload)
+    (/uploadcont ,web::uploadcont)
+    (/share ,web::share)
 
-    (/static/main.css ,web-main.css)
-    (/static/previewunknown.svg ,web-previewunknown)
-    (/static/previewunknownurl.svg ,web-previewunknownurl)
+    (/static/main.css ,web::main.css)
+    (/static/previewunknown.svg ,web::previewunknown)
+    (/static/previewunknownurl.svg ,web::previewunknownurl)
     ))
 
 (define handlers-funcmap
@@ -60,7 +60,7 @@
     handlers-config)))
 
 (define (web::server-handle callctx)
-  (parameterize ((web-callcontext/p callctx))
+  (parameterize ((web::callcontext/p callctx))
     (define path (callcontext-path callctx))
     (define func (hashmap-ref handlers-funcmap path #f))
     (if func (func)

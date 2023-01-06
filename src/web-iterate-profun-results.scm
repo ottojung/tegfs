@@ -15,13 +15,13 @@
 
 %run guile
 
-%var web-iterate-profun-results
+%var web::iterate-profun-results
 
 %use (fn-alist) "./euphrates/fn-alist.scm"
 %use (list-singleton?) "./euphrates/list-singleton-q.scm"
-%use (web-handle-profun-results) "./web-handle-profun-results.scm"
+%use (web::handle-profun-results) "./web-handle-profun-results.scm"
 
-(define-syntax web-iterate-profun-results
+(define-syntax web::iterate-profun-results
   (syntax-rules ()
     ((_ results (name . names) . bodies)
      (let* ((fun (fn-alist (name . names) . bodies))
@@ -30,4 +30,4 @@
                (if (list-singleton? equals)
                    (fun (car equals))
                    (for-each fun equals)))))
-       (web-handle-profun-results results fun*)))))
+       (web::handle-profun-results results fun*)))))

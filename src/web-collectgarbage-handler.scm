@@ -15,16 +15,16 @@
 
 %run guile
 
-%var web-collectgarbage-handler
+%var web::collectgarbage-handler
 
 %use (profun-accept) "./euphrates/profun-accept.scm"
 %use (profun-op-lambda) "./euphrates/profun-op-lambda.scm"
-%use (web-collectgarbage/nocall) "./web-collectgarbage-nocall.scm"
+%use (web::collectgarbage/nocall) "./web-collectgarbage-nocall.scm"
 
-(define web-collectgarbage-handler
-  (lambda (web-context)
+(define web::collectgarbage-handler
+  (lambda (web::context)
     (profun-op-lambda
      (ctx env ())
 
-     (web-collectgarbage/nocall web-context)
+     (web::collectgarbage/nocall web::context)
      (profun-accept))))

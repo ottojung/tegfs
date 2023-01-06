@@ -15,14 +15,14 @@
 
 %run guile
 
-%var web-decode-query
+%var web::decode-query
 
 %use (appcomp) "./euphrates/comp.scm"
-%use (web-try-uri-decode) "./web-try-uri-decode.scm"
+%use (web::try-uri-decode) "./web-try-uri-decode.scm"
 
-(define (web-decode-query query/encoded)
+(define (web::decode-query query/encoded)
   (appcomp query/encoded
-           web-try-uri-decode
+           web::try-uri-decode
            string->list
            (map (lambda (c) (if (equal? #\+ c) #\space c)))
            (map (lambda (c) (if (equal? #\: c) #\= c)))

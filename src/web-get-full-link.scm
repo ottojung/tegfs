@@ -15,12 +15,12 @@
 
 %run guile
 
-%var web-get-full-link
+%var web::get-full-link
 
 %use (raisu) "./euphrates/raisu.scm"
 %use (a-weblink?) "./a-weblink-q.scm"
 
-(define (web-get-full-link entry target maybe-senderid)
+(define (web::get-full-link entry target maybe-senderid)
   (cond
    (maybe-senderid (string-append "/full?vid=" maybe-senderid))
    ((a-weblink? target) target)

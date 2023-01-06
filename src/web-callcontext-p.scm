@@ -15,7 +15,7 @@
 
 %run guile
 
-%var web-callcontext/p
+%var web::callcontext/p
 
-(define web-callcontext/p
+(define web::callcontext/p
   (make-parameter #f))

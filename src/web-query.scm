@@ -15,26 +15,26 @@
 
 %run guile
 
-%var web-query
+%var web::query
 
 %use (hashmap-ref) "./euphrates/hashmap.scm"
 %use (string->words) "./euphrates/string-to-words.scm"
 %use (default-full-sharing-time) "./default-full-sharing-time.scm"
 %use (default-preview-sharing-time) "./default-preview-sharing-time.scm"
-%use (web-callcontext/p) "./web-callcontext-p.scm"
+%use (web::callcontext/p) "./web-callcontext-p.scm"
 %use (callcontext-token) "./web-callcontext.scm"
-%use (web-decode-query) "./web-decode-query.scm"
-%use (web-get-query) "./web-get-query.scm"
-%use (web-handle-profun-results) "./web-handle-profun-results.scm"
-%use (web-query-display-results) "./web-query-display-results.scm"
+%use (web::decode-query) "./web-decode-query.scm"
+%use (web::get-query) "./web-get-query.scm"
+%use (web::handle-profun-results) "./web-handle-profun-results.scm"
+%use (web::query-display-results) "./web-query-display-results.scm"
 %use (webcore::ask) "./webcore-ask.scm"
 
-(define (web-query)
-  (define callctx (web-callcontext/p))
-  (define ctxq (web-get-query))
+(define (web::query)
+  (define callctx (web::callcontext/p))
+  (define ctxq (web::get-query))
 
   (define query/encoded (hashmap-ref ctxq 'q ""))
-  (define query (web-decode-query query/encoded))
+  (define query (web::decode-query query/encoded))
   (define query/split (string->words query))
 
   (define result
@@ -49,7 +49,7 @@
        more (99999)
        )))
 
-  (web-handle-profun-results result web-query-handle-results))
+  (web::handle-profun-results result web::query-handle-results))
 
-(define (web-query-handle-results equals)
-  (web-query-display-results equals))
+(define (web::query-handle-results equals)
+  (web::query-display-results equals))

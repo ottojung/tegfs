@@ -15,9 +15,9 @@
 
 %run guile
 
-%var web-basic-headers
+%var web::basic-headers
 
-(define web-basic-headers
+(define web::basic-headers
   '((referrer-policy . "strict-origin-when-cross-origin") ;; optional, ensures not to send too much user data.
     (x-frame-options . "DENY") ;; optional, bans embedding in <iframe> and such.
     (strict-transport-security . "max-age=63072000; includeSubDomains; preload") ;; something something security.

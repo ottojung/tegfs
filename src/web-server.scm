@@ -19,12 +19,12 @@
 
 %use (assq-or) "./euphrates/assq-or.scm"
 %use (dprintln) "./euphrates/dprintln.scm"
-%use (default-web-port) "./default-web-port.scm"
+%use (web::default-port) "./web-default-port.scm"
 %use (get-config) "./get-config.scm"
 %use (keyword-config-port) "./keyword-config-port.scm"
 %use (web::current-temp-paths-table/p) "./web-current-temp-paths-table-p.scm"
-%use (web-make-callcontext) "./web-make-callcontext.scm"
-%use (web-make-communicator) "./web-make-communicator.scm"
+%use (web::make-callcontext) "./web-make-callcontext.scm"
+%use (web::make-communicator) "./web-make-communicator.scm"
 %use (web::make-temp-paths-table) "./web-make-temp-paths-table.scm"
 %use (web::server-current-handler/p) "./web-server-current-handler-p.scm"
 %use (web::server-handle) "./web-server-handle.scm"
@@ -48,14 +48,14 @@
 
 (define (make-handler)
   (lambda (request body)
-    (define callctx (web-make-callcontext request body))
+    (define callctx (web::make-callcontext request body))
     (log-request request)
     (with-current-time (web::server-handle callctx))))
 
 (define (tegfs-serve/parse)
   (define config (get-config))
-  (define port (car (assq-or keyword-config-port config '(,default-web-port))))
-  (define comm (web-make-communicator))
+  (define port (car (assq-or keyword-config-port config '(,web::default-port))))
+  (define comm (web::make-communicator))
   (define tptable (web::make-temp-paths-table))
   (define handler (make-handler))
 
