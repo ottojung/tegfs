@@ -19,10 +19,10 @@
 
 (define (web::form-template form-params insides)
   (string-append
-   "<div class='centering-container'><form class='bordered smooth-edged with-shadow' "
+   "<div class='centering-container'>
+  <div class='tiled dark smooth-edged'>
+    <form "
    (or form-params "")
-   " method='post'>
-     <div class='container'>"
+   " method='post'>"
    insides
-   "  </div>
-    </form></div>"))
+   "</form></div></div>"))

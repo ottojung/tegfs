@@ -21,5 +21,12 @@
 
 (define web::login-body
   (web::form-template "action='logincont' enctype='application/x-www-form-urlencoded'" "
-    <input type='password' placeholder='Enter Password' name='psw' required autofocus>
-    <button type='submit'>Login</button>"))
+    <div class='tiled-v-element split-container with-separator'>
+      <div class='form-block'>
+        <input type='password' placeholder='Enter Password' name='psw' required autofocus>
+      </div>
+    </div>
+    <div class='form-block tiled-v-element'>
+      <button type='submit'>Login</button>
+    </div>
+"))

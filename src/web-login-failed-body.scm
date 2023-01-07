@@ -21,6 +21,13 @@
 
 (define web::login-failed-body
   (web::form-template #f "
-       <label><b>You are a failure</b></label>
-       <input type='password' placeholder='Enter Password' name='psw' required autofocus>
-       <button type='submit'>Login</button>"))
+    <div class='tiled-v-element split-container with-separator'>
+      <div class='form-block'>
+        <label for='password'>Failed</label>
+        <input type='password' placeholder='Enter Password' name='psw' required autofocus>
+      </div>
+    </div>
+    <div class='form-block tiled-v-element'>
+      <button type='submit'>Login</button>
+    </div>
+"))
