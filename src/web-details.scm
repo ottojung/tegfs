@@ -29,7 +29,8 @@
   (define table
     (with-output-to-string
       (lambda _
-        (display "<table class='styled-table subc'>\n")
+        ;; (display "<style> body { height: 100% } </style>")
+        (display "<div class='centering-container'><table class='styled-table'>\n")
         (display "  <thead><tr><th>Prop</th><th>Value</th></tr></thead>\n")
         (for-each
          (lambda (row)
@@ -46,7 +47,7 @@
            (display "    </tr>\n")
            (display "  </tbody>\n"))
          entry)
-        (display "</table>\n"))))
+        (display "</table></div>\n"))))
 
   (web::make-html-response table))
 
