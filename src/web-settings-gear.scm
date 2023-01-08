@@ -48,7 +48,6 @@
    <stop id='U' stop-color='#888a85'/>
    <stop id='V' offset='1' stop-color='#babdb6'/>
   </linearGradient>
-  <radialGradient cx='16.791' cy='8.822' r='20.676' id='E' xlink:href='#A' gradientUnits='userSpaceOnUse'/>
   <linearGradient x1='86.13' y1='105.11' x2='84.64' y2='20.895' id='F' xlink:href='#B' gradientUnits='userSpaceOnUse' gradientTransform='matrix(0.2879622,-0.1167595,0.1167595,0.2879622,-1.7854195,12.564044)'/>
   <radialGradient cx='25.25' cy='41.18' r='22' id='G' xlink:href='#C' gradientUnits='userSpaceOnUse' gradientTransform='matrix(0.6210894,-1.8176291,1.6110669,0.5505064,-50.378255,62.138382)'/>
   <linearGradient x1='2.35' y1='1.35' x2='45.65' y2='44.65' id='H' xlink:href='#8' gradientUnits='userSpaceOnUse' gradientTransform='matrix(0.9576328,0,0,0.9576328,1.0168128,1.2074984)'/>
