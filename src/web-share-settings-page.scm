@@ -17,7 +17,7 @@
 
 %var web::share::get-settings-text
 
-%use (hashmap-set!) "./euphrates/hashmap.scm"
+%use (hashmap-delete!) "./euphrates/hashmap.scm"
 %use (stringf) "./euphrates/stringf.scm"
 %use (callcontext-query) "./web-callcontext.scm"
 %use (web::form-template) "./web-form-template.scm"
@@ -41,7 +41,7 @@
 (define (web::share::get-settings-text callctx)
   (define query
     (let ((original (callcontext-query callctx)))
-      (hashmap-set! original 'settings 'no)
+      (hashmap-delete! original 'settings)
       original))
 
   (define query/s
