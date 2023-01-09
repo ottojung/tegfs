@@ -43,7 +43,8 @@
        (and bH
             (hashmap-ref bH 'q #f)))))
   (define query/submitted
-    (if (string-null? query/submitted/0) #f
+    (if (or (not query/submitted/0)
+            (string-null? query/submitted/0)) #f
         query/submitted/0))
   (define query/encoded
     (or query/submitted "%any"))
