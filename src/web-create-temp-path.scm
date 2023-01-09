@@ -31,7 +31,7 @@
     (string-append "/" (get-random-network-name)))
   (define destination
     (if (procedure? destination/0)
-        (memconst (destination/0 tempid))
+        (memconst (destination/0))
         destination/0))
   (define tpath (web::temp-path-ctr tempid destination now stime))
 

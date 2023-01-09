@@ -119,10 +119,10 @@
   (define no-continue
     (web::create-temp-path
      share-time
-     (lambda (tempid)
+     (lambda _
        (stringf "/authfail?yes=~a&no=~a&expected=~a"
                 yes-continue
-                tempid
+                no-continue
                 token))))
 
   (define initial
