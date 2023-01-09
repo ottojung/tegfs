@@ -28,6 +28,7 @@
 %use (web::details) "./web-details.scm"
 %use (web::directory) "./web-directory.scm"
 %use (web::full) "./web-full.scm"
+%use (web::favicon.ico) "./web-icon.scm"
 %use (web::login) "./web-login.scm"
 %use (web::logincont) "./web-logincont.scm"
 %use (web::main.css) "./web-main-css.scm"
@@ -55,6 +56,7 @@
     (/authcont ,web::authcont)
     (/authfail ,web::authfail)
 
+    (/favicon.ico ,web::favicon.ico)
     (/static/main.css ,web::main.css)
     (/static/previewunknown.svg ,web::previewunknown)
     (/static/previewunknownurl.svg ,web::previewunknownurl)
