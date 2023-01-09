@@ -172,6 +172,56 @@ hr {
 	font-size: 180%;
 }
 
+/*****************
+ * Header styles *
+ *****************/
+
+header {
+	box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);
+	background-color: #24313c;
+	color: white;
+	padding: 4px;
+	text-align: center;
+	width: 90%;
+	margin: 0 auto;
+
+	border-bottom-left-radius: 15px;
+	border-bottom-right-radius: 15px;
+}
+
+header nav ul {
+	list-style: none;
+	margin: 0;
+	padding: 0;
+	display: flex;
+	justify-content: space-around;
+}
+
+header nav ul li {
+	padding: 0px 50px;
+	border-radius: 5px;
+	display: flex;
+	align-items: center;
+	text-align: center;
+}
+
+header nav ul li a {
+	display: block;
+	font-size: 140%;
+	font-family: sans-serif;
+	color: #fff;
+	text-decoration: none;
+	border-radius: 4px;
+}
+
+header nav ul li label {
+	font-size: 80%;
+}
+
+header nav ul li:hover {
+	background-color: #435259;
+}
+
 /***************
  * Grid styles *
  ***************/
