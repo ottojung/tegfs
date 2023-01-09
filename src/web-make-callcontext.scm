@@ -18,7 +18,7 @@
 %var web::make-callcontext
 %var web::make-callcontext/raw
 
-%use (alist->hashmap hashmap-ref make-hashmap) "./euphrates/hashmap.scm"
+%use (alist->hashmap hashmap-ref hashmap? make-hashmap) "./euphrates/hashmap.scm"
 %use (memconst) "./euphrates/memconst.scm"
 %use (raisu) "./euphrates/raisu.scm"
 %use (string-split-3) "./euphrates/string-split-3.scm"
@@ -91,8 +91,11 @@
   (define headers (request-headers req))
   (web::make-callcontext/raw url path query/encoded headers body))
 
-(define (web::make-callcontext/raw url path query/encoded headers body)
-  (define qH (memconst (initialize-query query/encoded)))
+(define (web::make-callcontext/raw url path query headers body)
+  (define qH
+    (if (hashmap? query)
+        (lambda _ query)
+        (memconst (initialize-query query))))
   (letrec
       ((tokenfn (memconst (get-access-token callctx (qH) headers)))
        (callctx (callcontext-ctr url path headers qH body #f tokenfn)))
