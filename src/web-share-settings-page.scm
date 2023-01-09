@@ -29,10 +29,9 @@
    "<div class='tiled-v-element'>
       <div class='form-block'>
         <label for='for-duration'>Duration</label>
-        <input placeholder='Ex: \"2d5h\" for 2 days and 5 hours' name='for-duration' required autofocus>
+        <input type='text' placeholder='Ex: \"2d5h\" for 2 days and 5 hours' name='for-duration' required autofocus>
       </div>
     </div>
-    <br/>
     <div class='form-block tiled-v-element'>
       <button type='submit'>Share</button>
     </div>
