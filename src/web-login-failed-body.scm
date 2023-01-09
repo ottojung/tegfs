@@ -20,8 +20,9 @@
 %use (web::form-template) "./web-form-template.scm"
 
 (define web::login-failed-body
-  (web::form-template #f "
-    <div class='tiled-v-element'>
+  (web::form-template
+   "action='logincont' enctype='application/x-www-form-urlencoded'"
+   "<div class='tiled-v-element'>
       <div class='form-block'>
         <label for='password'>Failed</label>
         <input type='password' placeholder='Enter Password' name='psw' required autofocus>
