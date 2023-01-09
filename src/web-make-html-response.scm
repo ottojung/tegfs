@@ -22,6 +22,7 @@
 %use (current-time/p) "./current-time-p.scm"
 %use (web::callcontext/p) "./web-callcontext-p.scm"
 %use (callcontext-key) "./web-callcontext.scm"
+%use (web::display-header) "./web-display-header.scm"
 %use (web::return) "./web-return.scm"
 %use (web::set-cookie-header) "./web-set-cookie-header.scm"
 %use (webcore::current-communicator/p) "./webcore-current-communicator-p.scm"
@@ -82,6 +83,9 @@
        (display "  <link rel='stylesheet' href='/static/main.css'>")
        (for-each display extra-heads)
        (display "</head>\n")
+       (display "<header>\n")
+       (web::display-header callctx)
+       (display "</header>\n")
        (display "<body>\n")
        (cond
         ((string? body) (display body))
