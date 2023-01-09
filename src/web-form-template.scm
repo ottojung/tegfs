@@ -1,4 +1,4 @@
-;;;; Copyright (C) 2022  Otto Jung
+;;;; Copyright (C) 2022, 2023  Otto Jung
 ;;;;
 ;;;; This program is free software: you can redistribute it and/or modify
 ;;;; it under the terms of the GNU Affero General Public License as published
@@ -17,12 +17,21 @@
 
 %var web::form-template
 
-(define (web::form-template form-params insides)
+(define (web::form-template/full form-params insides outsides)
   (string-append
-   "<div class='centering-container'>
-  <div class='tiled dark smooth-edged'>
-    <form "
-   (or form-params "")
-   " method='post'>"
-   insides
-   "</form></div></div>"))
+   "
+<div class='centering-container'>
+  <div>
+    <div class='tiled dark smooth-edged'>
+      <form " (or form-params "") " method='post'>"
+      insides
+      "</form>
+    </div>"
+    (or outsides "")
+ "</div>
+</div>"))
+
+(define web::form-template
+  (case-lambda
+   ((form-params insides) (web::form-template/full form-params insides #f))
+   ((form-params insides outsides) (web::form-template/full form-params insides outsides))))
