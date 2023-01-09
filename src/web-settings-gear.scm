@@ -20,8 +20,7 @@
 %use (web::define-static-file) "./web-define-static-file.scm"
 
 (define web::settings-gear-image-string
-  "
-<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+  "<?xml version='1.0' encoding='UTF-8' standalone='no'?>
 <!--part of the rodentia icon theme by sixsixfive released under CC0 (https://creativecommons.org/publicdomain/zero/1.0/) on openclipart-->
 <svg xmlns='http://www.w3.org/2000/svg' xmlns:xlink='http://www.w3.org/1999/xlink' viewBox='0 0 48 48'>
  <defs id='0'>
