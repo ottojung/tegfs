@@ -45,7 +45,7 @@ button, input, label {
 	display: flex;
 	align-items: center;
 	justify-content: center;
-	height: 100%;
+	height: 80%;
 	width: 100%;
 }
 
