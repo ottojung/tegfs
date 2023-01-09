@@ -56,7 +56,7 @@
   />
   <g
       id='Vrstva_x0020_1'
-      style='stroke:#000000;fill:#0F238C'
+      style='stroke:#000000;fill:#1ab188'
     >
     <g
         id='g3470'
