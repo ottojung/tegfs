@@ -1,4 +1,4 @@
-;;;; Copyright (C) 2022  Otto Jung
+;;;; Copyright (C) 2022, 2023  Otto Jung
 ;;;;
 ;;;; This program is free software: you can redistribute it and/or modify
 ;;;; it under the terms of the GNU Affero General Public License as published
@@ -102,20 +102,6 @@
         (web::bad-request "Bad `for-duration' value ~s" for-duration/s)))
       default-share-expiery-time))
 
-;; (define (web::share-cont/2/old callctx query/encoded first-binding)
-;;   (define domainname (web::get-domainname callctx))
-;;   (define token
-;;     (assq-or 'K first-binding (raisu 'unexpected-result-from-backend first-binding)))
-;;   (define location
-;;     (if query/encoded
-;;         (stringf "~a/query?q=~a&key=~a" domainname query/encoded token)
-;;         (assq-or 'FL first-binding (raisu 'unexpected-result-from-backend first-binding))))
-;;   (define hidden-query-location
-;;     (stringf "~a/query?q=%any&key=~a" domainname token))
-;;   (define text
-;;     (get-share-query-text callctx location hidden-query-location token))
-;;   (web::make-html-response text))
-
 (define (web::share-cont/2 callctx query/encoded first-binding)
   (define token
     (assq-or 'K first-binding (raisu 'unexpected-result-from-backend first-binding)))
@@ -156,12 +142,6 @@
   (debugs initial)
 
   (web::make-html-response text))
-
-  ;; (define hidden-query-location
-  ;;   (stringf "~a/query?q=%any&key=~a" domainname token))
-  ;; (define text
-  ;;   (get-share-query-text callctx location hidden-query-location token))
-  ;; (web::make-html-response text))
 
 (define (web::share-cont callctx query/encoded)
   (lambda (equals)
