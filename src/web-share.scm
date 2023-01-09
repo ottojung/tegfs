@@ -19,76 +19,73 @@
 
 %use (assq-or) "./euphrates/assq-or.scm"
 %use (catchu-case) "./euphrates/catchu-case.scm"
-%use (debugs) "./euphrates/debugs.scm"
 %use (hashmap-ref) "./euphrates/hashmap.scm"
 %use (raisu) "./euphrates/raisu.scm"
 %use (string->seconds) "./euphrates/string-to-seconds.scm"
 %use (string->words) "./euphrates/string-to-words.scm"
 %use (stringf) "./euphrates/stringf.scm"
 %use (default-share-expiery-time) "./default-share-expiery-time.scm"
-%use (get-random-access-token) "./get-random-access-token.scm"
 %use (web::bad-request) "./web-bad-request.scm"
 %use (web::callcontext/p) "./web-callcontext-p.scm"
 %use (callcontext-token) "./web-callcontext.scm"
 %use (web::create-temp-path) "./web-create-temp-path.scm"
 %use (web::decode-query) "./web-decode-query.scm"
+%use (web::form-template) "./web-form-template.scm"
 %use (web::get-domainname) "./web-get-domainname.scm"
 %use (web::get-query) "./web-get-query.scm"
 %use (web::handle-profun-results) "./web-handle-profun-results.scm"
 %use (web::make-html-response) "./web-make-html-response.scm"
-%use (web::not-found) "./web-not-found.scm"
 %use (webcore::ask) "./webcore-ask.scm"
 
-%for (COMPILER "guile")
+(define web::share::inside-template
+  "
+          <div class='tiled-v-element split-container with-separator'>
+            <div class='form-block split-left'>
+              <label for='username'>Default link</label>
+              <input readonly autofocus onfocus='this.select()' value='~a' type='text'/>
+            </div>
+            <div class='split-right'>
+              <div class='form-block'>
+                <label for='username'>Protected link</label>
+                <input readonly value='~a' type='text'/>
+              </div>
+              <div class='form-block'>
+                <label for='password'>Password</label>
+                <input readonly value='~a' type='text'/>
+              </div>
+            </div>
+          </div>
+")
 
-(use-modules (sxml simple))
+(define web::share::outside-template
+  "
+      <br/>
+      <div class='form-block tiled-v-element'>
+        <a href='/share?~a'>
+          <img src='/static/gear.svg' width='40px' />
+        </a>
+      </div>
+")
 
-%end
-
-(define (print-url url)
-  (sxml->xml `(a (@ (href ,url)) ,url)))
-
-(define (get-share-query-text callctx location hidden-query-location token)
+(define (get-share-query-text callctx unprotected-link0 protected-link0 password)
   (define domainname (web::get-domainname callctx))
-  (define (print-link url0)
-    (define url (string-append domainname url0))
-    (print-url url))
-  (define (print-newline)
-    (display "<br>\n"))
-  (define (print-line/fullink title url)
-    (display title)
-    (display ":")
-    (print-newline)
-    (print-url url)
-    (print-newline))
-  (define (print-line title url)
-    (display title)
-    (display ":")
-    (print-newline)
-    (print-link url)
-    (print-newline))
+  (define (get-link url0)
+    (string-append domainname url0))
 
-  (with-output-to-string
-    (lambda _
-      (parameterize ((current-error-port (current-output-port)))
-        (print-line/fullink "Default link" location)
-        (print-line/fullink "Hidden query link" hidden-query-location)
-        (print-newline) (print-newline)
-        (display "Second then forth:")
-        (print-newline)
-        (print-link
-         (stringf "/query?q=ll&key=~a" (get-random-access-token)))
-        (print-newline)
-        (print-link
-         (stringf "/query?q=ll&key=~a" token))
-        (print-newline)
-        (print-link
-         (stringf "/query?q=ll&key=~a" (get-random-access-token)))
-        (print-newline)
-        (print-link "/query?q=%any")
-        (print-newline)
-        (print-link
-         (stringf "/query?q=ll&key=~a" (get-random-access-token)))))))
+  (define unprotected-link
+    (get-link unprotected-link0))
+  (define protected-link
+    (get-link protected-link0))
+
+  (define insides
+    (stringf web::share::inside-template
+             unprotected-link protected-link password))
+
+  (define outsides
+    (stringf web::share::outside-template
+             "FIXME: TODO: get the modified link"))
+
+  (web::form-template #f insides outsides))
 
 (define (get-share-duration)
   (define ctxq (web::get-query))
@@ -102,12 +99,12 @@
         (web::bad-request "Bad `for-duration' value ~s" for-duration/s)))
       default-share-expiery-time))
 
-(define (web::share-cont/2 callctx query/encoded first-binding)
+(define (web::share-cont/2 callctx query? first-binding)
   (define token
     (assq-or 'K first-binding (raisu 'unexpected-result-from-backend first-binding)))
   (define location
-    (if query/encoded
-        (stringf "/query?q=~a&key=~a" query/encoded token)
+    (if query?
+        (stringf "/query?q=~a&key=~a" "%any" token)
         (assq-or 'FL first-binding (raisu 'unexpected-result-from-backend first-binding))))
   (define share-time
     (assq-or 'AD first-binding (raisu 'unexpected-result-from-backend first-binding)))
@@ -125,7 +122,7 @@
                 no-continue
                 token))))
 
-  (define initial
+  (define protected-link
     (web::create-temp-path
      share-time
      (stringf "/auth?yes=~a&no=~a&expected=~a"
@@ -133,21 +130,24 @@
               no-continue
               token)))
 
-  (define text
-    (stringf "<br><br>~a<br><br>~a"
-             initial password))
+  (define unprotected-link
+    (web::create-temp-path share-time location))
 
-  (debugs yes-continue)
-  (debugs no-continue)
-  (debugs initial)
+  (define body
+    (get-share-query-text
+     callctx
+     unprotected-link
+     protected-link
+     password
+     ))
 
-  (web::make-html-response text))
+  (web::make-html-response body))
 
-(define (web::share-cont callctx query/encoded)
+(define (web::share-cont callctx query?)
   (lambda (equals)
     (if (null? equals)
         (raisu 'unexpected-false-from-backend-71631231237)
-        (web::share-cont/2 callctx query/encoded (car equals)))))
+        (web::share-cont/2 callctx query? (car equals)))))
 
 (define (web::share-query query/encoded)
   (define callctx (web::callcontext/p))
@@ -168,7 +168,7 @@
        )))
 
   (web::handle-profun-results
-   result (web::share-cont callctx query/encoded)))
+   result (web::share-cont callctx #t)))
 
 (define (web::share-vid senderid)
   (define callctx (web::callcontext/p))
