@@ -35,6 +35,7 @@
 %use (web::previewunknownurl) "./web-previewunknownurl.scm"
 %use (web::query) "./web-query.scm"
 %use (web::server-handle-temp-path) "./web-server-handle-temp-path.scm"
+%use (web::settings-gear) "./web-settings-gear.scm"
 %use (web::share) "./web-share.scm"
 %use (web::upload) "./web-upload.scm"
 %use (web::uploadcont) "./web-uploadcont.scm"
@@ -57,6 +58,7 @@
     (/static/main.css ,web::main.css)
     (/static/previewunknown.svg ,web::previewunknown)
     (/static/previewunknownurl.svg ,web::previewunknownurl)
+    (/static/gear.svg ,web::settings-gear)
     ))
 
 (define handlers-funcmap

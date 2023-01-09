@@ -15,6 +15,8 @@
 
 %run guile
 
+%var web::settings-gear
+
 %use (web::define-static-file) "./web-define-static-file.scm"
 
 (define web::settings-gear-image-string
@@ -62,5 +64,6 @@
 </svg>
 ")
 
-(define web::define-static-file web::settings-gear
-  `(image/svg+xml) web::settings-gear-image-string)
+(web::define-static-file
+ web::settings-gear
+ `(image/svg+xml) web::settings-gear-image-string)
