@@ -26,20 +26,27 @@
 %use (stringf) "./euphrates/stringf.scm"
 %use (default-share-expiery-time) "./default-share-expiery-time.scm"
 %use (web::bad-request) "./web-bad-request.scm"
+%use (web::body->hashmap) "./web-body-to-hashmap.scm"
 %use (web::callcontext/p) "./web-callcontext-p.scm"
-%use (callcontext-token) "./web-callcontext.scm"
+%use (callcontext-body callcontext-query callcontext-token) "./web-callcontext.scm"
 %use (web::create-temp-path) "./web-create-temp-path.scm"
 %use (web::decode-query) "./web-decode-query.scm"
 %use (web::get-query) "./web-get-query.scm"
 %use (web::handle-profun-results) "./web-handle-profun-results.scm"
 %use (web::make-html-response) "./web-make-html-response.scm"
 %use (web::share::get-default-text) "./web-share-default-page.scm"
+%use (web::share::get-settings-text) "./web-share-settings-page.scm"
 %use (webcore::ask) "./webcore-ask.scm"
 
-(define (get-share-duration)
-  (define ctxq (web::get-query))
+(define (get-share-duration callctx)
+  (define ctxq (callcontext-query callctx))
   (define for-duration/s
-    (hashmap-ref ctxq 'for-duration #f))
+    (or
+     (hashmap-ref ctxq 'for-duration #f)
+     (let* ((body/bytes (callcontext-body callctx))
+            (bH (web::body->hashmap body/bytes)))
+       (and bH
+            (hashmap-ref bH 'for-duration #f)))))
 
   (if for-duration/s
       (catchu-case
@@ -101,7 +108,7 @@
 (define (web::share-query query/encoded)
   (define callctx (web::callcontext/p))
   (define key (callcontext-token callctx))
-  (define share-duration (get-share-duration))
+  (define share-duration (get-share-duration callctx))
   (define query (web::decode-query query/encoded))
   (define query/split (string->words query))
 
@@ -122,7 +129,7 @@
 (define (web::share-vid senderid)
   (define callctx (web::callcontext/p))
   (define key (callcontext-token callctx))
-  (define share-duration (get-share-duration))
+  (define share-duration (get-share-duration callctx))
 
   (define result
     (webcore::ask
@@ -139,12 +146,19 @@
   (web::handle-profun-results
    result (web::share-cont callctx #f)))
 
+(define (web::share::settings)
+  (define callctx (web::callcontext/p))
+  (define body (web::share::get-settings-text callctx))
+  (web::make-html-response body))
+
 (define (web::share)
   (define ctxq (web::get-query))
   (define query/encoded (hashmap-ref ctxq 'q #f))
   (define vid (hashmap-ref ctxq 'vid #f))
+  (define settings? (hashmap-ref ctxq 'settings #f))
 
   (cond
+   ((equal? settings? "yes") (web::share::settings))
    (query/encoded (web::share-query query/encoded))
    (vid (web::share-vid vid))
    (else (web::bad-request "Bad arguments to share"))))

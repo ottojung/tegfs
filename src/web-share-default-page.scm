@@ -70,7 +70,7 @@
 
   (define settings-query
     (let ((original (hashmap-copy (callcontext-query callctx))))
-      (hashmap-set! original 'settings "true")
+      (hashmap-set! original 'settings "yes")
       original))
   (define settings-link
     (string-append

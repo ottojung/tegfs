@@ -25,7 +25,7 @@
   (define ret "")
   (hashmap-foreach
    (lambda (key val)
-     (define s (string-append (~a key) "=" (uri-encode val)))
+     (define s (string-append (~a key) "=" (uri-encode (~a val))))
      (unless (string-null? ret)
        (set! ret (string-append ret "&")))
      (set! ret (string-append ret s)))

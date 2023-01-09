@@ -18,14 +18,14 @@
 %var web::make-callcontext
 %var web::make-callcontext/raw
 
-%use (alist->hashmap hashmap-ref hashmap? make-hashmap) "./euphrates/hashmap.scm"
+%use (hashmap-ref hashmap? make-hashmap) "./euphrates/hashmap.scm"
 %use (memconst) "./euphrates/memconst.scm"
 %use (raisu) "./euphrates/raisu.scm"
 %use (string-split-3) "./euphrates/string-split-3.scm"
 %use (string-split/simple) "./euphrates/string-split-simple.scm"
 %use (string-strip) "./euphrates/string-strip.scm"
 %use (callcontext-ctr set-callcontext-key!) "./web-callcontext.scm"
-%use (web::try-uri-decode) "./web-try-uri-decode.scm"
+%use (web::query->hashmap) "./web-query-to-hashmap.scm"
 
 %for (COMPILER "guile")
 
@@ -71,7 +71,7 @@
 
 (define (initialize-query query/encoded)
   (if query/encoded
-      (query->hashmap query/encoded)
+      (web::query->hashmap query/encoded)
       (make-hashmap)))
 
 (define (web::make-callcontext req body)
