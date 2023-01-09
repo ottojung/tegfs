@@ -50,7 +50,7 @@
   (when details-link?
     (display "<a href='/details?vid=")
     (display maybe-full-senderid)
-    (display "' style='color: white'>"))
+    (display "'>"))
 
   (cond
    ((and (assoc keyword-title entry)

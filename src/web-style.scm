@@ -227,11 +227,18 @@ header nav ul li:hover {
  ***************/
 
 .card {
-	background-color: dodgerblue;
-	color: white;
 	padding: 1rem;
 	min-height: 4rem;
 	text-align: center;
+}
+
+.card:hover {
+	background-color: rgba(1, 0, 0, 0.1);
+}
+
+.card a {
+	color: black;
+	text-decoration: none;
 }
 
 .cards {
@@ -244,6 +251,7 @@ header nav ul li:hover {
 
 .card img {
 	width: 100%;
+	margin-bottom: 0.7em;
 }
 
 /*****************
