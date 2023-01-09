@@ -146,7 +146,7 @@
 (define (web::share-cont callctx query/encoded)
   (lambda (equals)
     (if (null? equals)
-        (web::not-found)
+        (raisu 'unexpected-false-from-backend-71631231237)
         (web::share-cont/2 callctx query/encoded (car equals)))))
 
 (define (web::share-query query/encoded)
