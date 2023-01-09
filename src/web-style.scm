@@ -257,6 +257,7 @@ header nav ul li:hover {
 	padding: 1rem;
 	min-height: 4rem;
 	text-align: center;
+	max-width: 40vw;
 }
 
 .card:hover {
