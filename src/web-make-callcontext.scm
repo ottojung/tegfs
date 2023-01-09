@@ -69,15 +69,6 @@
    (or (get-cookie "key" headers)
        (get-cookie "pwdtoken" headers))))
 
-(define (query->hashmap query)
-  (define split (string-split/simple query #\&))
-  (define key-values
-    (map (lambda (sp)
-           (define-values (key eq val) (string-split-3 #\= sp))
-           (cons (string->symbol key) (web::try-uri-decode val)))
-         split))
-  (alist->hashmap key-values))
-
 (define (initialize-query query/encoded)
   (if query/encoded
       (query->hashmap query/encoded)
