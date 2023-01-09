@@ -25,6 +25,7 @@
 %use (callcontext-token) "./web-callcontext.scm"
 %use (web::get-query) "./web-get-query.scm"
 %use (web::handle-profun-results) "./web-handle-profun-results.scm"
+%use (web::make-html-response) "./web-make-html-response.scm"
 %use (web::query-display-results) "./web-query-display-results.scm"
 %use (webcore::ask) "./webcore-ask.scm"
 
@@ -47,4 +48,6 @@
        web::directory-handle)))
 
 (define (web::directory-handle equals)
-  (web::query-display-results equals))
+  (web::make-html-response
+   (lambda _
+     (web::query-display-results equals))))

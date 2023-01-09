@@ -18,22 +18,35 @@
 %var web::query
 
 %use (hashmap-ref) "./euphrates/hashmap.scm"
+%use (printf) "./euphrates/printf.scm"
 %use (string->words) "./euphrates/string-to-words.scm"
 %use (default-full-sharing-time) "./default-full-sharing-time.scm"
 %use (default-preview-sharing-time) "./default-preview-sharing-time.scm"
+%use (web::body->hashmap) "./web-body-to-hashmap.scm"
 %use (web::callcontext/p) "./web-callcontext-p.scm"
-%use (callcontext-token) "./web-callcontext.scm"
+%use (callcontext-body callcontext-query callcontext-token) "./web-callcontext.scm"
 %use (web::decode-query) "./web-decode-query.scm"
-%use (web::get-query) "./web-get-query.scm"
 %use (web::handle-profun-results) "./web-handle-profun-results.scm"
+%use (web::make-html-response) "./web-make-html-response.scm"
 %use (web::query-display-results) "./web-query-display-results.scm"
 %use (webcore::ask) "./webcore-ask.scm"
 
 (define (web::query)
   (define callctx (web::callcontext/p))
-  (define ctxq (web::get-query))
+  (define ctxq (callcontext-query callctx))
 
-  (define query/encoded (hashmap-ref ctxq 'q "%any"))
+  (define query/submitted/0
+    (or
+     (hashmap-ref ctxq 'q #f)
+     (let* ((body (callcontext-body callctx))
+            (bH (and body (web::body->hashmap body))))
+       (and bH
+            (hashmap-ref bH 'q #f)))))
+  (define query/submitted
+    (if (string-null? query/submitted/0) #f
+        query/submitted/0))
+  (define query/encoded
+    (or query/submitted "%any"))
   (define query (web::decode-query query/encoded))
   (define query/split (string->words query))
 
@@ -49,7 +62,30 @@
        more (99999)
        )))
 
-  (web::handle-profun-results result web::query-handle-results))
+  (web::handle-profun-results
+   result (web::query-handle-results query/submitted query)))
 
-(define (web::query-handle-results equals)
-  (web::query-display-results equals))
+(define (web::query-handle-results query/submitted query)
+  (lambda (equals)
+    (web::make-html-response
+     (lambda _
+       (define maybe-value
+         (if query/submitted
+             (string-append " value='" query "'")
+             ""))
+
+       (display "<br/>\n")
+       (display "<div class='search-input'>\n")
+       (display "<div class='tiled light smooth-edged'>\n")
+       (display "<div>\n")
+       (display "<form class='split-container' action='query'>\n")
+       (printf "  <input class='split-left' ~a autofocus type='text' name='q' placeholder='Filter by tags' />\n"
+               maybe-value)
+       (display " <input type='image' class='split-right' src='static/search.svg' alt='Submit'/>")
+       (display "</form>\n")
+       (display "</div>\n")
+       (display "</div>\n")
+       (display "</div>\n")
+       (display "<br/>\n")
+
+       (web::query-display-results equals)))))

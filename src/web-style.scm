@@ -98,8 +98,12 @@ button, input, label {
 	color: white;
 }
 
+.tiled.dark input[type=text], .tiled.dark input[type=password], .tiled.dark button {
+	background-color: rgba(0, 0, 0, 0.1);
+}
+
 .tiled.dark button {
-	background: #1ab188;
+	background-color: #1ab188;
 }
 
 .tiled.bright, .tiled.bright input {
@@ -128,7 +132,6 @@ button, input, label {
 }
 
 .form-block input, .form-block button {
-	background: rgba(0, 0, 0, 0.1);
 	border: 0;
 	border-radius: 4px;
 	box-sizing: border-box;
@@ -170,6 +173,30 @@ hr {
 .copytext {
 	font-family: monospace;
 	font-size: 180%;
+}
+
+/***********************
+ * Search input styles *
+ ***********************/
+
+.search-input {
+	display: flex;
+	justify-content: center;
+}
+
+.search-input input[type=text] {
+	border-width: 5px;
+	border-radius: 35px;
+	border-color: #1ab188;
+}
+
+.search-input input[type=image] {
+	margin-left: 15px;
+	width: 60px;
+}
+
+.search-input .tiled {
+	width: 60%;
 }
 
 /*****************
