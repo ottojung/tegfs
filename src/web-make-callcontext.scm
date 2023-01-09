@@ -92,11 +92,11 @@
   (web::make-callcontext/raw url path query/encoded headers body))
 
 (define (web::make-callcontext/raw url path query headers body)
-  (define qH
+  (define queryfn
     (if (hashmap? query)
         (lambda _ query)
         (memconst (initialize-query query))))
   (letrec
-      ((tokenfn (memconst (get-access-token callctx (qH) headers)))
-       (callctx (callcontext-ctr url path headers qH body #f tokenfn)))
+      ((tokenfn (memconst (get-access-token callctx (queryfn) headers)))
+       (callctx (callcontext-ctr url path headers queryfn body #f tokenfn)))
     callctx))
