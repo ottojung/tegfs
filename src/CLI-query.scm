@@ -33,6 +33,9 @@
      (<query-format> (comp (entry-print/formatted <query-format>)))
      (else (fatal "Unexpected mode: both --entries and <query-format> were not set"))))
 
+  (define query
+    (or <query...> '("%any")))
+
   (define result
     (profune-communicator-handle
      (tegfs-make-communicator)

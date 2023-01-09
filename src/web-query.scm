@@ -33,7 +33,7 @@
   (define callctx (web::callcontext/p))
   (define ctxq (web::get-query))
 
-  (define query/encoded (hashmap-ref ctxq 'q ""))
+  (define query/encoded (hashmap-ref ctxq 'q "%any"))
   (define query (web::decode-query query/encoded))
   (define query/split (string->words query))
 

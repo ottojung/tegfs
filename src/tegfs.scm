@@ -70,7 +70,7 @@
        /          REMOTEOPT? SAVETARGET?
        REMOTEOPT : --remote <remote>
        SAVETARGET : --target <savetext>
-       QUERYARGS : QUERYOPT* QUERYQ+
+       QUERYARGS : QUERYOPT* QUERYQ*
        QUERYOPT : --format <query-format>
        /          --entries
        /          --diropen
