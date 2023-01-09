@@ -37,26 +37,30 @@
 
      (if ctx (ctx)
          (let ()
-            (define query (core::query/p))
-            (define diropen? (profun-default (core::diropen?/p) #t))
-            (define dirpreview? (profun-default (core::dirpreview?/p) #f))
+           (define query
+             (let ((init (core::query/p)))
+               (if (profun-unbound-value? init)
+                   '("%any")
+                   init)))
+           (define diropen? (profun-default (core::diropen?/p) #t))
+           (define dirpreview? (profun-default (core::dirpreview?/p) #f))
 
-            (define opening-properties
-              (appcomp
-               '()
-               ((curry-if (const diropen?) (comp (cons keyword-diropen))))
-               ((curry-if (const dirpreview?) (comp (cons keyword-dirpreview))))))
+           (define opening-properties
+             (appcomp
+              '()
+              ((curry-if (const diropen?) (comp (cons keyword-diropen))))
+              ((curry-if (const dirpreview?) (comp (cons keyword-dirpreview))))))
 
-            (cond
-             ((profun-unbound-value? query)
-              (make-profun-RFC `((query _))))
-             ((profun-bound-value? entry/out)
-              (make-profun-error 'query-is-a-generator 'cannot-check-if-element-already-exists))
-             (else
-              (let* ((iter (get-iter opening-properties query E-name))
-                     (val (iter)))
-                (if (profun-accept? val)
-                    (profun-ctx-set iter val)
-                    val))))
+           (cond
+            ((profun-unbound-value? query)
+             (make-profun-RFC `((query _))))
+            ((profun-bound-value? entry/out)
+             (make-profun-error 'query-is-a-generator 'cannot-check-if-element-already-exists))
+            (else
+             (let* ((iter (get-iter opening-properties query E-name))
+                    (val (iter)))
+               (if (profun-accept? val)
+                   (profun-ctx-set iter val)
+                   val))))
 
-            )))))
+           )))))
