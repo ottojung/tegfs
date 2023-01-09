@@ -20,11 +20,8 @@
 
 %use (hashmap-ref hashmap? make-hashmap) "./euphrates/hashmap.scm"
 %use (memconst) "./euphrates/memconst.scm"
-%use (raisu) "./euphrates/raisu.scm"
-%use (string-split-3) "./euphrates/string-split-3.scm"
-%use (string-split/simple) "./euphrates/string-split-simple.scm"
-%use (string-strip) "./euphrates/string-strip.scm"
 %use (callcontext-ctr set-callcontext-key!) "./web-callcontext.scm"
+%use (web::get-cookie) "./web-get-cookie.scm"
 %use (web::query->hashmap) "./web-query-to-hashmap.scm"
 
 %for (COMPILER "guile")
@@ -34,40 +31,14 @@
 
 %end
 
-(define (parse-cookies-string cookies/string)
-  (define _aa
-    (unless (string? cookies/string)
-      (raisu 'bad-cookies-cdr cookies/string)))
-
-  (define cookie-split-semicolon
-    (string-split/simple cookies/string #\;))
-
-  (define cookie-split
-    (map
-     (lambda (c)
-       (define-values (key eq val) (string-split-3 #\= c))
-       (unless eq
-         (raisu 'bad-cookie-split cookies/string))
-       (cons (string-strip key) val))
-     cookie-split-semicolon))
-
-  cookie-split)
-
-(define (get-cookie name headers)
-  (let* ((cookies-p (assoc 'cookie headers))
-         (cookies/string (and (pair? cookies-p) (cdr cookies-p)))
-         (cookies (and cookies/string (parse-cookies-string cookies/string)))
-         (got (and cookies (assoc name cookies))))
-    (and got (cdr got))))
-
 (define (get-access-token callctx qH headers)
   (or
    (let ((ret (hashmap-ref qH 'key #f)))
      (when ret
        (set-callcontext-key! callctx ret))
      ret)
-   (or (get-cookie "key" headers)
-       (get-cookie "pwdtoken" headers))))
+   (or (web::get-cookie "key" headers)
+       (web::get-cookie "pwdtoken" headers))))
 
 (define (initialize-query query/encoded)
   (if query/encoded
