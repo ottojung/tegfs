@@ -29,16 +29,16 @@
           <div class='tiled-v-element split-container with-separator'>
             <div class='form-block split-left'>
               <label for='username'>Default link</label>
-              <input readonly autofocus onfocus='this.select()' value='~a' type='text'/>
+              <input class='copytext' readonly autofocus onfocus='this.select()' value='~a' type='text'/>
             </div>
             <div class='split-right'>
               <div class='form-block'>
                 <label for='username'>Protected link</label>
-                <input readonly value='~a' type='text'/>
+                <input class='copytext' readonly value='~a' type='text'/>
               </div>
               <div class='form-block'>
                 <label for='password'>Password</label>
-                <input readonly value='~a' type='text'/>
+                <input class='copytext' readonly value='~a' type='text'/>
               </div>
             </div>
           </div>

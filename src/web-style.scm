@@ -154,20 +154,6 @@ button[type=submit] {
 	transition: all.5s ease;
 }
 
-/* button { */
-/* 	background-color: #04AA6D; */
-/* 	color: white; */
-/* 	padding: 14px 20px; */
-/* 	margin: 8px 0; */
-/* 	border: none; */
-/* 	cursor: pointer; */
-/* 	width: 100%; */
-/* } */
-
-/* button:hover { */
-/* 	opacity: 0.8; */
-/* } */
-
 hr {
 	border-color: #f1f1f1;
 	background-color: #f1f1f1;
@@ -181,9 +167,9 @@ hr {
 	margin: 24px 0 12px 0;
 }
 
-span.psw {
-	float: right;
-	padding-top: 16px;
+.copytext {
+	font-family: monospace;
+	font-size: 180%;
 }
 
 /***************
