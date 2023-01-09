@@ -33,7 +33,7 @@
 (define (web::get-auth-body failed? yes no expected)
   (define top
     (if failed?
-        "<label><b>Bad password</b></label>"
+        "<label for='password'>Failed</label>"
         ""))
 
   (web::form-template
@@ -43,7 +43,13 @@
             (web::auth-encode-arg expected))
    (stringf
     "
-    ~a
-    <input type='password' placeholder='Enter Password' name='psw' required autofocus>
-    <button type='submit'>Login</button>"
+    <div class='tiled-v-element'>
+      <div class='form-block'>
+        ~a
+        <input type='password' placeholder='Enter Password' name='psw' required autofocus>
+      </div>
+    </div>
+    <div class='form-block tiled-v-element'>
+      <button type='submit'>Login</button>
+    </div>"
     top)))

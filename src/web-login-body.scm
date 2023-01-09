@@ -21,7 +21,7 @@
 
 (define web::login-body
   (web::form-template "action='logincont' enctype='application/x-www-form-urlencoded'" "
-    <div class='tiled-v-element split-container with-separator'>
+    <div class='tiled-v-element'>
       <div class='form-block'>
         <input type='password' placeholder='Enter Password' name='psw' required autofocus>
       </div>
