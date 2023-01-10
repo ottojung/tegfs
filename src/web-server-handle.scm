@@ -75,7 +75,9 @@
 
 (define (web::server-handle callctx)
   (parameterize ((web::callcontext/p callctx))
-    (define path (callcontext-path callctx))
+    (define path/ma (callcontext-path callctx))
+    (define path (if (string-prefix? "/" path/ma) path/ma
+                     (string-append "/" path/ma)))
     (define func (hashmap-ref handlers-funcmap path #f))
     (if func (func)
         (web::server-handle-temp-path callctx path))))
