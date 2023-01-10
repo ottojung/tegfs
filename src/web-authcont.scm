@@ -23,6 +23,7 @@
 %use (list-singleton?) "./euphrates/list-singleton-q.scm"
 %use (raisu) "./euphrates/raisu.scm"
 %use (string-split/simple) "./euphrates/string-split-simple.scm"
+%use (stringf) "./euphrates/stringf.scm"
 %use (web::bad-request) "./web-bad-request.scm"
 %use (web::body-not-found) "./web-body-not-found.scm"
 %use (web::callcontext/p) "./web-callcontext-p.scm"
@@ -39,8 +40,11 @@
   (define key (callcontext-token callctx))
   (define query (callcontext-query callctx))
   (define yes-continue (hashmap-ref query 'yes #f))
-  (define no-continue (hashmap-ref query 'no #f))
-  (define expected-key (hashmap-ref query 'expected #f))
+  (define expected-key (hashmap-ref query 'expected ""))
+  (define no-continue
+    (or (hashmap-ref query 'no #f)
+        (stringf "/auth?failed=true&yes=~a&expected=~a"
+                 yes-continue expected-key)))
   (define body/bytes (callcontext-body callctx))
 
   (cond
@@ -48,9 +52,7 @@
     (web::body-not-found))
    ((not yes-continue)
     (web::bad-request "Missing query argument ~s" "yes"))
-   ((not no-continue)
-    (web::bad-request "Missing query argument ~s" "no"))
-   ((not expected-key) ;; TODO: allow skipping this?
+   ((string-null? expected-key) ;; TODO: allow skipping this?
     (web::bad-request "Missing query argument ~s" "expected"))
    (else
     (let ()
