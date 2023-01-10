@@ -22,8 +22,8 @@
 %use (web::bad-request) "./web-bad-request.scm"
 %use (web::body-not-found) "./web-body-not-found.scm"
 %use (web::body->hashmap) "./web-body-to-hashmap.scm"
-%use (web::callcontext/p) "./web-callcontext-p.scm"
-%use (callcontext-body callcontext-query callcontext-token) "./web-callcontext.scm"
+%use (callcontext-body) "./web-callcontext.scm"
+%use (web::iterate-profun-results/or) "./web-iterate-profun-results.scm"
 %use (web::return) "./web-return.scm"
 %use (web::set-cookie-header) "./web-set-cookie-header.scm"
 %use (webcore::ask) "./webcore-ask.scm"
@@ -58,17 +58,17 @@
            (login ,password)
            (key K))))
 
+      (define (fail-fun results)
+        (values no-continue #f))
+
       (define-values (cont token)
-        (case (car result)
-          ((its)
-           (let ()
-             (define word (cadr result))
-             (define token (list-ref word 2))
-             (if (or (equal? token expected-key)
-                     (and token (string-null? expected-key)))
-                 (values yes-continue token)
-                 (values no-continue #f))))
-          (else (values no-continue #f))))
+        (web::iterate-profun-results/or
+         fail-fun
+         result (K)
+         (if (or (equal? K expected-key)
+                 (and K (string-null? expected-key)))
+             (values yes-continue K)
+             (values no-continue #f))))
 
       (web::return
        301
