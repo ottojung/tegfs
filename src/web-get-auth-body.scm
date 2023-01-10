@@ -30,17 +30,26 @@
            (string-append
             s "=" (uri-encode name) "&"))))))
 
-(define (web::get-auth-body failed? yes no expected)
+(define (web::get-auth-body failed? yes no0 expected temporary)
   (define top
     (if failed?
         "<label for='password'>Failed</label>"
         ""))
 
+  (define no
+    (or no0
+        (stringf "auth?failed=true&~a~a~a"
+                 (web::auth-encode-arg yes)
+                 (web::auth-encode-arg expected)
+                 (web::auth-encode-arg temporary))))
+
   (web::form-template
-   (stringf "action='authcont?~a~a~a' enctype='application/x-www-form-urlencoded'"
+   (stringf "action='authcont?~a~a~a~a' enctype='application/x-www-form-urlencoded'"
             (web::auth-encode-arg yes)
             (web::auth-encode-arg no)
-            (web::auth-encode-arg expected))
+            (web::auth-encode-arg expected)
+            (web::auth-encode-arg temporary)
+            )
    (stringf
     "
     <div class='tiled-v-element'>

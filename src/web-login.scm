@@ -17,8 +17,20 @@
 
 %var web::login
 
-%use (web::login-body) "./web-login-body.scm"
-%use (web::make-html-response) "./web-make-html-response.scm"
+%use (assq-or) "./euphrates/assq-or.scm"
+%use (stringf) "./euphrates/stringf.scm"
+%use (web::callcontext/p) "./web-callcontext-p.scm"
+%use (callcontext-headers) "./web-callcontext.scm"
+%use (web::redirect) "./web-redirect.scm"
 
 (define (web::login)
-  (web::make-html-response web::login-body))
+  (define callctx (web::callcontext/p))
+  (define headers (callcontext-headers callctx))
+  (define referer0
+    (assq-or 'referer headers #f))
+  (define referer
+    (or referer0 "home"))
+  (define target
+    (stringf "auth?yes=~a" referer))
+
+  (web::redirect callctx target #f))

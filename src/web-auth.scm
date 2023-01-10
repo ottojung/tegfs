@@ -18,7 +18,6 @@
 %var web::auth
 
 %use (hashmap-ref) "./euphrates/hashmap.scm"
-%use (stringf) "./euphrates/stringf.scm"
 %use (web::callcontext/p) "./web-callcontext-p.scm"
 %use (callcontext-query callcontext-token) "./web-callcontext.scm"
 %use (web::get-auth-body) "./web-get-auth-body.scm"
@@ -30,12 +29,10 @@
   (define query (callcontext-query callctx))
   (define failed-v (hashmap-ref query 'failed 'false))
   (define failed? (equal? failed-v "true"))
+  (define temporary-v (hashmap-ref query 'temporary "yes"))
   (define yes-continue (hashmap-ref query 'yes #f))
+  (define no-continue (hashmap-ref query 'no #f))
   (define expected-key (hashmap-ref query 'expected ""))
-  (define no-continue
-    (or (hashmap-ref query 'no #f)
-        (stringf "auth?failed=true&yes=~a&expected=~a"
-                 yes-continue expected-key)))
 
   (web::make-html-response
-   (web::get-auth-body failed? yes-continue no-continue expected-key)))
+   (web::get-auth-body failed? yes-continue no-continue expected-key temporary-v)))

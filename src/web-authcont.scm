@@ -23,12 +23,12 @@
 %use (list-singleton?) "./euphrates/list-singleton-q.scm"
 %use (raisu) "./euphrates/raisu.scm"
 %use (string-split/simple) "./euphrates/string-split-simple.scm"
-%use (stringf) "./euphrates/stringf.scm"
 %use (web::bad-request) "./web-bad-request.scm"
 %use (web::body-not-found) "./web-body-not-found.scm"
 %use (web::callcontext/p) "./web-callcontext-p.scm"
 %use (callcontext-body callcontext-query callcontext-token) "./web-callcontext.scm"
 %use (web::return) "./web-return.scm"
+%use (web::set-cookie-header) "./web-set-cookie-header.scm"
 %use (webcore::ask) "./webcore-ask.scm"
 
 %for (COMPILER "guile")
@@ -41,10 +41,9 @@
   (define query (callcontext-query callctx))
   (define yes-continue (hashmap-ref query 'yes #f))
   (define expected-key (hashmap-ref query 'expected ""))
-  (define no-continue
-    (or (hashmap-ref query 'no #f)
-        (stringf "/auth?failed=true&yes=~a&expected=~a"
-                 yes-continue expected-key)))
+  (define no-continue (hashmap-ref query 'no #f))
+  (define temporary-v (hashmap-ref query 'temporary #f))
+  (define temporary? (equal? temporary-v "no"))
   (define body/bytes (callcontext-body callctx))
 
   (cond
@@ -52,6 +51,8 @@
     (web::body-not-found))
    ((not yes-continue)
     (web::bad-request "Missing query argument ~s" "yes"))
+   ((not no-continue)
+    (web::bad-request "Missing query argument ~s" "no"))
    (else
     (let ()
       (define body
@@ -80,7 +81,7 @@
            (login ,password)
            (key K))))
 
-      (define cont
+      (define-values (cont token)
         (case (car result)
           ((its)
            (let ()
@@ -88,12 +89,19 @@
              (define token (list-ref word 2))
              (if (or (equal? token expected-key)
                      (and token (string-null? expected-key)))
-                 yes-continue
-                 no-continue)))
-          (else no-continue)))
+                 (values yes-continue token)
+                 (values no-continue #f))))
+          (else (values no-continue #f))))
 
       (web::return
        301
-       `((Location . ,cont)
-         (Cache-Control . "no-cache"))
+       (append
+        `((Location . ,cont)
+          (Cache-Control . "no-cache"))
+        (if token
+            (list
+             (web::set-cookie-header
+              (if temporary? "key" "pwdtoken")
+              token))
+            '()))
        #f)))))
