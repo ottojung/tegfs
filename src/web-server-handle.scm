@@ -31,6 +31,7 @@
 %use (web::favicon.ico) "./web-icon.scm"
 %use (web::login) "./web-login.scm"
 %use (web::logincont) "./web-logincont.scm"
+%use (web::logo-gray.jpeg) "./web-logo-gray.scm"
 %use (web::main.css) "./web-main-css.scm"
 %use (web::previewunknown) "./web-previewunknown.scm"
 %use (web::previewunknownurl) "./web-previewunknownurl.scm"
@@ -58,6 +59,7 @@
     (/authfail ,web::authfail)
 
     (/favicon.ico ,web::favicon.ico)
+    (/static/logo-gray.jpeg ,web::logo-gray.jpeg)
     (/static/main.css ,web::main.css)
     (/static/previewunknown.svg ,web::previewunknown)
     (/static/previewunknownurl.svg ,web::previewunknownurl)
