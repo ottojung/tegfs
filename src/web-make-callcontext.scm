@@ -78,7 +78,10 @@
       (lambda (p)
         (define key (car p))
         (case key
-          ((referer) (cons 'referer (uri->string (cdr p))))
+          ((referer)
+           (cond
+            ((string? (cdr p)) p)
+            (else (cons 'referer (uri->string (cdr p))))))
           (else p)))
       headers)))
 
