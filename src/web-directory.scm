@@ -50,4 +50,5 @@
 (define (web::directory-handle equals)
   (web::make-html-response
    (lambda _
+     (display "<br/>")
      (web::query-display-results equals))))
