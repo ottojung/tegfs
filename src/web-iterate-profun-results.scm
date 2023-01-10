@@ -16,18 +16,28 @@
 %run guile
 
 %var web::iterate-profun-results
+%var web::iterate-profun-results/or
 
 %use (fn-alist) "./euphrates/fn-alist.scm"
 %use (list-singleton?) "./euphrates/list-singleton-q.scm"
-%use (web::handle-profun-results) "./web-handle-profun-results.scm"
+%use (web::handle-profun-results/default-fail-fun web::handle-profun-results/or) "./web-handle-profun-results.scm"
 
 (define-syntax web::iterate-profun-results
   (syntax-rules ()
     ((_ results (name . names) . bodies)
+     (web::iterate-profun-results/or
+      web::handle-profun-results/default-fail-fun
+      results
+      (name . names)
+      . bodies))))
+
+(define-syntax web::iterate-profun-results/or
+  (syntax-rules ()
+    ((_ fail-fun results (name . names) . bodies)
      (let* ((fun (fn-alist (name . names) . bodies))
             (fun*
              (lambda (equals)
                (if (list-singleton? equals)
                    (fun (car equals))
                    (for-each fun equals)))))
-       (web::handle-profun-results results fun*)))))
+       (web::handle-profun-results/or results fun* fail-fun)))))

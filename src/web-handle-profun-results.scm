@@ -18,6 +18,7 @@
 %var web::handle-profun-results
 %var web::handle-profun-results/hooked
 %var web::handle-profun-results/or
+%var web::handle-profun-results/default-fail-fun
 
 %use (comp) "./euphrates/comp.scm"
 %use (raisu) "./euphrates/raisu.scm"
@@ -50,8 +51,8 @@
 (define (web::handle-profun-results results fun)
   (web::handle-profun-results/hooked results fun identity))
 
-(define (web::handle-profun-results/hooked results fun hook)
-  (define (fail-fun results)
+(define (web::handle-profun-results/default-fail-fun hook)
+  (lambda (results)
     (hook results)
     (case (car results)
       ((its)
@@ -62,8 +63,10 @@
         "Error: ~a"
         (words->string (map ~s (cadr results)))))
       (else
-       (raisu 'unexpected-results-from-backend-87156243510 results))))
+       (raisu 'unexpected-results-from-backend-87156243510 results)))))
 
+(define (web::handle-profun-results/hooked results fun hook)
+  (define fail-fun (web::handle-profun-results/default-fail-fun hook))
   (web::handle-profun-results/or results fun fail-fun))
 
 (define (web::handle-profun-results/or results fun fail-fun)
