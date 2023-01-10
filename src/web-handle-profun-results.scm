@@ -16,7 +16,7 @@
 %run guile
 
 %var web::handle-profun-results
-%var web::handle-profun-results/or
+%var web::handle-profun-results/hooked
 
 %use (comp) "./euphrates/comp.scm"
 %use (raisu) "./euphrates/raisu.scm"
@@ -24,11 +24,11 @@
 %use (words->string) "./euphrates/words-to-string.scm"
 %use (web::bad-request) "./web-bad-request.scm"
 
-(define (web::handle-profun-results/2 results fun fail-fun)
+(define (web::handle-profun-results/2 results fun hook)
   (define head
     (if (null? results)
         (begin
-          (fail-fun (cons 'its results))
+          (hook (cons 'its results))
           (raisu 'unexpected-null-from-backend-7126363))
         (car results)))
 
@@ -45,24 +45,24 @@
 
    ((equal? '((true)) results) (fun))
    ((equal? '((false)) results)
-    (fail-fun (cons 'its results))
+    (hook (cons 'its results))
     (raisu 'unexpected-false-from-backend-812731632))
    (else
     (raisu 'unexpected-its-from-backend-61253123543 results))))
 
 (define (web::handle-profun-results results fun)
-  (web::handle-profun-results/or results fun identity))
+  (web::handle-profun-results/hooked results fun identity))
 
-(define (web::handle-profun-results/or results fun fail-fun)
+(define (web::handle-profun-results/hooked results fun hook)
   (case (car results)
     ((its)
-     (web::handle-profun-results/2 (cdr results) fun fail-fun))
+     (web::handle-profun-results/2 (cdr results) fun hook))
     ((error)
-     (fail-fun results)
+     (hook results)
      ;; TODO: handle authorization errors differently
      (web::bad-request
       "Error: ~a"
       (words->string (map ~s (cadr results)))))
     (else
-     (fail-fun results)
+     (hook results)
      (raisu 'unexpected-results-from-backend-87156243510 results))))

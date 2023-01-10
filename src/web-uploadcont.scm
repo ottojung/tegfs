@@ -36,7 +36,7 @@
 %use (web::body-not-found) "./web-body-not-found.scm"
 %use (web::callcontext/p) "./web-callcontext-p.scm"
 %use (callcontext-body callcontext-token) "./web-callcontext.scm"
-%use (web::handle-profun-results/or) "./web-handle-profun-results.scm"
+%use (web::handle-profun-results/hooked) "./web-handle-profun-results.scm"
 %use (parse-multipart-as-hashmap) "./web-parse-multipart.scm"
 %use (web::static-error-message) "./web-static-error-message.scm"
 %use (webcore::ask) "./webcore-ask.scm"
@@ -133,7 +133,7 @@
            (add-entry ,upload-registry-filename ,entry)
            )))
 
-      (web::handle-profun-results/or
+      (web::handle-profun-results/hooked
        result
        (lambda _ ((upload-success-page <target>)))
        (lambda _ (when full-filename (file-delete full-filename))))))))
