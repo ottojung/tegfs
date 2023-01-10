@@ -92,6 +92,7 @@
   (define body
     (web::share::get-default-text
      callctx
+     share-time
      unprotected-link
      protected-link
      password

@@ -48,13 +48,11 @@
   "
       <br/>
       <div class='form-block tiled-v-element'>
-        <a href='~a'>
-          <img src='/static/gear.svg' width='40px' />
-        </a>
+          Links expire in ~a (<a href='~a'>configure</a>)
       </div>
 ")
 
-(define (web::share::get-default-text callctx unprotected-link0 protected-link0 password)
+(define (web::share::get-default-text callctx share-time unprotected-link0 protected-link0 password)
   (define domainname (web::get-domainname callctx))
   (define (get-link url0)
     (string-append domainname url0))
@@ -68,6 +66,29 @@
     (stringf web::share::inside-template
              unprotected-link protected-link password))
 
+  (define formatted-share-time
+    (cond
+     ((<= (* 24 60 60 60) share-time)
+      (let ((div (inexact->exact (quotient share-time (* 24 60 60)))))
+        (case div
+          ((1) (stringf "1 day"))
+          (else (stringf "~a days" div)))))
+     ((<= (* 60 60) share-time)
+      (let ((div (inexact->exact (quotient share-time (* 60 60)))))
+        (case div
+          ((1) (stringf "1 hour"))
+          (else (stringf "~a hours" div)))))
+     ((<= (* 1 60) share-time)
+      (let ((div (inexact->exact (quotient share-time (* 1 60)))))
+        (case div
+          ((1) (stringf "1 minute"))
+          (else (stringf "~a minutes" div)))))
+     (else
+      (let ((div (inexact->exact (floor share-time))))
+        (case div
+          ((1) (stringf "1 minute"))
+          (else (stringf "~a minutes" div)))))))
+
   (define settings-query
     (let ((original (hashmap-copy (callcontext-query callctx))))
       (hashmap-set! original 'settings "yes")
@@ -78,6 +99,7 @@
      (web::hashmap->query settings-query)))
   (define outsides
     (stringf web::share::outside-template
+             formatted-share-time
              settings-link))
 
   (web::form-template #f insides outsides))
