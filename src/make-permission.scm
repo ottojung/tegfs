@@ -23,16 +23,10 @@
 %use (get-random-access-token) "./get-random-access-token.scm"
 %use (permission-constructor) "./permission.scm"
 
-(define (make-permission expiery-time admin? maybepassword uploadaccess? detailsaccess? categorizationaccess? share-longer-than-view?)
+(define (make-permission expiery-time admin? maybepassword dynamic)
   (define token (get-random-access-token))
   (define start (current-time/p))
   (define time expiery-time)
-  (define dynamic
-    `((maybepassword . ,maybepassword)
-      (uploadaccess? . ,uploadaccess?)
-      (detailsaccess? . ,detailsaccess?)
-      (categorizationaccess? . ,categorizationaccess?)
-      (share-longer-than-view? . ,share-longer-than-view?)))
 
   (permission-constructor
    token start time

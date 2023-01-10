@@ -60,21 +60,13 @@
 
          ;; TODO: read below from the config
          (define admin? #t)
-         (define uploadaccess? #t)
-         (define detailsaccess? #t)
-         (define categorizationaccess? #t)
-         (define share-longer-than-view? #t)
+         (define dynamic '())
 
          (define perm
            (make-permission!
             webcore::context
             default-login-expiery-time
-            admin?
-            maybepassword
-            uploadaccess?
-            detailsaccess?
-            categorizationaccess?
-            share-longer-than-view?))
+            admin? maybepassword dynamic))
          (profun-set-parameter (webcore::permissions/p <- perm))))
 
       (temporary
