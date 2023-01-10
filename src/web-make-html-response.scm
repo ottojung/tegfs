@@ -21,10 +21,9 @@
 %use (raisu) "./euphrates/raisu.scm"
 %use (current-time/p) "./current-time-p.scm"
 %use (web::callcontext/p) "./web-callcontext-p.scm"
-%use (callcontext-key) "./web-callcontext.scm"
+%use (callcontext-respheaders) "./web-callcontext.scm"
 %use (web::display-header) "./web-display-header.scm"
 %use (web::return) "./web-return.scm"
-%use (web::set-cookie-header) "./web-set-cookie-header.scm"
 %use (webcore::current-communicator/p) "./webcore-current-communicator-p.scm"
 
 %for (COMPILER "guile")
@@ -59,9 +58,7 @@
   (define comm (webcore::current-communicator/p))
   (define callctx (web::callcontext/p))
   (define now (current-time/p))
-  (define key (callcontext-key callctx))
-  (define key-headers
-    (if key (list (web::set-cookie-header "key" key)) '()))
+  (define key-headers (callcontext-respheaders callctx))
 
   (web::return
    status

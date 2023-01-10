@@ -20,9 +20,10 @@
 
 %use (hashmap-ref hashmap? make-hashmap) "./euphrates/hashmap.scm"
 %use (memconst) "./euphrates/memconst.scm"
-%use (callcontext-ctr set-callcontext-key!) "./web-callcontext.scm"
+%use (add-callcontext-respheaders! callcontext-ctr) "./web-callcontext.scm"
 %use (web::get-cookie) "./web-get-cookie.scm"
 %use (web::query->hashmap) "./web-query-to-hashmap.scm"
+%use (web::set-cookie-header) "./web-set-cookie-header.scm"
 
 %for (COMPILER "guile")
 
@@ -35,7 +36,10 @@
   (or
    (let ((ret (hashmap-ref qH 'key #f)))
      (when ret
-       (set-callcontext-key! callctx ret))
+       (let ()
+         (define additional-headers
+           (list (web::set-cookie-header "key" ret)))
+         (add-callcontext-respheaders! callctx additional-headers)))
      ret)
    (or (web::get-cookie "key" headers)
        (web::get-cookie "pwdtoken" headers))))
@@ -70,5 +74,5 @@
 
   (letrec
       ((tokenfn (memconst (get-access-token callctx (queryfn) headers)))
-       (callctx (callcontext-ctr url path headersfn queryfn body #f tokenfn)))
+       (callctx (callcontext-ctr url path headersfn queryfn body '() tokenfn)))
     callctx))

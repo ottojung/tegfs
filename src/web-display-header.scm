@@ -19,16 +19,14 @@
 
 %use (printf) "./euphrates/printf.scm"
 %use (stringf) "./euphrates/stringf.scm"
-%use (callcontext-headers callcontext-key) "./web-callcontext.scm"
+%use (callcontext-headers) "./web-callcontext.scm"
 %use (web::get-cookie) "./web-get-cookie.scm"
 
 (define (web::display-header callctx)
   (define headers (callcontext-headers callctx))
   (define usertype
     (cond
-     ((or (web::get-cookie "key" headers)
-          (callcontext-key callctx))
-      'Anonymous)
+     ((web::get-cookie "key" headers) 'Anonymous)
      ((web::get-cookie "pwdtoken" headers) 'Admin)
      (else #f)))
 

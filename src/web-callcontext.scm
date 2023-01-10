@@ -22,20 +22,21 @@
 %var callcontext-headers
 %var callcontext-query
 %var callcontext-body
-%var callcontext-key
-%var set-callcontext-key!
+%var callcontext-respheaders
+%var set-callcontext-respheaders!
+%var add-callcontext-respheaders!
 %var callcontext-token
 
 %use (define-type9) "./euphrates/define-type9.scm"
 
 (define-type9 <callcontext>
-  (callcontext-ctr url path headersfn queryfn body key tokenfn) callcontext?
+  (callcontext-ctr url path headersfn queryfn body respheaders tokenfn) callcontext?
   (url callcontext-url) ;; request url
   (path callcontext-path) ;; path part of the url
   (headersfn callcontext-headersfn) ;; request headers
   (queryfn callcontext-queryfn) ;; query hashmap
   (body callcontext-body) ;; client body
-  (key callcontext-key set-callcontext-key!) ;; access key to-set to
+  (respheaders callcontext-respheaders set-callcontext-respheaders!) ;; additional response headers to be set
   (tokenfn callcontext-tokenfn) ;; current token function
   )
 
@@ -47,3 +48,8 @@
 
 (define (callcontext-headers callctx)
   ((callcontext-headersfn callctx)))
+
+(define (add-callcontext-respheaders! callctx additional)
+  (define current (or (callcontext-respheaders callctx) '()))
+  (set-callcontext-respheaders!
+   callctx (append current additional)))
