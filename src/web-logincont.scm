@@ -17,12 +17,10 @@
 
 %var web::logincont
 
-%use (define-tuple) "./euphrates/define-tuple.scm"
-%use (fn) "./euphrates/fn.scm"
-%use (list-singleton?) "./euphrates/list-singleton-q.scm"
+%use (hashmap-ref) "./euphrates/hashmap.scm"
 %use (raisu) "./euphrates/raisu.scm"
-%use (string-split/simple) "./euphrates/string-split-simple.scm"
 %use (web::body-not-found) "./web-body-not-found.scm"
+%use (web::body->hashmap) "./web-body-to-hashmap.scm"
 %use (web::callcontext/p) "./web-callcontext-p.scm"
 %use (callcontext-body) "./web-callcontext.scm"
 %use (web::login-failed-body) "./web-login-failed-body.scm"
@@ -31,34 +29,17 @@
 %use (web::set-cookie-header) "./web-set-cookie-header.scm"
 %use (webcore::ask) "./webcore-ask.scm"
 
-%for (COMPILER "guile")
-(use-modules (ice-9 iconv))
-%end
-
 (define (web::logincont)
   (define body/bytes (callcontext-body (web::callcontext/p)))
   (if (not body/bytes)
       (web::body-not-found)
       (let ()
-        (define body
-          (bytevector->string body/bytes "utf-8"))
-
-        (define parts
-          (string-split/simple body #\&))
-
         (define key-values
-          (map (fn string-split/simple % #\=) parts))
+          (web::body->hashmap body/bytes))
 
-        (define _2
-          (unless (list-singleton? key-values)
-            (raisu 'too-many-query-parameters key-values)))
-
-        (define-tuple (key password)
-          (car key-values))
-
-        (define _3
-          (unless (equal? "psw" key)
-            (raisu 'bad-query-key key)))
+        (define password
+          (or (hashmap-ref key-values 'psw #f)
+              (raisu 'bad-body-key)))
 
         (define result
           (webcore::ask
