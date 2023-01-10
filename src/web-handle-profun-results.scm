@@ -17,6 +17,7 @@
 
 %var web::handle-profun-results
 %var web::handle-profun-results/hooked
+%var web::handle-profun-results/or
 
 %use (comp) "./euphrates/comp.scm"
 %use (raisu) "./euphrates/raisu.scm"
@@ -24,12 +25,10 @@
 %use (words->string) "./euphrates/words-to-string.scm"
 %use (web::bad-request) "./web-bad-request.scm"
 
-(define (web::handle-profun-results/2 results fun hook)
+(define (web::handle-profun-results/2 results fun fail-fun)
   (define head
     (if (null? results)
-        (begin
-          (hook (cons 'its results))
-          (raisu 'unexpected-null-from-backend-7126363))
+        (fail-fun (cons 'its results))
         (car results)))
 
   (cond
@@ -44,9 +43,7 @@
       (fun equals)))
 
    ((equal? '((true)) results) (fun))
-   ((equal? '((false)) results)
-    (hook (cons 'its results))
-    (raisu 'unexpected-false-from-backend-812731632))
+   ((equal? '((false)) results) (fail-fun (cons 'its results)))
    (else
     (raisu 'unexpected-its-from-backend-61253123543 results))))
 
@@ -54,15 +51,24 @@
   (web::handle-profun-results/hooked results fun identity))
 
 (define (web::handle-profun-results/hooked results fun hook)
+  (define (fail-fun results)
+    (hook results)
+    (case (car results)
+      ((its)
+       (raisu 'unexpected-its-result-from-backend-76123 results))
+      ((error)
+       ;; TODO: handle authorization errors differently
+       (web::bad-request
+        "Error: ~a"
+        (words->string (map ~s (cadr results)))))
+      (else
+       (raisu 'unexpected-results-from-backend-87156243510 results))))
+
+  (web::handle-profun-results/or results fun fail-fun))
+
+(define (web::handle-profun-results/or results fun fail-fun)
   (case (car results)
     ((its)
-     (web::handle-profun-results/2 (cdr results) fun hook))
-    ((error)
-     (hook results)
-     ;; TODO: handle authorization errors differently
-     (web::bad-request
-      "Error: ~a"
-      (words->string (map ~s (cadr results)))))
+     (web::handle-profun-results/2 (cdr results) fun fail-fun))
     (else
-     (hook results)
-     (raisu 'unexpected-results-from-backend-87156243510 results))))
+     (fail-fun results))))
