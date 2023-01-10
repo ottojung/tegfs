@@ -23,11 +23,14 @@
 %use (uri-encode) "./euphrates/uri-encode.scm"
 %use (web::callcontext/p) "./web-callcontext-p.scm"
 %use (callcontext-headers callcontext-url) "./web-callcontext.scm"
+%use (web::get-domainname) "./web-get-domainname.scm"
 %use (web::redirect) "./web-redirect.scm"
 
 (define (web::login)
   (define callctx (web::callcontext/p))
   (define headers (callcontext-headers callctx))
+  (define domainname
+    (web::get-domainname callctx))
   (define referer0
     (assq-or 'referer headers #f))
   (define referer1
