@@ -23,12 +23,12 @@
 %use (permission-token) "./permission.scm"
 %use (context-tokens) "./web-context.scm"
 
-(define (make-permission! ctx expiery-time admin? maybepassword uploadaccess? detailsaccess? share-longer-than-view?)
+(define (make-permission! ctx expiery-time admin? maybepassword uploadaccess? detailsaccess? categorizationaccess? share-longer-than-view?)
   (define tokens (context-tokens ctx))
   (define perm
     (make-permission
      expiery-time admin?
-     maybepassword uploadaccess? detailsaccess?
+     maybepassword uploadaccess? detailsaccess? categorizationaccess?
      share-longer-than-view?))
   (define token (permission-token perm))
   (hashmap-set! tokens token perm)

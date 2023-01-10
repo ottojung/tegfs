@@ -56,11 +56,15 @@
 
       (registered?
        (let ()
-         (define admin? #t) ;; TODO: read from the config
          (define maybepassword password)
-         (define uploadaccess? #t) ;; TODO: read from the config
-         (define detailsaccess? #t) ;; TODO: read from the config
-         (define share-longer-than-view? #t) ;; TODO: read from the config
+
+         ;; TODO: read below from the config
+         (define admin? #t)
+         (define uploadaccess? #t)
+         (define detailsaccess? #t)
+         (define categorizationaccess? #t)
+         (define share-longer-than-view? #t)
+
          (define perm
            (make-permission!
             webcore::context
@@ -69,6 +73,7 @@
             maybepassword
             uploadaccess?
             detailsaccess?
+            categorizationaccess?
             share-longer-than-view?))
          (profun-set-parameter (webcore::permissions/p <- perm))))
 

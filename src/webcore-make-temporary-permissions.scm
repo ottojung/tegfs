@@ -64,9 +64,10 @@
                (generate-random-password)))
          (define uploadaccess? #f) ;; TODO: maybe allow sometimes
          (define detailsaccess? #f) ;; TODO: maybe allow sometimes
+         (define categorizationaccess? #f) ;; TODO: maybe allow sometimes
          (define share-longer-than-view? #f) ;; TODO: maybe allow sometimes
          (define perm
-           (make-permission! web::context live-duration* admin? maybepassword uploadaccess? detailsaccess? share-longer-than-view?))
+           (make-permission! web::context live-duration* admin? maybepassword uploadaccess? detailsaccess? categorizationaccess? share-longer-than-view?))
          (define its-key (permission-token perm))
          (define actual (permission-time perm))
 
