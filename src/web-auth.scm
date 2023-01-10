@@ -27,7 +27,7 @@
 (define (web::authinitial callctx query)
   (define failed-v (hashmap-ref query 'failed 'false))
   (define failed? (equal? failed-v "true"))
-  (define temporary-v (hashmap-ref query 'temporary "yes"))
+  (define temporary-v (hashmap-ref query 'temporary "true"))
   (define yes-continue (hashmap-ref query 'yes #f))
   (define no-continue (hashmap-ref query 'no #f))
   (define expected-key (hashmap-ref query 'expected #f))
