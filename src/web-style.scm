@@ -242,7 +242,7 @@ header nav ul li a {
 }
 
 header nav ul li label {
-	font-size: 80%;
+	font-size: 70%;
 }
 
 header nav ul li:hover {

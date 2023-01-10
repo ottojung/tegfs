@@ -36,7 +36,7 @@
        (stringf
         "<div>
            <a href='logout'>Logout</a>
-           <label>(Loged in as <i>~a</i>)</label>
+           <label>(Loged in as ~a)</label>
          </div>" usertype))
       (else "<a href='login'>Login</a>")))
 
