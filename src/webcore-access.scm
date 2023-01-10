@@ -1,4 +1,4 @@
-;;;; Copyright (C) 2022  Otto Jung
+;;;; Copyright (C) 2022, 2023  Otto Jung
 ;;;;
 ;;;; This program is free software: you can redistribute it and/or modify
 ;;;; it under the terms of the GNU Affero General Public License as published
@@ -51,8 +51,9 @@
 
 (define (has-access-for-entry-details? filemap/2 perm entry)
   (and perm
-       (and (permission-detailsaccess? perm)
-            (has-access-for-entry? filemap/2 perm entry))))
+       (or (permission-admin? perm)
+           (and (permission-detailsaccess? perm)
+                (has-access-for-entry? filemap/2 perm entry)))))
 
 (define (can-upload? perm)
   (and perm
