@@ -45,5 +45,6 @@
   (let* ((cookies-p (assoc 'cookie headers))
          (cookies/string (and (pair? cookies-p) (cdr cookies-p)))
          (cookies (and cookies/string (parse-cookies-string cookies/string)))
-         (got (and cookies (assoc name cookies))))
-    (and got (cdr got))))
+         (got0 (and cookies (assoc name cookies)))
+         (got (and got0 (cdr got0))))
+    (and got (not (string-null? got)) got)))

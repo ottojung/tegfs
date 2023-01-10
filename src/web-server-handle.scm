@@ -32,6 +32,7 @@
 %use (web::login) "./web-login.scm"
 %use (web::logincont) "./web-logincont.scm"
 %use (web::logo-gray.jpeg) "./web-logo-gray.scm"
+%use (web::logout) "./web-logout.scm"
 %use (web::main.css) "./web-main-css.scm"
 %use (web::previewunknown) "./web-previewunknown.scm"
 %use (web::previewunknownurl) "./web-previewunknownurl.scm"
@@ -46,6 +47,7 @@
 (define handlers-config
   `((/login ,web::login)
     (/logincont ,web::logincont)
+    (/logout ,web::logout)
     (/collectgarbage ,web::collectgarbage)
     (/query ,web::query)
     (/directory ,web::directory)
