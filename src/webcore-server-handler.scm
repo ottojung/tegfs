@@ -20,18 +20,19 @@
 %use (profun-handler-extend) "./euphrates/profun-handler.scm"
 %use (add-entry) "./add-entry.scm"
 %use (core::make-server-handler) "./core-server-handler.scm"
+%use (webcore::add-entry) "./webcore-add-entry.scm"
+%use (webcore::collectgarbage) "./webcore-collectgarbage.scm"
+%use (webcore::entry) "./webcore-entry.scm"
+%use (webcore::key) "./webcore-key.scm"
+%use (webcore::link-shared) "./webcore-link-shared.scm"
 %use (webcore::login) "./webcore-login.scm"
 %use (webcore::make-temporary-permissions) "./webcore-make-temporary-permissions.scm"
-%use (webcore::shared-entry-contains) "./webcore-shared-entry-contains.scm"
-%use (webcore::key) "./webcore-key.scm"
-%use (webcore::collectgarbage) "./webcore-collectgarbage.scm"
-%use (webcore::link-shared) "./webcore-link-shared.scm"
 %use (webcore::senderid->entry) "./webcore-senderid-to-entry.scm"
 %use (webcore::share-entry-full) "./webcore-share-entry-full.scm"
-%use (webcore::share-entry) "./webcore-share-entry.scm"
 %use (webcore::share-entry-preview) "./webcore-share-entry-preview.scm"
-%use (webcore::add-entry) "./webcore-add-entry.scm"
-%use (webcore::entry) "./webcore-entry.scm"
+%use (webcore::share-entry) "./webcore-share-entry.scm"
+%use (webcore::shared-entry-contains) "./webcore-shared-entry-contains.scm"
+%use (webcore::time-left) "./webcore-time-left.scm"
 
 (define (webcore::make-server-handler web::context)
   (profun-handler-extend
@@ -49,5 +50,6 @@
    (shared-entry-contains (webcore::shared-entry-contains web::context))
    (make-temporary-permissions (webcore::make-temporary-permissions web::context))
    (collectgarbage (webcore::collectgarbage web::context))
+   (time-left (webcore::time-left web::context))
 
    ))
