@@ -29,7 +29,6 @@
 %use (web::full) "./web-full.scm"
 %use (web::favicon.ico) "./web-icon.scm"
 %use (web::login) "./web-login.scm"
-%use (web::logincont) "./web-logincont.scm"
 %use (web::logo-gray.jpeg) "./web-logo-gray.scm"
 %use (web::logout) "./web-logout.scm"
 %use (web::main.css) "./web-main-css.scm"
@@ -45,7 +44,6 @@
 
 (define handlers-config
   `((/login ,web::login)
-    (/logincont ,web::logincont)
     (/logout ,web::logout)
     (/collectgarbage ,web::collectgarbage)
     (/query ,web::query)
