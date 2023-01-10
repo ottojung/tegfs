@@ -1,4 +1,4 @@
-;;;; Copyright (C) 2022  Otto Jung
+;;;; Copyright (C) 2022, 2023  Otto Jung
 ;;;;
 ;;;; This program is free software: you can redistribute it and/or modify
 ;;;; it under the terms of the GNU Affero General Public License as published
@@ -61,37 +61,37 @@ button, input, label {
 
 .split-container.with-separator .split-right {
 	border-left: 1px solid #aaa;
-	padding-left: 20px;
-	padding-right: 5px;
+	padding-left: 1.25rem;
+	padding-right: 0.31rem;
 }
 
 .split-container.with-separator .split-left {
-	margin-right: 20px;
-	padding-left: 5px;
+	margin-right: 1.25rem;
+	padding-left: 0.31rem;
 }
 
 .bordered {
-	border: 2px solid #f1f1f1;
+	border: 0.125rem solid #f1f1f1;
 }
 
 .smooth-edged {
-	border-radius: 10px;
+	border-radius: 0.625rem;
 }
 
 .with-shadow {
-	box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);
+	box-shadow: 0 0.28rem 0.57rem 0 rgba(0, 0, 0, 0.2), 0 0.42rem 1.42rem 0 rgba(0, 0, 0, 0.19);
 }
 
 .tiled {
-	padding-top: 9px;
-	padding-bottom: 13px;
-	padding-left: 16px;
-	padding-right: 16px;
+	padding-top: 0.5625rem;
+	padding-bottom: 0.8125rem;
+	padding-left: 1rem;
+	padding-right: 1rem;
 }
 
 .tiled.dark {
 	background: linear-gradient(#24313c, #435259);;
-	box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);
+	box-shadow: 0 0.28rem 0.57rem 0 rgba(0, 0, 0, 0.2), 0 0.42rem 1.42rem 0 rgba(0, 0, 0, 0.19);
 }
 
 .tiled.dark, .tiled.dark input, .tiled.dark button {
@@ -103,7 +103,8 @@ button, input, label {
 }
 
 .tiled.dark button {
-	background-color: #1ab188;
+	background-color: #343bcb;
+	box-shadow: 0 0.28rem 0.57rem 0 rgba(0, 0, 0, 0.2), 0 0.42rem 1.42rem 0 rgba(0, 0, 0, 0.19);
 }
 
 .tiled.bright, .tiled.bright input {
@@ -118,8 +119,8 @@ button, input, label {
 
 .form-block label {
 	font-size: 80%;
-	margin-left: 10px;
-	letter-spacing: 0.2em;
+	margin-left: 0.625rem;
+	letter-spacing: 0.16rem;
 	text-transform: uppercase;
 }
 
@@ -133,15 +134,15 @@ button, input, label {
 
 .form-block input, .form-block button {
 	border: 0;
-	border-radius: 4px;
+	border-radius: 0.25rem;
 	box-sizing: border-box;
-	padding: 12px 20px;
+	padding: 0.75rem 1.25rem;
 }
 
 input[type=text], input[type=password] {
 	width: 100%;
-	padding: 12px 20px;
-	margin: 8px 0;
+	padding: 0.75rem 1.25rem;
+	margin: 0.5rem 0;
 	display: inline-block;
 	border: 1px solid #ccc;
 	box-sizing: border-box;
@@ -151,23 +152,15 @@ button[type=submit] {
 	font-size: 140%;
 	border: 0;
 	border-radius: 0;
-	padding: 15px 0;
+	padding: 0.93rem 0;
 	text-transform: uppercase;
-	letter-spacing: .1em;
+	letter-spacing: 0.1rem;
 	transition: all.5s ease;
-}
-
-hr {
-	border-color: #f1f1f1;
-	background-color: #f1f1f1;
-	margin-top: 14px;
-	margin-bottom: 19px;
-	height: 0px;
 }
 
 .imgcontainer {
 	text-align: center;
-	margin: 24px 0 12px 0;
+	margin: 1.5rem 0 0.75rem 0;
 }
 
 .copytext {
@@ -185,18 +178,18 @@ hr {
 }
 
 .search-input input[type=text] {
-	border-width: 5px;
-	border-radius: 35px;
+	border-width: 0.31rem;
+	border-radius: 2.19rem;
 	border-color: #1ab188;
 }
 
 .search-input input[type=image] {
-	margin-left: 15px;
-	width: 60px;
+	margin-left: 0.94rem;
+	width: 3.75rem;
 }
 
 .search-input .tiled {
-	width: 60%;
+	width: 50rem;
 }
 
 /*****************
@@ -247,8 +240,8 @@ header nav ul a:hover {
 header nav ul label {
 	color: #8ddf36;
 	font-size: 70%;
-	margin-left: -6.2rem;
-	margin-top: 2.5rem;
+	margin-left: -6rem;
+	margin-top: 2.6rem;
 	display: block;
 }
 
@@ -282,12 +275,12 @@ header nav ul img {
 	margin: 0 auto;
 	display: grid;
 	gap: 1rem;
-	grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+	grid-template-columns: repeat(auto-fit, minmax(18.75rem, 1fr));
 }
 
 .card img {
 	width: 100%;
-	margin-bottom: 0.7em;
+	margin-bottom: 0.7rem;
 }
 
 /*****************
@@ -296,9 +289,9 @@ header nav ul img {
 
 .styled-table {
 	border-collapse: collapse;
-	margin: 25px 0;
-	min-width: 400px;
-	box-shadow: 0 0 20px rgba(0, 0, 0, 0.15);
+	margin: 1.56rem 0;
+	min-width: 25rem;
+	box-shadow: 0 0 1.25rem rgba(0, 0, 0, 0.15);
 }
 
 .styled-table tbody {
@@ -309,7 +302,7 @@ header nav ul img {
 
 .styled-table th,
 .styled-table td {
-	padding: 12px 15px;
+	padding: 0.75rem 0.94rem;
 }
 
 .styled-table tbody tr {
@@ -321,7 +314,7 @@ header nav ul img {
 }
 
 .styled-table tbody tr:last-of-type {
-	border-bottom: 2px solid #009879;
+	border-bottom: 0.125rem solid #009879;
 }
 
 .styled-table tbody tr.active-row {
