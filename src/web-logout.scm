@@ -18,10 +18,9 @@
 %var web::logout
 
 %use (assq-or) "./euphrates/assq-or.scm"
-%use (debugs) "./euphrates/debugs.scm"
 %use (remove-common-prefix) "./euphrates/remove-common-prefix.scm"
 %use (web::callcontext/p) "./web-callcontext-p.scm"
-%use (callcontext-headers) "./web-callcontext.scm"
+%use (callcontext-headers callcontext-url) "./web-callcontext.scm"
 %use (web::get-cookie) "./web-get-cookie.scm"
 %use (web::get-domainname) "./web-get-domainname.scm"
 %use (web::return) "./web-return.scm"
@@ -38,12 +37,12 @@
     (assq-or 'referer headers #f))
   (define referer1
     (or referer0 "home"))
-  (define referer
+  (define referer2
     (remove-common-prefix referer1 domainname))
-
-  (debugs referer0)
-  (debugs referer1)
-  (debugs referer)
+  (define referer
+    (if (equal? referer2 (callcontext-url callctx))
+        "home"
+        referer2))
 
   (web::return
    303
