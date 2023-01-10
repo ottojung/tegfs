@@ -19,6 +19,7 @@
 
 %use (assq-or) "./euphrates/assq-or.scm"
 %use (stringf) "./euphrates/stringf.scm"
+%use (uri-encode) "./euphrates/uri-encode.scm"
 %use (web::callcontext/p) "./web-callcontext-p.scm"
 %use (callcontext-headers) "./web-callcontext.scm"
 %use (web::redirect) "./web-redirect.scm"
@@ -31,6 +32,6 @@
   (define referer
     (or referer0 "home"))
   (define target
-    (stringf "auth?yes=~a" referer))
+    (stringf "auth?yes=~a" (uri-encode referer)))
 
   (web::redirect callctx target #f))
