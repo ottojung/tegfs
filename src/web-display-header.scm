@@ -34,19 +34,19 @@
     (case usertype
       ((Admin Anonymous)
        (stringf
-        "<div>
-           <a href='logout'>Logout</a>
-           <label>(Loged in as ~a)</label>
-         </div>" usertype))
-      (else "<a href='login'>Login</a>")))
+        "<a href='logout'><li>Logout</li></a>
+         <label>(Loged in as ~a)</label>
+        " usertype))
+      (else "<a href='login'><li>Login</li></a>")))
 
   (printf
    "<nav>
       <ul>
-        <li><a href='query'>Search</a></li>
-        <li><a href='upload'>Upload</a></li>
-        <li><a href='tags'>Tags</a></li>
-        <li>~a</li>
+        <a href='home'><li><img src='./static/logo-gray.jpeg'/></li></a>
+        <a href='query'><li>Search</li></a>
+        <a href='upload'><li>Upload</li></a>
+        <a href='tags'><li>Tags</li></a>
+        ~a
       </ul>
     </nav>"
    auth))

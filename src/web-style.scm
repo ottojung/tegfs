@@ -27,7 +27,7 @@
 
 
 html, body {
-	height: 100%;
+	height: 90%;
 	margin: 0;
 	padding: 0;
 }
@@ -45,7 +45,7 @@ button, input, label {
 	display: flex;
 	align-items: center;
 	justify-content: center;
-	height: 80%;
+	height: 100%;
 	width: 100%;
 }
 
@@ -204,16 +204,15 @@ hr {
  *****************/
 
 header {
-	box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);
+	box-shadow: 0 0.28rem 0.57rem 0 rgba(0, 0, 0, 0.2), 0 0.42rem 1.42rem 0 rgba(0, 0, 0, 0.19);
+	border-color: black;
 	background-color: #24313c;
-	color: white;
-	padding: 4px;
 	text-align: center;
-	width: 90%;
 	margin: 0 auto;
 
-	border-bottom-left-radius: 15px;
-	border-bottom-right-radius: 15px;
+	border-bottom-left-radius: 9999rem;
+	border-bottom-right-radius: 9999rem;
+	width: 77rem;
 }
 
 header nav ul {
@@ -221,32 +220,41 @@ header nav ul {
 	margin: 0;
 	padding: 0;
 	display: flex;
-	justify-content: space-around;
+	justify-content: center;
 }
 
-header nav ul li {
-	padding: 0px 50px;
-	border-radius: 5px;
+header nav ul a {
+	padding-left: 4rem;
+	padding-right: 4rem;
 	display: flex;
 	align-items: center;
 	text-align: center;
+	text-decoration: none;
 }
 
-header nav ul li a {
+header nav ul a li {
 	display: block;
 	font-size: 140%;
 	font-family: sans-serif;
-	color: #fff;
+	color: white;
 	text-decoration: none;
-	border-radius: 4px;
 }
 
-header nav ul li label {
+header nav ul a:hover {
+	background-color: rgb(0, 0, 0, 0.1);
+}
+
+header nav ul label {
+	color: #8ddf36;
 	font-size: 70%;
+	margin-left: -6.2rem;
+	margin-top: 2.5rem;
+	display: block;
 }
 
-header nav ul li:hover {
-	background-color: #435259;
+header nav ul img {
+	padding-top: 0.32rem;
+	height: 3.5rem;
 }
 
 /***************
