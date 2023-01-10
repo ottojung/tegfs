@@ -58,7 +58,17 @@
     (if (hashmap? query)
         (lambda _ query)
         (memconst (initialize-query query))))
+  (define headersfn
+    (memconst
+     (map
+      (lambda (p)
+        (define key (car p))
+        (case key
+          ((referer) (cons 'referer (uri->string (cdr p))))
+          (else p)))
+      headers)))
+
   (letrec
       ((tokenfn (memconst (get-access-token callctx (queryfn) headers)))
-       (callctx (callcontext-ctr url path headers queryfn body #f tokenfn)))
+       (callctx (callcontext-ctr url path headersfn queryfn body #f tokenfn)))
     callctx))

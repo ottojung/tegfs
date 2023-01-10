@@ -24,24 +24,20 @@
 %use (web::return) "./web-return.scm"
 %use (web::set-cookie-header) "./web-set-cookie-header.scm"
 
-%for (COMPILER "guile")
-(use-modules (web uri))
-%end
-
 (define (web::logout)
   (define callctx (web::callcontext/p))
   (define headers (callcontext-headers callctx))
   (define temp-login? (web::get-cookie "key" headers))
   (define user-login? (web::get-cookie "pwdtoken" headers))
-  (define referer
+  (define referer0
     (assq-or 'referer headers #f))
-  (define referer-url
-    (or (and referer (uri->string referer)) "home"))
+  (define referer
+    (or referer0 "home"))
 
   (web::return
    301
    (append
-    `((Location . ,referer-url)
+    `((Location . ,referer)
       (Cache-Control . "no-cache"))
     (cond
      (temp-login?

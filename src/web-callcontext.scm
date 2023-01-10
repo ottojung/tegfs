@@ -29,10 +29,10 @@
 %use (define-type9) "./euphrates/define-type9.scm"
 
 (define-type9 <callcontext>
-  (callcontext-ctr url path headers queryfn body key tokenfn) callcontext?
+  (callcontext-ctr url path headersfn queryfn body key tokenfn) callcontext?
   (url callcontext-url) ;; request url
   (path callcontext-path) ;; path part of the url
-  (headers callcontext-headers) ;; request headers
+  (headersfn callcontext-headersfn) ;; request headers
   (queryfn callcontext-queryfn) ;; query hashmap
   (body callcontext-body) ;; client body
   (key callcontext-key set-callcontext-key!) ;; access key to-set to
@@ -44,3 +44,6 @@
 
 (define (callcontext-query callctx)
   ((callcontext-queryfn callctx)))
+
+(define (callcontext-headers callctx)
+  ((callcontext-headersfn callctx)))
