@@ -38,7 +38,7 @@
   (if (string-null? (url-get-protocol new-url))
       (handler new-callctx)
       (web::return
-       301
+       303
        `((Location . ,new-url)
          (Cache-Control . "no-cache"))
        #f)))

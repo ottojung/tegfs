@@ -37,7 +37,7 @@
    result (L)
 
    (web::return
-    301
+    303
     `((Location . ,L)
       (Cache-Control . "no-cache"))
     #f)))

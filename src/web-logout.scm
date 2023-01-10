@@ -35,7 +35,7 @@
     (or referer0 "home"))
 
   (web::return
-   301
+   303
    (append
     `((Location . ,referer)
       (Cache-Control . "no-cache"))

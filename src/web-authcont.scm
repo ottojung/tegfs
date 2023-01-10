@@ -73,7 +73,7 @@
              (values no-continue 0 #f))))
 
       (web::return
-       301
+       303
        (append
         `((Location . ,cont)
           (Cache-Control . "no-cache"))
