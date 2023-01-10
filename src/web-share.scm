@@ -73,7 +73,7 @@
     (web::create-temp-path
      share-time
      (lambda _
-       (stringf "/authfail?yes=~a&no=~a&expected=~a"
+       (stringf "/auth?yes=~a&no=~a&expected=~a&failed=true"
                 yes-continue
                 no-continue
                 token))))

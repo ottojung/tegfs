@@ -34,7 +34,7 @@
   (define expected-key (hashmap-ref query 'expected ""))
   (define no-continue
     (or (hashmap-ref query 'no #f)
-        (stringf "/auth?failed=true&yes=~a&expected=~a"
+        (stringf "auth?failed=true&yes=~a&expected=~a"
                  yes-continue expected-key)))
 
   (web::make-html-response
