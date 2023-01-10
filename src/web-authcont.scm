@@ -52,8 +52,6 @@
     (web::body-not-found))
    ((not yes-continue)
     (web::bad-request "Missing query argument ~s" "yes"))
-   ((string-null? expected-key) ;; TODO: allow skipping this?
-    (web::bad-request "Missing query argument ~s" "expected"))
    (else
     (let ()
       (define body
@@ -88,7 +86,8 @@
            (let ()
              (define word (cadr result))
              (define token (list-ref word 2))
-             (if (equal? token expected-key)
+             (if (or (equal? token expected-key)
+                     (and token (string-null? expected-key)))
                  yes-continue
                  no-continue)))
           (else no-continue)))

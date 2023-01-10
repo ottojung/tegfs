@@ -29,7 +29,7 @@
   (define key (callcontext-token callctx))
   (define query (callcontext-query callctx))
   (define failed-v (hashmap-ref query 'failed 'false))
-  (define failed? (case failed-v ((true) #t) (else #f)))
+  (define failed? (equal? failed-v "true"))
   (define yes-continue (hashmap-ref query 'yes #f))
   (define expected-key (hashmap-ref query 'expected ""))
   (define no-continue
