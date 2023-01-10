@@ -32,7 +32,7 @@
   (define temporary-v (hashmap-ref query 'temporary "yes"))
   (define yes-continue (hashmap-ref query 'yes #f))
   (define no-continue (hashmap-ref query 'no #f))
-  (define expected-key (hashmap-ref query 'expected ""))
+  (define expected-key (hashmap-ref query 'expected #f))
 
   (web::make-html-response
    (web::get-auth-body failed? yes-continue no-continue expected-key temporary-v)))
