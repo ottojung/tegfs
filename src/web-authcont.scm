@@ -17,23 +17,16 @@
 
 %var web::authcont
 
-%use (define-tuple) "./euphrates/define-tuple.scm"
-%use (fn) "./euphrates/fn.scm"
 %use (hashmap-ref) "./euphrates/hashmap.scm"
-%use (list-singleton?) "./euphrates/list-singleton-q.scm"
 %use (raisu) "./euphrates/raisu.scm"
-%use (string-split/simple) "./euphrates/string-split-simple.scm"
 %use (web::bad-request) "./web-bad-request.scm"
 %use (web::body-not-found) "./web-body-not-found.scm"
+%use (web::body->hashmap) "./web-body-to-hashmap.scm"
 %use (web::callcontext/p) "./web-callcontext-p.scm"
 %use (callcontext-body callcontext-query callcontext-token) "./web-callcontext.scm"
 %use (web::return) "./web-return.scm"
 %use (web::set-cookie-header) "./web-set-cookie-header.scm"
 %use (webcore::ask) "./webcore-ask.scm"
-
-%for (COMPILER "guile")
-(use-modules (ice-9 iconv))
-%end
 
 (define (web::authcont)
   (define callctx (web::callcontext/p))
@@ -55,25 +48,12 @@
     (web::bad-request "Missing query argument ~s" "no"))
    (else
     (let ()
-      (define body
-        (bytevector->string body/bytes "utf-8"))
-
-      (define parts
-        (string-split/simple body #\&))
-
       (define key-values
-        (map (fn string-split/simple % #\=) parts))
+        (web::body->hashmap body/bytes))
 
-      (define _2
-        (unless (list-singleton? key-values)
-          (raisu 'too-many-query-parameters key-values)))
-
-      (define-tuple (p-key password)
-        (car key-values))
-
-      (define _3
-        (unless (equal? "psw" p-key)
-          (raisu 'bad-query-key p-key)))
+      (define password
+        (or (hashmap-ref key-values 'psw #f)
+            (raisu 'bad-body-key)))
 
       (define result
         (webcore::ask
