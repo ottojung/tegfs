@@ -66,25 +66,26 @@
     (stringf web::share::inside-template
              unprotected-link protected-link password))
 
+  (define share-time/integer (inexact->exact (floor share-time)))
   (define formatted-share-time
     (cond
      ((<= (* 24 60 60 60) share-time)
-      (let ((div (inexact->exact (quotient share-time (* 24 60 60)))))
+      (let ((div (inexact->exact (quotient share-time/integer (* 24 60 60)))))
         (case div
           ((1) (stringf "1 day"))
           (else (stringf "~a days" div)))))
      ((<= (* 60 60) share-time)
-      (let ((div (inexact->exact (quotient share-time (* 60 60)))))
+      (let ((div (inexact->exact (quotient share-time/integer (* 60 60)))))
         (case div
           ((1) (stringf "1 hour"))
           (else (stringf "~a hours" div)))))
      ((<= (* 1 60) share-time)
-      (let ((div (inexact->exact (quotient share-time (* 1 60)))))
+      (let ((div (inexact->exact (quotient share-time/integer (* 1 60)))))
         (case div
           ((1) (stringf "1 minute"))
           (else (stringf "~a minutes" div)))))
      (else
-      (let ((div (inexact->exact (floor share-time))))
+      (let ((div share-time/integer))
         (case div
           ((1) (stringf "1 minute"))
           (else (stringf "~a minutes" div)))))))
