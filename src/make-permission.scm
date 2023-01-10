@@ -28,10 +28,10 @@
   (define start (current-time/p))
   (define time expiery-time)
   (define dynamic
-    `((maybepassword ,maybepassword)
-      (uploadaccess? ,uploadaccess?)
-      (detailsaccess? ,detailsaccess?)
-      (share-longer-than-view? ,share-longer-than-view?)))
+    `((maybepassword . ,maybepassword)
+      (uploadaccess? . ,uploadaccess?)
+      (detailsaccess? . ,detailsaccess?)
+      (share-longer-than-view? . ,share-longer-than-view?)))
 
   (permission-constructor
    token start time

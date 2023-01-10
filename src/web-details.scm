@@ -62,7 +62,7 @@
     (webcore::ask
      `(listen
        ((goal X) (senderid->entry ,vid X))
-       ((goal X) (query ("%any")) (entry X) (entry-field X "id" ,id))
+       ((goal X) (entry X) (entry-field X "id" ,id))
        whats
        (key ,key)
        (goal E)
