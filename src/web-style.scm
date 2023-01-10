@@ -203,9 +203,10 @@ header {
 	text-align: center;
 	margin: 0 auto;
 
-	border-bottom-left-radius: 9999rem;
-	border-bottom-right-radius: 9999rem;
-	width: 77rem;
+	border-bottom-left-radius: 19rem;
+	border-bottom-right-radius: 99rem;
+	width: 57rem;
+	padding-right: 5rem;
 }
 
 header nav ul {
@@ -217,8 +218,6 @@ header nav ul {
 }
 
 header nav ul a {
-	padding-left: 4rem;
-	padding-right: 4rem;
 	display: flex;
 	align-items: center;
 	text-align: center;
@@ -231,6 +230,11 @@ header nav ul a li {
 	font-family: sans-serif;
 	color: white;
 	text-decoration: none;
+}
+
+.highlighted {
+	padding-left: 4rem;
+	padding-right: 4rem;
 }
 
 .highlighted:hover {
@@ -247,6 +251,7 @@ header nav ul label {
 
 header nav ul img {
 	padding-top: 0.32rem;
+	margin-left: 0.5rem;
 	height: 3.5rem;
 	transition: transform .1s;
 }
