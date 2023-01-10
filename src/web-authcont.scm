@@ -28,10 +28,7 @@
 %use (web::set-cookie-header) "./web-set-cookie-header.scm"
 %use (webcore::ask) "./webcore-ask.scm"
 
-(define (web::authcont)
-  (define callctx (web::callcontext/p))
-  (define key (callcontext-token callctx))
-  (define query (callcontext-query callctx))
+(define (web::authcont callctx query)
   (define yes-continue (hashmap-ref query 'yes #f))
   (define expected-key (hashmap-ref query 'expected ""))
   (define no-continue (hashmap-ref query 'no #f))

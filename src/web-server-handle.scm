@@ -20,7 +20,6 @@
 %use (alist->hashmap hashmap-ref) "./euphrates/hashmap.scm"
 %use (~a) "./euphrates/tilda-a.scm"
 %use (web::auth) "./web-auth.scm"
-%use (web::authcont) "./web-authcont.scm"
 %use (web::callcontext/p) "./web-callcontext-p.scm"
 %use (callcontext-path) "./web-callcontext.scm"
 %use (web::collectgarbage) "./web-collectgarbage.scm"
@@ -54,7 +53,6 @@
     (/uploadcont ,web::uploadcont)
     (/share ,web::share)
     (/auth ,web::auth)
-    (/authcont ,web::authcont)
 
     (/favicon.ico ,web::favicon.ico)
     (/static/logo-gray.jpeg ,web::logo-gray.jpeg)

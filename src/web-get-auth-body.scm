@@ -44,7 +44,7 @@
                  (web::auth-encode-arg temporary))))
 
   (web::form-template
-   (stringf "action='authcont?~a~a~a~a' enctype='application/x-www-form-urlencoded'"
+   (stringf "action='auth?continue=true&~a~a~a~a' enctype='application/x-www-form-urlencoded'"
             (web::auth-encode-arg yes)
             (web::auth-encode-arg no)
             (web::auth-encode-arg expected)
