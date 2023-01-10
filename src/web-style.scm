@@ -233,7 +233,7 @@ header nav ul a li {
 	text-decoration: none;
 }
 
-header nav ul a:hover {
+.highlighted:hover {
 	background-color: rgb(0, 0, 0, 0.1);
 }
 
@@ -248,6 +248,11 @@ header nav ul label {
 header nav ul img {
 	padding-top: 0.32rem;
 	height: 3.5rem;
+	transition: transform .1s;
+}
+
+header nav ul img:hover {
+	transform: scale(1.05);
 }
 
 /***************
