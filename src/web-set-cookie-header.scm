@@ -17,10 +17,15 @@
 
 %var web::set-cookie-header
 
+%use (raisu) "./euphrates/raisu.scm"
 %use (~a) "./euphrates/tilda-a.scm"
 
-(define (web::set-cookie-header key value)
-  ;; TODO: make cookies expire!!!!!
+(define (web::set-cookie-header key value share-time)
   (cons 'set-cookie
         (string-append (~a key) "=" (~a value)
-                       " ; HttpOnly ; Secure ; SameSite=Lax ;")))
+                       " ; HttpOnly ; Secure ; SameSite=Lax ;"
+                       (if share-time
+                           (if (number? share-time)
+                               (string-append "Max-Age=" (~a share-time) " ;")
+                               (raisu 'share-time-should-be-a-number))
+                           ""))))

@@ -56,19 +56,21 @@
         (webcore::ask
          `(whats
            (login ,password)
-           (key K))))
+           (key K)
+           (time-left K TL)
+           )))
 
       (define (fail-fun results)
-        (values no-continue #f))
+        (values no-continue 0 #f))
 
-      (define-values (cont token)
+      (define-values (cont expiery token)
         (web::iterate-profun-results/or
          fail-fun
-         result (K)
+         result (K TL)
          (if (or (equal? K expected-key)
                  (and K (string-null? expected-key)))
-             (values yes-continue K)
-             (values no-continue #f))))
+             (values yes-continue TL K)
+             (values no-continue 0 #f))))
 
       (web::return
        301
@@ -79,6 +81,7 @@
             (list
              (web::set-cookie-header
               (if temporary? "key" "pwdtoken")
-              token))
+              token
+              expiery))
             '()))
        #f)))))

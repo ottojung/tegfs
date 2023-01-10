@@ -22,8 +22,10 @@
 %use (memconst) "./euphrates/memconst.scm"
 %use (add-callcontext-respheaders! callcontext-ctr) "./web-callcontext.scm"
 %use (web::get-cookie) "./web-get-cookie.scm"
+%use (web::iterate-profun-results/or) "./web-iterate-profun-results.scm"
 %use (web::query->hashmap) "./web-query-to-hashmap.scm"
 %use (web::set-cookie-header) "./web-set-cookie-header.scm"
+%use (webcore::ask) "./webcore-ask.scm"
 
 %for (COMPILER "guile")
 
@@ -32,14 +34,22 @@
 
 %end
 
+(define (remember-to-set-access-token callctx ret)
+  (define result
+    (webcore::ask
+     `(whats (time-left ,ret TL))))
+  (define expiery
+    (web::iterate-profun-results/or
+     (lambda _ 0)
+     result (TL) TL))
+  (define additional-headers
+    (list (web::set-cookie-header "key" ret expiery)))
+  (add-callcontext-respheaders! callctx additional-headers))
+
 (define (get-access-token callctx qH headers)
   (or
    (let ((ret (hashmap-ref qH 'key #f)))
-     (when ret
-       (let ()
-         (define additional-headers
-           (list (web::set-cookie-header "key" ret)))
-         (add-callcontext-respheaders! callctx additional-headers)))
+     (when ret (remember-to-set-access-token callctx ret))
      ret)
    (or (web::get-cookie "key" headers)
        (web::get-cookie "pwdtoken" headers))))

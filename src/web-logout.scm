@@ -41,8 +41,8 @@
       (Cache-Control . "no-cache"))
     (cond
      (temp-login?
-      (list (web::set-cookie-header "key" "")))
+      (list (web::set-cookie-header "key" "" 0)))
      (user-login?
-      (list (web::set-cookie-header "pwdtoken" "")))
+      (list (web::set-cookie-header "pwdtoken" "" 0)))
      (else '())))
    #f))
