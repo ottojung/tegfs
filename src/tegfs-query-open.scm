@@ -40,7 +40,8 @@
 
     (if opener
         (let ((target-fullpath (entry-target-fullpath entry)))
-          (if (file-is-directory?/no-readlink target-fullpath)
+          (if (and target-fullpath
+                   (file-is-directory?/no-readlink target-fullpath))
               (begin
                 (set! iter/open
                       (query-recurse opener entry target-fullpath))
