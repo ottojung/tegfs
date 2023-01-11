@@ -18,8 +18,12 @@
 %var web::details
 
 %use (hashmap-ref) "./euphrates/hashmap.scm"
+%use (~a) "./euphrates/tilda-a.scm"
+%use (words->string) "./euphrates/words-to-string.scm"
+%use (keyword-tags) "./keyword-tags.scm"
 %use (web::callcontext/p) "./web-callcontext-p.scm"
 %use (callcontext-token) "./web-callcontext.scm"
+%use (web::form-template) "./web-form-template.scm"
 %use (web::get-query) "./web-get-query.scm"
 %use (web::iterate-profun-results) "./web-iterate-profun-results.scm"
 %use (web::make-html-response) "./web-make-html-response.scm"
@@ -30,27 +34,40 @@
   (define table
     (with-output-to-string
       (lambda _
-        ;; (display "<style> body { height: 100% } </style>")
-        (display "<div class='centering-container'><table class='styled-table'>\n")
-        (display "  <thead><tr><th>Prop</th><th>Value</th></tr></thead>\n")
+        (display "<div class='details-table'>") (newline)
+
         (for-each
          (lambda (row)
            (define name (car row))
            (define val (cdr row))
-           (display "  <tbody>\n")
-           (display "    <tr>\n")
-           (display "      <td>")
-           (display name)
-           (display "</td>\n")
-           (display "      <td>")
-           (display val)
-           (display "</td>\n")
-           (display "    </tr>\n")
-           (display "  </tbody>\n"))
-         entry)
-        (display "</table></div>\n"))))
 
-  (web::make-html-response table))
+           (unless (string-prefix? "%" (~a name))
+             (display "<div class='form-block form-v-element'>") (newline)
+             (display "  <label>")
+             (display name)
+             (display "</label") (newline)
+             (display "</div>") (newline)
+
+             (display "<div class='form-block form-v-element'>") (newline)
+             (display "  <input type='text' value='")
+             (cond
+              ((equal? name keyword-tags)
+               (display (words->string (map ~a val))))
+              (else
+               (display val)))
+             (display "' />") (newline)
+             (display "</div>") (newline)
+
+             )
+
+           )
+
+         entry)
+
+        (display "</div>\n"))))
+
+  (web::make-html-response
+   (web::form-template #f table)))
 
 (define (web::details)
   (define callctx (web::callcontext/p))

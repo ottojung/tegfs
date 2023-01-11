@@ -342,6 +342,10 @@ header nav ul img:hover {
  * Details table *
  *****************/
 
+.details-table {
+	width: 40rem;
+}
+
 .styled-table {
 	border-collapse: collapse;
 	margin: 1.56rem 0;
