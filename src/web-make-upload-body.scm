@@ -23,14 +23,9 @@
 %use (categorization-get-all-tags) "./categorization-get-all-tags.scm"
 %use (web::form-template) "./web-form-template.scm"
 
-;; <textarea style='maxwidth: 100%; width: 100%;' rows='10' cols='120' name='tags'>~a</textarea>
-
 (define (web::make-upload-body categorization-text)
-  (define all-tags0
-    (categorization-get-all-tags categorization-text))
-
   (define all-tags
-    (append all-tags0 all-tags0 all-tags0 all-tags0 all-tags0))
+    (categorization-get-all-tags categorization-text))
 
   (define (tag->checkbox tag)
     (stringf
