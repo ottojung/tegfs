@@ -168,6 +168,52 @@ button[type=submit] {
 	font-size: 180%;
 }
 
+.capped-width {
+	max-width: 80%;
+}
+
+/************
+ * Tags box *
+ ************/
+
+.tagsbox {
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	height: 100%;
+	width: 100%;
+	margin-top: 1rem;
+}
+
+.tagsbox div {
+	margin-left: 1rem;
+	margin-right: 1rem;
+}
+
+.tagsbox input[type='checkbox'] {
+	display: none;
+}
+
+.tagsbox input[type='checkbox'] + label:before {
+	width: 1rem;
+	height: 1rem;
+	background-color: white;
+}
+
+.tagsbox input[type='checkbox']:checked + label {
+	background-color: #8ddf36;
+	color: black;
+}
+
+.tagsbox label {
+	padding: 0.5rem;
+	border-radius: 5rem;
+	margin: 0.3rem;
+	display: inline-block;
+	background-color: #343bcb;
+	color: white;
+}
+
 /***********************
  * Search input styles *
  ***********************/

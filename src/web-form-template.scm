@@ -21,7 +21,7 @@
   (string-append
    "
 <div class='centering-container'>
-  <div>
+  <div class='capped-width'>
     <div class='tiled dark smooth-edged'>
       <form " (or form-params "") " method='post'>"
       insides

@@ -18,24 +18,53 @@
 %var web::make-upload-body
 
 %use (printf) "./euphrates/printf.scm"
+%use (stringf) "./euphrates/stringf.scm"
+%use (words->string) "./euphrates/words-to-string.scm"
 %use (categorization-get-all-tags) "./categorization-get-all-tags.scm"
 %use (web::form-template) "./web-form-template.scm"
 
+;; <textarea style='maxwidth: 100%; width: 100%;' rows='10' cols='120' name='tags'>~a</textarea>
+
 (define (web::make-upload-body categorization-text)
-  (define all-tags
+  (define all-tags0
     (categorization-get-all-tags categorization-text))
+
+  (define all-tags
+    (append all-tags0 all-tags0 all-tags0 all-tags0 all-tags0))
+
+  (define (tag->checkbox tag)
+    (stringf
+     "<input type='checkbox' id='tag:~a' name='tag:~a' />
+      <label for='tag:~a'>~a</label>"
+     tag tag tag tag))
+
+  (define checkboxes
+    (words->string
+     (map tag->checkbox all-tags)))
 
   (define inner
     (with-output-to-string
       (lambda _
         (printf "
     <input type='file' name='file' autofocus>
-    <textarea style='maxwidth: 100%; width: 100%;' rows='10' cols='120' name='tags'>~a</textarea>
-    <input type='text' placeholder='Enter title' name='title' >
+    <br/>
+    <br/>
+    <div class='form-block form-v-element'>
+      <label>Tags</label>
+    </div>
+    <div class='tagsbox'>
+      <div>~a</div>
+    </div>
+    <div class='form-block form-v-element'>
+      <input type='text' name='additional-tags' placeholder='Additional tags' />
+    </div>
+    <input type='text' placeholder='Title' name='title' >
+    <br/>
+    <br/>
     <div class='form-block form-v-element'>
       <button type='submit'>Upload</button>
     </div>
     "
-                all-tags))))
+                checkboxes))))
 
   (web::form-template "action='uploadcont' enctype='multipart/form-data'" inner))
