@@ -35,12 +35,12 @@
 %use (system-re) "./euphrates/system-re.scm"
 %use (write-string-file) "./euphrates/write-string-file.scm"
 %use (a-weblink?) "./a-weblink-q.scm"
+%use (entry-get-target) "./entry-get-target.scm"
 %use (entry-print) "./entry-print.scm"
 %use (get-root) "./get-root.scm"
 %use (keyword-date) "./keyword-date.scm"
 %use (keyword-id) "./keyword-id.scm"
 %use (keyword-tags) "./keyword-tags.scm"
-%use (keyword-target) "./keyword-target.scm"
 %use (last-id-filename) "./last-id-filename.scm"
 
 (define (add-entry registry-file0 entry0)
@@ -102,7 +102,7 @@
           entry2)))
 
   (define target
-    (assq-or keyword-target entry #f))
+    (entry-get-target entry))
 
   (when target
     (when (absolute-posix-path? target)

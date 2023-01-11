@@ -19,10 +19,9 @@
 
 %use (assq-or) "./euphrates/assq-or.scm"
 %use (path-get-basename) "./euphrates/path-get-basename.scm"
-%use (uri-encode) "./euphrates/uri-encode.scm"
 %use (a-weblink?) "./a-weblink-q.scm"
+%use (entry-get-target) "./entry-get-target.scm"
 %use (keyword-id) "./keyword-id.scm"
-%use (keyword-target) "./keyword-target.scm"
 %use (keyword-title) "./keyword-title.scm"
 %use (web::get-full-link) "./web-get-full-link.scm"
 
@@ -35,7 +34,7 @@
   (display "/>"))
 
 (define (maybe-display-preview entry maybe-full-senderid preview-link)
-  (define target (assq-or keyword-target entry #f))
+  (define target (entry-get-target entry))
   (when target
     (let ((full-link (web::get-full-link entry target maybe-full-senderid)))
       (when full-link
@@ -56,11 +55,12 @@
    ((and (assoc keyword-title entry)
          (not (string-null? (cdr (assoc keyword-title entry)))))
     (display (cdr (assoc keyword-title entry))))
-   ((and (assoc keyword-target entry)
-         (not (string-null? (cdr (assoc keyword-target entry)))))
-    (let* ((orig (cdr (assoc keyword-target entry)))
-           (relative (if (a-weblink? orig) orig (path-get-basename orig))))
-      (display relative))))
+   (else
+    (let ()
+      (define orig (entry-get-target entry))
+      (if (not (string-null? orig))
+          (let* ((relative (if (a-weblink? orig) orig (path-get-basename orig))))
+            (display relative))))))
 
   (when details-link?
     (display "</a>"))

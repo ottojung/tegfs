@@ -23,29 +23,27 @@
 %use (path-normalize) "./euphrates/path-normalize.scm"
 %use (string-drop-n) "./euphrates/string-drop-n.scm"
 %use (a-weblink?) "./a-weblink-q.scm"
+%use (entry-get-target) "./entry-get-target.scm"
 %use (get-root) "./get-root.scm"
 %use (keyword-entry-parent-directory) "./keyword-entry-parent-directory.scm"
 %use (keyword-entry-registry-path) "./keyword-entry-registry-path.scm"
 %use (keyword-id) "./keyword-id.scm"
-%use (keyword-target) "./keyword-target.scm"
 
 (define (entry-target-fullpath entry)
-  (define target-p (assoc keyword-target entry))
-  (and target-p
-       (let ((target/1 (cdr target-p))
-             (id (assq-or keyword-id entry #f)))
-         (cond
-          ((not (string? target/1)) #f)
-          ((a-weblink? target/1) target/1)
-          ((absolute-posix-path? id) id)
-          (else
-           (let* ((target/0 (path-normalize target/1))
-                  (target (if (absolute-posix-path? target/0) (string-drop-n 1 target/0) target/0)))
-             (let* ((parent-directory-p (assq keyword-entry-parent-directory entry))
-                    (parent-directory (and parent-directory-p (cdr parent-directory-p)))
-                    (registry-p (assq keyword-entry-registry-path entry))
-                    (registry-dir (and registry-p (dirname (cdr registry-p))))
-                    (directory (or parent-directory registry-dir)))
-               (and directory
-                    (path-normalize
-                     (append-posix-path (get-root) directory target))))))))))
+  (define target/1 (entry-get-target entry))
+  (define id (assq-or keyword-id entry #f))
+  (cond
+   ((not target/1) #f)
+   ((a-weblink? target/1) target/1)
+   ((absolute-posix-path? id) id)
+   (else
+    (let* ((target/0 (path-normalize target/1))
+           (target (if (absolute-posix-path? target/0) (string-drop-n 1 target/0) target/0)))
+      (let* ((parent-directory-p (assq keyword-entry-parent-directory entry))
+             (parent-directory (and parent-directory-p (cdr parent-directory-p)))
+             (registry-p (assq keyword-entry-registry-path entry))
+             (registry-dir (and registry-p (dirname (cdr registry-p))))
+             (directory (or parent-directory registry-dir)))
+        (and directory
+             (path-normalize
+              (append-posix-path (get-root) directory target))))))))

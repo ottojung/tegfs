@@ -30,8 +30,8 @@
 %use (a-weblink?) "./a-weblink-q.scm"
 %use (dump-rules) "./dump-rules.scm"
 %use (entries-for-each) "./entries-for-each.scm"
+%use (entry-get-target) "./entry-get-target.scm"
 %use (keyword-id) "./keyword-id.scm"
-%use (keyword-target) "./keyword-target.scm"
 %use (make-temporary-filename/local) "./make-temporary-filename-local.scm"
 %use (parse-tag) "./parse-tag.scm"
 %use (print-tag-as-prolog-term) "./tag-to-prolog-term.scm"
@@ -161,7 +161,7 @@
       tags))
 
 (define (add-special-locality-tag target tags)
-  (if (and target (string? target))
+  (if target
       (if (a-weblink? target)
           (cons '%remote tags)
           (cons '%local tags))
@@ -180,8 +180,7 @@
                (cons 'tags '()))))
 
     (define target
-      (let ((p (assoc keyword-target entry)))
-        (and p (cdr p))))
+      (entry-get-target entry))
     (define tags
       (appcomp tags0
                add-special-sorted-status-tag
