@@ -17,8 +17,26 @@
 
 %var web::upload
 
-%use (web::make-upload-body) "./web-make-upload-body.scm"
+%use (fn-alist) "./euphrates/fn-alist.scm"
+%use (web::callcontext/p) "./web-callcontext-p.scm"
+%use (callcontext-token) "./web-callcontext.scm"
+%use (web::handle-profun-results) "./web-handle-profun-results.scm"
 %use (web::make-html-response) "./web-make-html-response.scm"
+%use (web::make-upload-body) "./web-make-upload-body.scm"
+%use (webcore::ask) "./webcore-ask.scm"
 
 (define (web::upload)
-  (web::make-html-response (web::make-upload-body)))
+  (define callctx (web::callcontext/p))
+  (define key (callcontext-token callctx))
+
+  (define result
+    (webcore::ask
+     `(whats (key ,key) (categorization C))))
+
+  (web::handle-profun-results
+   result
+   (lambda (equals)
+     (fn-alist
+      (C)
+      (web::make-html-response
+       (web::make-upload-body C))))))

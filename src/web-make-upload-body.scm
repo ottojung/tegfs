@@ -17,28 +17,18 @@
 
 %var web::make-upload-body
 
-%use (append-posix-path) "./euphrates/append-posix-path.scm"
-%use (memconst) "./euphrates/memconst.scm"
 %use (printf) "./euphrates/printf.scm"
-%use (read-string-file) "./euphrates/read-string-file.scm"
-%use (categorization-filename) "./categorization-filename.scm"
-%use (get-root) "./get-root.scm"
 %use (web::form-template) "./web-form-template.scm"
 
-(define web::make-upload-body
-  (memconst
-   (let ()
-     (define categorization-file (append-posix-path (get-root) categorization-filename))
-     (define tags-value (read-string-file categorization-file))
-
-     (define inner
-       (with-output-to-string
-         (lambda _
-           (printf "
+(define (web::make-upload-body categorization-text)
+  (define inner
+    (with-output-to-string
+      (lambda _
+        (printf "
     <input type='file' name='file' autofocus>
     <textarea style='maxwidth: 100%; width: 100%;' rows='10' cols='120' name='tags'>~a</textarea>
     <input type='text' placeholder='Enter title' name='title' >
     <button type='submit'>Upload</button>"
-                   tags-value))))
+                categorization-text))))
 
-     (web::form-template "action='uploadcont' enctype='multipart/form-data'" inner))))
+  (web::form-template "action='uploadcont' enctype='multipart/form-data'" inner))

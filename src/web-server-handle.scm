@@ -49,8 +49,8 @@
     (/directory ,web::directory)
     (/details ,web::details)
     (/full ,web::full)
-    ;; (/upload ,web::upload)
-    ;; (/uploadcont ,web::uploadcont)
+    (/upload ,web::upload)
+    (/uploadcont ,web::uploadcont)
     (/share ,web::share)
     (/auth ,web::auth)
 
