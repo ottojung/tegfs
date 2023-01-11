@@ -23,6 +23,7 @@
 %use (web::get-query) "./web-get-query.scm"
 %use (web::iterate-profun-results) "./web-iterate-profun-results.scm"
 %use (web::make-html-response) "./web-make-html-response.scm"
+%use (web::not-found) "./web-not-found.scm"
 %use (webcore::ask) "./webcore-ask.scm"
 
 (define (web::actual-details entry)
@@ -69,5 +70,6 @@
        )))
 
   (web::iterate-profun-results
-   result (E)
+   :onfalse (lambda _ (web::not-found))
+   :results result (E)
    (web::actual-details E)))
