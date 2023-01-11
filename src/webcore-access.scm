@@ -19,6 +19,7 @@
 %var has-access-for-entry-target?
 %var has-access-for-entry-details?
 %var can-upload?
+%var can-view-categorization?
 
 %use (assoc-or) "./euphrates/assoc-or.scm"
 %use (hashmap-ref) "./euphrates/hashmap.scm"
@@ -60,7 +61,7 @@
        (or (permission-admin? perm)
            (permission-uploadaccess? perm))))
 
-(define (can-access-categorization? perm)
+(define (can-view-categorization? perm)
   (and perm
        (or (permission-admin? perm)
            (permission-cat-view-access? perm))))

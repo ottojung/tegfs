@@ -23,6 +23,7 @@
 %use (profun-standard-handler) "./euphrates/profun-standard-handler.scm"
 %use (add-entry) "./add-entry.scm"
 %use (core::add-entry) "./core-add-entry.scm"
+%use (core::categorization) "./core-categorization.scm"
 %use (core::entry-field) "./core-entry-field.scm"
 %use (core::entry) "./core-entry.scm"
 %use (core::diropen?/p core::dirpreview?/p core::query/p) "./core-paremeters.scm"
@@ -34,6 +35,7 @@
    (entry core::entry)
    (entry-field core::entry-field)
    (add-entry core::add-entry)
+   (categorization core::categorization)
 
    (query (instantiate-profun-parameter core::query/p))
    (diropen? (instantiate-profun-parameter core::diropen?/p))

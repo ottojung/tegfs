@@ -21,6 +21,7 @@
 %use (add-entry) "./add-entry.scm"
 %use (core::make-server-handler) "./core-server-handler.scm"
 %use (webcore::add-entry) "./webcore-add-entry.scm"
+%use (webcore::categorization) "./webcore-categorization.scm"
 %use (webcore::collectgarbage) "./webcore-collectgarbage.scm"
 %use (webcore::entry) "./webcore-entry.scm"
 %use (webcore::key) "./webcore-key.scm"
@@ -42,6 +43,7 @@
    (key (webcore::key web::context))
    (entry (webcore::entry web::context)) ;; OVERRIDES
    (add-entry webcore::add-entry) ;; OVERRIDES
+   (categorization (webcore::categorization web::context)) ;; OVERRIDES
    (share-preview (webcore::share-entry-preview web::context))
    (share-full (webcore::share-entry-full web::context))
    (share-entry (webcore::share-entry web::context))
