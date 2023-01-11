@@ -25,6 +25,7 @@
 %var permission-uploadaccess?
 %var permission-detailsaccess?
 %var permission-cat-view-access?
+%var permission-cat-modify-access?
 %var permission-share-longer-than-view?
 %var permission-filemap
 %var permission-idset
@@ -52,8 +53,11 @@
 (define (permission-detailsaccess? perm) ;; true if user has access to objects details
   (assq-or 'detailsaccess? (permission-dynamic perm)))
 
-(define (permission-cat-view-access? perm) ;; true if user has access to tags categorization
+(define (permission-cat-view-access? perm) ;; true if user has read access to tags categorization
   (assq-or 'cat-view-access? (permission-dynamic perm)))
+
+(define (permission-cat-modify-access? perm) ;; true if user has write access to tags categorization
+  (assq-or 'cat-modify-access? (permission-dynamic perm)))
 
 (define (permission-share-longer-than-view? perm) ;; true if user can share entries for longer than viewing allows. useful for admins
   (assq-or 'sharelonger-than-view? (permission-dynamic perm)))

@@ -15,36 +15,31 @@
 
 %run guile
 
-%var core::categorization
+%var core::set-categorization
 
 %use (append-posix-path) "./euphrates/append-posix-path.scm"
-%use (catch-any) "./euphrates/catch-any.scm"
-%use (profun-set) "./euphrates/profun-accept.scm"
+%use (profun-accept) "./euphrates/profun-accept.scm"
 %use (make-profun-error) "./euphrates/profun-error.scm"
 %use (profun-op-lambda) "./euphrates/profun-op-lambda.scm"
-%use (profun-bound-value?) "./euphrates/profun-value.scm"
-%use (read-string-file) "./euphrates/read-string-file.scm"
+%use (profun-unbound-value?) "./euphrates/profun-value.scm"
+%use (write-string-file) "./euphrates/write-string-file.scm"
 %use (categorization-filename) "./categorization-filename.scm"
 %use (get-root) "./get-root.scm"
 
-(define core::categorization
+(define core::set-categorization
   (profun-op-lambda
    (ctx (categorization-text) (categorization-text-name))
 
    (cond
-    ((profun-bound-value? categorization-text)
+    ((profun-unbound-value? categorization-text)
      (make-profun-error
       'type-error
-      "Variable categorization-text is a return value, it should not be bound"
+      "Variable categorization-text is required to be bound"
       categorization-text-name))
 
     (else
      (let ()
        (define categorization-file
          (append-posix-path (get-root) categorization-filename))
-       (define content
-         (catch-any
-          (lambda _ (read-string-file categorization-file))
-          (lambda _ "")))
-
-       (profun-set (categorization-text-name <- content)))))))
+       (write-string-file categorization-file categorization-text)
+       (profun-accept))))))

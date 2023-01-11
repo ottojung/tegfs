@@ -20,6 +20,7 @@
 %var has-access-for-entry-details?
 %var can-upload?
 %var can-view-categorization?
+%var can-modify-categorization?
 
 %use (assoc-or) "./euphrates/assoc-or.scm"
 %use (hashmap-ref) "./euphrates/hashmap.scm"
@@ -29,7 +30,7 @@
 %use (filemap-ref-by-senderid) "./filemap.scm"
 %use (keyword-entry-parent-directory-senderid) "./keyword-entry-parent-directory-senderid.scm"
 %use (keyword-id) "./keyword-id.scm"
-%use (permission-admin? permission-cat-view-access? permission-detailsaccess? permission-filemap permission-idset permission-uploadaccess?) "./permission.scm"
+%use (permission-admin? permission-cat-modify-access? permission-cat-view-access? permission-detailsaccess? permission-filemap permission-idset permission-uploadaccess?) "./permission.scm"
 %use (sharedinfo-sourcepath) "./sharedinfo.scm"
 
 (define (has-access-for-entry? filemap/2 perm entry)
@@ -65,3 +66,8 @@
   (and perm
        (or (permission-admin? perm)
            (permission-cat-view-access? perm))))
+
+(define (can-modify-categorization? perm)
+  (and perm
+       (or (permission-admin? perm)
+           (permission-cat-modify-access? perm))))

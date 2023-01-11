@@ -23,7 +23,6 @@
 %use (make-profun-error) "./euphrates/profun-error.scm"
 %use (profun-op-lambda) "./euphrates/profun-op-lambda.scm"
 %use (profun-bound-value?) "./euphrates/profun-value.scm"
-%use (raisu) "./euphrates/raisu.scm"
 %use (read-string-file) "./euphrates/read-string-file.scm"
 %use (categorization-filename) "./categorization-filename.scm"
 %use (get-root) "./get-root.scm"
@@ -39,7 +38,10 @@
 
    (cond
     ((profun-bound-value? categorization-text)
-     (raisu 'TODO:mutable-categorization)) ;; FIXME: TODO:
+     (make-profun-error
+      'type-error
+      "Variable categorization-text is a return value, it should not be bound"
+      categorization-text-name))
 
     ((not (can-view-categorization? perm))
      (make-profun-error

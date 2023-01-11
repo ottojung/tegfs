@@ -38,6 +38,7 @@
 %use (web::server-handle-temp-path) "./web-server-handle-temp-path.scm"
 %use (web::settings-gear) "./web-settings-gear.scm"
 %use (web::share) "./web-share.scm"
+%use (web::tags) "./web-tags.scm"
 %use (web::upload) "./web-upload.scm"
 
 (define handlers-config
@@ -51,6 +52,7 @@
     (/upload ,web::upload)
     (/share ,web::share)
     (/auth ,web::auth)
+    (/tags ,web::tags)
 
     (/favicon.ico ,web::favicon.ico)
     (/static/logo-gray.jpeg ,web::logo-gray.jpeg)

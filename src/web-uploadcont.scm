@@ -18,7 +18,6 @@
 %var web::uploadcont
 
 %use (append-posix-path) "./euphrates/append-posix-path.scm"
-%use (assq-or) "./euphrates/assq-or.scm"
 %use (appcomp) "./euphrates/comp.scm"
 %use (file-delete) "./euphrates/file-delete.scm"
 %use (file-or-directory-exists?) "./euphrates/file-or-directory-exists-q.scm"
@@ -36,6 +35,7 @@
 %use (keyword-tags) "./keyword-tags.scm"
 %use (keyword-target) "./keyword-target.scm"
 %use (keyword-title) "./keyword-title.scm"
+%use (web::body::get-data web::body::get-data/decode) "./web-body-get-data.scm"
 %use (web::body-not-found) "./web-body-not-found.scm"
 %use (web::callcontext/p) "./web-callcontext-p.scm"
 %use (callcontext-body callcontext-token) "./web-callcontext.scm"
@@ -46,7 +46,6 @@
 %use (webcore::ask) "./webcore-ask.scm"
 
 %for (COMPILER "guile")
-(use-modules (ice-9 iconv))
 (use-modules (ice-9 binary-ports))
 %end
 
@@ -68,17 +67,8 @@
 (define (web::uploadcont/3 callctx body/bytes categorization-text)
   (define body/hash (parse-multipart-as-hashmap body/bytes))
 
-  (define (get-data a-key)
-    (define alist
-      (hashmap-ref body/hash a-key '()))
-    (assq-or 'data alist #f))
-
-  (define (get-data/decode a-key)
-    (define data (get-data a-key))
-    (and data (bytevector->string data "utf-8")))
-
   (define title
-    (get-data/decode "title"))
+    (web::body::get-data/decode body/hash "title"))
 
   (define tags/checked
     (let ((coll '()))
@@ -91,14 +81,14 @@
 
   (define tags/additional
     (string->words
-     (get-data/decode "additional-tags")))
+     (web::body::get-data/decode body/hash "additional-tags")))
 
   (define tags
     (map (compose string->symbol ~a)
          (append tags/additional tags/checked)))
 
   (define file-content
-    (get-data "file"))
+    (web::body::get-data body/hash "file"))
 
   (define filename
     (appcomp (hashmap-ref body/hash "file" #f)

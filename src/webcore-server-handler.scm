@@ -29,6 +29,7 @@
 %use (webcore::login) "./webcore-login.scm"
 %use (webcore::make-temporary-permissions) "./webcore-make-temporary-permissions.scm"
 %use (webcore::senderid->entry) "./webcore-senderid-to-entry.scm"
+%use (webcore::set-categorization) "./webcore-set-categorization.scm"
 %use (webcore::share-entry-full) "./webcore-share-entry-full.scm"
 %use (webcore::share-entry-preview) "./webcore-share-entry-preview.scm"
 %use (webcore::share-entry) "./webcore-share-entry.scm"
@@ -44,6 +45,7 @@
    (entry (webcore::entry web::context)) ;; OVERRIDES
    (add-entry webcore::add-entry) ;; OVERRIDES
    (categorization (webcore::categorization web::context)) ;; OVERRIDES
+   (set-categorization (webcore::set-categorization web::context)) ;; OVERRIDES
    (share-preview (webcore::share-entry-preview web::context))
    (share-full (webcore::share-entry-full web::context))
    (share-entry (webcore::share-entry web::context))
