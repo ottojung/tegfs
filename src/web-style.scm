@@ -182,7 +182,7 @@ button[type=submit] {
 	justify-content: center;
 	height: 100%;
 	width: 100%;
-	margin-top: 1rem;
+	margin-top: 0.3rem;
 }
 
 .tagsbox div {
@@ -206,7 +206,7 @@ button[type=submit] {
 }
 
 .tagsbox label {
-	padding: 0.5rem;
+	padding: 0.7rem;
 	border-radius: 5rem;
 	margin: 0.3rem;
 	display: inline-block;
