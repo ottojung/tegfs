@@ -18,6 +18,7 @@
 ;; Returns all tags, incuding the starred ones
 %var categorization-get-all-tags
 
+%use (list-deduplicate) "./euphrates/list-deduplicate.scm"
 %use (categorization-parse-tags) "./categorization-parse-tags.scm"
 %use (parsed-categorization-tags-get-all) "./parsed-categorization-tags-get-all.scm"
 
@@ -25,4 +26,5 @@
   (define parsed
     (categorization-parse-tags categorization-text))
 
-  (parsed-categorization-tags-get-all parsed))
+  (list-deduplicate
+   (parsed-categorization-tags-get-all parsed)))
