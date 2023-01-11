@@ -18,6 +18,7 @@
 %var web::uploadcont
 
 %use (append-posix-path) "./euphrates/append-posix-path.scm"
+%use (assq-or) "./euphrates/assq-or.scm"
 %use (appcomp) "./euphrates/comp.scm"
 %use (file-delete) "./euphrates/file-delete.scm"
 %use (file-or-directory-exists?) "./euphrates/file-or-directory-exists-q.scm"
@@ -68,12 +69,13 @@
   (define body/hash (parse-multipart-as-hashmap body/bytes))
 
   (define (get-data a-key)
-    (appcomp (hashmap-ref body/hash a-key #f)
-             (assoc 'data)
-             cdr))
+    (define alist
+      (hashmap-ref body/hash a-key '()))
+    (assq-or 'data alist #f))
 
   (define (get-data/decode a-key)
-    (bytevector->string (get-data a-key) "utf-8"))
+    (define data (get-data a-key))
+    (and data (bytevector->string data "utf-8")))
 
   (define title
     (get-data/decode "title"))
@@ -104,7 +106,9 @@
              cdr))
 
   (define-values (<target> full-filename)
-    (if (not filename) (values #f #f)
+    (if (or (not filename)
+            (string-null? filename))
+        (values #f #f)
         (let* ((f1
                 (append-posix-path (get-root)
                                    (path-get-dirname upload-registry-filename)
