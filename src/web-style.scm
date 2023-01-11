@@ -36,7 +36,7 @@ body {
 	font-family: sans-serif;
 }
 
-button, input, label {
+button, input, label, textarea {
 	font-family: sans-serif;
 	font-size: 130%;
 }
