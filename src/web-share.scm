@@ -60,7 +60,7 @@
     (assq-or 'K first-binding (raisu 'unexpected-result-from-backend first-binding)))
   (define location
     (if query?
-        (stringf "/query?key=~a" token)
+        (stringf "/query?q=&key=~a" token)
         (assq-or 'FL first-binding (raisu 'unexpected-result-from-backend first-binding))))
   (define share-time
     (assq-or 'AD first-binding (raisu 'unexpected-result-from-backend first-binding)))
