@@ -19,6 +19,7 @@
 
 %use (assq-or) "./euphrates/assq-or.scm"
 %use (remove-common-prefix) "./euphrates/remove-common-prefix.scm"
+%use (url-get-hostname-and-port) "./euphrates/url-get-hostname-and-port.scm"
 %use (callcontext-headers callcontext-url) "./web-callcontext.scm"
 %use (web::get-domainname) "./web-get-domainname.scm"
 
@@ -32,7 +33,10 @@
   (define referer1
     (or referer0 "home"))
   (define referer2
-    (remove-common-prefix referer1 domainname))
+    (if (equal? (url-get-hostname-and-port domainname)
+                (url-get-hostname-and-port referer1))
+        (remove-common-prefix referer1 domainname)
+        referer1))
   (define referer
     (if (equal? referer2 (callcontext-url callctx))
         "home"
