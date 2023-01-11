@@ -161,7 +161,7 @@
       tags))
 
 (define (add-special-locality-tag target tags)
-  (if target
+  (if (and target (string? target))
       (if (a-weblink? target)
           (cons '%remote tags)
           (cons '%local tags))
