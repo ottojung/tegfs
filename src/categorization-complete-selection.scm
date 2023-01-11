@@ -15,32 +15,25 @@
 
 %run guile
 
-%var tegfs-edit-tags
-%var tegfs-process-categorization-text
+;;
+;; Returns `((ok ,list-of-chosen-tags)
+;;           (ambiguous ,list-of-ambiguous-tags+their-parents)
+;;           (duplicates ,list-of-duplicates))
+;;
+;; With "ok" field always present,
+;; but "ambiguous" or "duplicates" may be absent.
+;;
+%var categorization-complete-selection
 
-%use (raisu) "./euphrates/raisu.scm"
-%use (read-string-file) "./euphrates/read-string-file.scm"
-%use (system-fmt) "./euphrates/system-fmt.scm"
 %use (categorization-complete-selection/cont) "./categorization-complete-selection-cont.scm"
 %use (categorization-parse-tags) "./categorization-parse-tags.scm"
-%use (categorization-starred-symbol?) "./categorization-starred-symbol-huh.scm"
 %use (parsed-categorization-tags-get-all) "./parsed-categorization-tags-get-all.scm"
 
-(define (tegfs-edit-tags working-file)
-  (unless working-file
-    (raisu 'must-provide-working-file))
-
-  (system-fmt "$EDITOR ~a" working-file)
-  (tegfs-process-categorization-text (read-string-file working-file)))
-
-(define (tegfs-process-categorization-text text)
+(define (categorization-complete-selection categorization-text starred)
   (define ast/flatten
-    (categorization-parse-tags text))
+    (categorization-parse-tags categorization-text))
 
   (define all-tags
     (parsed-categorization-tags-get-all ast/flatten))
-
-  (define starred
-    (filter categorization-starred-symbol? all-tags))
 
   (categorization-complete-selection/cont ast/flatten all-tags starred))

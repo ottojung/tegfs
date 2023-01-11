@@ -18,9 +18,13 @@
 %var web::make-upload-body
 
 %use (printf) "./euphrates/printf.scm"
+%use (categorization-get-all-tags) "./categorization-get-all-tags.scm"
 %use (web::form-template) "./web-form-template.scm"
 
 (define (web::make-upload-body categorization-text)
+  (define all-tags
+    (categorization-get-all-tags categorization-text))
+
   (define inner
     (with-output-to-string
       (lambda _
@@ -32,6 +36,6 @@
       <button type='submit'>Upload</button>
     </div>
     "
-                categorization-text))))
+                all-tags))))
 
   (web::form-template "action='uploadcont' enctype='multipart/form-data'" inner))
