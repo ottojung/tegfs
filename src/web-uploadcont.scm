@@ -21,13 +21,15 @@
 %use (appcomp) "./euphrates/comp.scm"
 %use (file-delete) "./euphrates/file-delete.scm"
 %use (file-or-directory-exists?) "./euphrates/file-or-directory-exists-q.scm"
-%use (hashmap-ref) "./euphrates/hashmap.scm"
+%use (hashmap-foreach hashmap-ref) "./euphrates/hashmap.scm"
 %use (make-directories) "./euphrates/make-directories.scm"
 %use (open-file-port) "./euphrates/open-file-port.scm"
 %use (path-get-dirname) "./euphrates/path-get-dirname.scm"
+%use (string-drop-n) "./euphrates/string-drop-n.scm"
+%use (string->words) "./euphrates/string-to-words.scm"
 %use (~a) "./euphrates/tilda-a.scm"
 %use (add-entry) "./add-entry.scm"
-%use (tegfs-process-categorization-text) "./edit-tags.scm"
+%use (categorization-complete-selection) "./categorization-complete-selection.scm"
 %use (get-random-basename) "./get-random-basename.scm"
 %use (get-root) "./get-root.scm"
 %use (keyword-tags) "./keyword-tags.scm"
@@ -37,6 +39,7 @@
 %use (web::callcontext/p) "./web-callcontext-p.scm"
 %use (callcontext-body callcontext-token) "./web-callcontext.scm"
 %use (web::handle-profun-results/hooked) "./web-handle-profun-results.scm"
+%use (web::iterate-profun-results) "./web-iterate-profun-results.scm"
 %use (parse-multipart-as-hashmap) "./web-parse-multipart.scm"
 %use (web::static-error-message) "./web-static-error-message.scm"
 %use (webcore::ask) "./webcore-ask.scm"
@@ -61,7 +64,7 @@
        200 (string-append "Uploaded successfully to filename: " <target>))
       (web::static-error-message 200 "Uploaded successfully")))
 
-(define (web::uploadcont/2 callctx body/bytes)
+(define (web::uploadcont/3 callctx body/bytes categorization-text)
   (define body/hash (parse-multipart-as-hashmap body/bytes))
 
   (define (get-data a-key)
@@ -75,8 +78,22 @@
   (define title
     (get-data/decode "title"))
 
+  (define tags/checked
+    (let ((coll '()))
+      (hashmap-foreach
+       (lambda (key val)
+         (when (string-prefix? "tag:" key)
+           (set! coll (cons (string-drop-n 4 key) coll))))
+       body/hash)
+      coll))
+
+  (define tags/additional
+    (string->words
+     (get-data/decode "additional-tags")))
+
   (define tags
-    (get-data/decode "tags"))
+    (map (compose string->symbol ~a)
+         (append tags/additional tags/checked)))
 
   (define file-content
     (get-data "file"))
@@ -113,30 +130,35 @@
       (set! body/hash #f)))
 
   (define tags-list-result
-    ;; TODO: edit the categorization file
-    (tegfs-process-categorization-text tags))
+    (categorization-complete-selection categorization-text tags))
 
-  (cond
-   ((assoc 'ambiguous tags-list-result)
-    (error-tags-list (cdr (assoc 'ambiguous tags-list-result))))
-   (else
-    (let ((tags-list (cdr (assoc 'ok tags-list-result))))
-      (define entry
-        `((,keyword-target . ,<target>)
-          (,keyword-title . ,title)
-          (,keyword-tags ,@tags-list)))
+  (let ((tags-list (cdr (assoc 'ok tags-list-result))))
+    (define entry
+      `((,keyword-target . ,<target>)
+        (,keyword-title . ,title)
+        (,keyword-tags ,@tags-list)))
 
-      (define result
-        (webcore::ask
-         `(whats
-           (key ,(callcontext-token callctx))
-           (add-entry ,upload-registry-filename ,entry)
-           )))
+    (define result
+      (webcore::ask
+       `(whats
+         (key ,(callcontext-token callctx))
+         (add-entry ,upload-registry-filename ,entry)
+         )))
 
-      (web::handle-profun-results/hooked
-       result
-       (lambda _ ((upload-success-page <target>)))
-       (lambda _ (when full-filename (file-delete full-filename))))))))
+    (web::handle-profun-results/hooked
+     result
+     (lambda _ ((upload-success-page <target>)))
+     (lambda _ (when full-filename (file-delete full-filename))))))
+
+(define (web::uploadcont/2 callctx body/bytes)
+  (define key (callcontext-token callctx))
+  (define result
+    (webcore::ask
+     `(whats (key ,key) (categorization C))))
+
+  (web::iterate-profun-results
+   result (C)
+   (web::uploadcont/3 callctx body/bytes C)))
 
 (define (web::uploadcont)
   (define callctx (web::callcontext/p))
