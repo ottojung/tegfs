@@ -1,4 +1,4 @@
-;;;; Copyright (C) 2022  Otto Jung
+;;;; Copyright (C) 2022, 2023  Otto Jung
 ;;;;
 ;;;; This program is free software: you can redistribute it and/or modify
 ;;;; it under the terms of the GNU Affero General Public License as published
@@ -34,6 +34,7 @@
 %use (tegfs-prolog/parse) "./prolog.scm"
 %use (root/p) "./root-p.scm"
 %use (tegfs-save/parse) "./save.scm"
+%use (tegfs-version) "./tegfs-version.scm"
 %use (tegfs-serve/parse) "./web-server.scm"
 
 (define (main)
@@ -44,6 +45,7 @@
       (MAIN
        MAIN : ROOT? FUNC
        /      --help
+       /      --version / -v / version
        FUNC : add ADDOPT+
        /      save SAVEARGS
        /      categorize
@@ -89,6 +91,8 @@
 
       :default (<root> (get-root/default))
 
+      :synonym (--version -v version)
+
       :default (--no-series #f)
       :exclusive (--no-series --series)
 
@@ -112,6 +116,7 @@
 
       (parameterize ((root/p <root>))
         (cond
+         (--version (display tegfs-version) (newline))
          (add (tegfs-add/parse
                <add-target> <title> <tag...> --series <key...> <value...>
                <registry-file> <date>))
