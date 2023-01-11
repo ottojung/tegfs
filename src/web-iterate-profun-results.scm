@@ -19,7 +19,6 @@
 %var web::iterate-profun-results/or
 
 %use (fn-alist) "./euphrates/fn-alist.scm"
-%use (list-singleton?) "./euphrates/list-singleton-q.scm"
 %use (web::handle-profun-results/default-fail-fun web::handle-profun-results/or) "./web-handle-profun-results.scm"
 
 (define-syntax web::iterate-profun-results
@@ -37,7 +36,10 @@
      (let* ((fun (fn-alist (name . names) . bodies))
             (fun*
              (lambda (equals)
-               (if (list-singleton? equals)
-                   (fun (car equals))
-                   (for-each fun equals)))))
+               (cond
+                ((null? equals) 'false)
+                ((null? (cdr equals))
+                 (fun (car equals)))
+                (else
+                 (for-each fun equals))))))
        (web::handle-profun-results/or results fun* fail-fun)))))

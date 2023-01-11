@@ -52,19 +52,21 @@
   (define query/split (string->words query))
 
   (define result
-    (webcore::ask
-     `(whats
-       (key ,(callcontext-token callctx))
-       (query ,query/split)
-       (entry E)
-       (share-preview E ,default-preview-sharing-time _ATP _P)
-       (share-full E ,default-full-sharing-time _ATF F)
-       (link-shared _P PL)
-       more (99999)
-       )))
+    (and query/submitted/0
+         (webcore::ask
+          `(whats
+            (key ,(callcontext-token callctx))
+            (query ,query/split)
+            (entry E)
+            (share-preview E ,default-preview-sharing-time _ATP _P)
+            (share-full E ,default-full-sharing-time _ATF F)
+            (link-shared _P PL)
+            more (99999)
+            ))))
 
   (web::handle-profun-results
-   result (web::query-handle-results query/submitted query)))
+   (or result '(its (false)))
+   (web::query-handle-results query/submitted query)))
 
 (define (web::query-handle-results query/submitted query)
   (lambda (equals)
@@ -89,4 +91,5 @@
        (display "</div>\n")
        (display "<br/>\n")
 
-       (web::query-display-results equals)))))
+       (unless (null? equals)
+         (web::query-display-results equals))))))

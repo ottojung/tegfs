@@ -26,10 +26,11 @@
 %use (words->string) "./euphrates/words-to-string.scm"
 %use (web::bad-request) "./web-bad-request.scm"
 
-(define (web::handle-profun-results/2 results fun fail-fun)
+(define (web::handle-profun-results/2 results0 fun fail-fun)
+  (define results (cdr results0))
   (define head
     (if (null? results)
-        (fail-fun (cons 'its results))
+        (fail-fun results0)
         (car results)))
 
   (cond
@@ -43,10 +44,9 @@
     (let ((equals (list (map (comp (apply (lambda (EQ A B) (cons A B)))) results))))
       (fun equals)))
 
-   ((equal? '((true)) results) (fun))
-   ((equal? '((false)) results) (fail-fun (cons 'its results)))
-   (else
-    (raisu 'unexpected-its-from-backend-61253123543 results))))
+   ((equal? '((true)) results) (fun '(())))
+   ((equal? '((false)) results) (fun '()))
+   (else (fail-fun results0))))
 
 (define (web::handle-profun-results results fun)
   (web::handle-profun-results/hooked results fun identity))
@@ -72,6 +72,6 @@
 (define (web::handle-profun-results/or results fun fail-fun)
   (case (car results)
     ((its)
-     (web::handle-profun-results/2 (cdr results) fun fail-fun))
+     (web::handle-profun-results/2 results fun fail-fun))
     (else
      (fail-fun results))))
