@@ -28,7 +28,10 @@
     <input type='file' name='file' autofocus>
     <textarea style='maxwidth: 100%; width: 100%;' rows='10' cols='120' name='tags'>~a</textarea>
     <input type='text' placeholder='Enter title' name='title' >
-    <button type='submit'>Upload</button>"
+    <div class='form-block form-v-element'>
+      <button type='submit'>Upload</button>
+    </div>
+    "
                 categorization-text))))
 
   (web::form-template "action='uploadcont' enctype='multipart/form-data'" inner))
