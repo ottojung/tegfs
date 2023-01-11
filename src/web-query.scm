@@ -76,9 +76,14 @@
          (if query/submitted
              (string-append " value='" query "'")
              ""))
+       (define initial?
+         (and (null? equals) (not query/submitted)))
 
        (display "<br/>\n")
-       (display "<div class='search-input'>\n")
+       (display "<div class='search-input")
+       (when initial?
+         (display " centering-container"))
+       (display "'>\n")
        (display "<div class='tiled light smooth-edged'>\n")
        (display "<div>\n")
        (display "<form class='split-container' action='query'>\n")
