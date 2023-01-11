@@ -18,71 +18,65 @@
 %var web::iterate-profun-results
 
 %use (fn-alist) "./euphrates/fn-alist.scm"
+%use (raisu) "./euphrates/raisu.scm"
 %use (web::handle-profun-results/default-fail-fun web::handle-profun-results/or) "./web-handle-profun-results.scm"
 
 (define-syntax web::iterate-profun-results
-  (syntax-rules (:or :results :wrap)
+  (syntax-rules (:or :results :onfalse)
 
     ((_ :results results :or fail-fun . rest)
      (web::iterate-profun-results
       :or fail-fun
       :results results
       . rest))
-    ((_ :results results :wrap wrapper . rest)
+    ((_ :results results :onfalse onfalse . rest)
      (web::iterate-profun-results
-      :wrap wrapper
+      :onfalse onfalse
       :results results
       . rest))
-    ((_ :wrap wrapper :or fail-fun . rest)
+    ((_ :onfalse onfalse :or fail-fun . rest)
      (web::iterate-profun-results
       :or fail-fun
-      :wrap wrapper
+      :onfalse onfalse
       . rest))
 
-    ((_ :or fail-fun :wrap wrapper :results results (name . names) . bodies)
+    ((_ :or fail-fun :onfalse onfalse :results results (name . names) . bodies)
      (let ()
        (define fun (fn-alist (name . names) . bodies))
        (define (fun* equals)
          (cond
-          ((null? equals) 'false)
+          ((null? equals)
+           (case onfalse
+             ((nothing) (when #f #t))
+             ((fail) (fail-fun results))
+             (else
+              (if (procedure? onfalse)
+                  (onfalse results)
+                  (raisu 'type-error "Bad type for onfalse value")))))
           ((null? (cdr equals))
            (fun (car equals)))
           (else
            (for-each fun equals))))
-       (define fun**
-         (if wrapper
-             (lambda (equals)
-               (let ((success? #t)
-                     (empty? (null? equals)))
-                 (wrapper success? empty? (lambda _ (fun* equals)))))
-             fun*))
-       (define fail-fun*
-         (if wrapper
-             (lambda (results)
-               (let ((success? #f)
-                     (empty? #t))
-                 (wrapper success? empty? (lambda _ (fail-fun results)))))
-             fail-fun))
 
-       (web::handle-profun-results/or results fun** fail-fun*)))
+       (web::handle-profun-results/or results fun* fail-fun)))
 
     ((_ :or fail-fun :results results (name . names) . bodies)
      (web::iterate-profun-results
       :or fail-fun
-      :wrap #f
+      :onfalse #f
       :results results
       (name . names) . bodies))
 
-    ((_ :wrap wrapper :results results (name . names) . bodies)
+    ((_ :onfalse onfalse :results results (name . names) . bodies)
      (web::iterate-profun-results
       :or web::handle-profun-results/default-fail-fun
-      :wrap wrapper
+      :onfalse onfalse
       :results results
       (name . names) . bodies))
 
     ((_ :results results (name . names) . bodies)
      (web::iterate-profun-results
-      :wrap #f
+      :onfalse #f
       :results results
       (name . names) . bodies))
 
