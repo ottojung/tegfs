@@ -33,7 +33,7 @@
   (define expected-key (hashmap-ref query 'expected ""))
   (define no-continue (hashmap-ref query 'no #f))
   (define temporary-v (hashmap-ref query 'temporary #f))
-  (define temporary? (equal? temporary-v "false"))
+  (define temporary? (equal? temporary-v "off"))
   (define body/bytes (callcontext-body callctx))
 
   (cond

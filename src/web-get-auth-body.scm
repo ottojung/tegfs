@@ -38,13 +38,13 @@
 
   (define no
     (or no0
-        (stringf "auth?failed=true&~a~a~a"
+        (stringf "auth?failed=on&~a~a~a"
                  (web::auth-encode-arg yes)
                  (web::auth-encode-arg expected)
                  (web::auth-encode-arg temporary))))
 
   (web::form-template
-   (stringf "action='auth?continue=true&~a~a~a~a' enctype='application/x-www-form-urlencoded'"
+   (stringf "action='auth?continue=on&~a~a~a~a' enctype='application/x-www-form-urlencoded'"
             (web::auth-encode-arg yes)
             (web::auth-encode-arg no)
             (web::auth-encode-arg expected)
