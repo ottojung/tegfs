@@ -51,7 +51,7 @@
 (define (web::handle-profun-results results fun)
   (web::handle-profun-results/hooked results fun identity))
 
-(define (web::handle-profun-results/default-fail-fun hook)
+(define (web::handle-profun-results/default-fail-fun* hook)
   (lambda (results)
     (hook results)
     (case (car results)
@@ -65,8 +65,11 @@
       (else
        (raisu 'unexpected-results-from-backend-87156243510 results)))))
 
+(define web::handle-profun-results/default-fail-fun
+  (web::handle-profun-results/default-fail-fun* identity))
+
 (define (web::handle-profun-results/hooked results fun hook)
-  (define fail-fun (web::handle-profun-results/default-fail-fun hook))
+  (define fail-fun (web::handle-profun-results/default-fail-fun* hook))
   (web::handle-profun-results/or results fun fail-fun))
 
 (define (web::handle-profun-results/or results fun fail-fun)
