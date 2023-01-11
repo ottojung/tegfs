@@ -40,7 +40,9 @@
        (define perm (webcore::permissions/p))
 
        (define (continue entry target-fullpath)
-         (define generic-fullpath (get-shared-path target-fullpath))
+         (define generic-fullpath
+           (and target-fullpath
+                (get-shared-path target-fullpath)))
          (if generic-fullpath
              (let ()
                (define info
@@ -60,8 +62,7 @@
        (define (try entry)
          (and (profun-bound-value? entry)
               (let ((target-fullpath (entry-target-fullpath entry)))
-                (and target-fullpath
-                     (continue entry target-fullpath)))))
+                (continue entry target-fullpath))))
 
        (cond
         ((profun-bound-value? senderid)
