@@ -35,6 +35,7 @@
        (let ((target/1 (cdr target-p))
              (id (assq-or keyword-id entry #f)))
          (cond
+          ((not (string? target/1)) #f)
           ((a-weblink? target/1) target/1)
           ((absolute-posix-path? id) id)
           (else
