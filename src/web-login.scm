@@ -17,30 +17,15 @@
 
 %var web::login
 
-%use (assq-or) "./euphrates/assq-or.scm"
-%use (remove-common-prefix) "./euphrates/remove-common-prefix.scm"
 %use (stringf) "./euphrates/stringf.scm"
 %use (uri-encode) "./euphrates/uri-encode.scm"
 %use (web::callcontext/p) "./web-callcontext-p.scm"
-%use (callcontext-headers callcontext-url) "./web-callcontext.scm"
-%use (web::get-domainname) "./web-get-domainname.scm"
+%use (web::get-safe-referer) "./web-get-safe-referer.scm"
 %use (web::redirect) "./web-redirect.scm"
 
 (define (web::login)
   (define callctx (web::callcontext/p))
-  (define headers (callcontext-headers callctx))
-  (define domainname
-    (web::get-domainname callctx))
-  (define referer0
-    (assq-or 'referer headers #f))
-  (define referer1
-    (or referer0 "home"))
-  (define referer2
-    (remove-common-prefix referer1 domainname))
-  (define referer
-    (if (equal? referer2 (callcontext-url callctx))
-        "home"
-        referer2))
+  (define referer (web::get-safe-referer callctx))
   (define target
     (stringf "auth?yes=~a" (uri-encode referer)))
 
