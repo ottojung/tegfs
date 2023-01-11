@@ -23,7 +23,7 @@
 %use (web::body-not-found) "./web-body-not-found.scm"
 %use (web::body->hashmap) "./web-body-to-hashmap.scm"
 %use (callcontext-body) "./web-callcontext.scm"
-%use (web::iterate-profun-results/or) "./web-iterate-profun-results.scm"
+%use (web::iterate-profun-results) "./web-iterate-profun-results.scm"
 %use (web::return) "./web-return.scm"
 %use (web::set-cookie-header) "./web-set-cookie-header.scm"
 %use (webcore::ask) "./webcore-ask.scm"
@@ -64,9 +64,10 @@
         (values no-continue 0 #f))
 
       (define-values (cont expiery token)
-        (web::iterate-profun-results/or
-         fail-fun
-         result (K TL)
+        (web::iterate-profun-results
+         :or fail-fun
+         :results result
+         (K TL)
          (if (or (equal? K expected-key)
                  (and K (string-null? expected-key)))
              (values yes-continue TL K)

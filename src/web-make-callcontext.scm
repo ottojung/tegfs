@@ -22,7 +22,7 @@
 %use (memconst) "./euphrates/memconst.scm"
 %use (add-callcontext-respheaders! callcontext-ctr) "./web-callcontext.scm"
 %use (web::get-cookie) "./web-get-cookie.scm"
-%use (web::iterate-profun-results/or) "./web-iterate-profun-results.scm"
+%use (web::iterate-profun-results) "./web-iterate-profun-results.scm"
 %use (web::query->hashmap) "./web-query-to-hashmap.scm"
 %use (web::set-cookie-header) "./web-set-cookie-header.scm"
 %use (webcore::ask) "./webcore-ask.scm"
@@ -39,9 +39,10 @@
     (webcore::ask
      `(whats (time-left ,ret TL))))
   (define expiery
-    (web::iterate-profun-results/or
-     (lambda _ 0)
-     result (TL) TL))
+    (web::iterate-profun-results
+     :or (lambda _ 0)
+     :results result
+     (TL) TL))
   (define additional-headers
     (list (web::set-cookie-header "key" ret expiery)))
   (add-callcontext-respheaders! callctx additional-headers))
