@@ -39,7 +39,6 @@
 %use (web::settings-gear) "./web-settings-gear.scm"
 %use (web::share) "./web-share.scm"
 %use (web::upload) "./web-upload.scm"
-%use (web::uploadcont) "./web-uploadcont.scm"
 
 (define handlers-config
   `((/login ,web::login)
@@ -50,7 +49,6 @@
     (/details ,web::details)
     (/full ,web::full)
     (/upload ,web::upload)
-    (/uploadcont ,web::uploadcont)
     (/share ,web::share)
     (/auth ,web::auth)
 

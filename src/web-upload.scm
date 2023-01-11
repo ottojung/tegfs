@@ -17,15 +17,16 @@
 
 %var web::upload
 
+%use (hashmap-ref) "./euphrates/hashmap.scm"
 %use (web::callcontext/p) "./web-callcontext-p.scm"
-%use (callcontext-token) "./web-callcontext.scm"
+%use (callcontext-query callcontext-token) "./web-callcontext.scm"
 %use (web::iterate-profun-results) "./web-iterate-profun-results.scm"
 %use (web::make-html-response) "./web-make-html-response.scm"
 %use (web::make-upload-body) "./web-make-upload-body.scm"
+%use (web::uploadcont) "./web-uploadcont.scm"
 %use (webcore::ask) "./webcore-ask.scm"
 
-(define (web::upload)
-  (define callctx (web::callcontext/p))
+(define (web::upload::initial callctx)
   (define key (callcontext-token callctx))
 
   (define result
@@ -36,3 +37,13 @@
    result (C)
    (web::make-html-response
     (web::make-upload-body C))))
+
+(define (web::upload)
+  (define callctx (web::callcontext/p))
+  (define query (callcontext-query callctx))
+  (define continue-v (hashmap-ref query 'continue #f))
+  (define continue? (equal? "on" continue-v))
+
+  (if continue?
+      (web::uploadcont)
+      (web::upload::initial callctx)))
