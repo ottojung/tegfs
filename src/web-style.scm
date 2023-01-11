@@ -41,6 +41,10 @@ button, input, label, textarea {
 	font-size: 130%;
 }
 
+textarea {
+	padding: 0.5rem;
+}
+
 .centering-container {
 	display: flex;
 	align-items: center;
