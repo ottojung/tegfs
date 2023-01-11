@@ -138,9 +138,19 @@
 
   (let ((tags-list (cdr (assoc 'ok tags-list-result))))
     (define entry
-      `((,keyword-target . ,<target>)
-        (,keyword-title . ,title)
-        (,keyword-tags ,@tags-list)))
+      (append
+
+       (if (and title (not (string-null? title)))
+           `((,keyword-title . ,title))
+           '())
+
+       (if (and <target> (not (string-null? <target>)))
+           `((,keyword-target . ,<target>))
+           '())
+
+       (if (and tags-list (not (null? tags-list)))
+           `((,keyword-tags ,@tags-list))
+           '())))
 
     (define result
       (webcore::ask
