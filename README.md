@@ -18,7 +18,7 @@ This program also provides a web-based file-browser
   - `file` for determining file types
   - `fzf` for making choices during `tegfs save`
   - `rsync` for sending files to remote servers if using `tegfs save` with `--remote`
-  - `prolog` for query capabilities (TODO: REMOVE THIS DEPENDENCY)
+  - `prolog` for query capabilities
 - Web server
   - `ffmpeg` for video previews production
   - `imagemagick` for image previews production
@@ -44,12 +44,22 @@ So, for example, doing `tegfs query %any` will return
 
 # TODO
 
-- [ ] remove prolog dependency
-- [ ] web: make /upload tagging interactive
-- [ ] web: make buttons for logging-out
+- [ ] remove `prolog` dependency
+- [ ] remove `pup` dependency and use guile's sxml instead
+- [*] web: make /upload tagging interactive
+- [*] web: make buttons for logging-out
 - [ ] web: make buttons for sharing
 - [ ] web: more granular users permissions
 - [ ] document on how to run this thing
 - [ ] web: implement pagination
 - [*] web: implement directory sharing
-- [ ] web: escape all links
+- [*] web: escape all links
+- [ ] finish renaming
+- [ ] initialize files mimetypes on `add-entry`
+  - [ ] add directory preview svg
+  - [ ] change default file preview unknown
+- [*] implement /home
+- [*] implement /logout
+- [*] implement /tags
+- [ ] implement /note
+- [ ] fix web::not-found
