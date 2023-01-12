@@ -127,11 +127,14 @@
         (raisu 'target-does-not-exist target))))
 
   (define entry
-    (if target-full
-        (assoc-set-value
-         keyword-mimetype (get-file-mimetype target-full)
-         entry3)
-        entry3))
+    (let ((mimetype
+           (and target-full
+                (get-file-mimetype target-full))))
+      (if mimetype
+          (assoc-set-value
+           keyword-mimetype mimetype
+           entry3)
+          entry3)))
 
   (write-string-file last-id-path id)
 
