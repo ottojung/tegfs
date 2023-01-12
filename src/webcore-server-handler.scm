@@ -35,6 +35,7 @@
 %use (webcore::share-entry) "./webcore-share-entry.scm"
 %use (webcore::shared-entry-contains) "./webcore-shared-entry-contains.scm"
 %use (webcore::time-left) "./webcore-time-left.scm"
+%use (webcore::update-entry) "./webcore-update-entry.scm"
 
 (define (webcore::make-server-handler web::context)
   (profun-handler-extend
@@ -44,6 +45,7 @@
    (key (webcore::key web::context))
    (entry (webcore::entry web::context)) ;; OVERRIDES
    (add-entry webcore::add-entry) ;; OVERRIDES
+   (update-entry (webcore::update-entry web::context)) ;; OVERRIDES
    (categorization (webcore::categorization web::context)) ;; OVERRIDES
    (set-categorization (webcore::set-categorization web::context)) ;; OVERRIDES
    (share-preview (webcore::share-entry-preview web::context))

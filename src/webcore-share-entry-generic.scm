@@ -79,6 +79,6 @@
         ((permission? perm)
          (or (try (env (profun-meta-key E-name)))
              ;; (try (env E-name)) ;; NOTE: uncommenting allows forging of entries
-             (make-profun-error 'bad-entry:does-not-have-target-infos entry)))
+             (make-profun-error 'type-error "Cannot confirm that the entry passed is the actual entry from the database")))
         (else
          (make-profun-error 'could-not-authorize)))))))
