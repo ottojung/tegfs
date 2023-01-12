@@ -141,4 +141,6 @@
      (lambda _
        (newline)
        (entry-print entry)
-       (newline)))))
+       (newline))))
+
+  entry)
