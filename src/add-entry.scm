@@ -42,6 +42,7 @@
 %use (keyword-date) "./keyword-date.scm"
 %use (keyword-id) "./keyword-id.scm"
 %use (keyword-mimetype) "./keyword-mimetype.scm"
+%use (keyword-prev) "./keyword-prev.scm"
 %use (keyword-tags) "./keyword-tags.scm"
 %use (last-id-filename) "./last-id-filename.scm"
 
@@ -96,15 +97,19 @@
          entry1)))
 
   (define entry3
-    (let ((prev0 (assq-or keyword-tags entry2 #f)))
+    (let ((prev0 (assq-or keyword-prev entry2 #f)))
       (if (equal? prev0 '%LAST-ID)
-          (and (or (file-or-directory-exists? last-id-path)
-                   (raisu 'no-last-id-for-series))
-               (string-strip (read-string-file last-id-path)))
+          (let ((prev
+                 (and (or (file-or-directory-exists? last-id-path)
+                          (raisu 'no-last-id-for-series))
+                      (string-strip (read-string-file last-id-path)))))
+            (assoc-set-value
+             keyword-prev prev
+             entry2))
           entry2)))
 
   (define target
-    (entry-get-target entry))
+    (entry-get-target entry3))
 
   (define target-full
     (cond
