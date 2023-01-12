@@ -17,7 +17,7 @@ This program also provides a web-based file-browser
   - `xclip` for dumping clipboard content
   - `file` for determining file types
   - `fzf` for making choices during `tegfs save`
-  - `rsync` for sending files to remote servers if using `tegfs save` with `--remote`
+  - `rsync` and `ssh` for sending files to remote servers if using `tegfs save` with `--remote`
   - `prolog` for query capabilities
 - Web server
   - `ffmpeg` for video previews production
