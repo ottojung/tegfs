@@ -17,14 +17,14 @@
 
 %var webcore::add-entry
 
-%use (profun-accept) "./euphrates/profun-accept.scm"
+%use (profun-set-meta) "./euphrates/profun-accept.scm"
 %use (make-profun-error) "./euphrates/profun-error.scm"
 %use (profun-op-lambda) "./euphrates/profun-op-lambda.scm"
 %use (profun-request-value) "./euphrates/profun-request-value.scm"
 %use (profun-unbound-value?) "./euphrates/profun-value.scm"
-%use (can-upload?) "./webcore-access.scm"
 %use (add-entry) "./add-entry.scm"
 %use (permission?) "./permission.scm"
+%use (can-upload?) "./webcore-access.scm"
 %use (webcore::permissions/p) "./webcore-parameters.scm"
 
 (define webcore::add-entry
@@ -45,5 +45,6 @@
      (profun-request-value E-name))
 
     (else
-     (add-entry registry-file entry)
-     (profun-accept)))))
+     (let ((created (add-entry registry-file entry)))
+       (profun-set-meta
+        (E-name <- created)))))))
