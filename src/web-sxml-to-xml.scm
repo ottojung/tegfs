@@ -1,4 +1,4 @@
-;;;; Copyright (C) 2022  Otto Jung
+;;;; Copyright (C) 2023  Otto Jung
 ;;;;
 ;;;; This program is free software: you can redistribute it and/or modify
 ;;;; it under the terms of the GNU Affero General Public License as published
@@ -15,14 +15,10 @@
 
 %run guile
 
-%var web::message-template
+%var web::sxml->xml
 
-%use (web::form-template) "./web-form-template.scm"
-%use (web::sxml->xml) "./web-sxml-to-xml.scm"
+%for (COMPILER "guile")
+(use-modules (sxml simple))
+%end
 
-(define (web::message-template message)
-  (define xml
-    (with-output-to-string
-      (lambda _
-        (web::sxml->xml `(label (b ,message))))))
-  (web::form-template #f xml))
+(define web::sxml->xml sxml->xml)

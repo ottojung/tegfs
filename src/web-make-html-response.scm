@@ -24,13 +24,8 @@
 %use (callcontext-respheaders) "./web-callcontext.scm"
 %use (web::display-header) "./web-display-header.scm"
 %use (web::return) "./web-return.scm"
+%use (web::sxml->xml) "./web-sxml-to-xml.scm"
 %use (webcore::current-communicator/p) "./webcore-current-communicator-p.scm"
-
-%for (COMPILER "guile")
-
-(use-modules (sxml simple))
-
-%end
 
 (define web::og-headers
   (lines->string
@@ -86,7 +81,7 @@
        (display "</header>\n")
        (cond
         ((string? body) (display body))
-        ((pair? body) (sxml->xml body port))
+        ((pair? body) (web::sxml->xml body port))
         ((procedure? body)
          (parameterize ((web::callcontext/p callctx)
                         (webcore::current-communicator/p comm)

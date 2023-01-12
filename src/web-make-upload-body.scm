@@ -19,10 +19,7 @@
 
 %use (categorization-get-all-tags) "./categorization-get-all-tags.scm"
 %use (web::form-template/wide) "./web-form-template-wide.scm"
-
-%for (COMPILER "guile")
-(use-modules (sxml simple))
-%end
+%use (web::sxml->xml) "./web-sxml-to-xml.scm"
 
 (define (web::make-upload-body categorization-text)
   (define all-tags
@@ -30,11 +27,11 @@
 
   (define (tag->checkbox tag0)
     (define tag (symbol->string tag0))
-    (sxml->xml
+    (web::sxml->xml
      `(input (@ (type "checkbox")
                 (id ,(string-append "tag:" tag))
                 (name ,(string-append "tag:" tag)))))
-    (sxml->xml
+    (web::sxml->xml
      `(label (@ (for ,(string-append "tag:" tag)))
              ,tag)))
 
