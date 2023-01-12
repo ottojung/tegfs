@@ -19,11 +19,14 @@
 
 %use (string-strip) "./euphrates/string-strip.scm"
 %use (system-re) "./euphrates/system-re.scm"
+%use (a-weblink?) "./a-weblink-q.scm"
 
 (define (get-file-mimetype target)
-  (let* ((ret (system-re "file --brief --mime-type ~a" target))
-         (mimetype (car ret))
-         (code (cdr ret)))
-    (if (= 0 code)
-        (string-strip mimetype)
-        #f)))
+  (if (a-weblink? target)
+      "text/uri-list"
+      (let* ((ret (system-re "file --brief --mime-type ~a" target))
+             (mimetype (car ret))
+             (code (cdr ret)))
+        (if (= 0 code)
+            (string-strip mimetype)
+            #f))))
