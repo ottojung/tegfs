@@ -76,3 +76,4 @@ So, for example, doing `tegfs query %any` will return
 	  to the post itself, instead of to the files; it can also
 	  download a "context" for such files - which in case of
 	  an imageboard post could be the original thread page (in HTML + CSS).
+- [ ] make the website usable on mobile
