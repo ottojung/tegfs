@@ -111,6 +111,10 @@ textarea {
 	box-shadow: 0 0.28rem 0.57rem 0 rgba(0, 0, 0, 0.2), 0 0.42rem 1.42rem 0 rgba(0, 0, 0, 0.19);
 }
 
+.tiled.dark button:hover {
+	background-color: #890fdf;
+}
+
 .tiled.bright, .tiled.bright input {
 	color: rgba(0, 0, 0, 0.6);
 }
@@ -174,6 +178,15 @@ button[type=submit] {
 
 .capped-width {
 	max-width: 80%;
+}
+
+#dangerous {
+	margin-top: 0.4rem;
+	background-color: #c02525;
+}
+
+#dangerous:hover {
+	background-color: #e52020;
 }
 
 /************

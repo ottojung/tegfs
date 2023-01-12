@@ -64,10 +64,18 @@
 
          entry)
 
+        (display "
+        <div class='form-block form-v-element'>
+          <button type='submit' name='action' type='submit' value='update'>Update</button>
+        </div>
+        <div class='form-block form-v-element'>
+          <button id='dangerous' name='action' type='submit' value='delete'>Delete</button>
+        </div>")
+
         (display "</div>\n"))))
 
   (web::make-html-response
-   (web::form-template #f table)))
+   (web::form-template "action='details?continue=on'" table)))
 
 (define (web::details)
   (define callctx (web::callcontext/p))
