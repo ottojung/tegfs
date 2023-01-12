@@ -29,6 +29,7 @@
 %use (web::favicon.ico) "./web-icon.scm"
 %use (web::login) "./web-login.scm"
 %use (web::logo-gray.jpeg) "./web-logo-gray.scm"
+%use (web::logo-white.jpeg) "./web-logo-white.scm"
 %use (web::logout) "./web-logout.scm"
 %use (web::main.css) "./web-main-css.scm"
 %use (web::previewunknown) "./web-previewunknown.scm"
@@ -55,6 +56,7 @@
     (/tags ,web::tags)
 
     (/favicon.ico ,web::favicon.ico)
+    (/static/logo-white.jpeg ,web::logo-white.jpeg)
     (/static/logo-gray.jpeg ,web::logo-gray.jpeg)
     (/static/main.css ,web::main.css)
     (/static/previewunknown.svg ,web::previewunknown)
