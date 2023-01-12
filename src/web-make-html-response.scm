@@ -49,6 +49,7 @@
           (doctype "<!DOCTYPE html>\n")
           (content-type-params '((charset . "utf-8")))
           (content-type 'text/html)
+          (display-header? #t)
           (extra-headers '()))
   (define comm (webcore::current-communicator/p))
   (define callctx (web::callcontext/p))
@@ -77,7 +78,8 @@
        (display "</head>\n")
        (display "<body>\n")
        (display "<header>\n")
-       (web::display-header callctx)
+       (when display-header?
+         (web::display-header callctx))
        (display "</header>\n")
        (cond
         ((string? body) (display body))
