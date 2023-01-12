@@ -62,4 +62,4 @@
     "
                 checkboxes))))
 
-  (web::form-template "action='upload?continue=on' enctype='multipart/form-data'" inner))
+  (web::form-template "action='upload?continue=on' oenctype='multipart/form-data'" inner))

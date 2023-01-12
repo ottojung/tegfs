@@ -18,31 +18,41 @@
 %var update-entry
 
 %use (assq-or) "./euphrates/assq-or.scm"
+%use (debugs) "./euphrates/debugs.scm"
 %use (file-delete) "./euphrates/file-delete.scm"
 %use (raisu) "./euphrates/raisu.scm"
 %use (entries-map!) "./entries-map-bang.scm"
 %use (entry-target-fullpath) "./entry-target-fullpath.scm"
+%use (keyword-entry-registry-path) "./keyword-entry-registry-path.scm"
 %use (keyword-id) "./keyword-id.scm"
 
 (define (update-entry::continue id updated-entry)
   (define updated-target
     (entry-target-fullpath updated-entry))
 
-  (define (update iterated-entry)
+  (debugs updated-entry)
+  (debugs updated-target)
+
+  (define (update registry-path iterated-entry)
+    (define registry-property
+      (cons keyword-entry-registry-path registry-path))
     (define original-target
-      (entry-target-fullpath iterated-entry))
+      (entry-target-fullpath
+       (cons registry-property iterated-entry)))
     (unless (equal? original-target updated-target)
+      (debugs iterated-entry)
+      (debugs original-target)
       (if (and updated-target
                (not (string-null? updated-target)))
           (rename-file original-target updated-target)
           (file-delete original-target)))
     updated-entry)
 
-  (define (mapper iterated-entry)
+  (define (mapper registry-path iterated-entry)
     (define iterated-id
       (assq-or keyword-id iterated-entry #f))
     (if (equal? id iterated-id)
-        (update iterated-entry)
+        (update registry-path iterated-entry)
         iterated-entry))
 
   (entries-map! mapper))
