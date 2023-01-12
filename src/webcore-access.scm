@@ -30,7 +30,7 @@
 %use (filemap-ref-by-senderid) "./filemap.scm"
 %use (keyword-entry-parent-directory-senderid) "./keyword-entry-parent-directory-senderid.scm"
 %use (keyword-id) "./keyword-id.scm"
-%use (permission-admin? permission-cat-modify-access? permission-cat-view-access? permission-detailsaccess? permission-filemap permission-idset permission-uploadaccess?) "./permission.scm"
+%use (permission-admin? permission-cat-modify-access? permission-cat-view-access? permission-entry-view-access? permission-filemap permission-idset permission-uploadaccess?) "./permission.scm"
 %use (sharedinfo-sourcepath) "./sharedinfo.scm"
 
 (define (has-access-for-entry? filemap/2 perm entry)
@@ -54,7 +54,7 @@
 (define (has-access-for-entry-details? filemap/2 perm entry)
   (and perm
        (or (permission-admin? perm)
-           (and (permission-detailsaccess? perm)
+           (and (permission-entry-view-access? perm)
                 (has-access-for-entry? filemap/2 perm entry)))))
 
 (define (can-upload? perm)
