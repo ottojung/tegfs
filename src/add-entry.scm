@@ -37,9 +37,11 @@
 %use (a-weblink?) "./a-weblink-q.scm"
 %use (entry-get-target) "./entry-get-target.scm"
 %use (entry-print) "./entry-print.scm"
+%use (get-file-mimetype) "./get-file-mimetype.scm"
 %use (get-root) "./get-root.scm"
 %use (keyword-date) "./keyword-date.scm"
 %use (keyword-id) "./keyword-id.scm"
+%use (keyword-mimetype) "./keyword-mimetype.scm"
 %use (keyword-tags) "./keyword-tags.scm"
 %use (last-id-filename) "./last-id-filename.scm"
 
@@ -48,8 +50,6 @@
   (define (generate-random-id)
     (list->string
      (random-choice 30 alphanum-lowercase/alphabet)))
-
-  (define (get-file-
 
   (define (get-date)
     (string-strip
@@ -95,7 +95,7 @@
           entry1)
          entry1)))
 
-  (define entry
+  (define entry3
     (let ((prev0 (assq-or keyword-tags entry2 #f)))
       (if (equal? prev0 '%LAST-ID)
           (and (or (file-or-directory-exists? last-id-path)
@@ -106,13 +106,27 @@
   (define target
     (entry-get-target entry))
 
-  (when target
-    (when (absolute-posix-path? target)
+  (define target-full
+    (cond
+     ((not target) #f)
+     ((absolute-posix-path? target)
       (raisu 'target-absolute-but-should-relative target))
-    (let ((target-full (append-posix-path registry-dir target)))
+     ((a-weblink? target) target)
+     (else
+      (append-posix-path registry-dir target))))
+
+  (define _717231
+    (when target
       (unless (or (file-or-directory-exists? target-full)
                   (a-weblink? target))
         (raisu 'target-does-not-exist target))))
+
+  (define entry
+    (if target-full
+        (assoc-set-value
+         keyword-mimetype (get-file-mimetype target-full)
+         entry3)
+        entry3))
 
   (write-string-file last-id-path id)
 
