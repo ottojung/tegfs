@@ -36,9 +36,8 @@
 %use (web::not-found) "./web-not-found.scm"
 %use (parse-multipart-as-hashmap) "./web-parse-multipart.scm"
 %use (web::return) "./web-return.scm"
+%use (web::static-error-message) "./web-static-error-message.scm"
 %use (webcore::ask) "./webcore-ask.scm"
-
-(use-modules (ice-9 pretty-print))
 
 (define (web::detailscont/3 callctx body/bytes original-entry)
   (define body/hash
@@ -85,12 +84,6 @@
      (else
       (raisu 'bad-action "Bad action. Expected 'update' or 'delete'"))))
 
-  (newline)
-  (display "UPDATED:") (newline)
-  (pretty-print updated-entry)
-  (newline)
-  (newline)
-
   (define key (callcontext-token callctx))
   (define id
     (or (assq-or keyword-id original-entry #f)
@@ -112,11 +105,18 @@
               (vid (string-append "details?vid=" vid))
               (id (string-append "details?id=" id))
               (else "home"))))
-     (web::return
-      303
-      `((Location . ,L)
-        (Cache-Control . "no-cache"))
-      #f))))
+
+     (cond
+      ((equal? action "delete")
+       ((web::static-error-message 200 "Entry deleted")))
+      ((equal? action "update")
+       (web::return
+        303
+        `((Location . ,L)
+          (Cache-Control . "no-cache"))
+        #f))
+      (else
+       (raisu 'bad-action "Bad action. Expected 'update' or 'delete'"))))))
 
 (define (web::detailscont/2 callctx body/bytes)
   (define callctx (web::callcontext/p))
