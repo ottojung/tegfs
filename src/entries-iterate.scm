@@ -1,4 +1,4 @@
-;;;; Copyright (C) 2022  Otto Jung
+;;;; Copyright (C) 2022, 2023  Otto Jung
 ;;;;
 ;;;; This program is free software: you can redistribute it and/or modify
 ;;;; it under the terms of the GNU Affero General Public License as published
@@ -18,11 +18,13 @@
 %var entries-iterate
 
 %use (append-posix-path) "./euphrates/append-posix-path.scm"
+%use (catch-any) "./euphrates/catch-any.scm"
 %use (open-file-port) "./euphrates/open-file-port.scm"
 %use (list->stack stack-empty? stack-pop!) "./euphrates/stack.scm"
 %use (get-registry-files) "./get-registry-files.scm"
 %use (get-root) "./get-root.scm"
 %use (keyword-entry-registry-path) "./keyword-entry-registry-path.scm"
+%use (warning) "./warning.scm"
 
 ;; Iterator returns #f when done.
 (define (entries-iterate)
@@ -38,11 +40,23 @@
       (stack-pop! registries))
     (define registry-fullpath
       (append-posix-path (get-root) registry-path))
+    (define p
+      (catch-any
+       (lambda _
+         (open-file-port registry-fullpath "r"))
+       (lambda _
+         (warning "Could not open registry ~s" registry-path)
+         #f)))
 
-    (set! registry-property
-          (cons keyword-entry-registry-path registry-path))
-    (set! input-port
-          (open-file-port registry-fullpath "r")))
+    (cond
+     (p
+      (set! input-port p)
+      (set! registry-property
+            (cons keyword-entry-registry-path registry-path)))
+     ((stack-empty? registries)
+      (set! input-port #f))
+     (else
+      (init-next-registry))))
 
   (define (next)
     (if input-port
