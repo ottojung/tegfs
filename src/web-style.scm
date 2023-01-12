@@ -119,6 +119,10 @@ textarea {
 	color: rgba(0, 0, 0, 0.6);
 }
 
+.tiled.wide {
+	width: 40rem;
+}
+
 .tiled-v-element {
 	display: flex;
 	width: 100%;
@@ -355,10 +359,6 @@ header nav ul img:hover {
 /*****************
  * Details table *
  *****************/
-
-.details-table {
-	width: 40rem;
-}
 
 .styled-table {
 	border-collapse: collapse;

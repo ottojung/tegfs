@@ -26,7 +26,7 @@
 %use (web::callcontext/p) "./web-callcontext-p.scm"
 %use (callcontext-query callcontext-token) "./web-callcontext.scm"
 %use (web::details::continue) "./web-detailscont.scm"
-%use (web::form-template) "./web-form-template.scm"
+%use (web::form-template/wide) "./web-form-template-wide.scm"
 %use (web::get-query) "./web-get-query.scm"
 %use (web::iterate-profun-results) "./web-iterate-profun-results.scm"
 %use (web::make-html-response) "./web-make-html-response.scm"
@@ -89,7 +89,7 @@
         (display "</div>\n"))))
 
   (web::make-html-response
-   (web::form-template
+   (web::form-template/wide
     (stringf "action='details?continue=on&~a' enctype='multipart/form-data'" vid/id)
     table)))
 

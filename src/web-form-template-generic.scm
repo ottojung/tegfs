@@ -15,11 +15,18 @@
 
 %run guile
 
-%var web::form-template
+%var web::form-template/generic
 
-%use (web::form-template/generic) "./web-form-template-generic.scm"
-
-(define web::form-template
-  (case-lambda
-   ((form-params insides) (web::form-template/generic #f form-params insides #f))
-   ((form-params insides outsides) (web::form-template/generic #f form-params insides outsides))))
+(define (web::form-template/generic wide? form-params insides outsides)
+  (string-append
+   "
+<div class='centering-container'>
+  <div class='capped-width'>
+    <div class='tiled dark" (if wide? " wide " " ") "smooth-edged'>
+      <form " (or form-params "") " method='post'>"
+      insides
+      "</form>
+    </div>"
+    (or outsides "")
+ "</div>
+</div>"))

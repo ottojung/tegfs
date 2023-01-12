@@ -1,4 +1,4 @@
-;;;; Copyright (C) 2022, 2023  Otto Jung
+;;;; Copyright (C) 2023  Otto Jung
 ;;;;
 ;;;; This program is free software: you can redistribute it and/or modify
 ;;;; it under the terms of the GNU Affero General Public License as published
@@ -15,11 +15,11 @@
 
 %run guile
 
-%var web::form-template
+%var web::form-template/wide
 
 %use (web::form-template/generic) "./web-form-template-generic.scm"
 
-(define web::form-template
+(define web::form-template/wide
   (case-lambda
-   ((form-params insides) (web::form-template/generic #f form-params insides #f))
-   ((form-params insides outsides) (web::form-template/generic #f form-params insides outsides))))
+   ((form-params insides) (web::form-template/generic #t form-params insides #f))
+   ((form-params insides outsides) (web::form-template/generic #t form-params insides outsides))))
