@@ -261,7 +261,7 @@ button[type=submit] {
  * Header styles *
  *****************/
 
-header {
+header nav {
 	box-shadow: 0 0.28rem 0.57rem 0 rgba(0, 0, 0, 0.2), 0 0.42rem 1.42rem 0 rgba(0, 0, 0, 0.19);
 	border-color: black;
 	background-color: #24313c;
@@ -272,6 +272,8 @@ header {
 	border-bottom-left-radius: 9999rem;
 	border-bottom-right-radius: 9999rem;
 	width: 77rem;
+	max-width: 95vw;
+	min-width: 45rem;
 }
 
 header nav ul {
@@ -279,12 +281,12 @@ header nav ul {
 	margin: 0;
 	padding: 0;
 	display: flex;
-	justify-content: center;
+	justify-content: space-between;
 }
 
 header nav ul a {
-	padding-left: 4rem;
-	padding-right: 4rem;
+	padding-left: 0.3rem;
+	padding-right: 0.3rem;
 	display: flex;
 	align-items: center;
 	text-align: center;
@@ -292,29 +294,45 @@ header nav ul a {
 }
 
 header nav ul a li {
-	display: block;
+	background-color: #24313c;
 	font-size: 140%;
 	font-family: sans-serif;
 	color: white;
 	text-decoration: none;
+	margin-top: 0.4rem;
 }
 
 .highlighted:hover {
 	background-color: rgb(0, 0, 0, 0.1);
 }
 
-header nav ul label {
+header #lst {
+	align-content: right;
+	text-align: right;
+	justify-content: right;
 	color: #8ddf36;
 	font-size: 70%;
-	margin-left: -6rem;
-	margin-top: 2.6rem;
 	display: block;
+}
+
+header #lst div {
+	margin-top: -0.9rem;
+	margin-right: 3rem;
 }
 
 header nav ul img {
 	padding-top: 0.32rem;
+	margin-left: 3rem;
 	height: 3.5rem;
 	transition: transform .1s;
+}
+
+header .highlighted.first {
+	margin-left: -3.4rem;
+}
+
+header .highlighted.last {
+	margin-right: 4rem;
 }
 
 header nav ul img:hover {

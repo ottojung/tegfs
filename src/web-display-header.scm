@@ -17,8 +17,6 @@
 
 %var web::display-header
 
-%use (printf) "./euphrates/printf.scm"
-%use (stringf) "./euphrates/stringf.scm"
 %use (callcontext-headers) "./web-callcontext.scm"
 %use (web::get-cookie) "./web-get-cookie.scm"
 
@@ -30,23 +28,29 @@
      ((web::get-cookie "pwdtoken" headers) 'Admin)
      (else #f)))
 
-  (define auth
-    (case usertype
-      ((Admin Anonymous)
-       (stringf
-        "<a class='highlighted' href='logout'><li>Logout</li></a>
-         <label>(Loged in as ~a)</label>
-        " usertype))
-      (else "<a class='highlighted' href='login'><li>Login</li></a>")))
-
-  (printf
+  (display
    "<nav>
       <ul>
-        <a href='home'><li><img src='static/logo-gray.jpeg'/></li></a>
-        <a class='highlighted' href='query'><li>Search</li></a>
+        <a href='home'><img src='static/logo-gray.jpeg'/></a>
+        <a class='highlighted first' href='query'><li>Search</li></a>
         <a class='highlighted' href='upload'><li>Upload</li></a>
         <a class='highlighted' href='tags'><li>Tags</li></a>
-        ~a
-      </ul>
-    </nav>"
-   auth))
+    ")
+
+  (case usertype
+    ((Admin Anonymous)
+     (display "<a class='highlighted last' href='logout'><li>Logout</li></a>"))
+    (else
+     (display "<a class='highlighted last' href='login'><li>Login</li></a>")))
+
+  (display "\n</ul>\n")
+
+  (case usertype
+    ((Admin Anonymous)
+     (display "
+      <div id='lst'>
+        <div>(Loged in as ")
+     (display usertype)
+     (display ")</div></div>")))
+
+  (display "\n</nav>\n"))
