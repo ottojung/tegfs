@@ -1,4 +1,4 @@
-;;;; Copyright (C) 2022  Otto Jung
+;;;; Copyright (C) 2022, 2023  Otto Jung
 ;;;;
 ;;;; This program is free software: you can redistribute it and/or modify
 ;;;; it under the terms of the GNU Affero General Public License as published
@@ -19,14 +19,13 @@
 
 %use (append-posix-path) "./euphrates/append-posix-path.scm"
 %use (file-delete) "./euphrates/file-delete.scm"
-%use (fn) "./euphrates/fn.scm"
 %use (open-file-port) "./euphrates/open-file-port.scm"
 %use (entry-print) "./entry-print.scm"
 %use (get-registry-files) "./get-registry-files.scm"
 %use (get-root) "./get-root.scm"
 %use (make-temporary-filename/local) "./make-temporary-filename-local.scm"
 
-(define (entries-map! fn)
+(define (entries-map! fun)
   (for-each
    (lambda (registry-path)
      (define registry-fullpath (append-posix-path (get-root) registry-path))
@@ -38,7 +37,7 @@
        (let loop ()
          (define x (read input-port))
          (unless (eof-object? x)
-           (let ((ret (fn x)))
+           (let ((ret (fun x)))
              (when ret
                (newline)
                (entry-print ret)
