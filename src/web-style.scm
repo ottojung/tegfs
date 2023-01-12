@@ -27,7 +27,7 @@
 
 
 html, body {
-	height: 90%;
+	height: 100%;
 	margin: 0;
 	padding: 0;
 }
@@ -49,7 +49,7 @@ textarea {
 	display: flex;
 	align-items: center;
 	justify-content: center;
-	height: 100%;
+	height: calc(100% - 4.2rem);
 	width: 100%;
 }
 
@@ -265,6 +265,7 @@ header {
 	background-color: #24313c;
 	text-align: center;
 	margin: 0 auto;
+	height: 4.2rem;
 
 	border-bottom-left-radius: 9999rem;
 	border-bottom-right-radius: 9999rem;
