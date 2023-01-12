@@ -18,7 +18,6 @@
 %var update-entry
 
 %use (assq-or) "./euphrates/assq-or.scm"
-%use (debugs) "./euphrates/debugs.scm"
 %use (file-delete) "./euphrates/file-delete.scm"
 %use (raisu) "./euphrates/raisu.scm"
 %use (entries-map!) "./entries-map-bang.scm"
@@ -28,10 +27,8 @@
 
 (define (update-entry::continue id updated-entry)
   (define updated-target
-    (entry-target-fullpath updated-entry))
-
-  (debugs updated-entry)
-  (debugs updated-target)
+    (and updated-entry
+         (entry-target-fullpath updated-entry)))
 
   (define (update registry-path iterated-entry)
     (define registry-property
@@ -40,8 +37,6 @@
       (entry-target-fullpath
        (cons registry-property iterated-entry)))
     (unless (equal? original-target updated-target)
-      (debugs iterated-entry)
-      (debugs original-target)
       (if (and updated-target
                (not (string-null? updated-target)))
           (rename-file original-target updated-target)

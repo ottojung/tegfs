@@ -65,22 +65,29 @@
         body/hash)
        coll)))
 
-  (define get-updated-entry
-    (memconst
-     (let loop ((ret original-entry)
-                (left (get-fields)))
-       (if (null? left) ret
-           (let* ((p (car left))
-                  (key (car p))
-                  (val (cdr p)))
-             (loop
-              (assoc-set-value
-               key val ret)
-              (cdr left)))))))
+  (define action
+    (web::body::get-data/decode body/hash "action"))
+
+  (define updated-entry
+    (cond
+     ((equal? action "delete") #f)
+     ((equal? action "update")
+      (let loop ((ret original-entry)
+                 (left (get-fields)))
+        (if (null? left) ret
+            (let* ((p (car left))
+                   (key (car p))
+                   (val (cdr p)))
+              (loop
+               (assoc-set-value
+                key val ret)
+               (cdr left))))))
+     (else
+      (raisu 'bad-action "Bad action. Expected 'update' or 'delete'"))))
 
   (newline)
   (display "UPDATED:") (newline)
-  (pretty-print (get-updated-entry))
+  (pretty-print updated-entry)
   (newline)
   (newline)
 
@@ -94,7 +101,7 @@
        (key ,key)
        (entry E)
        (entry-field E "id" ,id)
-       (update-entry E ,(get-updated-entry)))))
+       (update-entry E ,updated-entry))))
 
   (web::iterate-profun-results
    :results result (E)
