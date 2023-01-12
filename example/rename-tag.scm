@@ -29,7 +29,7 @@
 (define to 'picture)
 
 (entries-map!
- (lambda (entry)
+ (lambda (registry-path entry)
    (define tags (assoc-or 'tags entry '()))
    (define new-tags
      (map (curry-if (comp (equal? from)) (const to)) tags))

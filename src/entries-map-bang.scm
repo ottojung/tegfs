@@ -37,7 +37,7 @@
        (let loop ()
          (define x (read input-port))
          (unless (eof-object? x)
-           (let ((ret (fun x)))
+           (let ((ret (fun registry-path x)))
              (when ret
                (newline)
                (entry-print ret)
