@@ -198,12 +198,10 @@ button[type=submit] {
  ************/
 
 .tagsbox {
-	display: flex;
-	align-items: center;
-	justify-content: center;
-	height: 100%;
 	width: 100%;
 	margin-top: 0.3rem;
+	overflow-y: scroll;
+	max-height: 20rem;
 }
 
 .tagsbox div {

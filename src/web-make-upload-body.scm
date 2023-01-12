@@ -21,7 +21,7 @@
 %use (stringf) "./euphrates/stringf.scm"
 %use (words->string) "./euphrates/words-to-string.scm"
 %use (categorization-get-all-tags) "./categorization-get-all-tags.scm"
-%use (web::form-template) "./web-form-template.scm"
+%use (web::form-template/wide) "./web-form-template-wide.scm"
 
 (define (web::make-upload-body categorization-text)
   (define all-tags
@@ -62,4 +62,4 @@
     "
                 checkboxes))))
 
-  (web::form-template "action='upload?continue=on' enctype='multipart/form-data'" inner))
+  (web::form-template/wide "action='upload?continue=on' enctype='multipart/form-data'" inner))
