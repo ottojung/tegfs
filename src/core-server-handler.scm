@@ -28,6 +28,7 @@
 %use (core::entry) "./core-entry.scm"
 %use (core::diropen?/p core::dirpreview?/p core::query/p) "./core-paremeters.scm"
 %use (core::set-categorization) "./core-set-categorization.scm"
+%use (core::update-entry) "./core-update-entry.scm"
 
 (define (core::make-server-handler)
   (profun-handler-extend
@@ -36,6 +37,7 @@
    (entry core::entry)
    (entry-field core::entry-field)
    (add-entry core::add-entry)
+   (update-entry core::update-entry)
    (categorization core::categorization)
    (set-categorization core::set-categorization)
 
