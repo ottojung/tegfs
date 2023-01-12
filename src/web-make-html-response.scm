@@ -80,10 +80,10 @@
        (display "  <link rel='stylesheet' href='/static/main.css'>")
        (for-each display extra-heads)
        (display "</head>\n")
+       (display "<body>\n")
        (display "<header>\n")
        (web::display-header callctx)
        (display "</header>\n")
-       (display "<body>\n")
        (cond
         ((string? body) (display body))
         ((pair? body) (sxml->xml body port))
