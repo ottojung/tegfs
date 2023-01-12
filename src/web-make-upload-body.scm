@@ -1,4 +1,4 @@
-;;;; Copyright (C) 2022  Otto Jung
+;;;; Copyright (C) 2022, 2023  Otto Jung
 ;;;;
 ;;;; This program is free software: you can redistribute it and/or modify
 ;;;; it under the terms of the GNU Affero General Public License as published
@@ -17,30 +17,29 @@
 
 %var web::make-upload-body
 
-%use (printf) "./euphrates/printf.scm"
-%use (stringf) "./euphrates/stringf.scm"
-%use (words->string) "./euphrates/words-to-string.scm"
 %use (categorization-get-all-tags) "./categorization-get-all-tags.scm"
 %use (web::form-template/wide) "./web-form-template-wide.scm"
+
+%for (COMPILER "guile")
+(use-modules (sxml simple))
+%end
 
 (define (web::make-upload-body categorization-text)
   (define all-tags
     (categorization-get-all-tags categorization-text))
 
-  (define (tag->checkbox tag)
-    (stringf
-     "<input type='checkbox' id='tag:~a' name='tag:~a' />
-      <label for='tag:~a'>~a</label>"
-     tag tag tag tag))
+  (define (tag->checkbox tag0)
+    (define tag (symbol->string tag0))
+    (sxml->xml
+     `(input (@ (type "checkbox")
+                (id ,(string-append "tag:" tag))
+                (name ,(string-append "tag:" tag)))))
+    (sxml->xml
+     `(label (@ (for ,(string-append "tag:" tag)))
+             ,tag)))
 
-  (define checkboxes
-    (words->string
-     (map tag->checkbox all-tags)))
-
-  (define inner
-    (with-output-to-string
-      (lambda _
-        (printf "
+  (define (inner)
+    (display "
     <input type='file' name='file' autofocus>
     <br/>
     <br/>
@@ -48,7 +47,11 @@
       <label>Tags</label>
     </div>
     <div class='tagsbox'>
-      <div>~a</div>
+      <div>")
+
+    (for-each tag->checkbox all-tags)
+
+    (display "</div>
     </div>
     <div class='form-block form-v-element'>
       <input type='text' name='additional-tags' placeholder='Additional tags' />
@@ -59,7 +62,6 @@
     <div class='form-block form-v-element'>
       <button type='submit'>Upload</button>
     </div>
-    "
-                checkboxes))))
+    "))
 
   (web::form-template/wide "action='upload?continue=on' enctype='multipart/form-data'" inner))

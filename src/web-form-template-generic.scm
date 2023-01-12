@@ -18,15 +18,20 @@
 %var web::form-template/generic
 
 (define (web::form-template/generic wide? form-params insides outsides)
-  (string-append
-   "
+  (lambda _
+    (display "
 <div class='centering-container'>
   <div class='capped-width'>
-    <div class='tiled dark" (if wide? " wide " " ") "smooth-edged'>
-      <form " (or form-params "") " method='post'>"
-      insides
-      "</form>
-    </div>"
-    (or outsides "")
- "</div>
-</div>"))
+    <div class='tiled dark")
+    (when wide? (display " wide"))
+    (display " smooth-edged'> <form ")
+    (when form-params (display form-params))
+    (display " method='post'>")
+    (cond
+     ((string? insides) (display insides))
+     ((procedure? insides) (insides)))
+    (display "</form> </div>")
+    (cond
+     ((string? outsides) (display outsides))
+     ((procedure? outsides) (outsides)))
+    (display "</div> </div>")))
