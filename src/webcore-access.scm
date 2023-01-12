@@ -18,6 +18,7 @@
 %var has-access-for-entry?
 %var has-access-for-entry-target?
 %var has-access-for-entry-details?
+%var can-modify-entry?
 %var can-upload?
 %var can-view-categorization?
 %var can-modify-categorization?
@@ -30,7 +31,7 @@
 %use (filemap-ref-by-senderid) "./filemap.scm"
 %use (keyword-entry-parent-directory-senderid) "./keyword-entry-parent-directory-senderid.scm"
 %use (keyword-id) "./keyword-id.scm"
-%use (permission-admin? permission-cat-modify-access? permission-cat-view-access? permission-entry-view-access? permission-filemap permission-idset permission-uploadaccess?) "./permission.scm"
+%use (permission-admin? permission-cat-modify-access? permission-cat-view-access? permission-entry-modify-access? permission-entry-view-access? permission-filemap permission-idset permission-uploadaccess?) "./permission.scm"
 %use (sharedinfo-sourcepath) "./sharedinfo.scm"
 
 (define (has-access-for-entry? filemap/2 perm entry)
@@ -55,6 +56,12 @@
   (and perm
        (or (permission-admin? perm)
            (and (permission-entry-view-access? perm)
+                (has-access-for-entry? filemap/2 perm entry)))))
+
+(define (can-modify-entry? filemap/2 perm entry)
+  (and perm
+       (or (permission-admin? perm)
+           (and (permission-entry-modify-access? perm)
                 (has-access-for-entry? filemap/2 perm entry)))))
 
 (define (can-upload? perm)

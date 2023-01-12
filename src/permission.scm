@@ -24,6 +24,7 @@
 %var permission-maybepassword
 %var permission-uploadaccess?
 %var permission-entry-view-access?
+%var permission-entry-modify-access?
 %var permission-cat-view-access?
 %var permission-cat-modify-access?
 %var permission-share-longer-than-view?
@@ -52,6 +53,9 @@
 
 (define (permission-entry-view-access? perm) ;; true if user has access to objects details
   (assq-or 'entry-view-access? (permission-dynamic perm)))
+
+(define (permission-entry-modify-access? perm) ;; true if user can modify (AND DELETE) existing entries
+  (assq-or 'entry-modify-access? (permission-dynamic perm)))
 
 (define (permission-cat-view-access? perm) ;; true if user has read access to tags categorization
   (assq-or 'cat-view-access? (permission-dynamic perm)))
