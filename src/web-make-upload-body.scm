@@ -17,6 +17,7 @@
 
 %var web::make-upload-body
 
+%use (categorization::first-order-tag?) "./categorization-first-order-tag-huh.scm"
 %use (categorization-get-all-tags) "./categorization-get-all-tags.scm"
 %use (web::form-template/wide) "./web-form-template-wide.scm"
 %use (web::sxml->xml) "./web-sxml-to-xml.scm"
@@ -24,6 +25,8 @@
 (define (web::make-upload-body categorization-text)
   (define all-tags
     (categorization-get-all-tags categorization-text))
+  (define all-simple-tags
+    (filter categorization::first-order-tag? all-tags))
 
   (define (tag->checkbox tag0)
     (define tag (symbol->string tag0))
@@ -46,7 +49,7 @@
     <div class='tagsbox'>
       <div>")
 
-    (for-each tag->checkbox all-tags)
+    (for-each tag->checkbox all-simple-tags)
 
     (display "</div>
     </div>
