@@ -30,8 +30,10 @@
 %use (~a) "./euphrates/tilda-a.scm"
 %use (add-entry) "./add-entry.scm"
 %use (categorization-complete-selection) "./categorization-complete-selection.scm"
+%use (default-share-expiery-time) "./default-share-expiery-time.scm"
 %use (get-random-basename) "./get-random-basename.scm"
 %use (get-root) "./get-root.scm"
+%use (keyword-entry-registry-path) "./keyword-entry-registry-path.scm"
 %use (keyword-tags) "./keyword-tags.scm"
 %use (keyword-target) "./keyword-target.scm"
 %use (keyword-title) "./keyword-title.scm"
@@ -39,9 +41,10 @@
 %use (web::body-not-found) "./web-body-not-found.scm"
 %use (web::callcontext/p) "./web-callcontext-p.scm"
 %use (callcontext-body callcontext-token) "./web-callcontext.scm"
-%use (web::handle-profun-results/hooked) "./web-handle-profun-results.scm"
+%use (web::handle-profun-results/default-fail-fun) "./web-handle-profun-results.scm"
 %use (web::iterate-profun-results) "./web-iterate-profun-results.scm"
 %use (parse-multipart-as-hashmap) "./web-parse-multipart.scm"
+%use (web::return) "./web-return.scm"
 %use (web::static-error-message) "./web-static-error-message.scm"
 %use (webcore::ask) "./webcore-ask.scm"
 
@@ -130,6 +133,8 @@
     (define entry
       (append
 
+       `((,keyword-entry-registry-path . ,upload-registry-filename))
+
        (if (and title (not (string-null? title)))
            `((,keyword-title . ,title))
            '())
@@ -147,12 +152,22 @@
        `(whats
          (key ,(callcontext-token callctx))
          (add-entry ,upload-registry-filename ,entry)
-         )))
+         (share-full ,entry ,default-share-expiery-time _ F))))
 
-    (web::handle-profun-results/hooked
-     result
-     (lambda _ ((upload-success-page <target>)))
-     (lambda _ (when full-filename (file-delete full-filename))))))
+    (web::iterate-profun-results
+     :or (lambda _
+           (when full-filename (file-delete full-filename))
+           (web::handle-profun-results/default-fail-fun result))
+     :results result (F)
+     (if F
+         ;; TODO: figure out how to get the vid even without <target>
+         (let ((L (string-append "details?vid=" F)))
+           (web::return
+            303
+            `((Location . ,L)
+              (Cache-Control . "no-cache"))
+            #f))
+         ((upload-success-page #f))))))
 
 (define (web::uploadcont/2 callctx body/bytes)
   (define key (callcontext-token callctx))
