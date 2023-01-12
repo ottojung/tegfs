@@ -26,6 +26,7 @@
 %use (web::details) "./web-details.scm"
 %use (web::directory) "./web-directory.scm"
 %use (web::full) "./web-full.scm"
+%use (web::home) "./web-home.scm"
 %use (web::favicon.ico) "./web-icon.scm"
 %use (web::login) "./web-login.scm"
 %use (web::logo-gray.jpeg) "./web-logo-gray.scm"
@@ -54,6 +55,8 @@
     (/share ,web::share)
     (/auth ,web::auth)
     (/tags ,web::tags)
+    (/home ,web::home)
+    (/ ,web::home)
 
     (/favicon.ico ,web::favicon.ico)
     (/static/logo-white.jpeg ,web::logo-white.jpeg)
