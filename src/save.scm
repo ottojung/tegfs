@@ -1,4 +1,4 @@
-;;;; Copyright (C) 2022  Otto Jung
+;;;; Copyright (C) 2022, 2023  Otto Jung
 ;;;;
 ;;;; This program is free software: you can redistribute it and/or modify
 ;;;; it under the terms of the GNU Affero General Public License as published
@@ -59,6 +59,7 @@
 %use (file-is-image?) "./file-is-image-q.scm"
 %use (file-is-video?) "./file-is-video-q.scm"
 %use (get-config) "./get-config.scm"
+%use (get-file-mimetype) "./get-file-mimetype.scm"
 %use (get-random-basename) "./get-random-basename.scm"
 %use (get-registry-files) "./get-registry-files.scm"
 %use (get-root) "./get-root.scm"
@@ -124,14 +125,6 @@
       (unless (= 0 (system-fmt "wget --header ~a ~a -O ~a" headers url target))
         (fatal "Could not download ~s" url)))
     target))
-
-(define (get-file-mimetype target)
-  (let* ((ret (system-re "file --brief --mime-type ~a" target))
-         (mimetype (car ret))
-         (code (cdr ret)))
-    (if (= 0 code)
-        (string-strip mimetype)
-        #f)))
 
 (define (a-real-filepath? string)
   (file-or-directory-exists? string))

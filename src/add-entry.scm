@@ -49,6 +49,8 @@
     (list->string
      (random-choice 30 alphanum-lowercase/alphabet)))
 
+  (define (get-file-
+
   (define (get-date)
     (string-strip
      (car
