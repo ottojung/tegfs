@@ -43,6 +43,7 @@
 %use (callcontext-body callcontext-token) "./web-callcontext.scm"
 %use (web::handle-profun-results/default-fail-fun) "./web-handle-profun-results.scm"
 %use (web::iterate-profun-results) "./web-iterate-profun-results.scm"
+%use (web::make-info-box-response) "./web-make-info-box-response.scm"
 %use (parse-multipart-as-hashmap) "./web-parse-multipart.scm"
 %use (web::return) "./web-return.scm"
 %use (web::static-error-message) "./web-static-error-message.scm"
@@ -61,11 +62,8 @@
 (define duplicates-tags-list
   (web::static-error-message 400 "Tags contain duplicates"))
 
-(define (upload-success-page <target>)
-  (if <target>
-      (web::static-error-message
-       200 (string-append "Uploaded successfully to filename: " <target>))
-      (web::static-error-message 200 "Uploaded successfully")))
+(define (upload-success-page)
+  (web::make-info-box-response "Uploaded successfully"))
 
 (define (web::uploadcont/3 callctx body/bytes categorization-text)
   (define body/hash (parse-multipart-as-hashmap body/bytes))
@@ -167,7 +165,7 @@
             `((Location . ,L)
               (Cache-Control . "no-cache"))
             #f))
-         ((upload-success-page #f))))))
+         (upload-success-page)))))
 
 (define (web::uploadcont/2 callctx body/bytes)
   (define key (callcontext-token callctx))

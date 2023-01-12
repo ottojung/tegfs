@@ -33,10 +33,10 @@
 %use (callcontext-body callcontext-token) "./web-callcontext.scm"
 %use (web::get-query) "./web-get-query.scm"
 %use (web::iterate-profun-results) "./web-iterate-profun-results.scm"
+%use (web::make-info-box-response) "./web-make-info-box-response.scm"
 %use (web::not-found) "./web-not-found.scm"
 %use (parse-multipart-as-hashmap) "./web-parse-multipart.scm"
 %use (web::return) "./web-return.scm"
-%use (web::static-error-message) "./web-static-error-message.scm"
 %use (webcore::ask) "./webcore-ask.scm"
 
 (define (web::detailscont/3 callctx body/bytes original-entry)
@@ -108,7 +108,7 @@
 
      (cond
       ((equal? action "delete")
-       ((web::static-error-message 200 "Entry deleted")))
+       (web::make-info-box-response "Entry deleted"))
       ((equal? action "update")
        (web::return
         303
