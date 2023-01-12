@@ -63,3 +63,16 @@ So, for example, doing `tegfs query %any` will return
 - [*] implement /tags
 - [ ] implement /note
 - [ ] fix web::not-found
+- [ ] make an electron frontend?
+      This may simplify the web setup - electron can be the fileserver as well as the frontend.
+- [ ] move these TODOs elsewhere
+- [ ] add a "download manager" option.
+      This will improve the downloading experience by allowing to
+	  perform downloads that are otherwise hard to do.
+	  Example 1: a download manager can handle youtube links
+	  by downloading the video.
+	  Example 2: it can handle imageboard links by downloading
+	  the post's files, but keeping the original source link
+	  to the post itself, instead of to the files; it can also
+	  download a "context" for such files - which in case of
+	  an imageboard post could be the original thread page (in HTML + CSS).
