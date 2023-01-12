@@ -42,7 +42,7 @@
   (printf
    "<nav>
       <ul>
-        <a href='home'><li><img src='./static/logo-gray.jpeg'/></li></a>
+        <a href='home'><li><img src='static/logo-gray.jpeg'/></li></a>
         <a class='highlighted' href='query'><li>Search</li></a>
         <a class='highlighted' href='upload'><li>Upload</li></a>
         <a class='highlighted' href='tags'><li>Tags</li></a>
