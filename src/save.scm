@@ -273,8 +273,7 @@
 (define working-file/p (make-parameter #f))
 
 (define (get-tags edit?)
-  (define result (cdr (tegfs-categorize (working-file/p))))
-  (map symbol->string result))
+  (cdr (tegfs-categorize (working-file/p))))
 
 (define (set-real-type-preference state)
   (define text-content (cadr (assoc '-text-content state)))

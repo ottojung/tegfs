@@ -33,6 +33,7 @@
 %use (read-string-file) "./euphrates/read-string-file.scm"
 %use (string-strip) "./euphrates/string-strip.scm"
 %use (system-re) "./euphrates/system-re.scm"
+%use (~a) "./euphrates/tilda-a.scm"
 %use (write-string-file) "./euphrates/write-string-file.scm"
 %use (a-weblink?) "./a-weblink-q.scm"
 %use (entry-get-target) "./entry-get-target.scm"
@@ -56,6 +57,11 @@
     (string-strip
      (car
       (system-re "date --utc '+%Y-%m-%dT%H:%M:%S+0000'"))))
+
+  (define (tosymbol x)
+    (cond
+     ((symbol? x) x)
+     (else (string->symbol (~a x)))))
 
   (define (init-registry-file <registry-file>)
     (define registry-file (append-posix-path (get-root) <registry-file>))
@@ -92,7 +98,9 @@
     (let ((tags0 (assq-or keyword-tags entry1 #f)))
       (if tags0
          (assoc-set-value
-          keyword-tags (list-deduplicate/reverse tags0)
+          keyword-tags
+          (list-deduplicate/reverse
+           (map tosymbol tags0))
           entry1)
          entry1)))
 
