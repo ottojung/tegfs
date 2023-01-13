@@ -27,6 +27,7 @@
 %use (file-or-directory-exists?) "./euphrates/file-or-directory-exists-q.scm"
 %use (list-deduplicate/reverse) "./euphrates/list-deduplicate.scm"
 %use (make-directories) "./euphrates/make-directories.scm"
+%use (memconst) "./euphrates/memconst.scm"
 %use (path-get-dirname) "./euphrates/path-get-dirname.scm"
 %use (raisu) "./euphrates/raisu.scm"
 %use (random-choice) "./euphrates/random-choice.scm"
@@ -38,7 +39,9 @@
 %use (a-weblink?) "./a-weblink-q.scm"
 %use (entry-get-target) "./entry-get-target.scm"
 %use (entry-print) "./entry-print.scm"
+%use (get-config) "./get-config.scm"
 %use (get-file-mimetype) "./get-file-mimetype.scm"
+%use (get-registry-files) "./get-registry-files.scm"
 %use (get-root) "./get-root.scm"
 %use (keyword-date) "./keyword-date.scm"
 %use (keyword-id) "./keyword-id.scm"
@@ -46,6 +49,8 @@
 %use (keyword-prev) "./keyword-prev.scm"
 %use (keyword-tags) "./keyword-tags.scm"
 %use (last-id-filename) "./last-id-filename.scm"
+%use (set-config) "./set-config.scm"
+%use (warning) "./warning.scm"
 
 (define (add-entry registry-file0 entry0)
 
@@ -63,8 +68,33 @@
      ((symbol? x) x)
      (else (string->symbol (~a x)))))
 
+  (define config (get-config))
+
   (define (init-registry-file <registry-file>)
-    (define registry-file (append-posix-path (get-root) <registry-file>))
+    (define get-default-registry
+      (memconst (assq-or 'default-save-registry config #f)))
+    (define get-existing-registries
+      (memconst (get-registry-files)))
+
+    (define registry-file1
+      (cond
+       (<registry-file> <registry-file>)
+
+       ((get-default-registry) (get-default-registry))
+
+       ((not (null? (get-existing-registries)))
+        (warning "Default registry not set. Choosing a first available one: ~s."
+                 (car (get-existing-registries)))
+        (car (get-existing-registries)))
+
+       (else
+        (warning "Default registry not set. A new one is created.")
+        (let ((new "default/default.tegfs.reg.lisp"))
+          (set-config 'registries new)
+          new))))
+
+    (define registry-file
+      (append-posix-path (get-root) registry-file1))
 
     (unless (file-or-directory-exists? registry-file)
       (let ((registry-dir (dirname registry-file)))
