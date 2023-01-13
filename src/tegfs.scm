@@ -23,6 +23,8 @@
 %use (CLI::talk) "./CLI-talk.scm"
 %use (tegfs-add/parse) "./add.scm"
 %use (tegfs-categorize/parse) "./categorize.scm"
+%use (CLI::show-license) "./cli-show-license.scm"
+%use (CLI::show-warranty) "./cli-show-warranty.scm"
 %use (tegfs-config/parse) "./config.scm"
 %use (tegfs-dump-clipboard/parse) "./dump-clipboard.scm"
 %use (get-root/default) "./get-root.scm"
@@ -58,6 +60,8 @@
        /      make-thumbnails THUMBOPT
        /      config CONFIGOPT
        /      dump-clipboard
+       /      license
+       /      warranty
 
        ADDOPT : --target <add-target>
        /        --title <title>
@@ -92,6 +96,7 @@
       :default (<root> (get-root/default))
 
       :synonym (--version -v version)
+      :synonym (license copying)
 
       :default (--no-series #f)
       :exclusive (--no-series --series)
@@ -133,6 +138,8 @@
          (status
           (display "NOT IMPLEMENTED YET") (newline)
           (exit 1))
+         (license (CLI::show-license))
+         (warranty (CLI::show-warranty))
          (else
           (display "Impossible") (newline)
           (exit 1))))))))
