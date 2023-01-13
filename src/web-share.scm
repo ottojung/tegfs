@@ -60,7 +60,7 @@
     (assq-or 'K first-binding (raisu 'unexpected-result-from-backend first-binding)))
   (define location
     (if query?
-        (stringf "/query?q=&key=~a" token)
+        (stringf "query?q=&key=~a" token)
         (assq-or 'FL first-binding (raisu 'unexpected-result-from-backend first-binding))))
   (define share-time
     (assq-or 'AD first-binding (raisu 'unexpected-result-from-backend first-binding)))
@@ -73,7 +73,7 @@
     (web::create-temp-path
      share-time
      (lambda _
-       (stringf "/auth?yes=~a&no=~a&expected=~a&failed=on"
+       (stringf "auth?yes=~a&no=~a&expected=~a&failed=on"
                 yes-continue
                 no-continue
                 token))))
@@ -81,7 +81,7 @@
   (define protected-link
     (web::create-temp-path
      share-time
-     (stringf "/auth?yes=~a&no=~a&expected=~a"
+     (stringf "auth?yes=~a&no=~a&expected=~a"
               yes-continue
               no-continue
               token)))

@@ -96,7 +96,7 @@
       original))
   (define settings-link
     (string-append
-     "/share?"
+     "share?"
      (web::hashmap->query settings-query)))
   (define outsides
     (stringf web::share::outside-template

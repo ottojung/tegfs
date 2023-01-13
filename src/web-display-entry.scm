@@ -1,4 +1,4 @@
-;;;; Copyright (C) 2022  Otto Jung
+;;;; Copyright (C) 2022, 2023  Otto Jung
 ;;;;
 ;;;; This program is free software: you can redistribute it and/or modify
 ;;;; it under the terms of the GNU Affero General Public License as published
@@ -27,7 +27,7 @@
 
 (define (display-preview target preview-link)
   (define default-preview
-    (if (a-weblink? target) "/static/previewunknownurl.svg" "/static/previewunknown.svg"))
+    (if (a-weblink? target) "static/previewunknownurl.svg" "static/previewunknown.svg"))
 
   (display "<img src=")
   (write (or preview-link default-preview))
@@ -47,7 +47,7 @@
   (define details-link? (not (not maybe-full-senderid)))
 
   (when details-link?
-    (display "<a href='/details?vid=")
+    (display "<a href='details?vid=")
     (display maybe-full-senderid)
     (display "'>"))
 

@@ -1,4 +1,4 @@
-;;;; Copyright (C) 2022  Otto Jung
+;;;; Copyright (C) 2022, 2023  Otto Jung
 ;;;;
 ;;;; This program is free software: you can redistribute it and/or modify
 ;;;; it under the terms of the GNU Affero General Public License as published
@@ -22,7 +22,7 @@
 
 (define (web::get-full-link entry target maybe-senderid)
   (cond
-   (maybe-senderid (string-append "/full?vid=" maybe-senderid))
+   (maybe-senderid (string-append "full?vid=" maybe-senderid))
    ((a-weblink? target) target)
    (else
     (raisu 'not-enough-information-to-get-full-link entry))))
