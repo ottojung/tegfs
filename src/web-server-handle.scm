@@ -23,6 +23,7 @@
 %use (web::callcontext/p) "./web-callcontext-p.scm"
 %use (callcontext-path) "./web-callcontext.scm"
 %use (web::collectgarbage) "./web-collectgarbage.scm"
+%use (web::details.svg) "./web-details-svg.scm"
 %use (web::details) "./web-details.scm"
 %use (web::directory) "./web-directory.scm"
 %use (web::full) "./web-full.scm"
@@ -66,6 +67,7 @@
     (/static/previewunknownurl.svg ,web::previewunknownurl)
     (/static/gear.svg ,web::settings-gear)
     (/static/search.svg ,web::search.svg)
+    (/static/details.svg ,web::details.svg)
     ))
 
 (define handlers-funcmap
