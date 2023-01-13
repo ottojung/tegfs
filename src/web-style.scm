@@ -269,6 +269,7 @@ button[type=submit] {
 .search-input {
 	display: flex;
 	justify-content: center;
+	margin-top: 1rem;
 }
 
 .search-input input[type=text] {
