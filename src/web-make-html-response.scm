@@ -90,7 +90,7 @@
         (else (raisu 'unknown-body-type body)))
        (display "\n</div>\n")
        (display "<footer>\n")
-       (display "  <a href='https://codeberg.org/otto/tegfs'>Released under the AGPLv3 on Codeberg.</a>")
+       (display "  <a href='https://codeberg.org/otto/tegfs/src/branch/master/COPYING'>Released under the AGPLv3 on Codeberg.</a>")
        (display "</footer>\n")
        (display "</main></body>\n")
        (display "</html>\n")))))
