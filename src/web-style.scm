@@ -373,7 +373,7 @@ header nav ul img:hover {
  ***************/
 
 .card {
-	width: 400px;
+	width: 20rem;
 	padding: 1rem;
 	min-height: 4rem;
 	text-align: center;
@@ -403,15 +403,15 @@ header nav ul img:hover {
 }
 
 .card img {
-	width: 400px;
-	height: 225px;
+	width: 20rem;
+	height: 11.25rem;
 }
 
 .cards {
-	max-width: 90%;
+	max-width: 96%;
 	margin: 0 auto;
 	display: grid;
-	grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
+	grid-template-columns: repeat(auto-fit, minmax(21rem, 1fr));
 }
 
 /*****************
