@@ -18,11 +18,13 @@
 %var web::details
 
 %use (hashmap-ref) "./euphrates/hashmap.scm"
+%use (printf) "./euphrates/printf.scm"
 %use (raisu) "./euphrates/raisu.scm"
 %use (stringf) "./euphrates/stringf.scm"
 %use (~a) "./euphrates/tilda-a.scm"
 %use (words->string) "./euphrates/words-to-string.scm"
 %use (keyword-tags) "./keyword-tags.scm"
+%use (keyword-target) "./keyword-target.scm"
 %use (web::callcontext/p) "./web-callcontext-p.scm"
 %use (callcontext-query callcontext-token) "./web-callcontext.scm"
 %use (web::details::continue) "./web-detailscont.scm"
@@ -54,6 +56,15 @@
            (define val (cdr row))
 
            (unless (string-prefix? "%" (~a name))
+             (when (and vid (equal? name keyword-target))
+               (printf "
+                   <div class='target-share'>
+                     <div id='imgbox' class='form-block form-v-element'>
+                       <a href='share?vid=~a'>
+                         <img src='static/share.svg' />
+                       </a>
+                     </div>" vid))
+
              (display "<div class='form-block form-v-element'>") (newline)
              (display "  <label>")
              (display name)
@@ -71,6 +82,9 @@
              (write (string-append "field:" (~a name)))
              (display " />") (newline)
              (display "</div>") (newline)
+
+             (when (and vid (equal? name keyword-target))
+               (display "</div>\n"))
 
              )
 

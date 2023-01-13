@@ -424,6 +424,21 @@ header nav ul img:hover {
  * Details table *
  *****************/
 
+.target-share #imgbox {
+	text-align: right;
+	width: calc(100% + 5rem);
+
+	height: 5rem;
+	margin-bottom: -5rem;
+}
+
+.target-share img {
+	height: 2.57rem;
+	width: 2.57rem;
+	margin-right: 1rem;
+	margin-top: 1.9rem;
+}
+
 .styled-table {
 	border-collapse: collapse;
 	margin: 1.56rem 0;
