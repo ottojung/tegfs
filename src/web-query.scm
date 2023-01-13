@@ -104,8 +104,9 @@
          (display "</form>\n")
          (display "</div>\n")
          (display "</div>\n")
-         (display "<br/>\n")
          (display "</div>\n"))
+
+       (display "<br/>\n")
 
        (unless (null? equals)
          (web::query-display-results equals))))))
