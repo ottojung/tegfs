@@ -1,5 +1,5 @@
 
-![logo](assets/logo-white.png)
+![logo](assets/logo-white.jpeg)
 
 TegFS is a virtual file system that utilizes a tag-based system for file organization,
 categorization and searching.
