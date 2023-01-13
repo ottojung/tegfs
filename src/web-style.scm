@@ -411,4 +411,43 @@ header nav ul img:hover {
 	color: #009879;
 }
 
+/********
+ * Home *
+ ********/
+
+.homepage {
+	display: flex;
+	justify-content: center;
+}
+
+.homepage img, .homepage p {
+	width: min(80%, max(30%, 49rem));
+}
+
+.homepage img {
+	margin-top: min(8%, max(1%, 3rem));
+	border-radius: 5%;
+}
+
+.homepage p {
+	font-size: 130%;
+	font-family: sans-serif;
+}
+
+.homepage a {
+	box-shadow: 0 0.28rem 0.57rem 0 rgba(0, 0, 0, 0.2), 0 0.42rem 1.42rem 0 rgba(0, 0, 0, 0.19);
+	padding-right: 0.3rem;
+	padding-left: 0.3rem;
+	padding-bottom: 0.1rem;
+	padding-top: 0.1rem;
+	border-radius: 0.4rem;
+	color: white;
+	background-color: #343bcb;
+	text-decoration: none;
+}
+
+.homepage a:hover {
+	background-color: #890fdf;
+}
+
 ")

@@ -20,10 +20,38 @@
 %use (web::make-html-response) "./web-make-html-response.scm"
 
 (define (web::home::page)
-  (display "<div class='centering-container'>")
-  (display "<img src='static/logo-white.jpeg'>")
-  (display "</div>")
-  )
+  (display "
+<div class='homepage'>
+  <img src='static/logo-white.jpeg'>
+</div>
+<div class='homepage'>
+  <p>
+    Welcome to TegFS, the ultimate file tagging system! With TegFS, organizing your files has never been easier.
+    Its user-friendly CLI and web UI make tagging and searching for your files a breeze.
+    And the best part? It's completely free and libre software, made by community for the community.
+
+    <br/>
+    <br/>
+
+    If you are the owner of this webpage, you can access the full functionality of TegFS <a href='auth?yes=query'>here</a>.
+    After the login, you can search for files using tags, upload new files, and share them with others.
+
+    <br/>
+    <br/>
+
+    If you are not the owner of this webpage and you got the link, this is a private page,
+    it's owned by someone who shared the link with you.
+
+    <br/>
+    <br/>
+
+    But that's not all, TegFS is a community-driven project, which means that everyone can <a href='https://codeberg.org/otto/tegfs/pulls'>contribute</a>,
+    <a href='https://codeberg.org/otto/tegfs/issues'>report bugs</a>, and <a href='https://codeberg.org/otto/tegfs/issues'>request new features</a>.
+    With your help, we can make TegFS an even more powerful tool for everyone.
+    Happy tagging!
+
+  </p>
+</div>"))
 
 (define (web::home)
   (web::make-html-response
