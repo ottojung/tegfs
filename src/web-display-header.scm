@@ -29,7 +29,8 @@
      (else #f)))
 
   (display
-   "<nav>
+   "<header>
+    <nav>
       <ul>
         <a href='home'><img src='static/logo-gray.jpeg'/></a>
         <a class='highlighted first' href='query'><li>Search</li></a>
@@ -53,4 +54,4 @@
      (display usertype)
      (display ")</div></div>")))
 
-  (display "\n</nav>\n"))
+  (display "\n</header></nav>\n"))

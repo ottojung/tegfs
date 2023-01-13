@@ -77,10 +77,8 @@
        (for-each display extra-heads)
        (display "</head>\n")
        (display "<body>\n")
-       (display "<header>\n")
        (when display-header?
          (web::display-header callctx))
-       (display "</header>\n")
        (cond
         ((string? body) (display body))
         ((pair? body) (web::sxml->xml body port))
