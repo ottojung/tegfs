@@ -47,7 +47,10 @@
       (MAIN
        MAIN : ROOT? FUNC
        /      --help
-       /      --version / -v / version
+       /      --version
+       /      license
+       /      warranty
+
        FUNC : add ADDOPT+
        /      save SAVEARGS
        /      categorize
@@ -60,8 +63,6 @@
        /      make-thumbnails THUMBOPT
        /      config CONFIGOPT
        /      dump-clipboard
-       /      license
-       /      warranty
 
        ADDOPT : --target <add-target>
        /        --title <title>
