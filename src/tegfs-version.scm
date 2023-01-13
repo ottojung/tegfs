@@ -17,4 +17,4 @@
 
 %var tegfs-version
 
-(define tegfs-version "0.7")
+(define tegfs-version "0.8")
