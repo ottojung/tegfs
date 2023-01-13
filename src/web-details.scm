@@ -57,7 +57,7 @@
              (display "<div class='form-block form-v-element'>") (newline)
              (display "  <label>")
              (display name)
-             (display "</label") (newline)
+             (display "</label>") (newline)
              (display "</div>") (newline)
 
              (display "<div class='form-block form-v-element'>") (newline)
