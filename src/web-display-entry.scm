@@ -60,7 +60,7 @@
   (define details-link? (not (not maybe-full-senderid)))
 
   (when details-link?
-    (display "<a href='details?vid=")
+    (display "<a href='full?vid=")
     (display maybe-full-senderid)
     (display "'>"))
 
