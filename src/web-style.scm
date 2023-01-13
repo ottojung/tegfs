@@ -45,6 +45,23 @@ textarea {
 	padding: 0.5rem;
 }
 
+footer {
+	background-color: #f1f1f1;
+	padding:10px;
+	margin:0;
+}
+
+main {
+	display: flex;
+	flex-direction: column;
+	height: 100%;
+	min-height: 100vh;
+}
+
+#content {
+	flex-grow: 1;
+}
+
 .centering-container {
 	display: flex;
 	align-items: center;

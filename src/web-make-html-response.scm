@@ -76,7 +76,7 @@
        (display "  <link rel='stylesheet' href='static/main.css'>")
        (for-each display extra-heads)
        (display "</head>\n")
-       (display "<body>\n")
+       (display "<body><main><div id='content'>\n")
        (when display-header?
          (web::display-header callctx))
        (cond
@@ -88,5 +88,5 @@
                         (current-time/p now))
            (body)))
         (else (raisu 'unknown-body-type body)))
-       (display "\n</body>\n")
+       (display "\n</div></main></body>\n")
        (display "</html>\n")))))
