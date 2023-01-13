@@ -40,6 +40,7 @@
 %use (web::search.svg) "./web-search.scm"
 %use (web::server-handle-temp-path) "./web-server-handle-temp-path.scm"
 %use (web::settings-gear) "./web-settings-gear.scm"
+%use (web::share-gray.svg) "./web-share-gray-svg.scm"
 %use (web::share.svg) "./web-share-svg.scm"
 %use (web::share) "./web-share.scm"
 %use (web::tags) "./web-tags.scm"
@@ -70,6 +71,7 @@
     (/static/search.svg ,web::search.svg)
     (/static/details.svg ,web::details.svg)
     (/static/share.svg ,web::share.svg)
+    (/static/share-gray.svg ,web::share-gray.svg)
     ))
 
 (define handlers-funcmap
