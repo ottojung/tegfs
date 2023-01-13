@@ -35,6 +35,8 @@
   (define callctx (web::callcontext/p))
   (define ctxq (callcontext-query callctx))
 
+  (define show-filter-v (hashmap-ref ctxq 'show-filter #f))
+  (define show-filter? (not (equal? show-filter-v "off")))
   (define query/submitted/0
     (or
      (hashmap-ref ctxq 'q #f)
@@ -66,9 +68,9 @@
 
   (web::handle-profun-results
    (or result '(its (false)))
-   (web::query-handle-results query/submitted query)))
+   (web::query-handle-results show-filter? query/submitted query)))
 
-(define (web::query-handle-results query/submitted query)
+(define (web::query-handle-results show-filter? query/submitted query)
   (lambda (equals)
     (web::make-html-response
      (lambda _
@@ -79,30 +81,31 @@
        (define initial?
          (and (null? equals) (not query/submitted)))
 
-       (display "<div class='search-input")
-       (when initial?
-         (display " centering-container"))
-       (display "'>\n")
-       (display "<br/>\n")
-       (display "<div class='tiled light smooth-edged'>\n")
-       (display "<div>\n")
-       (display "<form class='split-container' action='query'>\n")
-       (printf "  <input class='split-left' ~a autofocus type='text' name='q' placeholder='Filter by tags' />\n"
-               maybe-value)
-       (display " <input type='image' class='split-right' src='static/search.svg' alt='Submit'/>")
-       (unless initial?
-         (display "<div class='split-right'>\n")
-         (display " <a href='share?q=")
-         (display (or query/submitted ""))
+       (when show-filter?
+         (display "<div class='search-input")
+         (when initial?
+           (display " centering-container"))
          (display "'>\n")
-         (display "   <img src='static/share-gray.svg'/>\n")
-         (display " </a>\n")
+         (display "<br/>\n")
+         (display "<div class='tiled light smooth-edged'>\n")
+         (display "<div>\n")
+         (display "<form class='split-container' action='query'>\n")
+         (printf "  <input class='split-left' ~a autofocus type='text' name='q' placeholder='Filter by tags' />\n"
+                 maybe-value)
+         (display " <input type='image' class='split-right' src='static/search.svg' alt='Submit'/>")
+         (unless initial?
+           (display "<div class='split-right'>\n")
+           (display " <a href='share?q=")
+           (display (or query/submitted ""))
+           (display "'>\n")
+           (display "   <img src='static/share-gray.svg'/>\n")
+           (display " </a>\n")
+           (display "</div>\n"))
+         (display "</form>\n")
+         (display "</div>\n")
+         (display "</div>\n")
+         (display "<br/>\n")
          (display "</div>\n"))
-       (display "</form>\n")
-       (display "</div>\n")
-       (display "</div>\n")
-       (display "<br/>\n")
-       (display "</div>\n")
 
        (unless (null? equals)
          (web::query-display-results equals))))))
