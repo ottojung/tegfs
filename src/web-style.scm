@@ -283,6 +283,11 @@ button[type=submit] {
 	width: 3.75rem;
 }
 
+.search-input img {
+	margin-left: 0.94rem;
+	width: 3.75rem;
+}
+
 .search-input .tiled {
 	width: 50rem;
 }
