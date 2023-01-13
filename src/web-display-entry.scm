@@ -42,6 +42,19 @@
         (display-preview target preview-link)
         (display "</a>")))))
 
+(define (display-actual-title entry)
+  (define title (assq-or keyword-title entry #f))
+
+  (cond
+   ((and title (not (string-null? title)))
+    (display title))
+   (else
+    (let ()
+      (define orig (entry-get-target entry))
+      (unless (string-null? orig)
+        (let ((relative (if (a-weblink? orig) orig (path-get-basename orig))))
+          (display relative)))))))
+
 (define (display-title maybe-full-senderid entry)
   (define id (assq-or keyword-id entry #f))
   (define details-link? (not (not maybe-full-senderid)))
@@ -51,27 +64,31 @@
     (display maybe-full-senderid)
     (display "'>"))
 
-  (cond
-   ((and (assoc keyword-title entry)
-         (not (string-null? (cdr (assoc keyword-title entry)))))
-    (display (cdr (assoc keyword-title entry))))
-   (else
-    (let ()
-      (define orig (entry-get-target entry))
-      (if (not (string-null? orig))
-          (let* ((relative (if (a-weblink? orig) orig (path-get-basename orig))))
-            (display relative))))))
+  (display-actual-title entry)
 
   (when details-link?
     (display "</a>"))
+
+  (when details-link?
+    (display "<a href='details?vid=")
+    (display maybe-full-senderid)
+    (display "'>")
+    (display "<img src='static/details.svg'/>")
+    (display "</a>"))
+
+  (when details-link?
+    (display "<a href='share?vid=")
+    (display maybe-full-senderid)
+    (display "'>")
+    (display "<img src='static/share.svg'/>")
+    (display "</a>"))
+
   )
 
 (define (web::display-entry entry maybe-full-senderid preview-link)
   (display "<div class='card'>")
-  (display "<div>")
   (maybe-display-preview entry maybe-full-senderid preview-link)
-  (display "</div>")
-  (display "<div>")
+  (display "<div id='sub'>")
   (display-title maybe-full-senderid entry)
   (display "</div>")
   (display "</div>")

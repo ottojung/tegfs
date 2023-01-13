@@ -373,6 +373,7 @@ header nav ul img:hover {
  ***************/
 
 .card {
+	width: 400px;
 	padding: 1rem;
 	min-height: 4rem;
 	text-align: center;
@@ -383,22 +384,34 @@ header nav ul img:hover {
 	background-color: rgba(1, 0, 0, 0.1);
 }
 
+.card #sub img {
+	display: none;
+	margin-bottom: -0.5rem;
+	margin-left: 0.3rem;
+	width: 1.7rem;
+	height: 1.7rem;
+}
+
+.card:hover #sub img {
+	display: inline-block;
+}
+
 .card a {
 	color: black;
 	text-decoration: none;
+	font-size: 130%;
+}
+
+.card img {
+	width: 400px;
+	height: 225px;
 }
 
 .cards {
 	max-width: 90%;
 	margin: 0 auto;
 	display: grid;
-	gap: 1rem;
-	grid-template-columns: repeat(auto-fit, minmax(18.75rem, 1fr));
-}
-
-.card img {
-	width: 100%;
-	margin-bottom: 0.7rem;
+	grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
 }
 
 /*****************
