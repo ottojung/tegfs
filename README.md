@@ -57,39 +57,3 @@ The tags are:
 
 So, for example, doing `tegfs query %any` will return
  every object there is in the database.
-
-# TODO
-
-- [ ] remove `prolog` dependency
-- [ ] remove `pup` dependency and use guile's sxml instead
-- [*] web: make /upload tagging interactive
-- [*] web: make buttons for logging-out
-- [ ] web: make buttons for sharing
-- [ ] web: more granular users permissions
-- [ ] document on how to run this thing
-- [ ] web: implement pagination
-- [*] web: implement directory sharing
-- [*] web: escape all links
-- [ ] finish renaming
-- [ ] initialize files mimetypes on `add-entry`
-  - [ ] add directory preview svg
-  - [ ] change default file preview unknown
-- [*] implement /home
-- [*] implement /logout
-- [*] implement /tags
-- [ ] implement /note
-- [ ] fix web::not-found
-- [ ] make an electron frontend?
-      This may simplify the web setup - electron can be the fileserver as well as the frontend.
-- [ ] move these TODOs elsewhere
-- [ ] add a "download manager" option.
-      This will improve the downloading experience by allowing to
-	  perform downloads that are otherwise hard to do.
-	  Example 1: a download manager can handle youtube links
-	  by downloading the video.
-	  Example 2: it can handle imageboard links by downloading
-	  the post's files, but keeping the original source link
-	  to the post itself, instead of to the files; it can also
-	  download a "context" for such files - which in case of
-	  an imageboard post could be the original thread page (in HTML + CSS).
-- [ ] make the website usable on mobile
