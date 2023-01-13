@@ -46,9 +46,21 @@ textarea {
 }
 
 footer {
+	padding: 10px;
+	margin: 0;
+	text-align: right;
+}
+
+footer a {
+	height: 100%;
+	padding: 10px;
 	background-color: #f1f1f1;
-	padding:10px;
-	margin:0;
+	text-decoration: none;
+	color: black;
+}
+
+footer a:hover {
+	color: #343bcb;
 }
 
 main {
