@@ -1,4 +1,4 @@
-;;;; Copyright (C) 2022  Otto Jung
+;;;; Copyright (C) 2022, 2023  Otto Jung
 ;;;;
 ;;;; This program is free software: you can redistribute it and/or modify
 ;;;; it under the terms of the GNU Affero General Public License as published
@@ -79,11 +79,11 @@
        (define initial?
          (and (null? equals) (not query/submitted)))
 
-       (display "<br/>\n")
        (display "<div class='search-input")
        (when initial?
          (display " centering-container"))
        (display "'>\n")
+       (display "<br/>\n")
        (display "<div class='tiled light smooth-edged'>\n")
        (display "<div>\n")
        (display "<form class='split-container' action='query'>\n")
@@ -93,8 +93,8 @@
        (display "</form>\n")
        (display "</div>\n")
        (display "</div>\n")
-       (display "</div>\n")
        (display "<br/>\n")
+       (display "</div>\n")
 
        (unless (null? equals)
          (web::query-display-results equals))))))
