@@ -40,12 +40,12 @@
 %use (read-string-file) "./euphrates/read-string-file.scm"
 %use (read-string-line) "./euphrates/read-string-line.scm"
 %use (string-split-3) "./euphrates/string-split-3.scm"
-%use (string-split/simple) "./euphrates/string-split-simple.scm"
 %use (string-strip) "./euphrates/string-strip.scm"
 %use (system-environment-get) "./euphrates/system-environment.scm"
 %use (system-fmt) "./euphrates/system-fmt.scm"
 %use (system-re) "./euphrates/system-re.scm"
 %use (~s) "./euphrates/tilda-s.scm"
+%use (url-get-hostname-and-port) "./euphrates/url-get-hostname-and-port.scm"
 %use (url-get-path) "./euphrates/url-get-path.scm"
 %use (write-string-file) "./euphrates/write-string-file.scm"
 %use (a-weblink?) "./a-weblink-q.scm"
@@ -106,20 +106,11 @@
       (fatal "Could not dump"))
     result))
 
-(define (url-get-domain-name url)
-  (define split (string-split/simple url #\/))
-  (let loop ((i 0) (split split))
-    (cond
-     ((null? split) "")
-     ((> i 2) "")
-     (else
-      (string-append (car split) "/" (loop (+ 1 i) (cdr split)))))))
-
 (define (download-temp url)
   (dprintln "Downloading...")
   (let* ((target (make-temporary-filename/local))
          ;; NOTE: some websites (looking at you 8chan) require referer to be set to its domain name, which is silly!! and which is stupid >:
-         (domain-name (url-get-domain-name url))
+         (domain-name (url-get-hostname-and-port url))
          (headers (string-append "referer: " (~s domain-name))))
     (unless (= 0 (system-fmt "wget ~a -O ~a" url target))
       (unless (= 0 (system-fmt "wget --header ~a ~a -O ~a" headers url target))
