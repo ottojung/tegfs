@@ -73,14 +73,14 @@
     (display "<a href='details?vid=")
     (display maybe-full-senderid)
     (display "'>")
-    (display "<img src='static/details.svg'/>")
+    (display "<img src='static/details.svg' title='Details'/>")
     (display "</a>"))
 
   (when details-link?
     (display "<a href='share?vid=")
     (display maybe-full-senderid)
     (display "'>")
-    (display "<img src='static/share.svg'/>")
+    (display "<img src='static/share.svg' title='Share'/>")
     (display "</a>"))
 
   )

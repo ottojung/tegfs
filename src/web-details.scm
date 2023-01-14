@@ -61,7 +61,7 @@
                    <div class='target-share'>
                      <div id='imgbox' class='form-block form-v-element'>
                        <a href='share?vid=~a'>
-                         <img src='static/share.svg' />
+                         <img src='static/share.svg' title='Share this file'/>
                        </a>
                      </div>" vid))
 

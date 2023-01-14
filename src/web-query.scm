@@ -92,13 +92,13 @@
          (display "<form class='split-container' action='query'>\n")
          (printf "  <input class='split-left' ~a autofocus type='text' name='q' placeholder='Filter by tags' />\n"
                  maybe-value)
-         (display " <input type='image' class='split-right' src='static/search.svg' alt='Submit'/>")
+         (display " <input type='image' class='split-right' src='static/search.svg' title='Search' alt='Submit'/>")
          (unless initial?
            (display "<div class='split-right'>\n")
            (display " <a href='share?q=")
            (display (or query/submitted ""))
            (display "'>\n")
-           (display "   <img src='static/share-gray.svg'/>\n")
+           (display "   <img src='static/share-gray.svg' title='Share this query'/>\n")
            (display " </a>\n")
            (display "</div>\n"))
          (display "</form>\n")
