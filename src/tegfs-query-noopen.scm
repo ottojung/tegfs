@@ -1,4 +1,4 @@
-;;;; Copyright (C) 2022  Otto Jung
+;;;; Copyright (C) 2022, 2023  Otto Jung
 ;;;;
 ;;;; This program is free software: you can redistribute it and/or modify
 ;;;; it under the terms of the GNU Affero General Public License as published
@@ -38,6 +38,12 @@
 %use (tag->prolog-term) "./tag-to-prolog-term.scm"
 
 (define (tegfs-query/noopen <query...>)
+  (define iter0 (entries-iterate))
+  (if <query...>
+      (tegfs-query/noopen/notall iter0 <query...>)
+      iter0))
+
+(define (tegfs-query/noopen/notall iter0 <query...>)
   (define output-path (string-append (make-temporary-filename/local) ".pl"))
   (define output-port (open-file-port output-path "w"))
 
@@ -79,15 +85,12 @@
              (filter (negate string-null?))
              make-hashset))
 
-  (define iter
-    (entries-iterate))
-
-  (define (next)
-    (define entry (iter))
+  (define (iter)
+    (define entry (iter0))
     (and entry
          (let ((id (assq-or keyword-id entry #f)))
            (if (hashset-has? ids id)
                entry
-               (next)))))
+               (iter)))))
 
-  next)
+  iter)

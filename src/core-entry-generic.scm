@@ -37,11 +37,7 @@
 
      (if ctx (ctx)
          (let ()
-           (define query
-             (let ((init (core::query/p)))
-               (if (profun-unbound-value? init)
-                   '("%any")
-                   init)))
+           (define query (profun-default (core::query/p) #f))
            (define diropen? (profun-default (core::diropen?/p) #t))
            (define dirpreview? (profun-default (core::dirpreview?/p) #f))
 
@@ -52,10 +48,8 @@
               ((curry-if (const dirpreview?) (comp (cons keyword-dirpreview))))))
 
            (cond
-            ((profun-unbound-value? query)
-             (make-profun-RFC `((query _))))
             ((profun-bound-value? entry/out)
-             (make-profun-error 'query-is-a-generator 'cannot-check-if-element-already-exists))
+             (make-profun-error 'type-error "Entry predicated is a generator, it should not be used to check if an element already exists"))
             (else
              (let* ((iter (get-iter opening-properties query E-name))
                     (val (iter)))
