@@ -47,6 +47,7 @@
 %use (~s) "./euphrates/tilda-s.scm"
 %use (url-get-hostname-and-port) "./euphrates/url-get-hostname-and-port.scm"
 %use (url-get-path) "./euphrates/url-get-path.scm"
+%use (url-get-protocol) "./euphrates/url-get-protocol.scm"
 %use (write-string-file) "./euphrates/write-string-file.scm"
 %use (a-weblink?) "./a-weblink-q.scm"
 %use (tegfs-add) "./add.scm"
@@ -110,8 +111,8 @@
   (dprintln "Downloading...")
   (let* ((target (make-temporary-filename/local))
          ;; NOTE: some websites (looking at you 8chan) require referer to be set to its domain name, which is silly!! and which is stupid >:
-         (domain-name (url-get-hostname-and-port url))
-         (headers (string-append "referer: " (~s domain-name))))
+         (home (string-append (url-get-protocol url) "://" (url-get-hostname-and-port url)))
+         (headers (string-append "referer: " (~s home))))
     (unless (= 0 (system-fmt "wget ~a -O ~a" url target))
       (unless (= 0 (system-fmt "wget --header ~a ~a -O ~a" headers url target))
         (fatal "Could not download ~s" url)))
