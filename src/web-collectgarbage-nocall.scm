@@ -95,4 +95,4 @@
        (write sharedname)
        (display " deleting...\n")
        (file-delete full-name)))
-   (directory-files sharedir)))
+   (directory-files #t sharedir)))
