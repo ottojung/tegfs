@@ -33,14 +33,14 @@
     <br/>
     <br/>
 
-    If you are the owner of this webpage, you can access the full functionality of TegFS <a href='auth?yes=query'>here</a>.
+    If you are a registered user, then you can access the full functionality of TegFS <a href='auth?yes=query'>here</a>.
     After the login, you can search for files using tags, upload new files, and share them with others.
 
     <br/>
     <br/>
 
-    If you are not the owner of this webpage and you got the link, this is a private page,
-    it's owned by someone who shared the link with you.
+    If you are not registered and you got the link, then note that this is a private page,
+    and the link you got is owned by the registered person that shared it with you.
 
     <br/>
     <br/>
