@@ -22,7 +22,6 @@
 %use (assoc-set-value) "./euphrates/assoc-set-value.scm"
 %use (comp) "./euphrates/comp.scm"
 %use (dprintln) "./euphrates/dprintln.scm"
-%use (eval-in-current-namespace) "./euphrates/eval-in-current-namespace.scm"
 %use (file-delete) "./euphrates/file-delete.scm"
 %use (file-is-directory?/no-readlink) "./euphrates/file-is-directory-q-no-readlink.scm"
 %use (file-or-directory-exists?) "./euphrates/file-or-directory-exists-q.scm"
@@ -36,7 +35,6 @@
 %use (print-in-frame) "./euphrates/print-in-frame.scm"
 %use (raisu) "./euphrates/raisu.scm"
 %use (range) "./euphrates/range.scm"
-%use (read-list) "./euphrates/read-list.scm"
 %use (read-string-file) "./euphrates/read-string-file.scm"
 %use (read-string-line) "./euphrates/read-string-line.scm"
 %use (string-split-3) "./euphrates/string-split-3.scm"
@@ -53,7 +51,6 @@
 %use (tegfs-add) "./add.scm"
 %use (tegfs-categorize) "./categorize.scm"
 %use (choose-clipboard-data-type classify-clipboard-text-content dump-clipboard-to-file dump-clipboard-to-temporary get-clipboard-text-content get-clipboard-type-extension) "./clipboard.scm"
-%use (custom-preferences-filename) "./custom-preferences-filename.scm"
 %use (tegfs-dump-clipboard tegfs-dump-clipboard/pasta) "./dump-clipboard.scm"
 %use (fatal) "./fatal.scm"
 %use (file-is-audio?) "./file-is-audio-q.scm"
@@ -159,11 +156,6 @@
              'registry-file
              (car default-save-registry)
              state)))))
-
-(define (state-set-custom-preferences preferences-code state)
-  (if preferences-code
-      (eval-in-current-namespace preferences-code)
-      state))
 
 (define (get-title edit?)
   (read-answer "Enter the title:"))
@@ -548,13 +540,6 @@
    set-target-basename-preference
    ))
 
-(define (get-custom-prefernences-code)
-  (define custom-file (append-posix-path (get-root) custom-preferences-filename))
-  (and (file-or-directory-exists? custom-file)
-       (with-input-from-file custom-file
-         (lambda _
-           (cons 'let (cons '() (read-list (current-input-port))))))))
-
 (define (send-state state)
   (define title (cadr (assoc 'title state)))
   (define tags (cadr (assoc 'tags state)))
@@ -599,18 +584,12 @@
    registry-file <date>))
 
 (define (tegfs-save/parse/no-remote --link <savetext>)
-  (define preferences-code
-    (get-custom-prefernences-code))
   (define generic-preferences
     (state-set-generic-preferences --link <savetext>))
-  (define custom-preferences
-    (comp (state-set-custom-preferences preferences-code)))
-  (define set-preferences
-    (compose generic-preferences custom-preferences))
 
   (parameterize ((working-file/p (make-temporary-filename/local)))
     (let ((state
-           (loop-state set-preferences (initialize-state))))
+           (loop-state generic-preferences (initialize-state))))
       (send-state state)))
 
   (dprintln "Saved!"))

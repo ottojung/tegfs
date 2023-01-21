@@ -91,7 +91,7 @@ test2: dist/tegfs $(TEST_FILES)
 
 test2-m: dist/tegfs $(TEST_FILES)
 	cp COPYING dist/
-	$(TEST_FS) save dist/COPYING
+	$(TEST_FS) save --target dist/COPYING
 
 test3: dist/tegfs $(TEST_FILES)
 	$(TEST_FS) categorize
