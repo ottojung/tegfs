@@ -43,14 +43,13 @@
 %use (system-fmt) "./euphrates/system-fmt.scm"
 %use (system-re) "./euphrates/system-re.scm"
 %use (~s) "./euphrates/tilda-s.scm"
-%use (url-get-hostname-and-port) "./euphrates/url-get-hostname-and-port.scm"
 %use (url-get-path) "./euphrates/url-get-path.scm"
-%use (url-get-protocol) "./euphrates/url-get-protocol.scm"
 %use (write-string-file) "./euphrates/write-string-file.scm"
 %use (a-weblink?) "./a-weblink-q.scm"
 %use (tegfs-add) "./add.scm"
 %use (tegfs-categorize) "./categorize.scm"
 %use (choose-clipboard-data-type classify-clipboard-text-content dump-clipboard-to-file dump-clipboard-to-temporary get-clipboard-text-content get-clipboard-type-extension) "./clipboard.scm"
+%use (download-to-temporary-file) "./download-to-temporary-file.scm"
 %use (tegfs-dump-clipboard tegfs-dump-clipboard/pasta) "./dump-clipboard.scm"
 %use (fatal) "./fatal.scm"
 %use (file-is-audio?) "./file-is-audio-q.scm"
@@ -103,17 +102,6 @@
     (unless result
       (fatal "Could not dump"))
     result))
-
-(define (download-temp url)
-  (dprintln "Downloading...")
-  (let* ((target (make-temporary-filename/local))
-         ;; NOTE: some websites (looking at you 8chan) require referer to be set to its domain name, which is silly!! and which is stupid >:
-         (home (string-append (url-get-protocol url) "://" (url-get-hostname-and-port url)))
-         (headers (string-append "referer: " (~s home))))
-    (unless (= 0 (system-fmt "wget ~a -O ~a" url target))
-      (unless (= 0 (system-fmt "wget --header ~a ~a -O ~a" headers url target))
-        (fatal "Could not download ~s" url)))
-    target))
 
 (define (initialize-state)
   (map
@@ -272,7 +260,7 @@
          (equal? 'yes download?)
          (not -temporary-file)
          (a-weblink? text-content))
-    (let* ((temp-name (download-temp text-content)))
+    (let* ((temp-name (download-to-temporary-file text-content)))
       (assoc-set-preference '-temporary-file temp-name state)))
    (else state)))
 
