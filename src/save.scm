@@ -115,9 +115,6 @@
         (fatal "Could not download ~s" url)))
     target))
 
-(define (a-real-filepath? string)
-  (file-or-directory-exists? string))
-
 (define (initialize-state)
   (map
    (lambda (p)
