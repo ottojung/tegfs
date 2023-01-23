@@ -69,7 +69,7 @@
   (define-pair (text status)
     (system-re "xclip -selection clipboard -out"))
 
-  text)
+  (if (= status 0) text ""))
 
 (define (string-data-type? s)
   (member s '("STRING" "UTF8_STRING" "TEXT" "COMPOUND_TEXT")))
