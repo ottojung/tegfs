@@ -63,6 +63,7 @@
 %use (keyword-default-save-registry) "./keyword-default-save-registry.scm"
 %use (make-temporary-filename/local) "./make-temporary-filename-local.scm"
 %use (regfile-suffix) "./regfile-suffix.scm"
+%use (CLI::save::loop) "./save-loop.scm"
 
 ;; TODO: factor out graph UI to euphrates
 ;;       and use progfun in it.
@@ -322,13 +323,13 @@
    ((and (equal? 'link real-type) (a-weblink? text-content) (equal? 'no download?))
     (assoc-set-preference 'data-type 'ignore state))
    ((and (equal? real-type 'pasta))
-    (assoc-set-preference 'data-type 'TEXT state))
+    (assoc-set-preference 'data-type 'text/plain state))
    ((and -temporary-file (not data-type))
     (let ((mimetype (get-file-mimetype -temporary-file)))
       (if mimetype
           (assoc-set-preference 'data-type mimetype state)
           (begin
-            (dprintln "Could not determine a file type of ~s" string)
+            (dprintln "Could not determine a file type of ~s" text-content)
             state))))
    (else state)))
 
@@ -513,31 +514,31 @@
    (assoc-set-preference 'series 'no)
    (assoc-set-preference 'confirm 'no)
    set-download-preference
-   set-diropen-preference
-   set-dirpreview-preference
-   set-real-type-preference
-   download-maybe
-   handle-localfile-maybe
-   set-data-type-preference
-   dump-clipboard-data-maybe
-   handle-pasta-maybe
-   set-target-extension-preference
-   set-target-basename-preference
+   set-diropen-preference ;; -
+   set-dirpreview-preference ;; -
+   set-real-type-preference ;; -
+   download-maybe ;; -
+   handle-localfile-maybe ;; -
+   set-data-type-preference ;; -
+   dump-clipboard-data-maybe ;; -
+   handle-pasta-maybe ;; -
+   set-target-extension-preference ;; -
+   set-target-basename-preference ;; -
    ))
 
 (define (send-state state)
-  (define title (cadr (assoc 'title state)))
-  (define tags (cadr (assoc 'tags state)))
-  (define target-extension (cadr (assoc 'target-extension state)))
-  (define target-basename (cadr (assoc 'target-basename state)))
-  (define data-type (cadr (assoc 'data-type state)))
-  (define real-type (cadr (assoc 'real-type state)))
-  (define series (cadr (assoc 'series state)))
+  (define title (cdr (assoc 'title state)))
+  (define tags (cdr (assoc 'tags state)))
+  (define target-extension (cdr (assoc 'target-extension state)))
+  (define target-basename (cdr (assoc 'target-basename state)))
+  (define data-type (cdr (assoc 'data-type state)))
+  (define real-type (cdr (assoc 'real-type state)))
+  (define series (cdr (assoc 'series state)))
   (define series? (case series ((yes) #t) ((no) #f) (else (fatal "Bad value for series ~s" series))))
-  (define link? (case (cadr (assoc 'link? state)) ((yes) #t) ((no) #f) (else (fatal "Bad value for link? ~s" (cadr (assoc 'link? state))))))
-  (define registry-file (cadr (assoc 'registry-file state)))
-  (define -temporary-file (cadr (assoc '-temporary-file state)))
-  (define -text-content (cadr (assoc '-text-content state)))
+  (define link? (case (cdr (assoc 'link? state)) ((yes) #t) ((no) #f) (else (fatal "Bad value for link? ~s" (cdr (assoc 'link? state))))))
+  (define registry-file (cdr (assoc 'registry-file state)))
+  (define -temporary-file (cdr (assoc '-temporary-file state)))
+  (define -text-content (cdr (assoc '-text-content state)))
   (define registry-dir (append-posix-path (get-root) (dirname registry-file)))
   (define source (and (a-weblink? -text-content) -temporary-file -text-content))
   (define key-value-pairs (if source (list (cons "source" source)) (list)))
@@ -569,12 +570,13 @@
    registry-file <date>))
 
 (define (tegfs-save/parse/no-remote --link <savetext>)
-  (define generic-preferences
-    (state-set-generic-preferences --link <savetext>))
+  ;; (define generic-preferences
+  ;;   (state-set-generic-preferences --link <savetext>))
 
   (parameterize ((working-file/p (make-temporary-filename/local)))
     (let ((state
-           (loop-state generic-preferences (initialize-state))))
+           ;; (loop-state generic-preferences (initialize-state))))
+           (CLI::save::loop --link <savetext>)))
       (send-state state)))
 
   (dprintln "Saved!"))
