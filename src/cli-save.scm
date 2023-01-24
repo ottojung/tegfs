@@ -15,7 +15,7 @@
 
 %run guile
 
-%var tegfs-save/parse
+%var CLI::save
 
 %use (append-posix-path) "./euphrates/append-posix-path.scm"
 %use (dprintln) "./euphrates/dprintln.scm"
@@ -88,14 +88,14 @@
    series? key-value-pairs
    registry-file <date>))
 
-(define (tegfs-save/parse/no-remote --link <savetext>)
+(define (CLI::save/no-remote --link <savetext>)
   (parameterize ((working-file/p (make-temporary-filename/local)))
     (let ((state (CLI::save::loop --link <savetext>)))
       (send-state state)))
 
   (dprintln "Saved!"))
 
-(define (tegfs-save/parse/remote <remote> <savetext>)
+(define (CLI::save/remote <remote> <savetext>)
   (define savetext
     (and <savetext>
          (case (classify-clipboard-text-content <savetext>)
@@ -138,7 +138,7 @@
 
   (dprintln "Saved!"))
 
-(define (tegfs-save/parse/from-remote <remote-id>)
+(define (CLI::save/from-remote <remote-id>)
   (define HOME (system-environment-get "HOME"))
   (define temp-file (append-posix-path HOME "tegfs-remote-hub" <remote-id>))
   (define temp-file-content
@@ -156,14 +156,14 @@
       ((data pasta) (fatal "Impossible real type: ~s" real-type))
       (else (raisu 'unhandled-real-type-in-server real-type))))
   (dprintln "Remote file content: ~s" <savetext>)
-  (tegfs-save/parse/no-remote #f <savetext>)
+  (CLI::save/no-remote #f <savetext>)
   (file-delete temp-file))
 
-(define (tegfs-save/parse <remote> --from-remote <remote-id> --link <savetext>)
+(define (CLI::save <remote> --from-remote <remote-id> --link <savetext>)
   (cond
    (<remote>
-    (tegfs-save/parse/remote <remote> <savetext>))
+    (CLI::save/remote <remote> <savetext>))
    (--from-remote
-    (tegfs-save/parse/from-remote <remote-id>))
+    (CLI::save/from-remote <remote-id>))
    (else
-    (tegfs-save/parse/no-remote --link <savetext>))))
+    (CLI::save/no-remote --link <savetext>))))

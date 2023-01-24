@@ -23,6 +23,7 @@
 %use (CLI::talk) "./CLI-talk.scm"
 %use (tegfs-add/parse) "./add.scm"
 %use (tegfs-categorize/parse) "./categorize.scm"
+%use (CLI::save) "./cli-save.scm"
 %use (CLI::show-license) "./cli-show-license.scm"
 %use (CLI::show-warranty) "./cli-show-warranty.scm"
 %use (tegfs-config/parse) "./config.scm"
@@ -35,7 +36,6 @@
 %use (tegfs-make-thumbnails/parse) "./make-thumbnails.scm"
 %use (tegfs-prolog/parse) "./prolog.scm"
 %use (root/p) "./root-p.scm"
-%use (tegfs-save/parse) "./save.scm"
 %use (tegfs-version) "./tegfs-version.scm"
 %use (tegfs-serve/parse) "./web-server.scm"
 
@@ -126,7 +126,7 @@
          (add (tegfs-add/parse
                <add-target> <title> <tag...> --series <key...> <value...>
                <registry-file> <date>))
-         (save (tegfs-save/parse <remote> --from-remote <remote-id> --link <savetext>))
+         (save (CLI::save <remote> --from-remote <remote-id> --link <savetext>))
          (categorize (tegfs-categorize/parse))
          (serve (tegfs-serve/parse))
          (prolog (tegfs-prolog/parse))
