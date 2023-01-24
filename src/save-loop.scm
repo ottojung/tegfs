@@ -230,10 +230,10 @@
     (data-type
      (or
       (and (equal? (real-type) 'pasta)
-           "text/plain")
+           'text/plain)
       (and (equal? 'link (real-type))
            (equal? 'no (download?))
-           "text/uri-list")
+           'text/uri-list)
       (and (-temporary-file 'or #f)
            (or (get-file-mimetype (-temporary-file))
                (begin

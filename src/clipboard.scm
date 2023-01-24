@@ -41,7 +41,8 @@
    ((file-or-directory-exists? text-content) 'localfile)
    (else 'pasta)))
 
-(define (dump-clipboard-to-file data-type target)
+(define (dump-clipboard-to-file data-type/0 target)
+  (define data-type (if (equal? data-type/0 'text/plain) 'TEXT data-type/0))
   (= 0 (system-fmt "xclip -selection clipboard -target ~a -out > ~a"
                    data-type target)))
 
