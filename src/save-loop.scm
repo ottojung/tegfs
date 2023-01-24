@@ -273,6 +273,7 @@
     (data-type (read-answer "Enter mimetype: "))
     (target-extension (get-target-extension))
     (target-basename (get-target-basename))
-    (confirm (get-confirm)))
+    ;; (confirm (get-confirm)) ;; TODO: fix this and enable again
+    )
 
    ))
