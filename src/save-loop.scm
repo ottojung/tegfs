@@ -27,7 +27,6 @@
 %use (path-get-basename) "./euphrates/path-get-basename.scm"
 %use (path-without-extension) "./euphrates/path-without-extension.scm"
 %use (print-in-frame) "./euphrates/print-in-frame.scm"
-%use (raisu) "./euphrates/raisu.scm"
 %use (range) "./euphrates/range.scm"
 %use (read-string-line) "./euphrates/read-string-line.scm"
 %use (string-strip) "./euphrates/string-strip.scm"
@@ -178,9 +177,23 @@
    (range (length setters)))
   )
 
-(define (useradvice name alist thunk)
-  (print-setter-fields)
+(define (useradvice name alist recalculate? thunk)
+  (unless recalculate?
+    (print-setter-fields))
   (thunk))
+
+(define swiched-field?
+  (make-parameter #f))
+
+(define (index-to-key i0)
+  (define setters (alist-initialize!:current-setters))
+  (define i (- i0 1))
+  (if (< i 0) #f
+      (let loop ((setters setters) (i i))
+        (if (null? setters) #f
+            (let ((x (car setters)))
+              (if (= 0 i) x
+                  (loop (cdr setters) (- i 1))))))))
 
 (define (read-answer question)
   (let loop ()
@@ -189,14 +202,13 @@
     (define answer (read-string-line))
     (define num (string->number answer))
     (if num
-        (raisu 'TODO:switch-to-other-entry) ;; FIXME: TODO: implement
-        ;; (let ((key (index-to-key state num)))
-        ;;   (if key
-        ;;       (raisu 'TODO:switch-to-other-entry) ;; FIXME: TODO: implement
-        ;;       ;; ((menu-callback) key)
-        ;;       (begin
-        ;;         (dprintln "Bad index ~s, must be one of the listed items" num)
-        ;;         (loop))))
+        (let ((name+setter (index-to-key num)))
+          (if name+setter
+              (parameterize ((swiched-field? #t))
+                ((cdr name+setter) 'recalculate))
+              (begin
+                (dprintln "Bad index ~s, must be one of the listed items" num)
+                (loop))))
         answer)))
 
 (define (CLI::save::loop --link <savetext>)
