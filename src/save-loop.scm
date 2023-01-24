@@ -242,7 +242,7 @@
 
     (target-extension
      (or
-      (and (equal? 'pasta real-type) ".txt")
+      (and (equal? 'pasta (real-type)) ".txt")
       (and (equal? 'localfile (real-type))
            (path-extensions (-text-content)))
       (and (equal? 'link (real-type))
