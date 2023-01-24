@@ -22,6 +22,7 @@
 %use (assq-or) "./euphrates/assq-or.scm"
 %use (dprintln) "./euphrates/dprintln.scm"
 %use (lines->string) "./euphrates/lines-to-string.scm"
+%use (list-intersperse) "./euphrates/list-intersperse.scm"
 %use (list-take-n) "./euphrates/list-take-n.scm"
 %use (path-extensions) "./euphrates/path-extensions.scm"
 %use (path-get-basename) "./euphrates/path-get-basename.scm"
@@ -30,12 +31,15 @@
 %use (range) "./euphrates/range.scm"
 %use (read-string-line) "./euphrates/read-string-line.scm"
 %use (string-strip) "./euphrates/string-strip.scm"
+%use (stringf) "./euphrates/stringf.scm"
 %use (system-re) "./euphrates/system-re.scm"
+%use (~a) "./euphrates/tilda-a.scm"
+%use (~s) "./euphrates/tilda-s.scm"
 %use (url-get-path) "./euphrates/url-get-path.scm"
 %use (write-string-file) "./euphrates/write-string-file.scm"
 %use (a-weblink?) "./a-weblink-q.scm"
 %use (tegfs-categorize) "./categorize.scm"
-%use (choose-clipboard-data-type classify-clipboard-text-content dump-clipboard-to-temporary get-clipboard-text-content get-clipboard-type-extension) "./clipboard.scm"
+%use (classify-clipboard-text-content dump-clipboard-to-temporary get-clipboard-text-content get-clipboard-type-extension) "./clipboard.scm"
 %use (download-to-temporary-file) "./download-to-temporary-file.scm"
 %use (fatal) "./fatal.scm"
 %use (file-is-audio?) "./file-is-audio-q.scm"
@@ -55,33 +59,24 @@
       (fatal "Could not dump"))
     result))
 
-(define (get-target-extension edit?)
+(define (get-target-extension)
   (define input (read-answer "Enter target extension: "))
   (if (string-prefix? "." input) input
       (string-append "." input)))
 
-(define (get-target-basename edit?)
+(define (get-target-basename)
   (read-answer "Enter target basename relative to the registry file: "))
 
-(define (get-series edit?)
-  (let loop ()
-    (case (string->symbol (read-answer "Is this item related to the one previously saved? (yes/no)"))
-      ((yes Yes YES) 'yes)
-      ((no No NO) 'no)
-      (else
-       (dprintln "Please answer \"yes\" or \"no\"")
-       (loop)))))
-
-(define (get-confirm edit?)
-  (if edit? #f
+(define (get-confirm)
+  (if (swiched-field?) #f
       (begin
         (read-answer "Press enter if parameters are OK")
         'done)))
 
-(define (get-title edit?)
+(define (get-title)
   (read-answer "Enter the title:"))
 
-(define (get-registry-file edit?)
+(define (get-registry-file)
   (define registry-files (get-registry-files))
 
   (case (length registry-files)
@@ -99,54 +94,26 @@
          (fatal "Cancelled"))
        chosen))))
 
-(define (get-real-type edit?)
-  (let loop ()
-    (define answer (string->symbol (read-answer "Real type: (data/link/localfile/pasta)")))
-    (case answer
-      ((data link localfile pasta) answer)
-      (else
-       (dprintln "Please answer either \"data\" or \"link\" or \"localfile\" or \"pasta\"")
-       (loop)))))
+(define (read-enumeration name option-list/0)
+  (define option-list (map ~a option-list/0))
+  (define hint/inner
+    (apply string-append (list-intersperse "/" option-list)))
+  (define hint
+    (stringf "~a (~a)" name hint/inner))
+  (define option-list/down
+    (map string-downcase option-list))
 
-(define (get-link-flag edit?)
   (let loop ()
-    (case (string->symbol (read-answer "Link target to the new location? (yes/no)"))
-      ((yes Yes YES) 'yes)
-      ((no No NO) 'no)
-      (else
-       (dprintln "Please answer \"yes\" or \"no\"")
-       (loop)))))
-
-(define (get-download-flag edit?)
-  (let loop ()
-    (case (string->symbol (read-answer "Download the target? (yes/no)"))
-      ((yes Yes YES) 'yes)
-      ((no No NO) 'no)
-      (else
-       (dprintln "Please answer \"yes\" or \"no\"")
-       (loop)))))
-
-(define (get-diropen-flag edit?)
-  (let loop ()
-    (case (string->symbol (read-answer "Diropen? (yes/no)"))
-      ((yes Yes YES) 'yes)
-      ((no No NO) 'no)
-      (else
-       (dprintln "Please answer \"yes\" or \"no\"")
-       (loop)))))
-
-(define (get-dirpreview-flag edit?)
-  (let loop ()
-    (case (string->symbol (read-answer "Dirpreview? (yes/no)"))
-      ((yes Yes YES) 'yes)
-      ((no No NO) 'no)
-      (else
-       (dprintln "Please answer \"yes\" or \"no\"")
-       (loop)))))
+    (define answer (string-downcase (read-answer hint)))
+    (if (member answer option-list/down)
+        (string->symbol answer)
+        (begin
+          (dprintln "\nPlease choose on of the following: ~a" hint/inner)
+          (loop)))))
 
 (define working-file/p (make-parameter #f))
 
-(define (get-tags edit?)
+(define (get-tags)
   (cdr (tegfs-categorize (working-file/p))))
 
 (define (print-text-content ret)
@@ -156,7 +123,7 @@
   (print-in-frame #t #t 3 60 0 #\space ret)
   (newline))
 
-(define (print-setter-fields)
+(define (print-setter-fields current-setter)
   (define setters (alist-initialize!:current-setters))
   (dprintln "\n\n")
   (dprintln " Enter *number* to edit one of below.")
@@ -169,7 +136,8 @@
            (if (and (string? value0) (< 50 (string-length value0)))
                (string-append (list->string (list-take-n 50 (string->list value0))) "...")
                value0))
-         (dprintln "   ~a) ~a: ~s"
+         (dprintln "   ~a~a) ~a: ~s"
+                   (if (equal? current-setter (car setter)) ">" " ")
                    (+ 1 i)
                    (car setter)
                    value))))
@@ -178,8 +146,9 @@
   )
 
 (define (useradvice name alist recalculate? thunk)
-  (unless recalculate?
-    (print-setter-fields))
+  (if recalculate?
+      (dprintln "\n Switched to ~s" (~s name))
+      (print-setter-fields name))
   (thunk))
 
 (define swiched-field?
@@ -292,26 +261,18 @@
 
    :useradvice useradvice
    :user
-   ((title (get-title #f))
-    (tags (get-tags #f))
-    (registry-file (get-registry-file #f))
-    (real-type (get-real-type #f))
-    (download? (get-download-flag #f))
-    (diropen? (get-diropen-flag #f))
-    (dirpreview? (get-dirpreview-flag #f))
-    (link? (get-link-flag #f))
-    (series (get-series #f))
-
-    (data-type
-     (if (a-weblink? (-text-content))
-         (read-answer "Enter mimetype: ")
-         (let* ((chosen (choose-clipboard-data-type)))
-           (unless chosen
-             (fatal "Cancelled"))
-           chosen)))
-
-    (target-extension (get-target-extension #f))
-    (target-basename (get-target-basename #f))
-    (confirm (get-confirm #f)))
+   ((title (get-title))
+    (tags (get-tags))
+    (registry-file (get-registry-file))
+    (real-type (read-enumeration "Real type" '(data link localfile pasta)))
+    (download? (read-enumeration "Downloaded target to the new location?" '(yes no)))
+    (diropen? (read-enumeration "Diropen?" '(yes no)))
+    (dirpreview? (read-enumeration "Dirpreview?" '(yes no)))
+    (link? (read-enumeration "Link target to the new location?" '(yes no)))
+    (series (read-enumeration "Is this item related to the one previously saved?" '(yes no)))
+    (data-type (read-answer "Enter mimetype: "))
+    (target-extension (get-target-extension))
+    (target-basename (get-target-basename))
+    (confirm (get-confirm)))
 
    ))
