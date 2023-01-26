@@ -182,6 +182,7 @@
 
 (define (CLI::save::loop --link <savetext>)
   (alist-initialize-loop
+   :current current
    :initial
    ((series 'no)
     (confirm 'no)
