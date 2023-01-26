@@ -39,7 +39,7 @@
 %use (get-random-basename) "./get-random-basename.scm"
 %use (get-root) "./get-root.scm"
 %use (make-temporary-filename/local) "./make-temporary-filename-local.scm"
-%use (CLI::save::loop) "./save-loop.scm"
+%use (CLI::save::loop) "./cli-save-loop.scm"
 
 (define working-file/p
   (make-parameter #f))
