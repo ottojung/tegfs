@@ -17,12 +17,8 @@
 
 %var web::not-found
 
-%use (web::callcontext/p) "./web-callcontext-p.scm"
-%use (callcontext-url) "./web-callcontext.scm"
-%use (web::make-html-response) "./web-make-html-response.scm"
+%use (web::static-error-message) "./web-static-error-message.scm"
 
-(define (web::not-found)
-  (define url (callcontext-url (web::callcontext/p)))
-  (web::make-html-response
-   "Resource not found"
-   #:status 404))
+(define web::not-found
+  (web::static-error-message
+   404 "<img width='100%' src='static/what.svg'/>"))
