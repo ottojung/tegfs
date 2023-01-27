@@ -71,7 +71,7 @@
       (let* ((target-name0 (string-append target-basename target-extension))
              (target-name (if (file-or-directory-exists?
                                 (append-posix-path registry-dir target-name0))
-                               (string-append (get-random-basename) target-name0)
+                               (string-append target-basename "-" (get-random-basename) target-extension)
                                target-name0))
              (target-fullname (append-posix-path registry-dir target-name)))
         (rename-file -temporary-file target-fullname)
