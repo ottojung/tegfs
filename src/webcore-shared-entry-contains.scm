@@ -65,7 +65,7 @@
 
              (cond
               ((not info)
-               (make-profun-error 'bad-vid vid))
+               (make-profun-error 'not-found "Bad vid" vid))
               ((not iter0)
                (make-profun-error 'shared-entry-is-not-a-directory vid))
 
