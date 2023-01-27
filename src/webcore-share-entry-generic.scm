@@ -1,4 +1,4 @@
-;;;; Copyright (C) 2022  Otto Jung
+;;;; Copyright (C) 2022, 2023  Otto Jung
 ;;;;
 ;;;; This program is free software: you can redistribute it and/or modify
 ;;;; it under the terms of the GNU Affero General Public License as published
@@ -27,11 +27,13 @@
 %use (permission?) "./permission.scm"
 %use (sharedinfo-senderid sharedinfo-stime) "./sharedinfo.scm"
 %use (web::share-file/dont-link-yet) "./web-share-file.scm"
+%use (webcore::get-share-plugins) "./webcore-get-share-plugins.scm"
 %use (webcore::permissions/p) "./webcore-parameters.scm"
 
 (define webcore::share-entry-generic
   (lambda (get-shared-path)
     (lambda (web::context)
+      (define plugins (webcore::get-share-plugins))
       (profun-op-lambda
        :with-env env
        (ctx (entry max-sharing-time actual-sharing-time senderid)
