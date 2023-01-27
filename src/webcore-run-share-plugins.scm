@@ -20,11 +20,11 @@
 %use (list-map-first) "./euphrates/list-map-first.scm"
 %use (plugin-function) "./plugin.scm"
 
-(define (webcore::run-share-plugins plugins entry generic-fullpath/0)
+(define (webcore::run-share-plugins config root plugins entry generic-fullpath/0)
   (or
    (list-map-first
     (lambda (plugin)
       (define fun (plugin-function plugin))
-      (fun entry generic-fullpath/0))
+      (fun config root entry generic-fullpath/0))
     plugins)
    generic-fullpath/0))
