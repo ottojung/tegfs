@@ -17,14 +17,9 @@
 
 %var load-plugin
 
-%use (eval-in-current-namespace) "./euphrates/eval-in-current-namespace.scm"
-%use (read-string-file) "./euphrates/read-string-file.scm"
+%use (dynamic-load) "./euphrates/dynamic-load.scm"
 %use (plugin-ctr) "./plugin.scm"
 
-(define (load-text/fn text)
-  (eval-in-current-namespace text))
-
 (define (load-plugin filepath)
-  (define text (read-string-file filepath))
-  (define fun (load-text/fn text))
+  (define fun (dynamic-load filepath))
   (plugin-ctr fun))
