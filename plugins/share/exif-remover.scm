@@ -15,11 +15,8 @@
   (define preview-prefix (string-append root "/cache"))
   (define preview? (string-prefix? preview-prefix fullpath))
   (and (not preview?)
-       (or
-        (string-suffix? ".jpg" fullpath)
-        (string-suffix? ".jpeg" fullpath)
-        (string-suffix? ".png" fullpath)
-        (string-suffix? ".gif" fullpath))
+       (let ((mimetype (cdr (or (assq 'mimetype entry) (cons 'mimetype "unknown")))))
+         (string-prefix? "image/" mimetype))
        (let ()
          (define id (cdr (assq 'id entry)))
          (define extension (path-extension fullpath))
