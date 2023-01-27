@@ -20,6 +20,7 @@
 %use (hashmap-ref) "./euphrates/hashmap.scm"
 %use (web::get-query) "./web-get-query.scm"
 %use (web::iterate-profun-results) "./web-iterate-profun-results.scm"
+%use (web::not-found) "./web-not-found.scm"
 %use (web::return) "./web-return.scm"
 %use (webcore::ask) "./webcore-ask.scm"
 
@@ -35,9 +36,10 @@
 
   (web::iterate-profun-results
    result (L)
-
-   (web::return
-    303
-    `((Location . ,L)
-      (Cache-Control . "no-cache"))
-    #f)))
+   (if L
+       (web::return
+        303
+        `((Location . ,L)
+          (Cache-Control . "no-cache"))
+        #f)
+       (web::not-found))))
