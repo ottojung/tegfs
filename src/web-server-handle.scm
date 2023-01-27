@@ -26,6 +26,7 @@
 %use (web::details.svg) "./web-details-svg.scm"
 %use (web::details) "./web-details.scm"
 %use (web::directory) "./web-directory.scm"
+%use (web::error.svg) "./web-error-svg.scm"
 %use (web::full) "./web-full.scm"
 %use (web::home) "./web-home.scm"
 %use (web::favicon.ico) "./web-icon.scm"
@@ -72,6 +73,7 @@
     (/static/details.svg ,web::details.svg)
     (/static/share.svg ,web::share.svg)
     (/static/share-gray.svg ,web::share-gray.svg)
+    (/static/error.svg ,web::error.svg)
     ))
 
 (define handlers-funcmap
