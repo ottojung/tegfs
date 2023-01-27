@@ -25,6 +25,8 @@
 %use (~s) "./euphrates/tilda-s.scm"
 %use (words->string) "./euphrates/words-to-string.scm"
 %use (web::bad-request) "./web-bad-request.scm"
+%use (web::not-found) "./web-not-found.scm"
+%use (web::permission-denied) "./web-permission-denied.scm"
 
 (define (web::handle-profun-results/2 results0 fun fail-fun)
   (define results (cdr results0))
@@ -51,17 +53,35 @@
 (define (web::handle-profun-results results fun)
   (web::handle-profun-results/hooked results fun identity))
 
+(define (web::handle-profun-results/default-error args)
+  (define errargs
+    (and (= 1 (length args))
+         (car args)))
+
+  (define errtype
+    (and (list? errargs)
+         (not (null? errargs))
+         (car errargs)))
+
+  (define (bad-request)
+    (web::bad-request
+     "Error: ~a"
+     (words->string (map ~s errargs))))
+
+  (case errtype
+    ((not-found) (web::not-found))
+    ((permission-denied) (web::permission-denied))
+    (else
+     (if errargs (bad-request)
+         (raisu 'unexpected-error-from-backend args)))))
+
 (define (web::handle-profun-results/default-fail-fun* hook)
   (lambda (results)
     (hook results)
     (case (car results)
       ((its)
        (raisu 'unexpected-its-result-from-backend-76123 results))
-      ((error)
-       ;; TODO: handle authorization errors differently
-       (web::bad-request
-        "Error: ~a"
-        (words->string (map ~s (cadr results)))))
+      ((error) (web::handle-profun-results/default-error (cdr results)))
       (else
        (raisu 'unexpected-results-from-backend-87156243510 results)))))
 
