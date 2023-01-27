@@ -22,4 +22,4 @@
 
 (define (get-save-plugins-files)
   (define dir (get-save-plugins-directory))
-  (directory-files dir))
+  (map car (directory-files dir)))

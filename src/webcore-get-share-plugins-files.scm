@@ -22,4 +22,4 @@
 
 (define (webcore::get-share-plugins-files)
   (define dir (webcore::get-share-plugins-directory))
-  (directory-files dir))
+  (map car (directory-files dir)))
