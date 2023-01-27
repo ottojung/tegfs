@@ -49,8 +49,11 @@
 %use (get-file-mimetype) "./get-file-mimetype.scm"
 %use (get-random-basename) "./get-random-basename.scm"
 %use (get-registry-files) "./get-registry-files.scm"
+%use (get-root) "./get-root.scm"
+%use (get-save-plugins) "./get-save-plugins.scm"
 %use (keyword-default-save-registry) "./keyword-default-save-registry.scm"
 %use (regfile-suffix) "./regfile-suffix.scm"
+%use (run-save-plugins) "./run-save-plugins.scm"
 
 (define (dump-clipboard-temp data-type)
   (dprintln "Dumping clipboard...")
@@ -180,7 +183,11 @@
                 (loop))))
         answer)))
 
+
 (define (CLI::save::loop --link <savetext>)
+  (define plugins (get-save-plugins))
+  (define config (get-config))
+  (define root (get-root))
   (alist-initialize-loop
    :current current
    :initial
@@ -257,6 +264,8 @@
       (and (equal? 'localfile (real-type))
            (path-without-extension (path-get-basename (-text-content))))
       (get-random-basename)))
+
+    (* (run-save-plugins config root current plugins))
 
     )
 
