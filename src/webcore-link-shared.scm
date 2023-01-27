@@ -66,7 +66,7 @@
       ((not (string? senderid))
        (make-profun-error 'type-error 'expected-string-for-senderid senderid))
       ((not info)
-       (make-profun-error 'bad-senderid senderid))
+       (make-profun-error 'not-found "Bad senderid" senderid))
       (else
        (if target-fullpath
            (let ()
