@@ -21,4 +21,4 @@
 
 (define web::not-found
   (web::static-error-message
-   404 "<img width='100%' src='static/what.svg'/>"))
+   404 "<div style='split'><img width='60%' src='static/what.svg'/> Does not exist"))
