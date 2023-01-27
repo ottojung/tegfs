@@ -18,6 +18,7 @@
 %var CLI::talk
 
 %use (catch-any) "./euphrates/catch-any.scm"
+%use (dprintln) "./euphrates/dprintln.scm"
 %use (profune-communicator-handle) "./euphrates/profune-communicator.scm"
 %use (read-list) "./euphrates/read-list.scm"
 %use (read-string-line) "./euphrates/read-string-line.scm"
@@ -44,7 +45,9 @@
 
   (define comm
     (if --web
-        (web::make-communicator)
+        (let ()
+          (define-values (comm server-operator-key) (web::make-communicator))
+          comm)
         (tegfs-make-communicator)))
 
   (define (send-to-server echo? read-sentence)

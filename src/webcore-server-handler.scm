@@ -20,9 +20,12 @@
 %use (profun-handler-extend) "./euphrates/profun-handler.scm"
 %use (add-entry) "./add-entry.scm"
 %use (core::make-server-handler) "./core-server-handler.scm"
+%use (permission-token) "./permission.scm"
+%use (update-entry) "./update-entry.scm"
 %use (webcore::add-entry) "./webcore-add-entry.scm"
 %use (webcore::categorization) "./webcore-categorization.scm"
 %use (webcore::collectgarbage) "./webcore-collectgarbage.scm"
+%use (webcore::create-server-operator-permission!) "./webcore-create-server-operator-permission-bang.scm"
 %use (webcore::entry) "./webcore-entry.scm"
 %use (webcore::key) "./webcore-key.scm"
 %use (webcore::link-shared) "./webcore-link-shared.scm"
@@ -37,7 +40,7 @@
 %use (webcore::time-left) "./webcore-time-left.scm"
 %use (webcore::update-entry) "./webcore-update-entry.scm"
 
-(define (webcore::make-server-handler web::context)
+(define (webcore::make-just-the-server-handler web::context)
   (profun-handler-extend
    (core::make-server-handler)
 
@@ -59,3 +62,9 @@
    (time-left (webcore::time-left web::context))
 
    ))
+
+(define (webcore::make-server-handler web::context)
+  (define perm (webcore::create-server-operator-permission! web::context))
+  (define key (permission-token perm))
+  (values (webcore::make-just-the-server-handler web::context)
+          key))

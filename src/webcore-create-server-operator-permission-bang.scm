@@ -1,4 +1,4 @@
-;;;; Copyright (C) 2022, 2023  Otto Jung
+;;;; Copyright (C) 2023  Otto Jung
 ;;;;
 ;;;; This program is free software: you can redistribute it and/or modify
 ;;;; it under the terms of the GNU Affero General Public License as published
@@ -15,24 +15,13 @@
 
 %run guile
 
-%var web::make-communicator
+%var webcore::create-server-operator-permission!
 
-%use (profun-create-database) "./euphrates/profun.scm"
-%use (make-profune-communicator) "./euphrates/profune-communicator.scm"
-%use (web::make-context) "./web-make-context.scm"
-%use (webcore::make-server-handler) "./webcore-server-handler.scm"
+%use (webcore::create-admin-permission!) "./webcore-create-admin-permission-bang.scm"
+%use (with-current-time) "./with-current-time.scm"
 
-(define (web::make-communicator)
-  (define webcore::context
-    (web::make-context))
-
-  (define-values (handler server-operator-key)
-    (webcore::make-server-handler webcore::context))
-
-  (define db
-    (profun-create-database handler '()))
-
-  (define comm
-    (make-profune-communicator db))
-
-  (values comm server-operator-key))
+(define (webcore::create-server-operator-permission! webcore::context)
+  (define expiery-time +inf.0)
+  (define maybepassword #f)
+  (with-current-time
+   (webcore::create-admin-permission! webcore::context maybepassword expiery-time)))

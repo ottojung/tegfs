@@ -55,7 +55,7 @@
 (define (tegfs-serve/parse)
   (define config (get-config))
   (define port (car (assq-or keyword-config-port config '(,web::default-port))))
-  (define comm (web::make-communicator))
+  (define-values (comm server-operator-key) (web::make-communicator))
   (define tptable (web::make-temp-paths-table))
 
   (dprintln "Starting the server")

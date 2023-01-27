@@ -58,7 +58,7 @@
        (let ()
          (define perm
            (webcore::create-admin-permission!
-            password default-login-expiery-time))
+            webcore::context password default-login-expiery-time))
          (profun-set-parameter (webcore::permissions/p <- perm))))
 
       (temporary

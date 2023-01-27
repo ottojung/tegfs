@@ -19,7 +19,7 @@
 
 %use (make-permission!) "./make-permission-bang.scm"
 
-(define (webcore::create-admin-permission! maybepassword expiery-time)
+(define (webcore::create-admin-permission! webcore::context maybepassword expiery-time)
   ;; TODO: read below from the config
   (define admin? #t)
   (define dynamic '())
