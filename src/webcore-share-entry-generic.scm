@@ -29,6 +29,7 @@
 %use (web::share-file/dont-link-yet) "./web-share-file.scm"
 %use (webcore::get-share-plugins) "./webcore-get-share-plugins.scm"
 %use (webcore::permissions/p) "./webcore-parameters.scm"
+%use (webcore::run-share-plugins) "./webcore-run-share-plugins.scm"
 
 (define webcore::share-entry-generic
   (lambda (get-shared-path)
@@ -42,9 +43,12 @@
        (define perm (webcore::permissions/p))
 
        (define (continue entry target-fullpath)
-         (define generic-fullpath
+         (define generic-fullpath/0
            (and target-fullpath
                 (get-shared-path target-fullpath)))
+         (define generic-fullpath
+           (and generic-fullpath/0
+                (webcore::run-share-plugins plugins entry generic-fullpath/0)))
          (if generic-fullpath
              (let ()
                (define info
