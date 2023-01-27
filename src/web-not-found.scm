@@ -109,14 +109,6 @@
 (define (web::not-found)
   ((web::static-error-message
     404
-    (stringf "
-          <div class='tiled-v-element split-container with-separator'>
-            <div class='form-block split-left'>
-              <img width='100%' src='static/what.svg'/>
-            </div>
-            <div class='split-right'>
-              <div class='form-block'>
-                <p>~a</p>
-              </div>
-            </div>
-          </div>" (get-random-answer)))))
+    (stringf "<img width='100%' src='static/what.svg'/>
+              <p>~a</p>"
+             (get-random-answer)))))
