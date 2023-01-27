@@ -24,10 +24,10 @@
 %use (profun-request-value) "./euphrates/profun-request-value.scm"
 %use (profun-unbound-value?) "./euphrates/profun-value.scm"
 %use (default-login-expiery-time) "./default-login-expiery-time.scm"
-%use (make-permission!) "./make-permission-bang.scm"
 %use (password->tokenlike) "./password-to-tokenlike.scm"
 %use (sha256sum) "./sha256sum.scm"
 %use (context-passwords context-tokens) "./web-context.scm"
+%use (webcore::create-admin-permission!) "./webcore-create-admin-permission-bang.scm"
 %use (webcore::permissions/p) "./webcore-parameters.scm"
 
 (define webcore::login
@@ -56,17 +56,9 @@
 
       (registered?
        (let ()
-         (define maybepassword password)
-
-         ;; TODO: read below from the config
-         (define admin? #t)
-         (define dynamic '())
-
          (define perm
-           (make-permission!
-            webcore::context
-            default-login-expiery-time
-            admin? maybepassword dynamic))
+           (webcore::create-admin-permission!
+            password default-login-expiery-time))
          (profun-set-parameter (webcore::permissions/p <- perm))))
 
       (temporary
