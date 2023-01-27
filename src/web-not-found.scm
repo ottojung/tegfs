@@ -1,4 +1,4 @@
-;;;; Copyright (C) 2022  Otto Jung
+;;;; Copyright (C) 2022, 2023  Otto Jung
 ;;;;
 ;;;; This program is free software: you can redistribute it and/or modify
 ;;;; it under the terms of the GNU Affero General Public License as published
@@ -21,15 +21,8 @@
 %use (callcontext-url) "./web-callcontext.scm"
 %use (web::make-html-response) "./web-make-html-response.scm"
 
-%for (COMPILER "guile")
-
-(use-modules (web request)
-             (web uri))
-
-%end
-
 (define (web::not-found)
   (define url (callcontext-url (web::callcontext/p)))
   (web::make-html-response
-   (string-append "Resource not found: " url)
+   "Resource not found"
    #:status 404))
