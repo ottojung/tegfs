@@ -26,5 +26,5 @@
     (lambda (plugin)
       (define fun (plugin-function plugin))
       (fun config root entry generic-fullpath/0))
-    plugins)
+    #f plugins)
    generic-fullpath/0))
