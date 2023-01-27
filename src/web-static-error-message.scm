@@ -1,4 +1,4 @@
-;;;; Copyright (C) 2022  Otto Jung
+;;;; Copyright (C) 2022, 2023  Otto Jung
 ;;;;
 ;;;; This program is free software: you can redistribute it and/or modify
 ;;;; it under the terms of the GNU Affero General Public License as published
@@ -17,10 +17,10 @@
 
 %var web::static-error-message
 
-%use (web::message-template) "./web-message-template.scm"
+%use (web::form-template) "./web-form-template.scm"
 %use (web::make-html-response) "./web-make-html-response.scm"
 
 (define (web::static-error-message status message)
-  (define xml (web::message-template message))
+  (define body (web::form-template #f message))
   (lambda _
-    (web::make-html-response xml #:status status)))
+    (web::make-html-response body #:status status)))

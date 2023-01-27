@@ -20,4 +20,5 @@
 %use (web::static-error-message) "./web-static-error-message.scm"
 
 (define web::permission-denied
-  (web::static-error-message 401 "Permission denied"))
+  (web::static-error-message
+   401 "<img width='100%' src='static/error.svg'/> <div class='centering-container'> <label> Permission denied </label> </div>"))
