@@ -17,7 +17,7 @@
 
 %var web::permission-denied
 
-%use (web::return) "./web-return.scm"
+%use (web::static-error-message) "./web-static-error-message.scm"
 
-(define (web::permission-denied)
-  (web::return 401 '() "Permission denied"))
+(define web::permission-denied
+  (web::static-error-message 401 "Permission denied"))
