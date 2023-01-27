@@ -46,6 +46,7 @@
 %use (web::share) "./web-share.scm"
 %use (web::tags) "./web-tags.scm"
 %use (web::upload) "./web-upload.scm"
+%use (web::what.svg) "./web-what.scm"
 
 (define handlers-config
   `((/login ,web::login)
@@ -74,6 +75,7 @@
     (/static/share.svg ,web::share.svg)
     (/static/share-gray.svg ,web::share-gray.svg)
     (/static/error.svg ,web::error.svg)
+    (/static/what.svg ,web::what.svg)
     ))
 
 (define handlers-funcmap
