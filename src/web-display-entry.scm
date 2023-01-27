@@ -20,14 +20,19 @@
 %use (assq-or) "./euphrates/assq-or.scm"
 %use (path-get-basename) "./euphrates/path-get-basename.scm"
 %use (a-weblink?) "./a-weblink-q.scm"
+%use (entry-get-mimetype) "./entry-get-mimetype.scm"
 %use (entry-get-target) "./entry-get-target.scm"
 %use (keyword-id) "./keyword-id.scm"
 %use (keyword-title) "./keyword-title.scm"
 %use (web::get-full-link) "./web-get-full-link.scm"
 
-(define (display-preview target preview-link)
+(define (display-preview entry target preview-link)
+  (define mimetype (entry-get-mimetype entry))
   (define default-preview
-    (if (a-weblink? target) "static/previewunknownurl.svg" "static/previewunknown.svg"))
+    (cond
+     ((a-weblink? target) "static/previewunknownurl.svg")
+     ((equal? mimetype "inode/directory") "static/directory.svg")
+     (else "static/previewunknown.svg")))
 
   (display "<img src=")
   (write (or preview-link default-preview))
@@ -39,7 +44,7 @@
     (let ((full-link (web::get-full-link entry target maybe-full-senderid)))
       (when full-link
         (display "<a href=") (write full-link) (display ">")
-        (display-preview target preview-link)
+        (display-preview entry target preview-link)
         (display "</a>")))))
 
 (define (display-actual-title entry)
