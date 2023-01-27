@@ -90,8 +90,8 @@ test2: dist/tegfs $(TEST_FILES)
 	$(TEST_FS) save
 
 test2-m: dist/tegfs $(TEST_FILES)
-	cp COPYING dist/
-	$(TEST_FS) save --target dist/COPYING
+	cp guix.scm dist/
+	$(TEST_FS) save --target dist/guix.scm
 
 test3: dist/tegfs $(TEST_FILES)
 	$(TEST_FS) categorize
