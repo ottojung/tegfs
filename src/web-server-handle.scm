@@ -25,6 +25,7 @@
 %use (web::collectgarbage) "./web-collectgarbage.scm"
 %use (web::details.svg) "./web-details-svg.scm"
 %use (web::details) "./web-details.scm"
+%use (web::directory.svg) "./web-directory-svg.scm"
 %use (web::directory) "./web-directory.scm"
 %use (web::error.svg) "./web-error-svg.scm"
 %use (web::full) "./web-full.scm"
@@ -76,6 +77,7 @@
     (/static/share-gray.svg ,web::share-gray.svg)
     (/static/error.svg ,web::error.svg)
     (/static/what.svg ,web::what.svg)
+    (/static/directory.svg ,web::directory.svg)
     ))
 
 (define handlers-funcmap
