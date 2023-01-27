@@ -46,7 +46,7 @@
 %use (web::share) "./web-share.scm"
 %use (web::tags) "./web-tags.scm"
 %use (web::upload) "./web-upload.scm"
-%use (web::what.svg) "./web-what.scm"
+%use (web::what.svg) "./web-what-svg.scm"
 
 (define handlers-config
   `((/login ,web::login)
