@@ -23,14 +23,21 @@
 %use (profun-request-value) "./euphrates/profun-request-value.scm"
 %use (profun-unbound-value?) "./euphrates/profun-value.scm"
 %use (filemap-ref-by-senderid) "./filemap.scm"
-%use (sharedinfo-recepientid sharedinfo-sourcepath) "./sharedinfo.scm"
+%use (get-config) "./get-config.scm"
+%use (get-root) "./get-root.scm"
+%use (sharedinfo-entry sharedinfo-recepientid sharedinfo-sourcepath) "./sharedinfo.scm"
 %use (symlink-shared-file) "./symlink-shared-file.scm"
 %use (context-filemap/2) "./web-context.scm"
 %use (web::get-adam-info) "./web-get-adam-info.scm"
 %use (web::get-sharedinfo-url) "./web-get-sharedinfo-url.scm"
+%use (webcore::get-share-plugins) "./webcore-get-share-plugins.scm"
+%use (webcore::run-share-plugins) "./webcore-run-share-plugins.scm"
 
 (define webcore::link-shared
   (lambda (web::context)
+    (define plugins (webcore::get-share-plugins))
+    (define config (get-config))
+    (define root (get-root))
     (profun-op-lambda
      (ctx (R L) (R-name L-name))
 
@@ -62,8 +69,11 @@
        (make-profun-error 'bad-senderid senderid))
       (else
        (if target-fullpath
-           (let ((location (web::get-sharedinfo-url web::context container-info info)))
+           (let ()
+             (define location (web::get-sharedinfo-url web::context container-info info))
+             (define entry (sharedinfo-entry info))
+             (define target-fullpath* (webcore::run-share-plugins config root plugins entry target-fullpath))
              (symlink-shared-file
-              web::context target-fullpath recepientid)
+              web::context target-fullpath* recepientid)
              (profun-set (L-name <- location)))
            (profun-set (L-name <- #f))))))))
