@@ -18,16 +18,16 @@
 %var print-prolog-inference
 
 %use (list-intersperse) "./euphrates/list-intersperse.scm"
-%use (query-parse) "./query-parse.scm"
+%use (prolog-query-parse) "./prolog-query-parse.scm"
 %use (print-tag-as-prolog-term tag->prolog-term) "./tag-to-prolog-term.scm"
 
 (define (print-prolog-inference antecedents consequent)
   (define-values (RHS-parts RHS-variables)
-    (query-parse antecedents))
+    (prolog-query-parse antecedents))
   (define RHS
     (apply string-append (list-intersperse ", " (map tag->prolog-term RHS-parts))))
   (define-values (consequent-parts consequent-variables)
-    (query-parse (list consequent)))
+    (prolog-query-parse (list consequent)))
   (print-tag-as-prolog-term (car consequent-parts))
   (unless (null? RHS-parts)
     (display " :- ")

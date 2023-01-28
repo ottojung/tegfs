@@ -15,7 +15,7 @@
 
 %run guile
 
-%var query-parse
+%var prolog-query-parse
 
 %use (comp) "./euphrates/comp.scm"
 %use (curry-if) "./euphrates/curry-if.scm"
@@ -26,7 +26,7 @@
 %use (make-prolog-var) "./prolog-var.scm"
 %use (tags-this-variable/string) "./tags-this-variable.scm"
 
-(define (query-parse <query...>)
+(define (prolog-query-parse <query...>)
   (define (tovar x)
     (make-prolog-var
      ((curry-if (comp (equal? tags-this-variable/string)) (const 'This)) x)))

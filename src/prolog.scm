@@ -18,6 +18,7 @@
 %var tegfs-prolog/parse
 %var tegfs-prolog
 %var tegfs-dump-prolog
+%var translate-entry-tags
 
 %use (appcomp) "./euphrates/comp.scm"
 %use (dprintln) "./euphrates/dprintln.scm"
@@ -25,6 +26,7 @@
 %use (list-deduplicate/reverse) "./euphrates/list-deduplicate.scm"
 %use (open-file-port) "./euphrates/open-file-port.scm"
 %use (raisu) "./euphrates/raisu.scm"
+%use (stack->list stack-make stack-push!) "./euphrates/stack.scm"
 %use (system-fmt) "./euphrates/system-fmt.scm"
 %use (~a) "./euphrates/tilda-a.scm"
 %use (a-weblink?) "./a-weblink-q.scm"
@@ -125,7 +127,7 @@
         ((t) (hashset-add! tags-set (car (cdr thing)))))
       (yield thing)))
 
-  (entries-for-each (translate-entry yield* counter))
+  (entries-for-each (translate-entry-tags* yield* counter))
 
   (for-each
    (lambda (tag)
@@ -138,7 +140,7 @@
   (lambda (name)
     (if (equal? name tags-this-variable/string)
         cnt
-        (string->symbol (string-append "v" (number->string cnt) name)))))
+        (string-append "v" (number->string cnt) name))))
 
 (define (translate-parsed-tag yield cnt)
   (define convert (alpha-convert-variable cnt))
@@ -167,7 +169,16 @@
           (cons '%local tags))
       (cons '%notarget tags)))
 
-(define (translate-entry yield counter)
+(define (translate-entry-tags entry)
+  (define counter (lambda _ 0))
+  (define ret (stack-make))
+  (define (yield thing)
+    (when (equal? 't (car thing))
+      (stack-push! ret (cdr thing))))
+  ((translate-entry-tags* yield counter) entry)
+  (stack->list ret))
+
+(define (translate-entry-tags* yield counter)
   (lambda (entry)
     (define cnt (counter))
 
