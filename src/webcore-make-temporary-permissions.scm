@@ -26,6 +26,7 @@
 %use (make-permission!) "./make-permission-bang.scm"
 %use (permission-time-left) "./permission-time-left.scm"
 %use (permission-time permission-token) "./permission.scm"
+%use (can-share-longer-than-view?) "./webcore-access.scm"
 %use (webcore::permissions/p) "./webcore-parameters.scm"
 
 (define (generate-random-password)
@@ -39,7 +40,10 @@
 
      (define perm (webcore::permissions/p))
      (define sharing-time-cap
-       (and perm (permission-time-left perm)))
+       (and perm
+            (if (can-share-longer-than-view? perm)
+                +inf.0
+                (permission-time-left perm))))
 
      (cond
       ((profun-bound-value? key)
