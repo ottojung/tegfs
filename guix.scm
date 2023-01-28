@@ -19,7 +19,7 @@
       (version "0.1")
       (source (local-file source-dir #:recursive? #t #:select? (const #t)))
       (propagated-inputs (list git guile-3.0))
-      (license license:gpl3)
+      (license license:agpl3+)
       (home-page "https://git.vau.place/tegfs.git")
       (synopsis "TegFS virtual file system")
       (description "TegFS is a virtual tag-based file system with higher order tags. It is used for file categorization, as an alternative for classical directory-based categorization.")
