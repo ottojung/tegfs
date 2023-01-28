@@ -23,9 +23,9 @@
 %use (web::form-template) "./web-form-template.scm"
 %use (web::hashmap->query) "./web-hashmap-to-query.scm"
 
-(define web::share::settings-template
+(define (web::share::settings-template query/s)
   (web::form-template
-   "action='share?~a' method='post'"
+   (stringf "action='share?~a' method='post'" query/s)
    "<div class='tiled-v-element'>
       <div class='form-block'>
         <label for='for-duration'>Duration</label>
@@ -46,5 +46,4 @@
   (define query/s
     (web::hashmap->query query))
 
-  (stringf web::share::settings-template
-           query/s))
+  (web::share::settings-template query/s))
