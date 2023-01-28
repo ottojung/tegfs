@@ -29,9 +29,11 @@
 %use (profun-standard-handler) "./euphrates/profun-standard-handler.scm"
 %use (profun-create-database profun-eval-query) "./euphrates/profun.scm"
 %use (raisu) "./euphrates/raisu.scm"
+%use (stack->list stack-make stack-push!) "./euphrates/stack.scm"
 %use (string-strip) "./euphrates/string-strip.scm"
 %use (string->lines) "./euphrates/string-to-lines.scm"
 %use (system-re) "./euphrates/system-re.scm"
+%use (dump-rules) "./dump-rules.scm"
 %use (entries-iterate) "./entries-iterate.scm"
 %use (keyword-id) "./keyword-id.scm"
 %use (make-temporary-filename/local) "./make-temporary-filename-local.scm"
@@ -76,10 +78,20 @@
     (devectorize-translated parsed-query/0))
   (define parsed-query
     (generify-query parsed-query/1))
+  (define rules
+    (let ((stack (stack-make)))
+      (dump-rules
+       (lambda (thing)
+         (define RHS (generify-query (devectorize-translated (cddr thing))))
+         (define consequent (generify-query (devectorize-translated (list (cadr thing)))))
+         (stack-push! stack (append consequent RHS))))
+      (stack->list stack)))
+
   (define (profun-filter entry)
     (define translated (translate-entry-tags entry))
     (define translated* (devectorize-translated translated))
-    (define db-definitions (map list translated*))
+    (define db-definitions/0 (map list translated*))
+    (define db-definitions (append db-definitions/0 rules))
     (define db
       (profun-create-database
        profun-standard-handler

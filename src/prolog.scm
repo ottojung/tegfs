@@ -36,6 +36,7 @@
 %use (keyword-id) "./keyword-id.scm"
 %use (make-temporary-filename/local) "./make-temporary-filename-local.scm"
 %use (parse-tag) "./parse-tag.scm"
+%use (print-prolog-inference) "./print-prolog-inference.scm"
 %use (print-tag-as-prolog-term) "./tag-to-prolog-term.scm"
 %use (tags-this-variable/string) "./tags-this-variable.scm"
 
@@ -92,7 +93,7 @@
   (display ":-style_check(-discontiguous).\n")
   (let ((ret
          (translate-registries yield-for-prolog)))
-    (dump-rules)
+    (dump-rules print-prolog-inference)
     (display "v(_, _) :- false.\n")
     (display "t('%diff', [X, Y]) :- X \\= Y.\n")
     (display "t('%any', _).\n")

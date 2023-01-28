@@ -1,4 +1,4 @@
-;;;; Copyright (C) 2022  Otto Jung
+;;;; Copyright (C) 2022, 2023  Otto Jung
 ;;;;
 ;;;; This program is free software: you can redistribute it and/or modify
 ;;;; it under the terms of the GNU Affero General Public License as published
@@ -31,12 +31,12 @@
 %use (fatal) "./fatal.scm"
 %use (get-root) "./get-root.scm"
 %use (parse-tag) "./parse-tag.scm"
-%use (print-prolog-inference) "./print-prolog-inference.scm"
 %use (make-prolog-cut-symbol) "./prolog-cut-symbol.scm"
+%use (prolog-query-parse) "./prolog-query-parse.scm"
 %use (rules-filename) "./rules-filename.scm"
 %use (tags-this-variable/string) "./tags-this-variable.scm"
 
-(define (parse-inference args)
+(define (parse-inference yield args)
   (define split (list-split-on (comp (equal? "=>")) args))
   (define len (length split))
 
@@ -44,10 +44,14 @@
     (fatal "Inference ~s should have had precisely one => arrow, but it has ~s of them" args (- len 1)))
 
   (define-tuple (antecedents consequents) split)
-  (for-each (lambda (c) (print-prolog-inference antecedents c))
+  (define-values (RHS-parts RHS-variables)
+    (prolog-query-parse antecedents))
+  (for-each (lambda (c)
+              (define consequent (car (prolog-query-parse (list c))))
+              (yield (cons 'inference (cons consequent RHS-parts))))
             consequents))
 
-(define (parse-synonyms args)
+(define (parse-synonyms yield args)
   (define len (length args))
   (unless (< 1 len)
     (fatal "Found an empty synonym"))
@@ -56,11 +60,11 @@
   (define rest (cdr args))
   (for-each
    (lambda (synonym)
-     (print-prolog-inference (list main) (list synonym))
-     (print-prolog-inference (list synonym) (list main)))
+     (yield (list 'inference (string->symbol synonym) (string->symbol main)))
+     (yield (list 'inference (string->symbol main) (string->symbol synonym))))
    rest))
 
-(define (parse-symmetric args)
+(define (parse-symmetric yield args)
   (define len (length args))
   (unless (equal? 1 len)
     (fatal "Symmetric rule ~s should have had exactly one argument, but it has ~s" args len))
@@ -71,19 +75,22 @@
   (unless (equal? 1 parsed-length)
     (fatal "Parsed symmetric relation ~s should be simple (without args), but it has ~s arguments"
            args (- parsed-length 1)))
-  (print-prolog-inference (list (string-append name "=X,Y") (make-prolog-cut-symbol))
-                          (string-append name "=Y,X")))
+  (yield
+   (list 'inference
+         (list (string->symbol name) 'Y 'X)
+         (list (string->symbol name) 'X 'Y) (make-prolog-cut-symbol))))
 
-(define (parse-rule words)
-  (define command (string->symbol (car words)))
-  (define args (cdr words))
-  (case command
-    ((rule) (parse-inference args))
-    ((synonyms) (parse-synonyms args))
-    ((symmetric) (parse-symmetric args))
-    (else (raisu 'unknown-command words command))))
+(define (parse-rule yield)
+  (lambda (words)
+    (define command (string->symbol (car words)))
+    (define args (cdr words))
+    (case command
+      ((rule) (parse-inference yield args))
+      ((synonyms) (parse-synonyms yield args))
+      ((symmetric) (parse-symmetric yield args))
+      (else (raisu 'unknown-command words command)))))
 
-(define (dump-rules)
+(define (dump-rules yield)
   (define rules-file (append-posix-path (get-root) rules-filename))
   (define rules-port
     (begin
@@ -103,4 +110,4 @@
                 (loop buf)
                 (loop (cons words buf)))))))
 
-  (for-each parse-rule rules-commands))
+  (for-each (parse-rule yield) rules-commands))
