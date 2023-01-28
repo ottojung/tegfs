@@ -25,9 +25,10 @@
 %use (get-sharedinfo-for-perm) "./get-sharedinfo-for-perm.scm"
 %use (make-sharedinfo) "./make-sharedinfo.scm"
 %use (permission-time-left) "./permission-time-left.scm"
-%use (permission-filemap permission-share-longer-than-view?) "./permission.scm"
+%use (permission-filemap) "./permission.scm"
 %use (sharedinfo-recepientid) "./sharedinfo.scm"
 %use (context-filemap/2) "./web-context.scm"
+%use (can-share-longer-than-view?) "./webcore-access.scm"
 
 (define (web::share-file/new ctx perm entry target-fullpath for-duration)
   (define filemap/2 (context-filemap/2 ctx))
@@ -38,7 +39,7 @@
      ((string? for-duration) (string->seconds for-duration))
      (else (raisu 'type-error 'expected-number-or-string-for-for-duration for-duration))))
   (define for-duration*
-    (if (permission-share-longer-than-view? perm)
+    (if (can-share-longer-than-view? perm)
         for-duration/parsed
         (min for-duration/parsed (permission-time-left perm now))))
   (define info (make-sharedinfo entry target-fullpath for-duration*))

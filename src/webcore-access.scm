@@ -22,6 +22,7 @@
 %var can-upload?
 %var can-view-categorization?
 %var can-modify-categorization?
+%var can-share-longer-than-view?
 
 %use (assoc-or) "./euphrates/assoc-or.scm"
 %use (hashmap-ref) "./euphrates/hashmap.scm"
@@ -78,3 +79,8 @@
   (and perm
        (or (permission-admin? perm)
            (permission-cat-modify-access? perm))))
+
+(define (can-share-longer-than-view? perm) ;; true if user can share entries for longer than viewing allows. useful for admins
+  (and perm
+       (or (permission-admin? perm)
+           (permission-share-longer-than-view? perm))))
