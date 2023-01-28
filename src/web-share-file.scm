@@ -30,7 +30,7 @@
 %use (context-filemap/2) "./web-context.scm"
 %use (can-share-longer-than-view?) "./webcore-access.scm"
 
-(define (web::share-file/new ctx perm entry target-fullpath for-duration)
+(define (web::share-file/dont-link-yet ctx perm entry target-fullpath for-duration)
   (define filemap/2 (context-filemap/2 ctx))
   (define now (or (current-time/p) (raisu 'current-time-is-not-set)))
   (define for-duration/parsed
@@ -57,6 +57,3 @@
            (hashmap-set! perm-filemap target-fullpath info)
            (filemap-set! filemap/2 info)
            info)))))
-
-(define (web::share-file/dont-link-yet ctx perm entry target-fullpath for-duration)
-  (web::share-file/new ctx perm entry target-fullpath for-duration))
