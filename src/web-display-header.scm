@@ -50,7 +50,7 @@
     ((Admin Anonymous)
      (display "
       <div id='lst'>
-        <div>(Loged in as ")
+        <div>(Logged in as ")
      (display usertype)
      (display ")</div></div>")))
 

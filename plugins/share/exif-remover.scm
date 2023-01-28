@@ -27,5 +27,5 @@
              (let ((status (system* "exiftool" "-all=" "-o" path-to-removed fullpath)))
                (define code (status:exit-val status))
                (unless (= 0 code)
-                 (throw 'plugin-failed "Exiftool exited with non-zero code. Image sharing must not go trough." id))
+                 (throw 'plugin-failed "Exiftool exited with non-zero code. Image sharing must not go through." id))
                path-to-removed)))))
