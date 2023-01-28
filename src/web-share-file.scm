@@ -17,25 +17,18 @@
 
 %var web::share-file/dont-link-yet
 
-%use (hashmap-delete! hashmap-set!) "./euphrates/hashmap.scm"
+%use (hashmap-set!) "./euphrates/hashmap.scm"
 %use (raisu) "./euphrates/raisu.scm"
 %use (string->seconds) "./euphrates/string-to-seconds.scm"
 %use (current-time/p) "./current-time-p.scm"
-%use (filemap-delete-by-recepientid! filemap-set!) "./filemap.scm"
+%use (filemap-set!) "./filemap.scm"
 %use (get-sharedinfo-for-perm) "./get-sharedinfo-for-perm.scm"
 %use (make-sharedinfo) "./make-sharedinfo.scm"
 %use (permission-time-left) "./permission-time-left.scm"
 %use (permission-filemap) "./permission.scm"
-%use (sharedinfo-recepientid sharedinfo-stime) "./sharedinfo.scm"
+%use (set-sharedinfo-stime! sharedinfo-stime) "./sharedinfo.scm"
 %use (context-filemap/2) "./web-context.scm"
 %use (can-share-longer-than-view?) "./webcore-access.scm"
-
-(define (delete-existing! ctx perm target-fullpath existing)
-  (define filemap/2 (context-filemap/2 ctx))
-  (define recepientid (sharedinfo-recepientid existing))
-  (define perm-filemap (permission-filemap perm))
-  (filemap-delete-by-recepientid! filemap/2 recepientid)
-  (hashmap-delete! perm-filemap target-fullpath))
 
 (define (web::share-file/new ctx perm entry target-fullpath for-duration)
   (define filemap/2 (context-filemap/2 ctx))
@@ -54,14 +47,16 @@
   (define extime (and existing (sharedinfo-stime existing)))
 
   (and (< 0 for-duration*)
-       (if (equal? extime for-duration*)
-           existing
-           (let ((info (make-sharedinfo entry target-fullpath for-duration*)))
-             (when existing
-               (delete-existing! ctx perm target-fullpath existing))
-             (hashmap-set! perm-filemap target-fullpath info)
-             (filemap-set! filemap/2 info)
-             info))))
+       (cond
+        ((equal? extime for-duration*) existing)
+        (existing
+         (set-sharedinfo-stime! existing for-duration*)
+         existing)
+        (else
+         (let ((info (make-sharedinfo entry target-fullpath for-duration*)))
+           (hashmap-set! perm-filemap target-fullpath info)
+           (filemap-set! filemap/2 info)
+           info)))))
 
 (define (web::share-file/dont-link-yet ctx perm entry target-fullpath for-duration)
   (web::share-file/new ctx perm entry target-fullpath for-duration))
