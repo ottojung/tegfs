@@ -54,4 +54,4 @@
      (display usertype)
      (display ")</div></div>")))
 
-  (display "\n</header></nav>\n"))
+  (display "\n</nav></header>\n"))
