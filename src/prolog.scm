@@ -128,7 +128,7 @@
         ((t) (hashset-add! tags-set (car (cdr thing)))))
       (yield thing)))
 
-  (entries-for-each (translate-entry-tags* yield* counter))
+  (entries-for-each (translate-entry-tags* #t yield* counter))
 
   (for-each
    (lambda (tag)
@@ -138,10 +138,11 @@
   (< 1 (counter)))
 
 (define (alpha-convert-variable cnt)
+  (define prefix (string-append "v" (number->string cnt)))
   (lambda (name)
     (if (equal? name tags-this-variable/string)
         cnt
-        (string-append "v" (number->string cnt) name))))
+        (string-append prefix name))))
 
 (define (translate-parsed-tag yield cnt)
   (define convert (alpha-convert-variable cnt))
@@ -176,10 +177,10 @@
   (define (yield thing)
     (when (equal? 't (car thing))
       (stack-push! ret (cdr thing))))
-  ((translate-entry-tags* yield counter) entry)
+  ((translate-entry-tags* #f yield counter) entry)
   (stack->list ret))
 
-(define (translate-entry-tags* yield counter)
+(define (translate-entry-tags* with-variables? yield counter)
   (lambda (entry)
     (define cnt (counter))
 
@@ -200,12 +201,14 @@
 
     (define parser (parse-tag counter))
     (define parsed-tags (apply append (map parser tags)))
-    (define variables
-      (list-deduplicate/reverse
-       (apply append (map cdr parsed-tags))))
 
     (for-each (translate-parsed-tag yield cnt) parsed-tags)
-    (for-each (translate-variable-binding yield cnt) variables)
+    (when with-variables?
+      (let ()
+        (define variables
+          (list-deduplicate/reverse
+           (apply append (map cdr parsed-tags))))
+        (for-each (translate-variable-binding yield cnt) variables)))
     (yield `(i ,cnt ,id))
 
     ))
