@@ -26,6 +26,7 @@
 %use (list-map/flatten) "./euphrates/list-map-flatten.scm"
 %use (open-file-port) "./euphrates/open-file-port.scm"
 %use (printf) "./euphrates/printf.scm"
+%use (profun-database-add-rule! profun-database-copy) "./euphrates/profun-database.scm"
 %use (profun-standard-handler) "./euphrates/profun-standard-handler.scm"
 %use (profun-create-falsy-database profun-eval-query/boolean) "./euphrates/profun.scm"
 %use (raisu) "./euphrates/raisu.scm"
@@ -52,12 +53,14 @@
 (define (devectorize-translated translated)
   (map
    (lambda (clause)
-     (list-map/flatten
-      (lambda (obj)
-        (if (vector? obj)
-            (vector->list obj)
-            (list obj)))
-      clause))
+     (apply
+      append
+      (map
+       (lambda (obj)
+         (if (vector? obj)
+             (vector->list obj)
+             (list obj)))
+       clause)))
    translated))
 
 (define (generify-query query)
@@ -86,16 +89,16 @@
          (define consequent (generify-query (devectorize-translated (list (cadr thing)))))
          (stack-push! stack (append consequent RHS))))
       (stack->list stack)))
+  (define db0
+    (profun-create-falsy-database
+     profun-standard-handler
+     rules))
 
   (define (profun-filter entry)
     (define translated (translate-entry-tags entry))
     (define translated* (devectorize-translated translated))
-    (define db-definitions/0 (map list translated*))
-    (define db-definitions (append db-definitions/0 rules))
-    (define db
-      (profun-create-falsy-database
-       profun-standard-handler
-       db-definitions))
+    (define db (profun-database-copy db0))
+    (for-each (lambda (t) (profun-database-add-rule! db (list t))) translated*)
     (profun-eval-query/boolean db parsed-query))
 
   (define (iter)
