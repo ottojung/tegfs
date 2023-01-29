@@ -4,16 +4,15 @@ PREFIX_BIN=$(PREFIX)/bin
 PREFIX_SHARE=$(PREFIX)/share
 
 BINARY_PATH=$(PREFIX_BIN)/tegfs
-CZEMPAK_INSTALL_ROOT=$(PREFIX_SHARE)/tegfs/czempakroot
+CODE_INSTALL_ROOT=$(PREFIX_SHARE)/tegfs/code
+CODE_ROOT=$(PWD)/src
 
 TEST_ROOT=dist/exampleroot
 TEST_FILES=$(TEST_ROOT) $(TEST_ROOT)/categorization.tegfs.txt $(TEST_ROOT)/config.tegfs.lisp
 
 SUBMODULES = deps/euphrates/.git
 
-CZEMPAK_ROOT=$(PWD)/.czempak-root
-
-CZEMPAK = CZEMPAK_ROOT=$(CZEMPAK_ROOT) guile -s ./deps/czempak.scm
+GUILE = guile -L $(CODE_ROOT) -s
 
 TEST_FS = TEGFS_ROOT=$(TEST_ROOT) dist/tegfs
 
@@ -25,13 +24,13 @@ install: $(BINARY_PATH)
 
 uninstall:
 	rm -f $(BINARY_PATH)
-	rm -rf $(CZEMPAK_INSTALL_ROOT)
+	rm -rf $(CODE_INSTALL_ROOT)
 
 $(BINARY_PATH): dist/tegfs $(PREFIX_BIN)
-	mkdir -p "$(CZEMPAK_INSTALL_ROOT)"
-	rm -rf "$(CZEMPAK_INSTALL_ROOT)"
-	cp -p -T -r "$(CZEMPAK_ROOT)" "$(CZEMPAK_INSTALL_ROOT)"
-	sed "s#$(CZEMPAK_ROOT)#$(CZEMPAK_INSTALL_ROOT)#g" dist/tegfs > "$@"
+	mkdir -p "$(CODE_INSTALL_ROOT)"
+	rm -rf "$(CODE_INSTALL_ROOT)"
+	cp -p -T -L -r "$(CODE_ROOT)" "$(CODE_INSTALL_ROOT)"
+	sed "s#$(CODE_ROOT)#$(CODE_INSTALL_ROOT)#g" dist/tegfs > "$@"
 	chmod +x "$@"
 
 $(PREFIX_BIN):
@@ -46,8 +45,10 @@ clean:
 deps/euphrates/.git:
 	git submodule update --init
 
-dist/tegfs: src/*.scm src/euphrates/*.scm dist $(SUBMODULES)
-	$(CZEMPAK) install src/tegfs.scm "$@"
+dist/tegfs: src/tegfs/*.scm src/euphrates/*.scm dist $(SUBMODULES)
+	echo "#! /bin/sh" > "$@"
+	printf "exec %s %s/tegfs/tegfs.scm \"%s%s\"\n" "$(GUILE)" "$(CODE_ROOT)" '$$' '@' >> "$@"
+	chmod +x "$@"
 
 dist:
 	mkdir -p "$@"
@@ -111,7 +112,7 @@ test7: dist/tegfs $(TEST_FILES)
 	$(TEST_FS) get "$(shell cat $(TEST_ROOT)/lastid.tegfs.txt)"
 
 test8: dist/tegfs $(TEST_FILES)
-	TEGFS_ROOT=$(TEST_ROOT) $(CZEMPAK) run example/rename-tag.scm
+	TEGFS_ROOT=$(TEST_ROOT) $(GUILE) example/rename-tag.scm
 
 test9: dist/tegfs $(TEST_FILES)
 	$(TEST_FS) query --talk
