@@ -19,10 +19,8 @@
 %var parse-tag-structure
 
 %use (comp) "./euphrates/comp.scm"
-%use (curry-if) "./euphrates/curry-if.scm"
 %use (list-intersperse) "./euphrates/list-intersperse.scm"
 %use (list-ref-or) "./euphrates/list-ref-or.scm"
-%use (list-span-while) "./euphrates/list-span-while.scm"
 %use (list-split-on) "./euphrates/list-split-on.scm"
 %use (raisu) "./euphrates/raisu.scm"
 %use (~a) "./euphrates/tilda-a.scm"
@@ -35,40 +33,12 @@
     (define str (~a tag))
     (define chars (string->list str))
 
-    (define-values (span-^-pre span-^-post0)
-      (list-span-while
-       (negate (comp (equal? #\^)))
-       chars))
-    (define span-^-post
-      ((curry-if (negate null?) cdr) span-^-post0))
-    (define span-^? (not (null? span-^-post)))
-
-    (define-values (span-_-pre0 span-_-post0)
-      (list-span-while
-       (negate (comp (equal? #\_)))
-       (reverse chars)))
-
-    (define span-_-pre (reverse span-_-pre0))
-    (define span-_-post
-      (reverse ((curry-if (negate null?) cdr) span-_-post0)))
-    (define span-_? (not (null? span-_-post)))
-
     (define equal-split
       (list-split-on (comp (equal? tag-structure-sep1)) chars))
     (define equal-split?
       (not (null? (cdr equal-split))))
 
-    (define sum
-      (+ (if span-^? 1 0)
-         (if span-_? 1 0)
-         (if equal-split? 1 0)))
-
-    (unless (>= 1 sum)
-      (raisu 'used-conflicting-tag-syntaxes tag sum))
-
     (cond
-     (span-^? `((prefix-suffix ,span-^-pre ,span-^-post)))
-     (span-_? `((prefix-suffix ,span-_-pre ,span-_-post)))
      (equal-split?
       (let* ((head (car equal-split)))
         (map (lambda (split)
@@ -97,32 +67,15 @@
   (define parser (parse-tag-structure/chars counter))
   (lambda (tag)
     (define structure/chars (parser tag))
-
-    (define (handle-prefix-suffix pre post)
-      (let* ((arguments (list-split-on (comp (equal? tag-structure-sep2)) post))
-             (do (unless (member (length arguments) '(1 2))
-                   (raisu 'bad-number-of-arguments tag arguments)))
-             (first-arg (car arguments))
-             (second-arg (list-ref-or arguments 1 `(,tags-this-variable/char)))
-             (num (counter))
-             (var (string->list (~a num)))
-             (first (append pre `(,tag-structure-sep1) var `(,tag-structure-sep2) second-arg))
-             (second (append first-arg `(,tag-structure-sep1) var)))
-        (list first second)))
-
-    (apply
-     append
-     (map
-      (lambda (s)
-        (case (car s)
-          ((prefix-suffix) (apply handle-prefix-suffix (cdr s)))
-          ((equality)
-           (let* ((equal-split (cdr s)))
-             (list
-              (apply append `(,(car equal-split) (,tag-structure-sep1)
-                              ,@(list-intersperse `(,tag-structure-sep2) (cdr equal-split)))))))
-          ((single) (list (append (cadr s) `(,tag-structure-sep1) `(,tags-this-variable/char))))))
-      structure/chars))))
+    (map
+     (lambda (s)
+       (case (car s)
+         ((equality)
+          (let* ((equal-split (cdr s)))
+            (apply append `(,(car equal-split) (,tag-structure-sep1)
+                            ,@(list-intersperse `(,tag-structure-sep2) (cdr equal-split))))))
+         ((single) (append (cadr s) `(,tag-structure-sep1) `(,tags-this-variable/char)))))
+     structure/chars)))
 
 (define (parse-tag counter)
   (lambda (tag)
