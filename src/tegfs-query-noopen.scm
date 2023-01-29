@@ -27,7 +27,7 @@
 %use (open-file-port) "./euphrates/open-file-port.scm"
 %use (printf) "./euphrates/printf.scm"
 %use (profun-standard-handler) "./euphrates/profun-standard-handler.scm"
-%use (profun-create-database profun-eval-query) "./euphrates/profun.scm"
+%use (profun-create-falsy-database profun-eval-query/boolean) "./euphrates/profun.scm"
 %use (raisu) "./euphrates/raisu.scm"
 %use (stack->list stack-make stack-push!) "./euphrates/stack.scm"
 %use (string-strip) "./euphrates/string-strip.scm"
@@ -93,11 +93,10 @@
     (define db-definitions/0 (map list translated*))
     (define db-definitions (append db-definitions/0 rules))
     (define db
-      (profun-create-database
+      (profun-create-falsy-database
        profun-standard-handler
        db-definitions))
-    (define result (profun-eval-query db parsed-query))
-    (not (null? result)))
+    (profun-eval-query/boolean db parsed-query))
 
   (define (iter)
     (let loop ()
