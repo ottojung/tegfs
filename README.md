@@ -28,18 +28,18 @@ TegFS offers a featureful CLI for power users, and a web-based UI for easy acces
 # Dependencies
 
 - Main program
-  - `GNU guile` version >1.8 for running the main program
+  - `GNU guile` version >1.8 for running the main program (MUST HAVE)
   - `wget` for saving stuff from the internet
   - `xclip` for dumping clipboard content
   - `file` for determining file types
-  - `fzf` for making choices during `tegfs save`
+  - `fzf` for making choices during `tegfs save` (MUST HAVE)
   - `rsync` and `ssh` for sending files to remote servers if using `tegfs save` with `--remote`
-  - `prolog` for query capabilities
+  - `prolog` for `tegfs prolog` command
 - Web server
   - `ffmpeg` for video previews production
   - `imagemagick` for image previews production
-  - `entr` for checking if new previews need to be made
-  - third-party file server, such as `Nginx`
+  - `entr` for checking if new previews need to be made (MUST HAVE)
+  - third-party file server, such as `Nginx` (MUST HAVE)
   - [pup](https://github.com/ericchiang/pup) for generating weblink thumbnails
 
 # Note on query
