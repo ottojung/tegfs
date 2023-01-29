@@ -16,14 +16,14 @@
 ;; This is an example that renames tag "image" to "picture"
 ;;  by making modifications in every entry of every registry
 
-%run guile
-
-%use (assoc-or) "./euphrates/assoc-or.scm"
-%use (assoc-set-value) "./euphrates/assoc-set-value.scm"
-%use (curry-if) "./euphrates/curry-if.scm"
-%use (comp) "./euphrates/comp.scm"
-
-%use (entries-map!) "./tegfs/entries-map-bang.scm"
+(cond-expand
+ (guile
+  (define-module (example rename-tag)
+    :use-module ((euphrates assoc-or) :select (assoc-or))
+    :use-module ((euphrates assoc-set-value) :select (assoc-set-value))
+    :use-module ((euphrates curry-if) :select (curry-if))
+    :use-module ((euphrates comp) :select (comp))
+    :use-module ((tegfs entries-map-bang) :select (entries-map!)))))
 
 (define from 'image)
 (define to 'picture)
