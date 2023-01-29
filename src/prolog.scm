@@ -20,6 +20,7 @@
 %var tegfs-dump-prolog
 %var translate-entry-tags
 
+%use (assq-or) "./euphrates/assq-or.scm"
 %use (appcomp) "./euphrates/comp.scm"
 %use (dprintln) "./euphrates/dprintln.scm"
 %use (hashset->list hashset-add! make-hashset) "./euphrates/hashset.scm"
@@ -34,6 +35,7 @@
 %use (entries-for-each) "./entries-for-each.scm"
 %use (entry-get-target) "./entry-get-target.scm"
 %use (keyword-id) "./keyword-id.scm"
+%use (keyword-tags) "./keyword-tags.scm"
 %use (make-temporary-filename/local) "./make-temporary-filename-local.scm"
 %use (parse-tag) "./parse-tag.scm"
 %use (print-prolog-inference) "./print-prolog-inference.scm"
@@ -156,18 +158,6 @@
     (unless (equal? (~a name) tags-this-variable/string)
       (yield `(v ,cnt ,(convert name))))))
 
-(define (add-special-sorted-status-tag tags)
-  (if (null? tags)
-      (cons '%unsorted tags)
-      tags))
-
-(define (add-special-locality-tag target tags)
-  (if target
-      (if (a-weblink? target)
-          (cons '%remote tags)
-          (cons '%local tags))
-      (cons '%notarget tags)))
-
 (define (translate-entry-tags entry)
   (define counter (lambda _ 0))
   (define ret (stack-make))
@@ -178,17 +168,24 @@
   (stack->list ret))
 
 (define (translate-entry-tags* with-variables? yield counter)
+  (define (add-special-sorted-status-tag tags)
+    (if (null? tags)
+        (cons '%unsorted tags)
+        tags))
+  (define (add-special-locality-tag target tags)
+    (if target
+        (if (a-weblink? target)
+            (cons '%remote tags)
+            (cons '%local tags))
+        (cons '%notarget tags)))
+
   (lambda (entry)
     (define cnt (counter))
 
     (define id
-      (cdr (or (assoc keyword-id entry)
-               (raisu 'could-not-get-an-id entry))))
-
+      (assq-or keyword-id entry (raisu 'could-not-get-an-id entry)))
     (define tags0
-      (cdr (or (assoc 'tags entry)
-               (cons 'tags '()))))
-
+      (assq-or keyword-tags entry '()))
     (define target
       (entry-get-target entry))
     (define tags
