@@ -9,6 +9,17 @@
  ((guix licenses) #:prefix license:)
  (gnu packages version-control)
  (gnu packages guile)
+ (gnu packages wget)
+ ((gnu packages xdisorg) #:select (xclip))
+ (gnu packages file)
+ ((gnu packages terminals) #:select (fzf))
+ (gnu packages rsync)
+ ((gnu packages prolog) #:select (swi-prolog))
+ ((gnu packages video) #:select (ffmpeg))
+ (gnu packages imagemagick)
+ (gnu packages entr)
+ ((gnu packages web) #:select (pup))
+ ((gnu packages photo) #:select (perl-image-exiftool))
  (ice-9 popen)
  (ice-9 rdelim))
 
@@ -18,7 +29,11 @@
       (name "tegfs")
       (version "0.1")
       (source (local-file source-dir #:recursive? #t #:select? (const #t)))
-      (propagated-inputs (list git guile-3.0))
+      (propagated-inputs
+       (list git guile-3.0 wget
+             xclip file fzf rsync
+             swi-prolog ffmpeg
+             imagemagick entr pup))
       (license license:agpl3+)
       (home-page "https://git.vau.place/tegfs.git")
       (synopsis "TegFS virtual file system")
