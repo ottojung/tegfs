@@ -55,6 +55,7 @@ dist:
 .PHONY: test1 test2 test3 test4 all clean install reinstall uninstall
 
 dist/exampleroot.tar:
+	mkdir -p dist
 	wget "https://vau.place/static/tegfs-example-root.tar" -O "$@"
 
 $(TEST_ROOT): dist/exampleroot.tar

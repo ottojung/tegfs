@@ -20,6 +20,7 @@
  (gnu packages entr)
  ((gnu packages web) #:select (pup))
  ((gnu packages photo) #:select (perl-image-exiftool))
+ ((gnu packages base) #:select (tar))
  (ice-9 popen)
  (ice-9 rdelim))
 
@@ -33,7 +34,7 @@
        (list git guile-3.0 wget
              xclip file fzf rsync
              swi-prolog ffmpeg
-             imagemagick entr pup))
+             imagemagick entr pup tar))
       (license license:agpl3+)
       (home-page "https://git.vau.place/tegfs.git")
       (synopsis "TegFS virtual file system")
