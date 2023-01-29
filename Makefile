@@ -4,7 +4,7 @@ PREFIX_BIN=$(PREFIX)/bin
 PREFIX_SHARE=$(PREFIX)/share
 
 BINARY_PATH=$(PREFIX_BIN)/tegfs
-CODE_INSTALL_ROOT=$(PREFIX_SHARE)/tegfs/code
+CODE_INSTALL_ROOT=$(PREFIX_SHARE)/tegfs/src
 CODE_ROOT=$(PWD)/src
 
 TEST_ROOT=dist/exampleroot
@@ -29,7 +29,7 @@ uninstall:
 $(BINARY_PATH): dist/tegfs $(PREFIX_BIN)
 	mkdir -p "$(CODE_INSTALL_ROOT)"
 	rm -rf "$(CODE_INSTALL_ROOT)"
-	cp -p -T -L -r "$(CODE_ROOT)" "$(CODE_INSTALL_ROOT)"
+	cp -p -T -L -r "src" "$(CODE_INSTALL_ROOT)"
 	sed "s#$(CODE_ROOT)#$(CODE_INSTALL_ROOT)#g" dist/tegfs > "$@"
 	chmod +x "$@"
 
@@ -46,7 +46,7 @@ deps/euphrates/.git:
 	git submodule update --init
 
 dist/tegfs: src/tegfs/*.scm src/euphrates/*.scm dist $(SUBMODULES)
-	echo "#! /bin/sh" > "$@"
+	echo "#! $$(command -v sh)" > "$@"
 	printf "exec %s %s/tegfs/tegfs.scm \"%s%s\"\n" "$(GUILE)" "$(CODE_ROOT)" '$$' '@' >> "$@"
 	chmod +x "$@"
 
