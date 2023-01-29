@@ -17,13 +17,13 @@
 
 %var tegfs-query/open
 
-%use (assoc-or) "./euphrates/assoc-or.scm"
 %use (assq-or) "./euphrates/assq-or.scm"
 %use (directory-files-depth-iter) "./euphrates/directory-files-depth-iter.scm"
 %use (file-is-directory?/no-readlink) "./euphrates/file-is-directory-q-no-readlink.scm"
 %use (list-singleton?) "./euphrates/list-singleton-q.scm"
 %use (raisu) "./euphrates/raisu.scm"
 %use (entry-target-fullpath) "./entry-target-fullpath.scm"
+%use (keyword-tags) "./keyword-tags.scm"
 %use (standalone-file->entry) "./standalone-file-to-entry.scm"
 %use (tegfs-query/noopen) "./tegfs-query-noopen.scm"
 
@@ -35,7 +35,7 @@
     (define opener
       (let loop ((buf opening-properties))
         (if (null? buf) #f
-            (or (assoc-or (car buf) entry #f)
+            (or (assq-or (car buf) entry #f)
                 (loop (cdr buf))))))
 
     (if opener
@@ -83,7 +83,7 @@
          (let ()
            (define path (car p))
            (define subentry
-             (cons (cons 'tags (assq-or 'tags entry '()))
+             (cons (cons keyword-tags (assq-or keyword-tags entry '()))
                    (standalone-file->entry path)))
            subentry)))
 
