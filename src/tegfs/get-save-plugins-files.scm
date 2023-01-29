@@ -13,12 +13,14 @@
 ;;;; You should have received a copy of the GNU Affero General Public License
 ;;;; along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
-%run guile
+(cond-expand
+ (guile
+  (define-module (tegfs get-save-plugins-files)
+    :export (get-save-plugins-files)
+    :use-module ((euphrates directory-files) :select (directory-files))
+    :use-module ((tegfs get-save-plugins-directory) :select (get-save-plugins-directory)))))
 
-%var get-save-plugins-files
 
-%use (directory-files) "./euphrates/directory-files.scm"
-%use (get-save-plugins-directory) "./get-save-plugins-directory.scm"
 
 (define (get-save-plugins-files)
   (define dir (get-save-plugins-directory))

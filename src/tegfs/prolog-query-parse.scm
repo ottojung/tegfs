@@ -13,18 +13,20 @@
 ;;;; You should have received a copy of the GNU Affero General Public License
 ;;;; along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
-%run guile
+(cond-expand
+ (guile
+  (define-module (tegfs prolog-query-parse)
+    :export (prolog-query-parse)
+    :use-module ((euphrates comp) :select (comp))
+    :use-module ((euphrates curry-if) :select (curry-if))
+    :use-module ((euphrates fn-cons) :select (fn-cons))
+    :use-module ((euphrates list-deduplicate) :select (list-deduplicate/reverse))
+    :use-module ((euphrates tilda-a) :select (~a))
+    :use-module ((tegfs parse-tag) :select (parse-tag))
+    :use-module ((tegfs prolog-var) :select (make-prolog-var))
+    :use-module ((tegfs tags-this-variable) :select (tags-this-variable/string)))))
 
-%var prolog-query-parse
 
-%use (comp) "./euphrates/comp.scm"
-%use (curry-if) "./euphrates/curry-if.scm"
-%use (fn-cons) "./euphrates/fn-cons.scm"
-%use (list-deduplicate/reverse) "./euphrates/list-deduplicate.scm"
-%use (~a) "./euphrates/tilda-a.scm"
-%use (parse-tag) "./parse-tag.scm"
-%use (make-prolog-var) "./prolog-var.scm"
-%use (tags-this-variable/string) "./tags-this-variable.scm"
 
 (define (prolog-query-parse <query...>)
   (define (tovar x)

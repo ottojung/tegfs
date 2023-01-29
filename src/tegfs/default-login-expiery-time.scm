@@ -13,11 +13,13 @@
 ;;;; You should have received a copy of the GNU Affero General Public License
 ;;;; along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
-%run guile
+(cond-expand
+ (guile
+  (define-module (tegfs default-login-expiery-time)
+    :export (default-login-expiery-time)
+    :use-module ((euphrates string-to-seconds) :select (string->seconds)))))
 
-%var default-login-expiery-time
 
-%use (string->seconds) "./euphrates/string-to-seconds.scm"
 
 (define default-login-expiery-time
   (string->seconds "12h"))

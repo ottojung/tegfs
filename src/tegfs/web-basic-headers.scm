@@ -13,9 +13,11 @@
 ;;;; You should have received a copy of the GNU Affero General Public License
 ;;;; along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
-%run guile
+(cond-expand
+ (guile
+  (define-module (tegfs web-basic-headers)
+    :export (web::basic-headers))))
 
-%var web::basic-headers
 
 (define web::basic-headers
   '((referrer-policy . "strict-origin-when-cross-origin") ;; optional, ensures not to send too much user data.

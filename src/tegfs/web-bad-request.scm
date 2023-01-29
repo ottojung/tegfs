@@ -13,12 +13,14 @@
 ;;;; You should have received a copy of the GNU Affero General Public License
 ;;;; along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
-%run guile
+(cond-expand
+ (guile
+  (define-module (tegfs web-bad-request)
+    :export (web::bad-request)
+    :use-module ((euphrates stringf) :select (stringf))
+    :use-module ((tegfs web-static-error-message) :select (web::static-error-message)))))
 
-%var web::bad-request
 
-%use (stringf) "./euphrates/stringf.scm"
-%use (web::static-error-message) "./web-static-error-message.scm"
 
 (define (web::bad-request fmt . args)
   (define str (apply stringf (cons fmt args)))

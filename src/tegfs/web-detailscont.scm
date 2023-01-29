@@ -13,31 +13,33 @@
 ;;;; You should have received a copy of the GNU Affero General Public License
 ;;;; along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
-%run guile
+(cond-expand
+ (guile
+  (define-module (tegfs web-detailscont)
+    :export (web::details::continue)
+    :use-module ((euphrates assoc-set-value) :select (assoc-set-value))
+    :use-module ((euphrates assq-or) :select (assq-or))
+    :use-module ((euphrates hashmap) :select (hashmap-foreach hashmap-ref))
+    :use-module ((euphrates memconst) :select (memconst))
+    :use-module ((euphrates raisu) :select (raisu))
+    :use-module ((euphrates string-drop-n) :select (string-drop-n))
+    :use-module ((euphrates string-to-words) :select (string->words))
+    :use-module ((tegfs keyword-id) :select (keyword-id))
+    :use-module ((tegfs keyword-tags) :select (keyword-tags))
+    :use-module ((tegfs update-entry) :select (update-entry))
+    :use-module ((tegfs web-body-get-data) :select (web::body::get-data/decode))
+    :use-module ((tegfs web-body-not-found) :select (web::body-not-found))
+    :use-module ((tegfs web-callcontext-p) :select (web::callcontext/p))
+    :use-module ((tegfs web-callcontext) :select (callcontext-body callcontext-token))
+    :use-module ((tegfs web-get-query) :select (web::get-query))
+    :use-module ((tegfs web-iterate-profun-results) :select (web::iterate-profun-results))
+    :use-module ((tegfs web-make-info-box-response) :select (web::make-info-box-response))
+    :use-module ((tegfs web-not-found) :select (web::not-found))
+    :use-module ((tegfs web-parse-multipart) :select (parse-multipart-as-hashmap))
+    :use-module ((tegfs web-return) :select (web::return))
+    :use-module ((tegfs webcore-ask) :select (webcore::ask)))))
 
-%var web::details::continue
 
-%use (assoc-set-value) "./euphrates/assoc-set-value.scm"
-%use (assq-or) "./euphrates/assq-or.scm"
-%use (hashmap-foreach hashmap-ref) "./euphrates/hashmap.scm"
-%use (memconst) "./euphrates/memconst.scm"
-%use (raisu) "./euphrates/raisu.scm"
-%use (string-drop-n) "./euphrates/string-drop-n.scm"
-%use (string->words) "./euphrates/string-to-words.scm"
-%use (keyword-id) "./keyword-id.scm"
-%use (keyword-tags) "./keyword-tags.scm"
-%use (update-entry) "./update-entry.scm"
-%use (web::body::get-data/decode) "./web-body-get-data.scm"
-%use (web::body-not-found) "./web-body-not-found.scm"
-%use (web::callcontext/p) "./web-callcontext-p.scm"
-%use (callcontext-body callcontext-token) "./web-callcontext.scm"
-%use (web::get-query) "./web-get-query.scm"
-%use (web::iterate-profun-results) "./web-iterate-profun-results.scm"
-%use (web::make-info-box-response) "./web-make-info-box-response.scm"
-%use (web::not-found) "./web-not-found.scm"
-%use (parse-multipart-as-hashmap) "./web-parse-multipart.scm"
-%use (web::return) "./web-return.scm"
-%use (webcore::ask) "./webcore-ask.scm"
 
 (define (web::detailscont/3 callctx body/bytes original-entry)
   (define body/hash

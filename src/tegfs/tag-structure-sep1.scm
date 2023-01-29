@@ -13,8 +13,10 @@
 ;;;; You should have received a copy of the GNU Affero General Public License
 ;;;; along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
-%run guile
+(cond-expand
+ (guile
+  (define-module (tegfs tag-structure-sep1)
+    :export (tag-structure-sep1))))
 
-%var tag-structure-sep1
 
 (define tag-structure-sep1 #\=)

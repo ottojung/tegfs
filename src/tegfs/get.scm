@@ -13,21 +13,21 @@
 ;;;; You should have received a copy of the GNU Affero General Public License
 ;;;; along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
-%run guile
+(cond-expand
+ (guile
+  (define-module (tegfs get)
+    :export (tegfs-get tegfs-get/parse tegfs-get/cached)
+    :use-module ((euphrates absolute-posix-path-q) :select (absolute-posix-path?))
+    :use-module ((euphrates dprintln) :select (dprintln))
+    :use-module ((euphrates hashmap) :select (hashmap-clear! hashmap-ref make-hashmap))
+    :use-module ((tegfs entries-for-each) :select (entries-for-each))
+    :use-module ((tegfs entries-to-hashmap) :select (entries->hashmap))
+    :use-module ((tegfs entry-print-formatted) :select (entry-print/formatted))
+    :use-module ((tegfs entry-print) :select (entry-print))
+    :use-module ((tegfs keyword-id) :select (keyword-id))
+    :use-module ((tegfs standalone-file-to-entry) :select (standalone-file->entry)))))
 
-%var tegfs-get
-%var tegfs-get/parse
-%var tegfs-get/cached
 
-%use (absolute-posix-path?) "./euphrates/absolute-posix-path-q.scm"
-%use (dprintln) "./euphrates/dprintln.scm"
-%use (hashmap-clear! hashmap-ref make-hashmap) "./euphrates/hashmap.scm"
-%use (entries-for-each) "./entries-for-each.scm"
-%use (entries->hashmap) "./entries-to-hashmap.scm"
-%use (entry-print/formatted) "./entry-print-formatted.scm"
-%use (entry-print) "./entry-print.scm"
-%use (keyword-id) "./keyword-id.scm"
-%use (standalone-file->entry) "./standalone-file-to-entry.scm"
 
 (define (tegfs-get/parse <get-format> <showid>)
   (define entry (tegfs-get <showid>))

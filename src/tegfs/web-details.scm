@@ -13,27 +13,29 @@
 ;;;; You should have received a copy of the GNU Affero General Public License
 ;;;; along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
-%run guile
+(cond-expand
+ (guile
+  (define-module (tegfs web-details)
+    :export (web::details)
+    :use-module ((euphrates hashmap) :select (hashmap-ref))
+    :use-module ((euphrates printf) :select (printf))
+    :use-module ((euphrates raisu) :select (raisu))
+    :use-module ((euphrates stringf) :select (stringf))
+    :use-module ((euphrates tilda-a) :select (~a))
+    :use-module ((euphrates words-to-string) :select (words->string))
+    :use-module ((tegfs keyword-tags) :select (keyword-tags))
+    :use-module ((tegfs keyword-target) :select (keyword-target))
+    :use-module ((tegfs web-callcontext-p) :select (web::callcontext/p))
+    :use-module ((tegfs web-callcontext) :select (callcontext-query callcontext-token))
+    :use-module ((tegfs web-detailscont) :select (web::details::continue))
+    :use-module ((tegfs web-form-template-wide) :select (web::form-template/wide))
+    :use-module ((tegfs web-get-query) :select (web::get-query))
+    :use-module ((tegfs web-iterate-profun-results) :select (web::iterate-profun-results))
+    :use-module ((tegfs web-make-html-response) :select (web::make-html-response))
+    :use-module ((tegfs web-not-found) :select (web::not-found))
+    :use-module ((tegfs webcore-ask) :select (webcore::ask)))))
 
-%var web::details
 
-%use (hashmap-ref) "./euphrates/hashmap.scm"
-%use (printf) "./euphrates/printf.scm"
-%use (raisu) "./euphrates/raisu.scm"
-%use (stringf) "./euphrates/stringf.scm"
-%use (~a) "./euphrates/tilda-a.scm"
-%use (words->string) "./euphrates/words-to-string.scm"
-%use (keyword-tags) "./keyword-tags.scm"
-%use (keyword-target) "./keyword-target.scm"
-%use (web::callcontext/p) "./web-callcontext-p.scm"
-%use (callcontext-query callcontext-token) "./web-callcontext.scm"
-%use (web::details::continue) "./web-detailscont.scm"
-%use (web::form-template/wide) "./web-form-template-wide.scm"
-%use (web::get-query) "./web-get-query.scm"
-%use (web::iterate-profun-results) "./web-iterate-profun-results.scm"
-%use (web::make-html-response) "./web-make-html-response.scm"
-%use (web::not-found) "./web-not-found.scm"
-%use (webcore::ask) "./webcore-ask.scm"
 
 (define (web::actual-details entry)
   (define ctxq (web::get-query))

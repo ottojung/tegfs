@@ -13,18 +13,19 @@
 ;;;; You should have received a copy of the GNU Affero General Public License
 ;;;; along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
-%run guile
+(cond-expand
+ (guile
+  (define-module (tegfs edit-tags)
+    :export (tegfs-edit-tags tegfs-process-categorization-text)
+    :use-module ((euphrates raisu) :select (raisu))
+    :use-module ((euphrates read-string-file) :select (read-string-file))
+    :use-module ((euphrates system-fmt) :select (system-fmt))
+    :use-module ((tegfs categorization-complete-selection-cont) :select (categorization-complete-selection/cont))
+    :use-module ((tegfs categorization-parse-tags) :select (categorization-parse-tags))
+    :use-module ((tegfs categorization-starred-symbol-huh) :select (categorization-starred-symbol?))
+    :use-module ((tegfs parsed-categorization-tags-get-all) :select (parsed-categorization-tags-get-all)))))
 
-%var tegfs-edit-tags
-%var tegfs-process-categorization-text
 
-%use (raisu) "./euphrates/raisu.scm"
-%use (read-string-file) "./euphrates/read-string-file.scm"
-%use (system-fmt) "./euphrates/system-fmt.scm"
-%use (categorization-complete-selection/cont) "./categorization-complete-selection-cont.scm"
-%use (categorization-parse-tags) "./categorization-parse-tags.scm"
-%use (categorization-starred-symbol?) "./categorization-starred-symbol-huh.scm"
-%use (parsed-categorization-tags-get-all) "./parsed-categorization-tags-get-all.scm"
 
 (define (tegfs-edit-tags working-file)
   (unless working-file

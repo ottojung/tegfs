@@ -13,45 +13,48 @@
 ;;;; You should have received a copy of the GNU Affero General Public License
 ;;;; along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
-%run guile
+(cond-expand
+ (guile
+  (define-module (tegfs web-uploadcont)
+    :export (web::uploadcont)
+    :use-module ((euphrates append-posix-path) :select (append-posix-path))
+    :use-module ((euphrates comp) :select (appcomp))
+    :use-module ((euphrates file-delete) :select (file-delete))
+    :use-module ((euphrates file-or-directory-exists-q) :select (file-or-directory-exists?))
+    :use-module ((euphrates hashmap) :select (hashmap-foreach hashmap-ref))
+    :use-module ((euphrates make-directories) :select (make-directories))
+    :use-module ((euphrates open-file-port) :select (open-file-port))
+    :use-module ((euphrates path-get-dirname) :select (path-get-dirname))
+    :use-module ((euphrates string-drop-n) :select (string-drop-n))
+    :use-module ((euphrates string-to-words) :select (string->words))
+    :use-module ((euphrates tilda-a) :select (~a))
+    :use-module ((tegfs add-entry) :select (add-entry))
+    :use-module ((tegfs categorization-complete-selection) :select (categorization-complete-selection))
+    :use-module ((tegfs default-share-expiery-time) :select (default-share-expiery-time))
+    :use-module ((tegfs get-random-basename) :select (get-random-basename))
+    :use-module ((tegfs get-root) :select (get-root))
+    :use-module ((tegfs keyword-entry-registry-path) :select (keyword-entry-registry-path))
+    :use-module ((tegfs keyword-tags) :select (keyword-tags))
+    :use-module ((tegfs keyword-target) :select (keyword-target))
+    :use-module ((tegfs keyword-title) :select (keyword-title))
+    :use-module ((tegfs web-body-get-data) :select (web::body::get-data web::body::get-data/decode))
+    :use-module ((tegfs web-body-not-found) :select (web::body-not-found))
+    :use-module ((tegfs web-callcontext-p) :select (web::callcontext/p))
+    :use-module ((tegfs web-callcontext) :select (callcontext-body callcontext-token))
+    :use-module ((tegfs web-handle-profun-results) :select (web::handle-profun-results/default-fail-fun))
+    :use-module ((tegfs web-iterate-profun-results) :select (web::iterate-profun-results))
+    :use-module ((tegfs web-make-info-box-response) :select (web::make-info-box-response))
+    :use-module ((tegfs web-parse-multipart) :select (parse-multipart-as-hashmap))
+    :use-module ((tegfs web-return) :select (web::return))
+    :use-module ((tegfs web-static-error-message) :select (web::static-error-message))
+    :use-module ((tegfs webcore-ask) :select (webcore::ask)))))
 
-%var web::uploadcont
 
-%use (append-posix-path) "./euphrates/append-posix-path.scm"
-%use (appcomp) "./euphrates/comp.scm"
-%use (file-delete) "./euphrates/file-delete.scm"
-%use (file-or-directory-exists?) "./euphrates/file-or-directory-exists-q.scm"
-%use (hashmap-foreach hashmap-ref) "./euphrates/hashmap.scm"
-%use (make-directories) "./euphrates/make-directories.scm"
-%use (open-file-port) "./euphrates/open-file-port.scm"
-%use (path-get-dirname) "./euphrates/path-get-dirname.scm"
-%use (string-drop-n) "./euphrates/string-drop-n.scm"
-%use (string->words) "./euphrates/string-to-words.scm"
-%use (~a) "./euphrates/tilda-a.scm"
-%use (add-entry) "./add-entry.scm"
-%use (categorization-complete-selection) "./categorization-complete-selection.scm"
-%use (default-share-expiery-time) "./default-share-expiery-time.scm"
-%use (get-random-basename) "./get-random-basename.scm"
-%use (get-root) "./get-root.scm"
-%use (keyword-entry-registry-path) "./keyword-entry-registry-path.scm"
-%use (keyword-tags) "./keyword-tags.scm"
-%use (keyword-target) "./keyword-target.scm"
-%use (keyword-title) "./keyword-title.scm"
-%use (web::body::get-data web::body::get-data/decode) "./web-body-get-data.scm"
-%use (web::body-not-found) "./web-body-not-found.scm"
-%use (web::callcontext/p) "./web-callcontext-p.scm"
-%use (callcontext-body callcontext-token) "./web-callcontext.scm"
-%use (web::handle-profun-results/default-fail-fun) "./web-handle-profun-results.scm"
-%use (web::iterate-profun-results) "./web-iterate-profun-results.scm"
-%use (web::make-info-box-response) "./web-make-info-box-response.scm"
-%use (parse-multipart-as-hashmap) "./web-parse-multipart.scm"
-%use (web::return) "./web-return.scm"
-%use (web::static-error-message) "./web-static-error-message.scm"
-%use (webcore::ask) "./webcore-ask.scm"
 
-%for (COMPILER "guile")
-(use-modules (ice-9 binary-ports))
-%end
+(cond-expand
+ (guile
+  (use-modules (ice-9 binary-ports))
+  ))
 
 ;; TODO: read from config
 (define upload-registry-filename "upload/upload.tegfs.reg.lisp")

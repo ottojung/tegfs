@@ -13,20 +13,22 @@
 ;;;; You should have received a copy of the GNU Affero General Public License
 ;;;; along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
-%run guile
+(cond-expand
+ (guile
+  (define-module (tegfs web-make-context)
+    :export (web::make-context)
+    :use-module ((euphrates file-or-directory-exists-q) :select (file-or-directory-exists?))
+    :use-module ((euphrates hashmap) :select (hashmap-set! make-hashmap))
+    :use-module ((euphrates make-directories) :select (make-directories))
+    :use-module ((euphrates raisu) :select (raisu))
+    :use-module ((euphrates tilda-a) :select (~a))
+    :use-module ((tegfs web-default-port) :select (web::default-port))
+    :use-module ((tegfs filemap) :select (filemap-make/empty))
+    :use-module ((tegfs get-config) :select (get-config))
+    :use-module ((tegfs keyword-config-port) :select (keyword-config-port))
+    :use-module ((tegfs web-context) :select (context-ctr)))))
 
-%var web::make-context
 
-%use (file-or-directory-exists?) "./euphrates/file-or-directory-exists-q.scm"
-%use (hashmap-set! make-hashmap) "./euphrates/hashmap.scm"
-%use (make-directories) "./euphrates/make-directories.scm"
-%use (raisu) "./euphrates/raisu.scm"
-%use (~a) "./euphrates/tilda-a.scm"
-%use (web::default-port) "./web-default-port.scm"
-%use (filemap-make/empty) "./filemap.scm"
-%use (get-config) "./get-config.scm"
-%use (keyword-config-port) "./keyword-config-port.scm"
-%use (context-ctr) "./web-context.scm"
 
 (define (web::make-context)
   (define passwords (make-hashmap))

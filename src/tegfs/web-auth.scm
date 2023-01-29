@@ -13,16 +13,18 @@
 ;;;; You should have received a copy of the GNU Affero General Public License
 ;;;; along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
-%run guile
+(cond-expand
+ (guile
+  (define-module (tegfs web-auth)
+    :export (web::auth)
+    :use-module ((euphrates hashmap) :select (hashmap-ref))
+    :use-module ((tegfs web-authcont) :select (web::authcont))
+    :use-module ((tegfs web-callcontext-p) :select (web::callcontext/p))
+    :use-module ((tegfs web-callcontext) :select (callcontext-query))
+    :use-module ((tegfs web-get-auth-body) :select (web::get-auth-body))
+    :use-module ((tegfs web-make-html-response) :select (web::make-html-response)))))
 
-%var web::auth
 
-%use (hashmap-ref) "./euphrates/hashmap.scm"
-%use (web::authcont) "./web-authcont.scm"
-%use (web::callcontext/p) "./web-callcontext-p.scm"
-%use (callcontext-query) "./web-callcontext.scm"
-%use (web::get-auth-body) "./web-get-auth-body.scm"
-%use (web::make-html-response) "./web-make-html-response.scm"
 
 (define (web::authinitial callctx query)
   (define failed-v (hashmap-ref query 'failed 'false))

@@ -13,20 +13,22 @@
 ;;;; You should have received a copy of the GNU Affero General Public License
 ;;;; along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
-%run guile
+(cond-expand
+ (guile
+  (define-module (tegfs webcore-set-categorization)
+    :export (webcore::set-categorization)
+    :use-module ((euphrates append-posix-path) :select (append-posix-path))
+    :use-module ((euphrates profun-accept) :select (profun-accept))
+    :use-module ((euphrates profun-error) :select (make-profun-error))
+    :use-module ((euphrates profun-op-lambda) :select (profun-op-lambda))
+    :use-module ((euphrates profun-value) :select (profun-unbound-value?))
+    :use-module ((euphrates write-string-file) :select (write-string-file))
+    :use-module ((tegfs categorization-filename) :select (categorization-filename))
+    :use-module ((tegfs get-root) :select (get-root))
+    :use-module ((tegfs webcore-access) :select (can-modify-categorization?))
+    :use-module ((tegfs webcore-parameters) :select (webcore::permissions/p)))))
 
-%var webcore::set-categorization
 
-%use (append-posix-path) "./euphrates/append-posix-path.scm"
-%use (profun-accept) "./euphrates/profun-accept.scm"
-%use (make-profun-error) "./euphrates/profun-error.scm"
-%use (profun-op-lambda) "./euphrates/profun-op-lambda.scm"
-%use (profun-unbound-value?) "./euphrates/profun-value.scm"
-%use (write-string-file) "./euphrates/write-string-file.scm"
-%use (categorization-filename) "./categorization-filename.scm"
-%use (get-root) "./get-root.scm"
-%use (can-modify-categorization?) "./webcore-access.scm"
-%use (webcore::permissions/p) "./webcore-parameters.scm"
 
 (define (webcore::set-categorization web::context)
   (profun-op-lambda

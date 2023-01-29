@@ -13,22 +13,24 @@
 ;;;; You should have received a copy of the GNU Affero General Public License
 ;;;; along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
-%run guile
+(cond-expand
+ (guile
+  (define-module (tegfs web-share-file)
+    :export (web::share-file/dont-link-yet)
+    :use-module ((euphrates hashmap) :select (hashmap-set!))
+    :use-module ((euphrates raisu) :select (raisu))
+    :use-module ((euphrates string-to-seconds) :select (string->seconds))
+    :use-module ((tegfs current-time-p) :select (current-time/p))
+    :use-module ((tegfs filemap) :select (filemap-set!))
+    :use-module ((tegfs get-sharedinfo-for-perm) :select (get-sharedinfo-for-perm))
+    :use-module ((tegfs make-sharedinfo) :select (make-sharedinfo))
+    :use-module ((tegfs permission-time-left) :select (permission-time-left))
+    :use-module ((tegfs permission) :select (permission-filemap))
+    :use-module ((tegfs sharedinfo) :select (set-sharedinfo-stime! sharedinfo-stime))
+    :use-module ((tegfs web-context) :select (context-filemap/2))
+    :use-module ((tegfs webcore-access) :select (can-share-longer-than-view?)))))
 
-%var web::share-file/dont-link-yet
 
-%use (hashmap-set!) "./euphrates/hashmap.scm"
-%use (raisu) "./euphrates/raisu.scm"
-%use (string->seconds) "./euphrates/string-to-seconds.scm"
-%use (current-time/p) "./current-time-p.scm"
-%use (filemap-set!) "./filemap.scm"
-%use (get-sharedinfo-for-perm) "./get-sharedinfo-for-perm.scm"
-%use (make-sharedinfo) "./make-sharedinfo.scm"
-%use (permission-time-left) "./permission-time-left.scm"
-%use (permission-filemap) "./permission.scm"
-%use (set-sharedinfo-stime! sharedinfo-stime) "./sharedinfo.scm"
-%use (context-filemap/2) "./web-context.scm"
-%use (can-share-longer-than-view?) "./webcore-access.scm"
 
 (define (web::share-file/dont-link-yet ctx perm entry target-fullpath for-duration)
   (define filemap/2 (context-filemap/2 ctx))

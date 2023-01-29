@@ -13,14 +13,16 @@
 ;;;; You should have received a copy of the GNU Affero General Public License
 ;;;; along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
-%run guile
+(cond-expand
+ (guile
+  (define-module (tegfs web-make-upload-body)
+    :export (web::make-upload-body)
+    :use-module ((tegfs categorization-first-order-tag-huh) :select (categorization::first-order-tag?))
+    :use-module ((tegfs categorization-get-all-tags) :select (categorization-get-all-tags))
+    :use-module ((tegfs web-form-template-wide) :select (web::form-template/wide))
+    :use-module ((tegfs web-sxml-to-xml) :select (web::sxml->xml)))))
 
-%var web::make-upload-body
 
-%use (categorization::first-order-tag?) "./categorization-first-order-tag-huh.scm"
-%use (categorization-get-all-tags) "./categorization-get-all-tags.scm"
-%use (web::form-template/wide) "./web-form-template-wide.scm"
-%use (web::sxml->xml) "./web-sxml-to-xml.scm"
 
 (define (web::make-upload-body categorization-text)
   (define all-tags

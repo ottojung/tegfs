@@ -13,13 +13,15 @@
 ;;;; You should have received a copy of the GNU Affero General Public License
 ;;;; along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
-%run guile
+(cond-expand
+ (guile
+  (define-module (tegfs entry-limit-fields)
+    :export (entry-limit-fields)
+    :use-module ((tegfs webcore-access) :select (has-access-for-entry-details? has-access-for-entry-target?))
+    :use-module ((tegfs keyword-target) :select (keyword-target))
+    :use-module ((tegfs keyword-title) :select (keyword-title)))))
 
-%var entry-limit-fields
 
-%use (has-access-for-entry-details? has-access-for-entry-target?) "./webcore-access.scm"
-%use (keyword-target) "./keyword-target.scm"
-%use (keyword-title) "./keyword-title.scm"
 
 (define target-fields
   (list keyword-target

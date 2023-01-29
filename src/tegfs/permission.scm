@@ -13,26 +13,14 @@
 ;;;; You should have received a copy of the GNU Affero General Public License
 ;;;; along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
-%run guile
+(cond-expand
+ (guile
+  (define-module (tegfs permission)
+    :export (permission-constructor permission? permission-token permission-start permission-time permission-admin? permission-maybepassword permission-uploadaccess? permission-entry-view-access? permission-entry-modify-access? permission-cat-view-access? permission-cat-modify-access? permission-share-longer-than-view? permission-filemap permission-idset)
+    :use-module ((euphrates assq-or) :select (assq-or))
+    :use-module ((euphrates define-type9) :select (define-type9)))))
 
-%var permission-constructor
-%var permission?
-%var permission-token
-%var permission-start
-%var permission-time
-%var permission-admin?
-%var permission-maybepassword
-%var permission-uploadaccess?
-%var permission-entry-view-access?
-%var permission-entry-modify-access?
-%var permission-cat-view-access?
-%var permission-cat-modify-access?
-%var permission-share-longer-than-view?
-%var permission-filemap
-%var permission-idset
 
-%use (assq-or) "./euphrates/assq-or.scm"
-%use (define-type9) "./euphrates/define-type9.scm"
 
 (define-type9 <permission>
   (permission-constructor token start time admin? dynamic filemap idset) permission?

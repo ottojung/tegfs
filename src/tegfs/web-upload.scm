@@ -13,18 +13,20 @@
 ;;;; You should have received a copy of the GNU Affero General Public License
 ;;;; along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
-%run guile
+(cond-expand
+ (guile
+  (define-module (tegfs web-upload)
+    :export (web::upload)
+    :use-module ((euphrates hashmap) :select (hashmap-ref))
+    :use-module ((tegfs web-callcontext-p) :select (web::callcontext/p))
+    :use-module ((tegfs web-callcontext) :select (callcontext-query callcontext-token))
+    :use-module ((tegfs web-iterate-profun-results) :select (web::iterate-profun-results))
+    :use-module ((tegfs web-make-html-response) :select (web::make-html-response))
+    :use-module ((tegfs web-make-upload-body) :select (web::make-upload-body))
+    :use-module ((tegfs web-uploadcont) :select (web::uploadcont))
+    :use-module ((tegfs webcore-ask) :select (webcore::ask)))))
 
-%var web::upload
 
-%use (hashmap-ref) "./euphrates/hashmap.scm"
-%use (web::callcontext/p) "./web-callcontext-p.scm"
-%use (callcontext-query callcontext-token) "./web-callcontext.scm"
-%use (web::iterate-profun-results) "./web-iterate-profun-results.scm"
-%use (web::make-html-response) "./web-make-html-response.scm"
-%use (web::make-upload-body) "./web-make-upload-body.scm"
-%use (web::uploadcont) "./web-uploadcont.scm"
-%use (webcore::ask) "./webcore-ask.scm"
 
 (define (web::upload::initial callctx)
   (define key (callcontext-token callctx))

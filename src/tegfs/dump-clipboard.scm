@@ -13,17 +13,17 @@
 ;;;; You should have received a copy of the GNU Affero General Public License
 ;;;; along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
-%run guile
+(cond-expand
+ (guile
+  (define-module (tegfs dump-clipboard)
+    :export (tegfs-dump-clipboard tegfs-dump-clipboard/parse tegfs-dump-clipboard/pasta)
+    :use-module ((euphrates make-temporary-filename) :select (make-temporary-filename))
+    :use-module ((euphrates raisu) :select (raisu))
+    :use-module ((euphrates write-string-file) :select (write-string-file))
+    :use-module ((tegfs clipboard) :select (choose-clipboard-data-type classify-clipboard-text-content dump-clipboard-to-file get-clipboard-text-content get-clipboard-type-extension))
+    :use-module ((tegfs fatal) :select (fatal)))))
 
-%var tegfs-dump-clipboard
-%var tegfs-dump-clipboard/parse
-%var tegfs-dump-clipboard/pasta
 
-%use (make-temporary-filename) "./euphrates/make-temporary-filename.scm"
-%use (raisu) "./euphrates/raisu.scm"
-%use (write-string-file) "./euphrates/write-string-file.scm"
-%use (choose-clipboard-data-type classify-clipboard-text-content dump-clipboard-to-file get-clipboard-text-content get-clipboard-type-extension) "./clipboard.scm"
-%use (fatal) "./fatal.scm"
 
 (define (tegfs-dump-clipboard/pasta text)
   (let* ((pref (make-temporary-filename))

@@ -13,13 +13,15 @@
 ;;;; You should have received a copy of the GNU Affero General Public License
 ;;;; along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
-%run guile
+(cond-expand
+ (guile
+  (define-module (tegfs entry-get-mimetype)
+    :export (entry-get-mimetype)
+    :use-module ((euphrates assq-or) :select (assq-or))
+    :use-module ((euphrates raisu) :select (raisu))
+    :use-module ((tegfs keyword-mimetype) :select (keyword-mimetype)))))
 
-%var entry-get-mimetype
 
-%use (assq-or) "./euphrates/assq-or.scm"
-%use (raisu) "./euphrates/raisu.scm"
-%use (keyword-mimetype) "./keyword-mimetype.scm"
 
 (define (entry-get-mimetype entry)
   (unless (pair? entry)

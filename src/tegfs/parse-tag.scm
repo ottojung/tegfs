@@ -13,20 +13,21 @@
 ;;;; You should have received a copy of the GNU Affero General Public License
 ;;;; along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
-%run guile
+(cond-expand
+ (guile
+  (define-module (tegfs parse-tag)
+    :export (parse-tag parse-tag-structure)
+    :use-module ((euphrates comp) :select (comp))
+    :use-module ((euphrates list-intersperse) :select (list-intersperse))
+    :use-module ((euphrates list-ref-or) :select (list-ref-or))
+    :use-module ((euphrates list-split-on) :select (list-split-on))
+    :use-module ((euphrates raisu) :select (raisu))
+    :use-module ((euphrates tilda-a) :select (~a))
+    :use-module ((tegfs tag-structure-sep1) :select (tag-structure-sep1))
+    :use-module ((tegfs tag-structure-sep2) :select (tag-structure-sep2))
+    :use-module ((tegfs tags-this-variable) :select (tags-this-variable/char)))))
 
-%var parse-tag
-%var parse-tag-structure
 
-%use (comp) "./euphrates/comp.scm"
-%use (list-intersperse) "./euphrates/list-intersperse.scm"
-%use (list-ref-or) "./euphrates/list-ref-or.scm"
-%use (list-split-on) "./euphrates/list-split-on.scm"
-%use (raisu) "./euphrates/raisu.scm"
-%use (~a) "./euphrates/tilda-a.scm"
-%use (tag-structure-sep1) "./tag-structure-sep1.scm"
-%use (tag-structure-sep2) "./tag-structure-sep2.scm"
-%use (tags-this-variable/char) "./tags-this-variable.scm"
 
 (define (parse-tag-structure/chars counter)
   (lambda (tag)

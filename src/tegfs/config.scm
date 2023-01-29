@@ -13,13 +13,15 @@
 ;;;; You should have received a copy of the GNU Affero General Public License
 ;;;; along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
-%run guile
+(cond-expand
+ (guile
+  (define-module (tegfs config)
+    :export (tegfs-config/parse)
+    :use-module ((tegfs fatal) :select (fatal))
+    :use-module ((tegfs get-config) :select (get-config))
+    :use-module ((tegfs set-config) :select (set-config)))))
 
-%var tegfs-config/parse
 
-%use (fatal) "./fatal.scm"
-%use (get-config) "./get-config.scm"
-%use (set-config) "./set-config.scm"
 
 (define (tegfs-config/parse get set <name> <value>)
   (define config (get-config))

@@ -13,13 +13,15 @@
 ;;;; You should have received a copy of the GNU Affero General Public License
 ;;;; along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
-%run guile
+(cond-expand
+ (guile
+  (define-module (tegfs web-collectgarbage)
+    :export (web::collectgarbage)
+    :use-module ((tegfs web-collect-own-garbage) :select (web::collect-own-garbage))
+    :use-module ((tegfs web-return) :select (web::return))
+    :use-module ((tegfs webcore-ask) :select (webcore::ask)))))
 
-%var web::collectgarbage
 
-%use (web::collect-own-garbage) "./web-collect-own-garbage.scm"
-%use (web::return) "./web-return.scm"
-%use (webcore::ask) "./webcore-ask.scm"
 
 (define (web::collectgarbage)
   (webcore::ask `(whats (collectgarbage)))

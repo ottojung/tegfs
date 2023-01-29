@@ -13,12 +13,14 @@
 ;;;; You should have received a copy of the GNU Affero General Public License
 ;;;; along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
-%run guile
+(cond-expand
+ (guile
+  (define-module (tegfs get-save-plugins)
+    :export (get-save-plugins)
+    :use-module ((tegfs get-save-plugins-files) :select (get-save-plugins-files))
+    :use-module ((tegfs load-plugin) :select (load-plugin)))))
 
-%var get-save-plugins
 
-%use (get-save-plugins-files) "./get-save-plugins-files.scm"
-%use (load-plugin) "./load-plugin.scm"
 
 (define (get-save-plugins)
   (define files (get-save-plugins-files))

@@ -13,18 +13,20 @@
 ;;;; You should have received a copy of the GNU Affero General Public License
 ;;;; along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
-%run guile
+(cond-expand
+ (guile
+  (define-module (tegfs CLI-query)
+    :export (CLI::query)
+    :use-module ((euphrates comp) :select (comp))
+    :use-module ((euphrates fn-alist) :select (fn-alist))
+    :use-module ((euphrates printf) :select (printf))
+    :use-module ((euphrates profune-communicator) :select (profune-communicator-handle))
+    :use-module ((tegfs entry-print-formatted) :select (entry-print/formatted))
+    :use-module ((tegfs entry-print) :select (entry-print))
+    :use-module ((tegfs fatal) :select (fatal))
+    :use-module ((tegfs tegfs-make-communicator) :select (tegfs-make-communicator)))))
 
-%var CLI::query
 
-%use (comp) "./euphrates/comp.scm"
-%use (fn-alist) "./euphrates/fn-alist.scm"
-%use (printf) "./euphrates/printf.scm"
-%use (profune-communicator-handle) "./euphrates/profune-communicator.scm"
-%use (entry-print/formatted) "./entry-print-formatted.scm"
-%use (entry-print) "./entry-print.scm"
-%use (fatal) "./fatal.scm"
-%use (tegfs-make-communicator) "./tegfs-make-communicator.scm"
 
 (define (CLI::query --diropen --dirpreview --entries <query-format> <query...>)
   (define print-func

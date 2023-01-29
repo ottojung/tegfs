@@ -13,11 +13,13 @@
 ;;;; You should have received a copy of the GNU Affero General Public License
 ;;;; along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
-%run guile
+(cond-expand
+ (guile
+  (define-module (tegfs web-form-template-wide)
+    :export (web::form-template/wide)
+    :use-module ((tegfs web-form-template-generic) :select (web::form-template/generic)))))
 
-%var web::form-template/wide
 
-%use (web::form-template/generic) "./web-form-template-generic.scm"
 
 (define web::form-template/wide
   (case-lambda

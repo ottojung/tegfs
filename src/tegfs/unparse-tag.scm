@@ -13,11 +13,13 @@
 ;;;; You should have received a copy of the GNU Affero General Public License
 ;;;; along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
-%run guile
+(cond-expand
+ (guile
+  (define-module (tegfs unparse-tag)
+    :export (unparse-tag)
+    :use-module ((euphrates list-intersperse) :select (list-intersperse)))))
 
-%var unparse-tag
 
-%use (list-intersperse) "./euphrates/list-intersperse.scm"
 
 (define (unparse-tag parsed-tag)
   (if (null? (cdr parsed-tag))

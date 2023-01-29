@@ -13,12 +13,14 @@
 ;;;; You should have received a copy of the GNU Affero General Public License
 ;;;; along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
-%run guile
+(cond-expand
+ (guile
+  (define-module (tegfs permission-time-left)
+    :export (permission-time-left)
+    :use-module ((tegfs current-time-p) :select (current-time/p))
+    :use-module ((tegfs permission) :select (permission-start permission-time)))))
 
-%var permission-time-left
 
-%use (current-time/p) "./current-time-p.scm"
-%use (permission-start permission-time) "./permission.scm"
 
 (define permission-time-left
   (case-lambda

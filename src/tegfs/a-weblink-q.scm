@@ -13,9 +13,11 @@
 ;;;; You should have received a copy of the GNU Affero General Public License
 ;;;; along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
-%run guile
+(cond-expand
+ (guile
+  (define-module (tegfs a-weblink-q)
+    :export (a-weblink?))))
 
-%var a-weblink?
 
 (define (a-weblink? string)
   (or (string-prefix? "blob:http" string)

@@ -13,21 +13,23 @@
 ;;;; You should have received a copy of the GNU Affero General Public License
 ;;;; along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
-%run guile
+(cond-expand
+ (guile
+  (define-module (tegfs webcore-shared-entry-contains)
+    :export (webcore::shared-entry-contains)
+    :use-module ((euphrates directory-files-depth-iter) :select (directory-files-depth-iter))
+    :use-module ((euphrates profun-accept) :select (profun-accept? profun-ctx-set profun-set profun-set-meta))
+    :use-module ((euphrates profun-error) :select (make-profun-error))
+    :use-module ((euphrates profun-op-lambda) :select (profun-op-lambda))
+    :use-module ((euphrates profun-reject) :select (profun-reject))
+    :use-module ((euphrates profun-value) :select (profun-bound-value? profun-unbound-value?))
+    :use-module ((tegfs filemap) :select (filemap-ref-by-senderid))
+    :use-module ((tegfs keyword-target) :select (keyword-target))
+    :use-module ((tegfs sharedinfo) :select (sharedinfo-sourcepath))
+    :use-module ((tegfs standalone-file-to-entry) :select (standalone-file->entry/prefixed))
+    :use-module ((tegfs web-context) :select (context-filemap/2)))))
 
-%var webcore::shared-entry-contains
 
-%use (directory-files-depth-iter) "./euphrates/directory-files-depth-iter.scm"
-%use (profun-accept? profun-ctx-set profun-set profun-set-meta) "./euphrates/profun-accept.scm"
-%use (make-profun-error) "./euphrates/profun-error.scm"
-%use (profun-op-lambda) "./euphrates/profun-op-lambda.scm"
-%use (profun-reject) "./euphrates/profun-reject.scm"
-%use (profun-bound-value? profun-unbound-value?) "./euphrates/profun-value.scm"
-%use (filemap-ref-by-senderid) "./filemap.scm"
-%use (keyword-target) "./keyword-target.scm"
-%use (sharedinfo-sourcepath) "./sharedinfo.scm"
-%use (standalone-file->entry/prefixed) "./standalone-file-to-entry.scm"
-%use (context-filemap/2) "./web-context.scm"
 
 (define webcore::shared-entry-contains
   (lambda (web::context)

@@ -13,14 +13,16 @@
 ;;;; You should have received a copy of the GNU Affero General Public License
 ;;;; along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
-%run guile
+(cond-expand
+ (guile
+  (define-module (tegfs categorization-get-all-tags)
+    :export (categorization-get-all-tags)
+    :use-module ((euphrates list-deduplicate) :select (list-deduplicate))
+    :use-module ((tegfs categorization-parse-tags) :select (categorization-parse-tags))
+    :use-module ((tegfs parsed-categorization-tags-get-all) :select (parsed-categorization-tags-get-all)))))
 
 ;; Returns all tags, incuding the starred ones
-%var categorization-get-all-tags
 
-%use (list-deduplicate) "./euphrates/list-deduplicate.scm"
-%use (categorization-parse-tags) "./categorization-parse-tags.scm"
-%use (parsed-categorization-tags-get-all) "./parsed-categorization-tags-get-all.scm"
 
 (define (categorization-get-all-tags categorization-text)
   (define parsed

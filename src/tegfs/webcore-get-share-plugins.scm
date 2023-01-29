@@ -13,12 +13,14 @@
 ;;;; You should have received a copy of the GNU Affero General Public License
 ;;;; along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
-%run guile
+(cond-expand
+ (guile
+  (define-module (tegfs webcore-get-share-plugins)
+    :export (webcore::get-share-plugins)
+    :use-module ((tegfs load-plugin) :select (load-plugin))
+    :use-module ((tegfs webcore-get-share-plugins-files) :select (webcore::get-share-plugins-files)))))
 
-%var webcore::get-share-plugins
 
-%use (load-plugin) "./load-plugin.scm"
-%use (webcore::get-share-plugins-files) "./webcore-get-share-plugins-files.scm"
 
 (define (webcore::get-share-plugins)
   (define files (webcore::get-share-plugins-files))

@@ -13,22 +13,24 @@
 ;;;; You should have received a copy of the GNU Affero General Public License
 ;;;; along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
-%run guile
+(cond-expand
+ (guile
+  (define-module (tegfs webcore-login)
+    :export (webcore::login)
+    :use-module ((euphrates hashmap) :select (hashmap-ref))
+    :use-module ((euphrates profun-accept) :select (profun-set-parameter))
+    :use-module ((euphrates profun-error) :select (make-profun-error))
+    :use-module ((euphrates profun-op-lambda) :select (profun-op-lambda))
+    :use-module ((euphrates profun-request-value) :select (profun-request-value))
+    :use-module ((euphrates profun-value) :select (profun-unbound-value?))
+    :use-module ((tegfs default-login-expiery-time) :select (default-login-expiery-time))
+    :use-module ((tegfs password-to-tokenlike) :select (password->tokenlike))
+    :use-module ((tegfs sha256sum) :select (sha256sum))
+    :use-module ((tegfs web-context) :select (context-passwords context-tokens))
+    :use-module ((tegfs webcore-create-admin-permission-bang) :select (webcore::create-admin-permission!))
+    :use-module ((tegfs webcore-parameters) :select (webcore::permissions/p)))))
 
-%var webcore::login
 
-%use (hashmap-ref) "./euphrates/hashmap.scm"
-%use (profun-set-parameter) "./euphrates/profun-accept.scm"
-%use (make-profun-error) "./euphrates/profun-error.scm"
-%use (profun-op-lambda) "./euphrates/profun-op-lambda.scm"
-%use (profun-request-value) "./euphrates/profun-request-value.scm"
-%use (profun-unbound-value?) "./euphrates/profun-value.scm"
-%use (default-login-expiery-time) "./default-login-expiery-time.scm"
-%use (password->tokenlike) "./password-to-tokenlike.scm"
-%use (sha256sum) "./sha256sum.scm"
-%use (context-passwords context-tokens) "./web-context.scm"
-%use (webcore::create-admin-permission!) "./webcore-create-admin-permission-bang.scm"
-%use (webcore::permissions/p) "./webcore-parameters.scm"
 
 (define webcore::login
   (lambda (webcore::context)

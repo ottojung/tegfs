@@ -13,16 +13,18 @@
 ;;;; You should have received a copy of the GNU Affero General Public License
 ;;;; along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
-%run guile
+(cond-expand
+ (guile
+  (define-module (tegfs sha256sum)
+    :export (sha256sum)
+    :use-module ((euphrates comp) :select (appcomp))
+    :use-module ((euphrates define-pair) :select (define-pair))
+    :use-module ((euphrates raisu) :select (raisu))
+    :use-module ((euphrates string-to-lines) :select (string->lines))
+    :use-module ((euphrates string-to-words) :select (string->words))
+    :use-module ((euphrates system-re) :select (system-re)))))
 
-%var sha256sum
 
-%use (appcomp) "./euphrates/comp.scm"
-%use (define-pair) "./euphrates/define-pair.scm"
-%use (raisu) "./euphrates/raisu.scm"
-%use (string->lines) "./euphrates/string-to-lines.scm"
-%use (string->words) "./euphrates/string-to-words.scm"
-%use (system-re) "./euphrates/system-re.scm"
 
 (define (sha256sum text)
   (define-pair (output exit-code)

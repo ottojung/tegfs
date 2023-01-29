@@ -13,12 +13,14 @@
 ;;;; You should have received a copy of the GNU Affero General Public License
 ;;;; along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
-%run guile
+(cond-expand
+ (guile
+  (define-module (tegfs entries-for-each)
+    :export (entries-for-each)
+    :use-module ((euphrates fn) :select (fn))
+    :use-module ((tegfs entries-iterate) :select (entries-iterate)))))
 
-%var entries-for-each
 
-%use (fn) "./euphrates/fn.scm"
-%use (entries-iterate) "./entries-iterate.scm"
 
 (define (entries-for-each fn)
   (define iter (entries-iterate))

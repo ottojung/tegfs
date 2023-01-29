@@ -13,12 +13,14 @@
 ;;;; You should have received a copy of the GNU Affero General Public License
 ;;;; along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
-%run guile
+(cond-expand
+ (guile
+  (define-module (tegfs with-current-time)
+    :export (with-current-time)
+    :use-module ((euphrates time-get-current-unixtime) :select (time-get-current-unixtime))
+    :use-module ((tegfs current-time-p) :select (current-time/p)))))
 
-%var with-current-time
 
-%use (time-get-current-unixtime) "./euphrates/time-get-current-unixtime.scm"
-%use (current-time/p) "./current-time-p.scm"
 
 (define-syntax with-current-time
   (syntax-rules ()

@@ -13,8 +13,10 @@
 ;;;; You should have received a copy of the GNU Affero General Public License
 ;;;; along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
-%run guile
+(cond-expand
+ (guile
+  (define-module (tegfs last-id-filename)
+    :export (last-id-filename))))
 
-%var last-id-filename
 
 (define last-id-filename "lastid.tegfs.txt")

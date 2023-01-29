@@ -13,13 +13,15 @@
 ;;;; You should have received a copy of the GNU Affero General Public License
 ;;;; along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
-%run guile
+(cond-expand
+ (guile
+  (define-module (tegfs web-get-auth-body)
+    :export (web::get-auth-body)
+    :use-module ((euphrates stringf) :select (stringf))
+    :use-module ((euphrates uri-encode) :select (uri-encode))
+    :use-module ((tegfs web-form-template) :select (web::form-template)))))
 
-%var web::get-auth-body
 
-%use (stringf) "./euphrates/stringf.scm"
-%use (uri-encode) "./euphrates/uri-encode.scm"
-%use (web::form-template) "./web-form-template.scm"
 
 (define-syntax web::auth-encode-arg
   (syntax-rules ()

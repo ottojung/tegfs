@@ -13,14 +13,16 @@
 ;;;; You should have received a copy of the GNU Affero General Public License
 ;;;; along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
-%run guile
+(cond-expand
+ (guile
+  (define-module (tegfs web-server-handle-temp-path)
+    :export (web::server-handle-temp-path)
+    :use-module ((tegfs web-not-found) :select (web::not-found))
+    :use-module ((tegfs web-redirect) :select (web::redirect))
+    :use-module ((tegfs web-temp-path-get) :select (web::temp-path-get))
+    :use-module ((tegfs web-temp-path) :select (web::temp-path-destination)))))
 
-%var web::server-handle-temp-path
 
-%use (web::not-found) "./web-not-found.scm"
-%use (web::redirect) "./web-redirect.scm"
-%use (web::temp-path-get) "./web-temp-path-get.scm"
-%use (web::temp-path-destination) "./web-temp-path.scm"
 
 (define (web::server-handle-temp-path callctx tempid)
   (define tpath (web::temp-path-get tempid))

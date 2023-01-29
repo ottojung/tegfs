@@ -13,17 +13,19 @@
 ;;;; You should have received a copy of the GNU Affero General Public License
 ;;;; along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
-%run guile
+(cond-expand
+ (guile
+  (define-module (tegfs download-to-temporary-file)
+    :export (download-to-temporary-file)
+    :use-module ((euphrates dprintln) :select (dprintln))
+    :use-module ((euphrates system-fmt) :select (system-fmt))
+    :use-module ((euphrates tilda-s) :select (~s))
+    :use-module ((euphrates url-get-hostname-and-port) :select (url-get-hostname-and-port))
+    :use-module ((euphrates url-get-protocol) :select (url-get-protocol))
+    :use-module ((tegfs fatal) :select (fatal))
+    :use-module ((tegfs make-temporary-filename-local) :select (make-temporary-filename/local)))))
 
-%var download-to-temporary-file
 
-%use (dprintln) "./euphrates/dprintln.scm"
-%use (system-fmt) "./euphrates/system-fmt.scm"
-%use (~s) "./euphrates/tilda-s.scm"
-%use (url-get-hostname-and-port) "./euphrates/url-get-hostname-and-port.scm"
-%use (url-get-protocol) "./euphrates/url-get-protocol.scm"
-%use (fatal) "./fatal.scm"
-%use (make-temporary-filename/local) "./make-temporary-filename-local.scm"
 
 (define (download-to-temporary-file url)
   (dprintln "Downloading...")

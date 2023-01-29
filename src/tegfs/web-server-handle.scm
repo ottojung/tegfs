@@ -13,41 +13,43 @@
 ;;;; You should have received a copy of the GNU Affero General Public License
 ;;;; along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
-%run guile
+(cond-expand
+ (guile
+  (define-module (tegfs web-server-handle)
+    :export (web::server-handle)
+    :use-module ((euphrates hashmap) :select (alist->hashmap hashmap-ref))
+    :use-module ((euphrates tilda-a) :select (~a))
+    :use-module ((tegfs web-auth) :select (web::auth))
+    :use-module ((tegfs web-callcontext-p) :select (web::callcontext/p))
+    :use-module ((tegfs web-callcontext) :select (callcontext-path))
+    :use-module ((tegfs web-collectgarbage) :select (web::collectgarbage))
+    :use-module ((tegfs web-details-svg) :select (web::details.svg))
+    :use-module ((tegfs web-details) :select (web::details))
+    :use-module ((tegfs web-directory-svg) :select (web::directory.svg))
+    :use-module ((tegfs web-directory) :select (web::directory))
+    :use-module ((tegfs web-error-svg) :select (web::error.svg))
+    :use-module ((tegfs web-full) :select (web::full))
+    :use-module ((tegfs web-home) :select (web::home))
+    :use-module ((tegfs web-icon) :select (web::favicon.ico))
+    :use-module ((tegfs web-login) :select (web::login))
+    :use-module ((tegfs web-logo-gray) :select (web::logo-gray.jpeg))
+    :use-module ((tegfs web-logo-white) :select (web::logo-white.jpeg))
+    :use-module ((tegfs web-logout) :select (web::logout))
+    :use-module ((tegfs web-main-css) :select (web::main.css))
+    :use-module ((tegfs web-previewunknown) :select (web::previewunknown))
+    :use-module ((tegfs web-previewunknownurl) :select (web::previewunknownurl))
+    :use-module ((tegfs web-query) :select (web::query))
+    :use-module ((tegfs web-search) :select (web::search.svg))
+    :use-module ((tegfs web-server-handle-temp-path) :select (web::server-handle-temp-path))
+    :use-module ((tegfs web-settings-gear) :select (web::settings-gear))
+    :use-module ((tegfs web-share-gray-svg) :select (web::share-gray.svg))
+    :use-module ((tegfs web-share-svg) :select (web::share.svg))
+    :use-module ((tegfs web-share) :select (web::share))
+    :use-module ((tegfs web-tags) :select (web::tags))
+    :use-module ((tegfs web-upload) :select (web::upload))
+    :use-module ((tegfs web-what-svg) :select (web::what.svg)))))
 
-%var web::server-handle
 
-%use (alist->hashmap hashmap-ref) "./euphrates/hashmap.scm"
-%use (~a) "./euphrates/tilda-a.scm"
-%use (web::auth) "./web-auth.scm"
-%use (web::callcontext/p) "./web-callcontext-p.scm"
-%use (callcontext-path) "./web-callcontext.scm"
-%use (web::collectgarbage) "./web-collectgarbage.scm"
-%use (web::details.svg) "./web-details-svg.scm"
-%use (web::details) "./web-details.scm"
-%use (web::directory.svg) "./web-directory-svg.scm"
-%use (web::directory) "./web-directory.scm"
-%use (web::error.svg) "./web-error-svg.scm"
-%use (web::full) "./web-full.scm"
-%use (web::home) "./web-home.scm"
-%use (web::favicon.ico) "./web-icon.scm"
-%use (web::login) "./web-login.scm"
-%use (web::logo-gray.jpeg) "./web-logo-gray.scm"
-%use (web::logo-white.jpeg) "./web-logo-white.scm"
-%use (web::logout) "./web-logout.scm"
-%use (web::main.css) "./web-main-css.scm"
-%use (web::previewunknown) "./web-previewunknown.scm"
-%use (web::previewunknownurl) "./web-previewunknownurl.scm"
-%use (web::query) "./web-query.scm"
-%use (web::search.svg) "./web-search.scm"
-%use (web::server-handle-temp-path) "./web-server-handle-temp-path.scm"
-%use (web::settings-gear) "./web-settings-gear.scm"
-%use (web::share-gray.svg) "./web-share-gray-svg.scm"
-%use (web::share.svg) "./web-share-svg.scm"
-%use (web::share) "./web-share.scm"
-%use (web::tags) "./web-tags.scm"
-%use (web::upload) "./web-upload.scm"
-%use (web::what.svg) "./web-what-svg.scm"
 
 (define handlers-config
   `((/login ,web::login)

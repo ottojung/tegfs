@@ -13,11 +13,13 @@
 ;;;; You should have received a copy of the GNU Affero General Public License
 ;;;; along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
-%run guile
+(cond-expand
+ (guile
+  (define-module (tegfs web-permission-denied)
+    :export (web::permission-denied)
+    :use-module ((tegfs web-static-error-message) :select (web::static-error-message)))))
 
-%var web::permission-denied
 
-%use (web::static-error-message) "./web-static-error-message.scm"
 
 (define web::permission-denied
   (web::static-error-message

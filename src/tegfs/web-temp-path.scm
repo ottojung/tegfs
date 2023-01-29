@@ -13,16 +13,13 @@
 ;;;; You should have received a copy of the GNU Affero General Public License
 ;;;; along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
-%run guile
+(cond-expand
+ (guile
+  (define-module (tegfs web-temp-path)
+    :export (web::temp-path-ctr web::temp-path? web::temp-path-tempid web::temp-path-destination web::temp-path-start web::temp-path-stime)
+    :use-module ((euphrates define-type9) :select (define-type9)))))
 
-%var web::temp-path-ctr
-%var web::temp-path?
-%var web::temp-path-tempid
-%var web::temp-path-destination
-%var web::temp-path-start
-%var web::temp-path-stime
 
-%use (define-type9) "./euphrates/define-type9.scm"
 
 (define-type9 <web::temp-path>
   (web::temp-path-ctr tempid destination/raw start stime) web::temp-path?

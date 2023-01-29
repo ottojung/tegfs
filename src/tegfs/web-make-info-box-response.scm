@@ -13,11 +13,13 @@
 ;;;; You should have received a copy of the GNU Affero General Public License
 ;;;; along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
-%run guile
+(cond-expand
+ (guile
+  (define-module (tegfs web-make-info-box-response)
+    :export (web::make-info-box-response)
+    :use-module ((tegfs web-make-generic-box-response) :select (web::make-generic-box-response)))))
 
-%var web::make-info-box-response
 
-%use (web::make-generic-box-response) "./web-make-generic-box-response.scm"
 
 (define (web::make-info-box-response fmt . args)
   (apply

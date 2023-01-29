@@ -13,30 +13,31 @@
 ;;;; You should have received a copy of the GNU Affero General Public License
 ;;;; along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
-%run guile
+(cond-expand
+ (guile
+  (define-module (tegfs categorize)
+    :export (tegfs-categorize/parse tegfs-categorize)
+    :use-module ((euphrates append-posix-path) :select (append-posix-path))
+    :use-module ((euphrates dprintln) :select (dprintln))
+    :use-module ((euphrates file-or-directory-exists-q) :select (file-or-directory-exists?))
+    :use-module ((euphrates hashmap) :select (hashmap-ref hashmap-set! make-hashmap))
+    :use-module ((euphrates hashset) :select (hashset->list hashset-add! hashset-difference make-hashset))
+    :use-module ((euphrates read-string-file) :select (read-string-file))
+    :use-module ((euphrates read-string-line) :select (read-string-line))
+    :use-module ((euphrates system-fmt) :select (system-fmt))
+    :use-module ((euphrates tilda-a) :select (~a))
+    :use-module ((euphrates words-to-string) :select (words->string))
+    :use-module ((euphrates write-string-file) :select (write-string-file))
+    :use-module ((tegfs categorization-filename) :select (categorization-filename))
+    :use-module ((tegfs categorization-split) :select (categorization-split))
+    :use-module ((tegfs edit-tags) :select (tegfs-edit-tags))
+    :use-module ((tegfs get-root) :select (get-root))
+    :use-module ((tegfs make-temporary-filename-local) :select (make-temporary-filename/local))
+    :use-module ((tegfs parse-tag) :select (parse-tag-structure))
+    :use-module ((tegfs tags-this-variable) :select (tags-this-variable))
+    :use-module ((tegfs unparse-tag) :select (unparse-tag)))))
 
-%var tegfs-categorize/parse
-%var tegfs-categorize
 
-%use (append-posix-path) "./euphrates/append-posix-path.scm"
-%use (dprintln) "./euphrates/dprintln.scm"
-%use (file-or-directory-exists?) "./euphrates/file-or-directory-exists-q.scm"
-%use (hashmap-ref hashmap-set! make-hashmap) "./euphrates/hashmap.scm"
-%use (hashset->list hashset-add! hashset-difference make-hashset) "./euphrates/hashset.scm"
-%use (read-string-file) "./euphrates/read-string-file.scm"
-%use (read-string-line) "./euphrates/read-string-line.scm"
-%use (system-fmt) "./euphrates/system-fmt.scm"
-%use (~a) "./euphrates/tilda-a.scm"
-%use (words->string) "./euphrates/words-to-string.scm"
-%use (write-string-file) "./euphrates/write-string-file.scm"
-%use (categorization-filename) "./categorization-filename.scm"
-%use (categorization-split) "./categorization-split.scm"
-%use (tegfs-edit-tags) "./edit-tags.scm"
-%use (get-root) "./get-root.scm"
-%use (make-temporary-filename/local) "./make-temporary-filename-local.scm"
-%use (parse-tag-structure) "./parse-tag.scm"
-%use (tags-this-variable) "./tags-this-variable.scm"
-%use (unparse-tag) "./unparse-tag.scm"
 
 (define (tegfs-categorize/parse)
   (define result (tegfs-categorize #f))
@@ -116,45 +117,45 @@
   (let loop ()
     (define result (tegfs-edit-tags working-file))
     (cond
-      ((= 1 (length result))
-       (unless (equal? working-file working-file0)
-         (delete-file working-file))
-       (when (equal? working-file working-file0)
-         (update-working-file))
+     ((= 1 (length result))
+      (unless (equal? working-file working-file0)
+        (delete-file working-file))
+      (when (equal? working-file working-file0)
+        (update-working-file))
 
-       (add-handled-var currently-handling-var)
-       (let* ((tags (add-current-to-tags (cdr (assoc 'ok result))))
-              (do (for-each handle-new-tag tags))
-              (all-vars (hashmap-ref state 'all-vars #f))
-              (handled-vars (hashmap-ref state 'handled-vars #f))
-              (diff (hashset->list (hashset-difference all-vars handled-vars))))
+      (add-handled-var currently-handling-var)
+      (let* ((tags (add-current-to-tags (cdr (assoc 'ok result))))
+             (do (for-each handle-new-tag tags))
+             (all-vars (hashmap-ref state 'all-vars #f))
+             (handled-vars (hashmap-ref state 'handled-vars #f))
+             (diff (hashset->list (hashset-difference all-vars handled-vars))))
 
-         (if (null? diff)
-             (finish)
-             (let ()
-               (define new-var (car diff))
-               (define temp-content
-                 (string-append ";; Now handling variable '" (~a new-var) "'\n\n"
-                                cfg-part))
+        (if (null? diff)
+            (finish)
+            (let ()
+              (define new-var (car diff))
+              (define temp-content
+                (string-append ";; Now handling variable '" (~a new-var) "'\n\n"
+                               cfg-part))
 
-               (set! currently-handling-var new-var)
-               (set! working-file (make-temporary-filename/local))
-               (write-string-file working-file temp-content)
+              (set! currently-handling-var new-var)
+              (set! working-file (make-temporary-filename/local))
+              (write-string-file working-file temp-content)
 
-               (loop)))))
-      ((assoc 'ambiguous result)
-       (dprintln "Error categorizing:")
-       (print-errors (cdr (assoc 'ambiguous result)))
-       (dprintln "Press enter to continue...")
-       (read-string-line)
-       (loop))
-      ((assoc 'duplicates result)
-       (dprintln "Error categorizing:")
-       (dprintln "These tags were chosen twice: ")
-       (dprintln "~s" (cdr (assoc 'duplicates result)))
-       (dprintln "Press enter to continue...")
-       (read-string-line)
-       (loop)))))
+              (loop)))))
+     ((assoc 'ambiguous result)
+      (dprintln "Error categorizing:")
+      (print-errors (cdr (assoc 'ambiguous result)))
+      (dprintln "Press enter to continue...")
+      (read-string-line)
+      (loop))
+     ((assoc 'duplicates result)
+      (dprintln "Error categorizing:")
+      (dprintln "These tags were chosen twice: ")
+      (dprintln "~s" (cdr (assoc 'duplicates result)))
+      (dprintln "Press enter to continue...")
+      (read-string-line)
+      (loop)))))
 
 (define (print-errors errors)
   (for-each

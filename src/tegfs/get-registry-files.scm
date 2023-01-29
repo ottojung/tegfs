@@ -13,13 +13,15 @@
 ;;;; You should have received a copy of the GNU Affero General Public License
 ;;;; along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
-%run guile
+(cond-expand
+ (guile
+  (define-module (tegfs get-registry-files)
+    :export (get-registry-files)
+    :use-module ((euphrates string-split-simple) :select (string-split/simple))
+    :use-module ((tegfs get-config) :select (get-config))
+    :use-module ((tegfs get-root) :select (get-root)))))
 
-%var get-registry-files
 
-%use (string-split/simple) "./euphrates/string-split-simple.scm"
-%use (get-config) "./get-config.scm"
-%use (get-root) "./get-root.scm"
 
 (define (get-registry-files)
   (define root (get-root))

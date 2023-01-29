@@ -13,32 +13,34 @@
 ;;;; You should have received a copy of the GNU Affero General Public License
 ;;;; along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
-%run guile
+(cond-expand
+ (guile
+  (define-module (tegfs webcore-server-handler)
+    :export (webcore::make-server-handler)
+    :use-module ((euphrates profun-handler) :select (profun-handler-extend))
+    :use-module ((tegfs add-entry) :select (add-entry))
+    :use-module ((tegfs core-server-handler) :select (core::make-server-handler))
+    :use-module ((tegfs permission) :select (permission-token))
+    :use-module ((tegfs update-entry) :select (update-entry))
+    :use-module ((tegfs webcore-add-entry) :select (webcore::add-entry))
+    :use-module ((tegfs webcore-categorization) :select (webcore::categorization))
+    :use-module ((tegfs webcore-collectgarbage) :select (webcore::collectgarbage))
+    :use-module ((tegfs webcore-create-server-operator-permission-bang) :select (webcore::create-server-operator-permission!))
+    :use-module ((tegfs webcore-entry) :select (webcore::entry))
+    :use-module ((tegfs webcore-key) :select (webcore::key))
+    :use-module ((tegfs webcore-link-shared) :select (webcore::link-shared))
+    :use-module ((tegfs webcore-login) :select (webcore::login))
+    :use-module ((tegfs webcore-make-temporary-permissions) :select (webcore::make-temporary-permissions))
+    :use-module ((tegfs webcore-senderid-to-entry) :select (webcore::senderid->entry))
+    :use-module ((tegfs webcore-set-categorization) :select (webcore::set-categorization))
+    :use-module ((tegfs webcore-share-entry-full) :select (webcore::share-entry-full))
+    :use-module ((tegfs webcore-share-entry-preview) :select (webcore::share-entry-preview))
+    :use-module ((tegfs webcore-share-entry) :select (webcore::share-entry))
+    :use-module ((tegfs webcore-shared-entry-contains) :select (webcore::shared-entry-contains))
+    :use-module ((tegfs webcore-time-left) :select (webcore::time-left))
+    :use-module ((tegfs webcore-update-entry) :select (webcore::update-entry)))))
 
-%var webcore::make-server-handler
 
-%use (profun-handler-extend) "./euphrates/profun-handler.scm"
-%use (add-entry) "./add-entry.scm"
-%use (core::make-server-handler) "./core-server-handler.scm"
-%use (permission-token) "./permission.scm"
-%use (update-entry) "./update-entry.scm"
-%use (webcore::add-entry) "./webcore-add-entry.scm"
-%use (webcore::categorization) "./webcore-categorization.scm"
-%use (webcore::collectgarbage) "./webcore-collectgarbage.scm"
-%use (webcore::create-server-operator-permission!) "./webcore-create-server-operator-permission-bang.scm"
-%use (webcore::entry) "./webcore-entry.scm"
-%use (webcore::key) "./webcore-key.scm"
-%use (webcore::link-shared) "./webcore-link-shared.scm"
-%use (webcore::login) "./webcore-login.scm"
-%use (webcore::make-temporary-permissions) "./webcore-make-temporary-permissions.scm"
-%use (webcore::senderid->entry) "./webcore-senderid-to-entry.scm"
-%use (webcore::set-categorization) "./webcore-set-categorization.scm"
-%use (webcore::share-entry-full) "./webcore-share-entry-full.scm"
-%use (webcore::share-entry-preview) "./webcore-share-entry-preview.scm"
-%use (webcore::share-entry) "./webcore-share-entry.scm"
-%use (webcore::shared-entry-contains) "./webcore-shared-entry-contains.scm"
-%use (webcore::time-left) "./webcore-time-left.scm"
-%use (webcore::update-entry) "./webcore-update-entry.scm"
 
 (define (webcore::make-just-the-server-handler web::context)
   (profun-handler-extend

@@ -13,21 +13,23 @@
 ;;;; You should have received a copy of the GNU Affero General Public License
 ;;;; along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
-%run guile
+(cond-expand
+ (guile
+  (define-module (tegfs webcore-make-temporary-permissions)
+    :export (webcore::make-temporary-permissions)
+    :use-module ((euphrates profun-accept) :select (profun-set))
+    :use-module ((euphrates profun-error) :select (make-profun-error))
+    :use-module ((euphrates profun-op-lambda) :select (profun-op-lambda))
+    :use-module ((euphrates profun-request-value) :select (profun-request-value))
+    :use-module ((euphrates profun-value) :select (profun-bound-value? profun-unbound-value?))
+    :use-module ((tegfs get-random-network-name) :select (get-random-network-name))
+    :use-module ((tegfs make-permission-bang) :select (make-permission!))
+    :use-module ((tegfs permission-time-left) :select (permission-time-left))
+    :use-module ((tegfs permission) :select (permission-time permission-token))
+    :use-module ((tegfs webcore-access) :select (can-share-longer-than-view?))
+    :use-module ((tegfs webcore-parameters) :select (webcore::permissions/p)))))
 
-%var webcore::make-temporary-permissions
 
-%use (profun-set) "./euphrates/profun-accept.scm"
-%use (make-profun-error) "./euphrates/profun-error.scm"
-%use (profun-op-lambda) "./euphrates/profun-op-lambda.scm"
-%use (profun-request-value) "./euphrates/profun-request-value.scm"
-%use (profun-bound-value? profun-unbound-value?) "./euphrates/profun-value.scm"
-%use (get-random-network-name) "./get-random-network-name.scm"
-%use (make-permission!) "./make-permission-bang.scm"
-%use (permission-time-left) "./permission-time-left.scm"
-%use (permission-time permission-token) "./permission.scm"
-%use (can-share-longer-than-view?) "./webcore-access.scm"
-%use (webcore::permissions/p) "./webcore-parameters.scm"
 
 (define (generate-random-password)
   (get-random-network-name))

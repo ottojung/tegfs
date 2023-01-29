@@ -13,15 +13,17 @@
 ;;;; You should have received a copy of the GNU Affero General Public License
 ;;;; along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
-%run guile
+(cond-expand
+ (guile
+  (define-module (tegfs get-file-type)
+    :export (get-file-type)
+    :use-module ((tegfs a-weblink-q) :select (a-weblink?))
+    :use-module ((tegfs file-is-audio-q) :select (file-is-audio?))
+    :use-module ((tegfs file-is-image-q) :select (file-is-image?))
+    :use-module ((tegfs file-is-text-q) :select (file-is-text?))
+    :use-module ((tegfs file-is-video-q) :select (file-is-video?)))))
 
-%var get-file-type
 
-%use (a-weblink?) "./a-weblink-q.scm"
-%use (file-is-audio?) "./file-is-audio-q.scm"
-%use (file-is-image?) "./file-is-image-q.scm"
-%use (file-is-text?) "./file-is-text-q.scm"
-%use (file-is-video?) "./file-is-video-q.scm"
 
 (define (get-file-type filepath)
   (cond

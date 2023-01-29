@@ -13,15 +13,18 @@
 ;;;; You should have received a copy of the GNU Affero General Public License
 ;;;; along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
-%run guile
+(cond-expand
+ (guile
+  (define-module (tegfs read-file-head)
+    :export (read-file-head)
+    :use-module ((euphrates open-file-port) :select (open-file-port)))))
 
-%var read-file-head
 
-%use (open-file-port) "./euphrates/open-file-port.scm"
 
-%for (COMPILER "guile")
-(use-modules (ice-9 textual-ports))
-%end
+(cond-expand
+ (guile
+  (use-modules (ice-9 textual-ports))
+  ))
 
 (define (read-file-head filepath)
   (define p (open-file-port filepath "r"))

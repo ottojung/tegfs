@@ -13,19 +13,21 @@
 ;;;; You should have received a copy of the GNU Affero General Public License
 ;;;; along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
-%run guile
+(cond-expand
+ (guile
+  (define-module (tegfs categorization-complete-selection-cont)
+    :export (categorization-complete-selection/cont)
+    :use-module ((euphrates comp) :select (comp))
+    :use-module ((euphrates curry-if) :select (curry-if))
+    :use-module ((euphrates fn) :select (fn))
+    :use-module ((euphrates list-deduplicate) :select (list-deduplicate))
+    :use-module ((euphrates list-find-first) :select (list-find-first))
+    :use-module ((euphrates list-singleton-q) :select (list-singleton?))
+    :use-module ((euphrates multiset) :select (list->multiset multiset->list multiset-filter))
+    :use-module ((euphrates raisu) :select (raisu))
+    :use-module ((tegfs categorization-starred-symbol-huh) :select (categorization-starred-symbol?)))))
 
-%var categorization-complete-selection/cont
 
-%use (comp) "./euphrates/comp.scm"
-%use (curry-if) "./euphrates/curry-if.scm"
-%use (fn) "./euphrates/fn.scm"
-%use (list-deduplicate) "./euphrates/list-deduplicate.scm"
-%use (list-find-first) "./euphrates/list-find-first.scm"
-%use (list-singleton?) "./euphrates/list-singleton-q.scm"
-%use (list->multiset multiset->list multiset-filter) "./euphrates/multiset.scm"
-%use (raisu) "./euphrates/raisu.scm"
-%use (categorization-starred-symbol?) "./categorization-starred-symbol-huh.scm"
 
 (define unstar-symbol
   (comp symbol->string

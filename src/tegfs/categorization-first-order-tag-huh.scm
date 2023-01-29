@@ -13,11 +13,13 @@
 ;;;; You should have received a copy of the GNU Affero General Public License
 ;;;; along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
-%run guile
+(cond-expand
+ (guile
+  (define-module (tegfs categorization-first-order-tag-huh)
+    :export (categorization::first-order-tag?)
+    :use-module ((euphrates raisu) :select (raisu)))))
 
-%var categorization::first-order-tag?
 
-%use (raisu) "./euphrates/raisu.scm"
 
 (define (categorization::first-order-tag?/string tag)
   (not (or (string-prefix? "<" tag) ;; Group tag like <TYPE>

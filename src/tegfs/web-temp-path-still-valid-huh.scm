@@ -13,12 +13,14 @@
 ;;;; You should have received a copy of the GNU Affero General Public License
 ;;;; along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
-%run guile
+(cond-expand
+ (guile
+  (define-module (tegfs web-temp-path-still-valid-huh)
+    :export (web::temp-path-still-valid?)
+    :use-module ((tegfs current-time-p) :select (current-time/p))
+    :use-module ((tegfs web-temp-path-time-left) :select (web::temp-path-time-left)))))
 
-%var web::temp-path-still-valid?
 
-%use (current-time/p) "./current-time-p.scm"
-%use (web::temp-path-time-left) "./web-temp-path-time-left.scm"
 
 (define web::temp-path-still-valid?
   (case-lambda

@@ -13,33 +13,35 @@
 ;;;; You should have received a copy of the GNU Affero General Public License
 ;;;; along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
-%run guile
+(cond-expand
+ (guile
+  (define-module (tegfs cli-save)
+    :export (CLI::save)
+    :use-module ((euphrates append-posix-path) :select (append-posix-path))
+    :use-module ((euphrates dprintln) :select (dprintln))
+    :use-module ((euphrates file-delete) :select (file-delete))
+    :use-module ((euphrates file-or-directory-exists-q) :select (file-or-directory-exists?))
+    :use-module ((euphrates make-directories) :select (make-directories))
+    :use-module ((euphrates path-get-basename) :select (path-get-basename))
+    :use-module ((euphrates path-normalize) :select (path-normalize))
+    :use-module ((euphrates raisu) :select (raisu))
+    :use-module ((euphrates read-string-file) :select (read-string-file))
+    :use-module ((euphrates string-split-3) :select (string-split-3))
+    :use-module ((euphrates system-environment) :select (system-environment-get))
+    :use-module ((euphrates system-fmt) :select (system-fmt))
+    :use-module ((euphrates tilda-s) :select (~s))
+    :use-module ((euphrates write-string-file) :select (write-string-file))
+    :use-module ((tegfs a-weblink-q) :select (a-weblink?))
+    :use-module ((tegfs add) :select (tegfs-add))
+    :use-module ((tegfs clipboard) :select (classify-clipboard-text-content))
+    :use-module ((tegfs dump-clipboard) :select (tegfs-dump-clipboard tegfs-dump-clipboard/pasta))
+    :use-module ((tegfs fatal) :select (fatal))
+    :use-module ((tegfs get-random-basename) :select (get-random-basename))
+    :use-module ((tegfs get-root) :select (get-root))
+    :use-module ((tegfs make-temporary-filename-local) :select (make-temporary-filename/local))
+    :use-module ((tegfs cli-save-loop) :select (CLI::save::loop)))))
 
-%var CLI::save
 
-%use (append-posix-path) "./euphrates/append-posix-path.scm"
-%use (dprintln) "./euphrates/dprintln.scm"
-%use (file-delete) "./euphrates/file-delete.scm"
-%use (file-or-directory-exists?) "./euphrates/file-or-directory-exists-q.scm"
-%use (make-directories) "./euphrates/make-directories.scm"
-%use (path-get-basename) "./euphrates/path-get-basename.scm"
-%use (path-normalize) "./euphrates/path-normalize.scm"
-%use (raisu) "./euphrates/raisu.scm"
-%use (read-string-file) "./euphrates/read-string-file.scm"
-%use (string-split-3) "./euphrates/string-split-3.scm"
-%use (system-environment-get) "./euphrates/system-environment.scm"
-%use (system-fmt) "./euphrates/system-fmt.scm"
-%use (~s) "./euphrates/tilda-s.scm"
-%use (write-string-file) "./euphrates/write-string-file.scm"
-%use (a-weblink?) "./a-weblink-q.scm"
-%use (tegfs-add) "./add.scm"
-%use (classify-clipboard-text-content) "./clipboard.scm"
-%use (tegfs-dump-clipboard tegfs-dump-clipboard/pasta) "./dump-clipboard.scm"
-%use (fatal) "./fatal.scm"
-%use (get-random-basename) "./get-random-basename.scm"
-%use (get-root) "./get-root.scm"
-%use (make-temporary-filename/local) "./make-temporary-filename-local.scm"
-%use (CLI::save::loop) "./cli-save-loop.scm"
 
 (define working-file/p
   (make-parameter #f))
@@ -70,9 +72,9 @@
      (-temporary-file
       (let* ((target-name0 (string-append target-basename target-extension))
              (target-name (if (file-or-directory-exists?
-                                (append-posix-path registry-dir target-name0))
-                               (string-append target-basename "-" (get-random-basename) target-extension)
-                               target-name0))
+                               (append-posix-path registry-dir target-name0))
+                              (string-append target-basename "-" (get-random-basename) target-extension)
+                              target-name0))
              (target-fullname (append-posix-path registry-dir target-name)))
         (rename-file -temporary-file target-fullname)
         (when link?

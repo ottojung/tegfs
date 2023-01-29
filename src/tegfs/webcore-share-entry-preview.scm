@@ -13,13 +13,15 @@
 ;;;; You should have received a copy of the GNU Affero General Public License
 ;;;; along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
-%run guile
+(cond-expand
+ (guile
+  (define-module (tegfs webcore-share-entry-preview)
+    :export (webcore::share-entry-preview)
+    :use-module ((euphrates file-or-directory-exists-q) :select (file-or-directory-exists?))
+    :use-module ((tegfs get-preview-path) :select (get-preview-path))
+    :use-module ((tegfs webcore-share-entry-generic) :select (webcore::share-entry-generic)))))
 
-%var webcore::share-entry-preview
 
-%use (file-or-directory-exists?) "./euphrates/file-or-directory-exists-q.scm"
-%use (get-preview-path) "./get-preview-path.scm"
-%use (webcore::share-entry-generic) "./webcore-share-entry-generic.scm"
 
 (define webcore::share-entry-preview
   (webcore::share-entry-generic

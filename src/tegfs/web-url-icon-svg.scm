@@ -13,11 +13,13 @@
 ;;;; You should have received a copy of the GNU Affero General Public License
 ;;;; along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
-%run guile
+(cond-expand
+ (guile
+  (define-module (tegfs web-url-icon-svg)
+    :export (web::url-icon/svg)
+    :use-module ((euphrates stringf) :select (stringf)))))
 
-%var web::url-icon/svg
 
-%use (stringf) "./euphrates/stringf.scm"
 
 (define web::url-icon/svg/template
   "<?xml version='1.0' encoding='UTF-8' standalone='no'?>

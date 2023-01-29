@@ -13,12 +13,14 @@
 ;;;; You should have received a copy of the GNU Affero General Public License
 ;;;; along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
-%run guile
+(cond-expand
+ (guile
+  (define-module (tegfs web-message-template)
+    :export (web::message-template)
+    :use-module ((tegfs web-form-template) :select (web::form-template))
+    :use-module ((tegfs web-sxml-to-xml) :select (web::sxml->xml)))))
 
-%var web::message-template
 
-%use (web::form-template) "./web-form-template.scm"
-%use (web::sxml->xml) "./web-sxml-to-xml.scm"
 
 (define (web::message-template message)
   (define xml

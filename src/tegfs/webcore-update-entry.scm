@@ -13,24 +13,26 @@
 ;;;; You should have received a copy of the GNU Affero General Public License
 ;;;; along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
-%run guile
+(cond-expand
+ (guile
+  (define-module (tegfs webcore-update-entry)
+    :export (webcore::update-entry)
+    :use-module ((euphrates catchu-case) :select (catchu-case))
+    :use-module ((euphrates profun-accept) :select (profun-accept))
+    :use-module ((euphrates profun-error) :select (make-profun-error))
+    :use-module ((euphrates profun-meta-key) :select (profun-meta-key))
+    :use-module ((euphrates profun-op-lambda) :select (profun-op-lambda))
+    :use-module ((euphrates profun-request-value) :select (profun-request-value))
+    :use-module ((euphrates profun-value) :select (profun-unbound-value?))
+    :use-module ((tegfs update-entry) :select (update-entry))
+    :use-module ((tegfs web-context) :select (context-filemap/2))
+    :use-module ((tegfs webcore-access) :select (can-modify-entry?))
+    :use-module ((tegfs webcore-parameters) :select (webcore::permissions/p)))))
 
 ;; Replaces `original-entry' by the `updated-entry'.
 ;; Note that if `updated-entry' is `#f', then the `original-entry' is deleted.
 ;; If `keyword-target` of the entry is updated or deleted, then the accompaying file is also renamed or deleted.
-%var webcore::update-entry
 
-%use (catchu-case) "./euphrates/catchu-case.scm"
-%use (profun-accept) "./euphrates/profun-accept.scm"
-%use (make-profun-error) "./euphrates/profun-error.scm"
-%use (profun-meta-key) "./euphrates/profun-meta-key.scm"
-%use (profun-op-lambda) "./euphrates/profun-op-lambda.scm"
-%use (profun-request-value) "./euphrates/profun-request-value.scm"
-%use (profun-unbound-value?) "./euphrates/profun-value.scm"
-%use (update-entry) "./update-entry.scm"
-%use (context-filemap/2) "./web-context.scm"
-%use (can-modify-entry?) "./webcore-access.scm"
-%use (webcore::permissions/p) "./webcore-parameters.scm"
 
 (define (webcore::update-entry webcore::context)
   (define filemap/2 (context-filemap/2 webcore::context))

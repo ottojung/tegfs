@@ -13,14 +13,16 @@
 ;;;; You should have received a copy of the GNU Affero General Public License
 ;;;; along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
-%run guile
+(cond-expand
+ (guile
+  (define-module (tegfs web-collect-own-garbage)
+    :export (web::collect-own-garbage)
+    :use-module ((euphrates hashmap) :select (hashmap-delete! hashmap-foreach))
+    :use-module ((tegfs current-time-p) :select (current-time/p))
+    :use-module ((tegfs web-current-temp-paths-table-p) :select (web::current-temp-paths-table/p))
+    :use-module ((tegfs web-temp-path-still-valid-huh) :select (web::temp-path-still-valid?)))))
 
-%var web::collect-own-garbage
 
-%use (hashmap-delete! hashmap-foreach) "./euphrates/hashmap.scm"
-%use (current-time/p) "./current-time-p.scm"
-%use (web::current-temp-paths-table/p) "./web-current-temp-paths-table-p.scm"
-%use (web::temp-path-still-valid?) "./web-temp-path-still-valid-huh.scm"
 
 (define (web::collect-own-garbage)
   (define table (web::current-temp-paths-table/p))

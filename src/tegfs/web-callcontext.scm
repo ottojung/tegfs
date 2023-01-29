@@ -13,21 +13,13 @@
 ;;;; You should have received a copy of the GNU Affero General Public License
 ;;;; along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
-%run guile
+(cond-expand
+ (guile
+  (define-module (tegfs web-callcontext)
+    :export (callcontext-ctr callcontext? callcontext-url callcontext-path callcontext-headers callcontext-query callcontext-body callcontext-respheaders set-callcontext-respheaders! add-callcontext-respheaders! callcontext-token)
+    :use-module ((euphrates define-type9) :select (define-type9)))))
 
-%var callcontext-ctr
-%var callcontext?
-%var callcontext-url
-%var callcontext-path
-%var callcontext-headers
-%var callcontext-query
-%var callcontext-body
-%var callcontext-respheaders
-%var set-callcontext-respheaders!
-%var add-callcontext-respheaders!
-%var callcontext-token
 
-%use (define-type9) "./euphrates/define-type9.scm"
 
 (define-type9 <callcontext>
   (callcontext-ctr url path headersfn queryfn body respheaders tokenfn) callcontext?

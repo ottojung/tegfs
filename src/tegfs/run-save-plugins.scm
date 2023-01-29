@@ -13,13 +13,15 @@
 ;;;; You should have received a copy of the GNU Affero General Public License
 ;;;; along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
-%run guile
+(cond-expand
+ (guile
+  (define-module (tegfs run-save-plugins)
+    :export (run-save-plugins)
+    :use-module ((euphrates alist-initialize-bang) :select (alist-initialize!:return-multiple))
+    :use-module ((euphrates list-fold) :select (list-fold))
+    :use-module ((tegfs plugin) :select (plugin-function)))))
 
-%var run-save-plugins
 
-%use (alist-initialize!:return-multiple) "./euphrates/alist-initialize-bang.scm"
-%use (list-fold) "./euphrates/list-fold.scm"
-%use (plugin-function) "./plugin.scm"
 
 (define (run-save-plugins config root current-alist plugins)
   (alist-initialize!:return-multiple

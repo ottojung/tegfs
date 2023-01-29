@@ -13,11 +13,13 @@
 ;;;; You should have received a copy of the GNU Affero General Public License
 ;;;; along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
-%run guile
+(cond-expand
+ (guile
+  (define-module (tegfs web-directory-svg)
+    :export (web::directory.svg)
+    :use-module ((tegfs web-define-static-file) :select (web::define-static-file)))))
 
-%var web::directory.svg
 
-%use (web::define-static-file) "./web-define-static-file.scm"
 
 (define web::directory.svg::string
   "<?xml version='1.0' encoding='UTF-8' standalone='no'?>

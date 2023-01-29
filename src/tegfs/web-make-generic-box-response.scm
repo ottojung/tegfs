@@ -13,13 +13,15 @@
 ;;;; You should have received a copy of the GNU Affero General Public License
 ;;;; along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
-%run guile
+(cond-expand
+ (guile
+  (define-module (tegfs web-make-generic-box-response)
+    :export (web::make-generic-box-response)
+    :use-module ((euphrates stringf) :select (stringf))
+    :use-module ((tegfs web-form-template) :select (web::form-template))
+    :use-module ((tegfs web-make-html-response) :select (web::make-html-response)))))
 
-%var web::make-generic-box-response
 
-%use (stringf) "./euphrates/stringf.scm"
-%use (web::form-template) "./web-form-template.scm"
-%use (web::make-html-response) "./web-make-html-response.scm"
 
 (define (web::make-generic-box-response status fmt . args)
   (define inner (apply stringf (cons fmt args)))

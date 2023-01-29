@@ -13,17 +13,19 @@
 ;;;; You should have received a copy of the GNU Affero General Public License
 ;;;; along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
-%run guile
+(cond-expand
+ (guile
+  (define-module (tegfs web-redirect)
+    :export (web::redirect)
+    :use-module ((euphrates url-get-path) :select (url-get-path))
+    :use-module ((euphrates url-get-protocol) :select (url-get-protocol))
+    :use-module ((euphrates url-get-query) :select (url-get-query))
+    :use-module ((tegfs web-callcontext) :select (callcontext-headers))
+    :use-module ((tegfs web-make-callcontext) :select (web::make-callcontext/raw))
+    :use-module ((tegfs web-return) :select (web::return))
+    :use-module ((tegfs web-server-current-handler-p) :select (webcore::server-current/p)))))
 
-%var web::redirect
 
-%use (url-get-path) "./euphrates/url-get-path.scm"
-%use (url-get-protocol) "./euphrates/url-get-protocol.scm"
-%use (url-get-query) "./euphrates/url-get-query.scm"
-%use (callcontext-headers) "./web-callcontext.scm"
-%use (web::make-callcontext/raw) "./web-make-callcontext.scm"
-%use (web::return) "./web-return.scm"
-%use (webcore::server-current/p) "./web-server-current-handler-p.scm"
 
 (define (web::redirect callctx new-url new-body)
   (define handler (webcore::server-current/p))

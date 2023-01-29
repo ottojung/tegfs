@@ -13,11 +13,13 @@
 ;;;; You should have received a copy of the GNU Affero General Public License
 ;;;; along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
-%run guile
+(cond-expand
+ (guile
+  (define-module (tegfs fatal)
+    :export (fatal)
+    :use-module ((euphrates dprintln) :select (dprintln)))))
 
-%var fatal
 
-%use (dprintln) "./euphrates/dprintln.scm"
 
 (define (fatal fmt . args)
   (parameterize ((current-output-port (current-error-port)))

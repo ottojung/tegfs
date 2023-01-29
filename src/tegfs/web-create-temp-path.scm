@@ -13,16 +13,18 @@
 ;;;; You should have received a copy of the GNU Affero General Public License
 ;;;; along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
-%run guile
+(cond-expand
+ (guile
+  (define-module (tegfs web-create-temp-path)
+    :export (web::create-temp-path)
+    :use-module ((euphrates hashmap) :select (hashmap-set!))
+    :use-module ((euphrates memconst) :select (memconst))
+    :use-module ((tegfs current-time-p) :select (current-time/p))
+    :use-module ((tegfs get-random-network-name) :select (get-random-network-name))
+    :use-module ((tegfs web-current-temp-paths-table-p) :select (web::current-temp-paths-table/p))
+    :use-module ((tegfs web-temp-path) :select (web::temp-path-ctr)))))
 
-%var web::create-temp-path
 
-%use (hashmap-set!) "./euphrates/hashmap.scm"
-%use (memconst) "./euphrates/memconst.scm"
-%use (current-time/p) "./current-time-p.scm"
-%use (get-random-network-name) "./get-random-network-name.scm"
-%use (web::current-temp-paths-table/p) "./web-current-temp-paths-table-p.scm"
-%use (web::temp-path-ctr) "./web-temp-path.scm"
 
 (define (web::create-temp-path stime destination/0)
   (define now (current-time/p))

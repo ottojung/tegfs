@@ -13,13 +13,13 @@
 ;;;; You should have received a copy of the GNU Affero General Public License
 ;;;; along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
-%run guile
+(cond-expand
+ (guile
+  (define-module (tegfs core-paremeters)
+    :export (core::query/p core::diropen?/p core::dirpreview?/p)
+    :use-module ((euphrates profun-op-parameter) :select (make-profun-parameter)))))
 
-%var core::query/p
-%var core::diropen?/p
-%var core::dirpreview?/p
 
-%use (make-profun-parameter) "./euphrates/profun-op-parameter.scm"
 
 (define core::query/p
   (make-profun-parameter))

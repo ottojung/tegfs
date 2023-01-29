@@ -13,8 +13,10 @@
 ;;;; You should have received a copy of the GNU Affero General Public License
 ;;;; along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
-%run guile
+(cond-expand
+ (guile
+  (define-module (tegfs web-default-port)
+    :export (web::default-port))))
 
-%var web::default-port
 
 (define web::default-port 33470)

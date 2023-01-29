@@ -13,29 +13,30 @@
 ;;;; You should have received a copy of the GNU Affero General Public License
 ;;;; along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
-%run guile
+(cond-expand
+ (guile
+  (define-module (tegfs web-parse-multipart)
+    :export (parse-multipart/from-data parse-multipart-as-hashmap parse-multipart->hashmap-by-name)
+    :use-module ((euphrates comp) :select (comp))
+    :use-module ((euphrates fn-cons) :select (fn-cons))
+    :use-module ((euphrates hashmap) :select (hashmap-set! make-hashmap))
+    :use-module ((euphrates raisu) :select (raisu))
+    :use-module ((euphrates string-split-3) :select (string-split-3))
+    :use-module ((euphrates string-strip) :select (string-strip))
+    :use-module ((euphrates string-to-lines) :select (string->lines))
+    :use-module ((euphrates tilda-a) :select (~a))
+    :use-module ((euphrates un-tilda-s) :select (un~s)))))
 
-%var parse-multipart/from-data
-%var parse-multipart-as-hashmap
-%var parse-multipart->hashmap-by-name
 
-%use (comp) "./euphrates/comp.scm"
-%use (fn-cons) "./euphrates/fn-cons.scm"
-%use (hashmap-set! make-hashmap) "./euphrates/hashmap.scm"
-%use (raisu) "./euphrates/raisu.scm"
-%use (string-split-3) "./euphrates/string-split-3.scm"
-%use (string-strip) "./euphrates/string-strip.scm"
-%use (string->lines) "./euphrates/string-to-lines.scm"
-%use (~a) "./euphrates/tilda-a.scm"
-%use (un~s) "./euphrates/un-tilda-s.scm"
 
-%for (COMPILER "guile")
+(cond-expand
+ (guile
 
-(use-modules (web uri))
-(use-modules (rnrs bytevectors))
-(use-modules (ice-9 iconv))
+  (use-modules (web uri))
+  (use-modules (rnrs bytevectors))
+  (use-modules (ice-9 iconv))
 
-%end
+  ))
 
 (define (split-semicolons str0)
   (define str (string->list str0))

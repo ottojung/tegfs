@@ -13,12 +13,14 @@
 ;;;; You should have received a copy of the GNU Affero General Public License
 ;;;; along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
-%run guile
+(cond-expand
+ (guile
+  (define-module (tegfs webcore-ask)
+    :export (webcore::ask)
+    :use-module ((euphrates profune-communicator) :select (profune-communicator-handle))
+    :use-module ((tegfs webcore-current-communicator-p) :select (webcore::current-communicator/p)))))
 
-%var webcore::ask
 
-%use (profune-communicator-handle) "./euphrates/profune-communicator.scm"
-%use (webcore::current-communicator/p) "./webcore-current-communicator-p.scm"
 
 (define (webcore::ask sentence)
   (profune-communicator-handle

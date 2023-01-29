@@ -13,21 +13,23 @@
 ;;;; You should have received a copy of the GNU Affero General Public License
 ;;;; along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
-%run guile
+(cond-expand
+ (guile
+  (define-module (tegfs core-entry-generic)
+    :export (core::entry/generic)
+    :use-module ((euphrates comp) :select (appcomp comp))
+    :use-module ((euphrates curry-if) :select (curry-if))
+    :use-module ((euphrates profun-RFC) :select (make-profun-RFC))
+    :use-module ((euphrates profun-accept) :select (profun-accept? profun-ctx-set))
+    :use-module ((euphrates profun-default) :select (profun-default))
+    :use-module ((euphrates profun-error) :select (make-profun-error))
+    :use-module ((euphrates profun-op-lambda) :select (profun-op-lambda))
+    :use-module ((euphrates profun-value) :select (profun-bound-value? profun-unbound-value?))
+    :use-module ((tegfs core-paremeters) :select (core::diropen?/p core::dirpreview?/p core::query/p))
+    :use-module ((tegfs keyword-diropen) :select (keyword-diropen))
+    :use-module ((tegfs keyword-dirpreview) :select (keyword-dirpreview)))))
 
-%var core::entry/generic
 
-%use (appcomp comp) "./euphrates/comp.scm"
-%use (curry-if) "./euphrates/curry-if.scm"
-%use (make-profun-RFC) "./euphrates/profun-RFC.scm"
-%use (profun-accept? profun-ctx-set) "./euphrates/profun-accept.scm"
-%use (profun-default) "./euphrates/profun-default.scm"
-%use (make-profun-error) "./euphrates/profun-error.scm"
-%use (profun-op-lambda) "./euphrates/profun-op-lambda.scm"
-%use (profun-bound-value? profun-unbound-value?) "./euphrates/profun-value.scm"
-%use (core::diropen?/p core::dirpreview?/p core::query/p) "./core-paremeters.scm"
-%use (keyword-diropen) "./keyword-diropen.scm"
-%use (keyword-dirpreview) "./keyword-dirpreview.scm"
 
 (define core::entry/generic
   (lambda (get-iter)

@@ -13,18 +13,21 @@
 ;;;; You should have received a copy of the GNU Affero General Public License
 ;;;; along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
-%run guile
+(cond-expand
+ (guile
+  (define-module (tegfs web-try-uri-decode)
+    :export (web::try-uri-decode)
+    :use-module ((euphrates catch-any) :select (catch-any))
+    :use-module ((euphrates raisu) :select (raisu)))))
 
-%var web::try-uri-decode
 
-%use (catch-any) "./euphrates/catch-any.scm"
-%use (raisu) "./euphrates/raisu.scm"
 
-%for (COMPILER "guile")
+(cond-expand
+ (guile
 
-(use-modules (web uri))
+  (use-modules (web uri))
 
-%end
+  ))
 
 (define (web::try-uri-decode url)
   (cond

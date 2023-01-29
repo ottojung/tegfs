@@ -13,15 +13,17 @@
 ;;;; You should have received a copy of the GNU Affero General Public License
 ;;;; along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
-%run guile
+(cond-expand
+ (guile
+  (define-module (tegfs categorization-starred-symbol-huh)
+    :export (categorization-starred-symbol?)
+    :use-module ((euphrates comp) :select (comp))
+    :use-module ((euphrates compose-under) :select (compose-under))
+    :use-module ((euphrates list-last) :select (list-last))
+    :use-module ((euphrates list-or-map) :select (list-or-map))
+    :use-module ((tegfs tag-structure-sep1) :select (tag-structure-sep1)))))
 
-%var categorization-starred-symbol?
 
-%use (comp) "./euphrates/comp.scm"
-%use (compose-under) "./euphrates/compose-under.scm"
-%use (list-last) "./euphrates/list-last.scm"
-%use (list-or-map) "./euphrates/list-or-map.scm"
-%use (tag-structure-sep1) "./tag-structure-sep1.scm"
 
 (define categorization-starred-symbol?
   (comp symbol->string string->list

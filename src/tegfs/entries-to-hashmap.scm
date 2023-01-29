@@ -13,14 +13,16 @@
 ;;;; You should have received a copy of the GNU Affero General Public License
 ;;;; along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
-%run guile
+(cond-expand
+ (guile
+  (define-module (tegfs entries-to-hashmap)
+    :export (entries->hashmap)
+    :use-module ((euphrates dprintln) :select (dprintln))
+    :use-module ((euphrates hashmap) :select (hashmap-set! make-hashmap))
+    :use-module ((tegfs entries-for-each) :select (entries-for-each))
+    :use-module ((tegfs keyword-id) :select (keyword-id)))))
 
-%var entries->hashmap
 
-%use (dprintln) "./euphrates/dprintln.scm"
-%use (hashmap-set! make-hashmap) "./euphrates/hashmap.scm"
-%use (entries-for-each) "./entries-for-each.scm"
-%use (keyword-id) "./keyword-id.scm"
 
 (define entries->hashmap
   (case-lambda

@@ -13,17 +13,19 @@
 ;;;; You should have received a copy of the GNU Affero General Public License
 ;;;; along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
-%run guile
+(cond-expand
+ (guile
+  (define-module (tegfs web-previewunknownurl)
+    :export (web::previewunknownurl)
+    :use-module ((tegfs web-define-static-file) :select (web::define-static-file))
+    :use-module ((tegfs web-preview-height) :select (web::preview-height))
+    :use-module ((tegfs web-preview-width) :select (web::preview-width))
+    :use-module ((tegfs web-url-icon-svg) :select (web::url-icon/svg)))))
 
-%var web::previewunknownurl
 
-%use (web::define-static-file) "./web-define-static-file.scm"
-%use (web::preview-height) "./web-preview-height.scm"
-%use (web::preview-width) "./web-preview-width.scm"
-%use (web::url-icon/svg) "./web-url-icon-svg.scm"
 
 (define unknownurl-image-string
   (web::url-icon/svg web::preview-width web::preview-height))
 
 (web::define-static-file web::previewunknownurl
-  '(image/svg+xml) unknownurl-image-string)
+             '(image/svg+xml) unknownurl-image-string)

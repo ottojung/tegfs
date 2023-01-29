@@ -13,12 +13,14 @@
 ;;;; You should have received a copy of the GNU Affero General Public License
 ;;;; along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
-%run guile
+(cond-expand
+ (guile
+  (define-module (tegfs web-logo-gray)
+    :export (web::logo-gray.jpeg)
+    :use-module ((tegfs web-define-static-file) :select (web::define-static-file))
+    :use-module ((tegfs web-logo-gray-bytes) :select (web::logo-gray/bytes)))))
 
-%var web::logo-gray.jpeg
 
-%use (web::define-static-file) "./web-define-static-file.scm"
-%use (web::logo-gray/bytes) "./web-logo-gray-bytes.scm"
 
 (web::define-static-file
  web::logo-gray.jpeg

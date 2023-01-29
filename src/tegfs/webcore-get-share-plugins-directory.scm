@@ -13,13 +13,15 @@
 ;;;; You should have received a copy of the GNU Affero General Public License
 ;;;; along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
-%run guile
+(cond-expand
+ (guile
+  (define-module (tegfs webcore-get-share-plugins-directory)
+    :export (webcore::get-share-plugins-directory)
+    :use-module ((euphrates append-posix-path) :select (append-posix-path))
+    :use-module ((euphrates make-directories) :select (make-directories))
+    :use-module ((tegfs get-root) :select (get-root)))))
 
-%var webcore::get-share-plugins-directory
 
-%use (append-posix-path) "./euphrates/append-posix-path.scm"
-%use (make-directories) "./euphrates/make-directories.scm"
-%use (get-root) "./get-root.scm"
 
 (define (webcore::get-share-plugins-directory)
   (define root (get-root))

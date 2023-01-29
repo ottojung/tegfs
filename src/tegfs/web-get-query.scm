@@ -13,12 +13,14 @@
 ;;;; You should have received a copy of the GNU Affero General Public License
 ;;;; along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
-%run guile
+(cond-expand
+ (guile
+  (define-module (tegfs web-get-query)
+    :export (web::get-query)
+    :use-module ((tegfs web-callcontext-p) :select (web::callcontext/p))
+    :use-module ((tegfs web-callcontext) :select (callcontext-query)))))
 
-%var web::get-query
 
-%use (web::callcontext/p) "./web-callcontext-p.scm"
-%use (callcontext-query) "./web-callcontext.scm"
 
 (define (web::get-query)
   (define callctx (web::callcontext/p))

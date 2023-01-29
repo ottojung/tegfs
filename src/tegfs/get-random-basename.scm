@@ -13,12 +13,14 @@
 ;;;; You should have received a copy of the GNU Affero General Public License
 ;;;; along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
-%run guile
+(cond-expand
+ (guile
+  (define-module (tegfs get-random-basename)
+    :export (get-random-basename)
+    :use-module ((euphrates alphanum-lowercase-alphabet) :select (alphanum-lowercase/alphabet))
+    :use-module ((euphrates random-choice) :select (random-choice)))))
 
-%var get-random-basename
 
-%use (alphanum-lowercase/alphabet) "./euphrates/alphanum-lowercase-alphabet.scm"
-%use (random-choice) "./euphrates/random-choice.scm"
 
 (define (get-random-basename)
   (list->string

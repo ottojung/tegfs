@@ -13,12 +13,14 @@
 ;;;; You should have received a copy of the GNU Affero General Public License
 ;;;; along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
-%run guile
+(cond-expand
+ (guile
+  (define-module (tegfs load-plugin)
+    :export (load-plugin)
+    :use-module ((euphrates dynamic-load) :select (dynamic-load))
+    :use-module ((tegfs plugin) :select (plugin-ctr)))))
 
-%var load-plugin
 
-%use (dynamic-load) "./euphrates/dynamic-load.scm"
-%use (plugin-ctr) "./plugin.scm"
 
 (define (load-plugin filepath)
   (define fun (dynamic-load filepath))

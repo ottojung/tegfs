@@ -13,13 +13,15 @@
 ;;;; You should have received a copy of the GNU Affero General Public License
 ;;;; along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
-%run guile
+(cond-expand
+ (guile
+  (define-module (tegfs entry-print-formatted)
+    :export (entry-print/formatted)
+    :use-module ((euphrates read-list) :select (read-list))
+    :use-module ((tegfs entry-target-fullpath) :select (entry-target-fullpath))
+    :use-module ((tegfs get-preview-path) :select (get-preview-path)))))
 
-%var entry-print/formatted
 
-%use (read-list) "./euphrates/read-list.scm"
-%use (entry-target-fullpath) "./entry-target-fullpath.scm"
-%use (get-preview-path) "./get-preview-path.scm"
 
 (define (entry-print/formatted <query-format> entry)
   (define format-elements

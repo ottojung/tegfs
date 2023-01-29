@@ -13,18 +13,20 @@
 ;;;; You should have received a copy of the GNU Affero General Public License
 ;;;; along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
-%run guile
+(cond-expand
+ (guile
+  (define-module (tegfs web-display-entry)
+    :export (web::display-entry)
+    :use-module ((euphrates assq-or) :select (assq-or))
+    :use-module ((euphrates path-get-basename) :select (path-get-basename))
+    :use-module ((tegfs a-weblink-q) :select (a-weblink?))
+    :use-module ((tegfs entry-get-mimetype) :select (entry-get-mimetype))
+    :use-module ((tegfs entry-get-target) :select (entry-get-target))
+    :use-module ((tegfs keyword-id) :select (keyword-id))
+    :use-module ((tegfs keyword-title) :select (keyword-title))
+    :use-module ((tegfs web-get-full-link) :select (web::get-full-link)))))
 
-%var web::display-entry
 
-%use (assq-or) "./euphrates/assq-or.scm"
-%use (path-get-basename) "./euphrates/path-get-basename.scm"
-%use (a-weblink?) "./a-weblink-q.scm"
-%use (entry-get-mimetype) "./entry-get-mimetype.scm"
-%use (entry-get-target) "./entry-get-target.scm"
-%use (keyword-id) "./keyword-id.scm"
-%use (keyword-title) "./keyword-title.scm"
-%use (web::get-full-link) "./web-get-full-link.scm"
 
 (define (display-preview entry target preview-link)
   (define mimetype (entry-get-mimetype entry))

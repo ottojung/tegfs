@@ -13,12 +13,14 @@
 ;;;; You should have received a copy of the GNU Affero General Public License
 ;;;; along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
-%run guile
+(cond-expand
+ (guile
+  (define-module (tegfs web-query-display-results)
+    :export (web::query-display-results)
+    :use-module ((euphrates fn-alist) :select (fn-alist))
+    :use-module ((tegfs web-display-entry) :select (web::display-entry)))))
 
-%var web::query-display-results
 
-%use (fn-alist) "./euphrates/fn-alist.scm"
-%use (web::display-entry) "./web-display-entry.scm"
 
 (define (web::query-display-results equals)
   (display "<div class='cards'>")

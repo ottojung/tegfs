@@ -13,11 +13,13 @@
 ;;;; You should have received a copy of the GNU Affero General Public License
 ;;;; along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
-%run guile
+(cond-expand
+ (guile
+  (define-module (tegfs web-settings-gear)
+    :export (web::settings-gear)
+    :use-module ((tegfs web-define-static-file) :select (web::define-static-file)))))
 
-%var web::settings-gear
 
-%use (web::define-static-file) "./web-define-static-file.scm"
 
 (define web::settings-gear-image-string
   "<?xml version='1.0' encoding='UTF-8' standalone='no'?>

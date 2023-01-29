@@ -13,15 +13,17 @@
 ;;;; You should have received a copy of the GNU Affero General Public License
 ;;;; along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
-%run guile
+(cond-expand
+ (guile
+  (define-module (tegfs path-safe-extension)
+    :export (path-safe-extension)
+    :use-module ((euphrates alphanum-alphabet) :select (alphanum/alphabet/index))
+    :use-module ((euphrates comp) :select (comp))
+    :use-module ((euphrates compose-under) :select (compose-under))
+    :use-module ((euphrates list-and-map) :select (list-and-map))
+    :use-module ((euphrates path-extension) :select (path-extension)))))
 
-%var path-safe-extension
 
-%use (alphanum/alphabet/index) "./euphrates/alphanum-alphabet.scm"
-%use (comp) "./euphrates/comp.scm"
-%use (compose-under) "./euphrates/compose-under.scm"
-%use (list-and-map) "./euphrates/list-and-map.scm"
-%use (path-extension) "./euphrates/path-extension.scm"
 
 (define (path-safe-extension path)
   (define max-size 7)

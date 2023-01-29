@@ -13,14 +13,16 @@
 ;;;; You should have received a copy of the GNU Affero General Public License
 ;;;; along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
-%run guile
+(cond-expand
+ (guile
+  (define-module (tegfs web-get-domainname)
+    :export (web::get-domainname)
+    :use-module ((euphrates tilda-a) :select (~a))
+    :use-module ((euphrates url-get-protocol) :select (url-get-protocol))
+    :use-module ((tegfs get-config) :select (get-config))
+    :use-module ((tegfs web-callcontext) :select (callcontext-headers)))))
 
-%var web::get-domainname
 
-%use (~a) "./euphrates/tilda-a.scm"
-%use (url-get-protocol) "./euphrates/url-get-protocol.scm"
-%use (get-config) "./get-config.scm"
-%use (callcontext-headers) "./web-callcontext.scm"
 
 (define (web::get-domainname callctx)
   (define headers (callcontext-headers callctx))

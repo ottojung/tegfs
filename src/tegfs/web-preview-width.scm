@@ -13,8 +13,10 @@
 ;;;; You should have received a copy of the GNU Affero General Public License
 ;;;; along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
-%run guile
+(cond-expand
+ (guile
+  (define-module (tegfs web-preview-width)
+    :export (web::preview-width))))
 
-%var web::preview-width
 
 (define web::preview-width 400)

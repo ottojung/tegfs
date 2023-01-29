@@ -13,11 +13,13 @@
 ;;;; You should have received a copy of the GNU Affero General Public License
 ;;;; along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
-%run guile
+(cond-expand
+ (guile
+  (define-module (tegfs get-sharedname)
+    :export (get-sharedname)
+    :use-module ((tegfs path-safe-extension) :select (path-safe-extension)))))
 
-%var get-sharedname
 
-%use (path-safe-extension) "./path-safe-extension.scm"
 
 (define (get-sharedname target-fullpath recepientid)
   (define ext (path-safe-extension target-fullpath))

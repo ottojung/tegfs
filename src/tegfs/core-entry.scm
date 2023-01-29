@@ -13,14 +13,16 @@
 ;;;; You should have received a copy of the GNU Affero General Public License
 ;;;; along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
-%run guile
+(cond-expand
+ (guile
+  (define-module (tegfs core-entry)
+    :export (core::entry)
+    :use-module ((euphrates profun-accept) :select (profun-set))
+    :use-module ((euphrates profun-reject) :select (profun-reject))
+    :use-module ((tegfs core-entry-generic) :select (core::entry/generic))
+    :use-module ((tegfs tegfs-query-open) :select (tegfs-query/open)))))
 
-%var core::entry
 
-%use (profun-set) "./euphrates/profun-accept.scm"
-%use (profun-reject) "./euphrates/profun-reject.scm"
-%use (core::entry/generic) "./core-entry-generic.scm"
-%use (tegfs-query/open) "./tegfs-query-open.scm"
 
 (define (core::entry-get-iter opening-properties query E-name)
   (define iter0 (tegfs-query/open opening-properties query))

@@ -13,34 +13,36 @@
 ;;;; You should have received a copy of the GNU Affero General Public License
 ;;;; along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
-%run guile
+(cond-expand
+ (guile
+  (define-module (tegfs tegfs-query-noopen)
+    :export (tegfs-query/noopen)
+    :use-module ((euphrates assq-or) :select (assq-or))
+    :use-module ((euphrates comp) :select (appcomp))
+    :use-module ((euphrates define-pair) :select (define-pair))
+    :use-module ((euphrates file-delete) :select (file-delete))
+    :use-module ((euphrates hashset) :select (hashset-has? make-hashset))
+    :use-module ((euphrates list-intersperse) :select (list-intersperse))
+    :use-module ((euphrates open-file-port) :select (open-file-port))
+    :use-module ((euphrates printf) :select (printf))
+    :use-module ((euphrates profun-database) :select (profun-database-extend))
+    :use-module ((euphrates profun-standard-handler) :select (profun-standard-handler))
+    :use-module ((euphrates profun) :select (profun-create-falsy-database profun-eval-query/boolean))
+    :use-module ((euphrates raisu) :select (raisu))
+    :use-module ((euphrates stack) :select (stack->list stack-make stack-push!))
+    :use-module ((euphrates string-strip) :select (string-strip))
+    :use-module ((euphrates string-to-lines) :select (string->lines))
+    :use-module ((euphrates system-re) :select (system-re))
+    :use-module ((tegfs dump-rules) :select (dump-rules))
+    :use-module ((tegfs entries-iterate) :select (entries-iterate))
+    :use-module ((tegfs keyword-id) :select (keyword-id))
+    :use-module ((tegfs make-temporary-filename-local) :select (make-temporary-filename/local))
+    :use-module ((tegfs prolog-query-parse) :select (prolog-query-parse))
+    :use-module ((tegfs prolog-var) :select (make-prolog-var prolog-var-name prolog-var?))
+    :use-module ((tegfs prolog) :select (tegfs-dump-prolog translate-entry-tags))
+    :use-module ((tegfs tag-to-prolog-term) :select (tag->prolog-term)))))
 
-%var tegfs-query/noopen
 
-%use (assq-or) "./euphrates/assq-or.scm"
-%use (appcomp) "./euphrates/comp.scm"
-%use (define-pair) "./euphrates/define-pair.scm"
-%use (file-delete) "./euphrates/file-delete.scm"
-%use (hashset-has? make-hashset) "./euphrates/hashset.scm"
-%use (list-intersperse) "./euphrates/list-intersperse.scm"
-%use (open-file-port) "./euphrates/open-file-port.scm"
-%use (printf) "./euphrates/printf.scm"
-%use (profun-database-extend) "./euphrates/profun-database.scm"
-%use (profun-standard-handler) "./euphrates/profun-standard-handler.scm"
-%use (profun-create-falsy-database profun-eval-query/boolean) "./euphrates/profun.scm"
-%use (raisu) "./euphrates/raisu.scm"
-%use (stack->list stack-make stack-push!) "./euphrates/stack.scm"
-%use (string-strip) "./euphrates/string-strip.scm"
-%use (string->lines) "./euphrates/string-to-lines.scm"
-%use (system-re) "./euphrates/system-re.scm"
-%use (dump-rules) "./dump-rules.scm"
-%use (entries-iterate) "./entries-iterate.scm"
-%use (keyword-id) "./keyword-id.scm"
-%use (make-temporary-filename/local) "./make-temporary-filename-local.scm"
-%use (prolog-query-parse) "./prolog-query-parse.scm"
-%use (make-prolog-var prolog-var-name prolog-var?) "./prolog-var.scm"
-%use (tegfs-dump-prolog translate-entry-tags) "./prolog.scm"
-%use (tag->prolog-term) "./tag-to-prolog-term.scm"
 
 (define (tegfs-query/noopen <query...>)
   (define iter0 (entries-iterate))

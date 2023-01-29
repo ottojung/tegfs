@@ -13,21 +13,23 @@
 ;;;; You should have received a copy of the GNU Affero General Public License
 ;;;; along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
-%run guile
+(cond-expand
+ (guile
+  (define-module (tegfs webcore-share-entry-generic)
+    :export (webcore::share-entry-generic)
+    :use-module ((euphrates profun-accept) :select (profun-set))
+    :use-module ((euphrates profun-error) :select (make-profun-error))
+    :use-module ((euphrates profun-meta-key) :select (profun-meta-key))
+    :use-module ((euphrates profun-op-lambda) :select (profun-op-lambda))
+    :use-module ((euphrates profun-request-value) :select (profun-request-value))
+    :use-module ((euphrates profun-value) :select (profun-bound-value? profun-unbound-value?))
+    :use-module ((tegfs entry-target-fullpath) :select (entry-target-fullpath))
+    :use-module ((tegfs permission) :select (permission?))
+    :use-module ((tegfs sharedinfo) :select (sharedinfo-senderid sharedinfo-stime))
+    :use-module ((tegfs web-share-file) :select (web::share-file/dont-link-yet))
+    :use-module ((tegfs webcore-parameters) :select (webcore::permissions/p)))))
 
-%var webcore::share-entry-generic
 
-%use (profun-set) "./euphrates/profun-accept.scm"
-%use (make-profun-error) "./euphrates/profun-error.scm"
-%use (profun-meta-key) "./euphrates/profun-meta-key.scm"
-%use (profun-op-lambda) "./euphrates/profun-op-lambda.scm"
-%use (profun-request-value) "./euphrates/profun-request-value.scm"
-%use (profun-bound-value? profun-unbound-value?) "./euphrates/profun-value.scm"
-%use (entry-target-fullpath) "./entry-target-fullpath.scm"
-%use (permission?) "./permission.scm"
-%use (sharedinfo-senderid sharedinfo-stime) "./sharedinfo.scm"
-%use (web::share-file/dont-link-yet) "./web-share-file.scm"
-%use (webcore::permissions/p) "./webcore-parameters.scm"
 
 (define webcore::share-entry-generic
   (lambda (get-shared-path)

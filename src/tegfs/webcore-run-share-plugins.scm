@@ -13,12 +13,14 @@
 ;;;; You should have received a copy of the GNU Affero General Public License
 ;;;; along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
-%run guile
+(cond-expand
+ (guile
+  (define-module (tegfs webcore-run-share-plugins)
+    :export (webcore::run-share-plugins)
+    :use-module ((euphrates list-map-first) :select (list-map-first))
+    :use-module ((tegfs plugin) :select (plugin-function)))))
 
-%var webcore::run-share-plugins
 
-%use (list-map-first) "./euphrates/list-map-first.scm"
-%use (plugin-function) "./plugin.scm"
 
 (define (webcore::run-share-plugins config root plugins entry generic-fullpath/0)
   (or

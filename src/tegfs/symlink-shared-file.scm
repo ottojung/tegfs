@@ -13,17 +13,19 @@
 ;;;; You should have received a copy of the GNU Affero General Public License
 ;;;; along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
-%run guile
+(cond-expand
+ (guile
+  (define-module (tegfs symlink-shared-file)
+    :export (symlink-shared-file)
+    :use-module ((euphrates absolute-posix-path-q) :select (absolute-posix-path?))
+    :use-module ((euphrates append-posix-path) :select (append-posix-path))
+    :use-module ((euphrates catch-any) :select (catch-any))
+    :use-module ((euphrates file-or-directory-exists-q) :select (file-or-directory-exists?))
+    :use-module ((euphrates get-current-directory) :select (get-current-directory))
+    :use-module ((tegfs web-context) :select (context-sharedir))
+    :use-module ((tegfs web-get-shared-fullpath) :select (web::get-shared-fullpath)))))
 
-%var symlink-shared-file
 
-%use (absolute-posix-path?) "./euphrates/absolute-posix-path-q.scm"
-%use (append-posix-path) "./euphrates/append-posix-path.scm"
-%use (catch-any) "./euphrates/catch-any.scm"
-%use (file-or-directory-exists?) "./euphrates/file-or-directory-exists-q.scm"
-%use (get-current-directory) "./euphrates/get-current-directory.scm"
-%use (context-sharedir) "./web-context.scm"
-%use (web::get-shared-fullpath) "./web-get-shared-fullpath.scm"
 
 (define (symlink-shared-file ctx target-fullpath recepientid)
   (define sharedir (context-sharedir ctx))

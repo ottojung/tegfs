@@ -13,15 +13,17 @@
 ;;;; You should have received a copy of the GNU Affero General Public License
 ;;;; along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
-%run guile
+(cond-expand
+ (guile
+  (define-module (tegfs make-temporary-filename-local)
+    :export (make-temporary-filename/local)
+    :use-module ((euphrates append-posix-path) :select (append-posix-path))
+    :use-module ((euphrates file-or-directory-exists-q) :select (file-or-directory-exists?))
+    :use-module ((euphrates make-directories) :select (make-directories))
+    :use-module ((tegfs get-random-basename) :select (get-random-basename))
+    :use-module ((tegfs get-root) :select (get-root)))))
 
-%var make-temporary-filename/local
 
-%use (append-posix-path) "./euphrates/append-posix-path.scm"
-%use (file-or-directory-exists?) "./euphrates/file-or-directory-exists-q.scm"
-%use (make-directories) "./euphrates/make-directories.scm"
-%use (get-random-basename) "./get-random-basename.scm"
-%use (get-root) "./get-root.scm"
 
 (define (make-temporary-filename/local)
   (define dir

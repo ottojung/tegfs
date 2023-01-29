@@ -13,16 +13,18 @@
 ;;;; You should have received a copy of the GNU Affero General Public License
 ;;;; along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
-%run guile
+(cond-expand
+ (guile
+  (define-module (tegfs web-full)
+    :export (web::full)
+    :use-module ((euphrates hashmap) :select (hashmap-ref))
+    :use-module ((tegfs web-get-query) :select (web::get-query))
+    :use-module ((tegfs web-iterate-profun-results) :select (web::iterate-profun-results))
+    :use-module ((tegfs web-not-found) :select (web::not-found))
+    :use-module ((tegfs web-return) :select (web::return))
+    :use-module ((tegfs webcore-ask) :select (webcore::ask)))))
 
-%var web::full
 
-%use (hashmap-ref) "./euphrates/hashmap.scm"
-%use (web::get-query) "./web-get-query.scm"
-%use (web::iterate-profun-results) "./web-iterate-profun-results.scm"
-%use (web::not-found) "./web-not-found.scm"
-%use (web::return) "./web-return.scm"
-%use (webcore::ask) "./webcore-ask.scm"
 
 (define (web::full)
   (define ctxq (web::get-query))

@@ -13,14 +13,16 @@
 ;;;; You should have received a copy of the GNU Affero General Public License
 ;;;; along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
-%run guile
+(cond-expand
+ (guile
+  (define-module (tegfs web-make-communicator)
+    :export (web::make-communicator)
+    :use-module ((euphrates profun) :select (profun-create-database))
+    :use-module ((euphrates profune-communicator) :select (make-profune-communicator))
+    :use-module ((tegfs web-make-context) :select (web::make-context))
+    :use-module ((tegfs webcore-server-handler) :select (webcore::make-server-handler)))))
 
-%var web::make-communicator
 
-%use (profun-create-database) "./euphrates/profun.scm"
-%use (make-profune-communicator) "./euphrates/profune-communicator.scm"
-%use (web::make-context) "./web-make-context.scm"
-%use (webcore::make-server-handler) "./webcore-server-handler.scm"
 
 (define (web::make-communicator)
   (define webcore::context

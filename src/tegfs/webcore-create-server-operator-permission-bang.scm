@@ -13,12 +13,14 @@
 ;;;; You should have received a copy of the GNU Affero General Public License
 ;;;; along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
-%run guile
+(cond-expand
+ (guile
+  (define-module (tegfs webcore-create-server-operator-permission-bang)
+    :export (webcore::create-server-operator-permission!)
+    :use-module ((tegfs webcore-create-admin-permission-bang) :select (webcore::create-admin-permission!))
+    :use-module ((tegfs with-current-time) :select (with-current-time)))))
 
-%var webcore::create-server-operator-permission!
 
-%use (webcore::create-admin-permission!) "./webcore-create-admin-permission-bang.scm"
-%use (with-current-time) "./with-current-time.scm"
 
 (define (webcore::create-server-operator-permission! webcore::context)
   (define expiery-time +inf.0)

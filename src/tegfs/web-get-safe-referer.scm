@@ -13,15 +13,17 @@
 ;;;; You should have received a copy of the GNU Affero General Public License
 ;;;; along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
-%run guile
+(cond-expand
+ (guile
+  (define-module (tegfs web-get-safe-referer)
+    :export (web::get-safe-referer)
+    :use-module ((euphrates assq-or) :select (assq-or))
+    :use-module ((euphrates remove-common-prefix) :select (remove-common-prefix))
+    :use-module ((euphrates url-get-hostname-and-port) :select (url-get-hostname-and-port))
+    :use-module ((tegfs web-callcontext) :select (callcontext-headers callcontext-url))
+    :use-module ((tegfs web-get-domainname) :select (web::get-domainname)))))
 
-%var web::get-safe-referer
 
-%use (assq-or) "./euphrates/assq-or.scm"
-%use (remove-common-prefix) "./euphrates/remove-common-prefix.scm"
-%use (url-get-hostname-and-port) "./euphrates/url-get-hostname-and-port.scm"
-%use (callcontext-headers callcontext-url) "./web-callcontext.scm"
-%use (web::get-domainname) "./web-get-domainname.scm"
 
 (define (web::get-safe-referer callctx)
   (define headers

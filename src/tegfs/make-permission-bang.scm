@@ -13,15 +13,17 @@
 ;;;; You should have received a copy of the GNU Affero General Public License
 ;;;; along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
-%run guile
+(cond-expand
+ (guile
+  (define-module (tegfs make-permission-bang)
+    :export (make-permission!)
+    :use-module ((euphrates hashmap) :select (hashmap-set!))
+    :use-module ((tegfs make-permission) :select (make-permission))
+    :use-module ((tegfs password-to-tokenlike) :select (password->tokenlike))
+    :use-module ((tegfs permission) :select (permission-token))
+    :use-module ((tegfs web-context) :select (context-tokens)))))
 
-%var make-permission!
 
-%use (hashmap-set!) "./euphrates/hashmap.scm"
-%use (make-permission) "./make-permission.scm"
-%use (password->tokenlike) "./password-to-tokenlike.scm"
-%use (permission-token) "./permission.scm"
-%use (context-tokens) "./web-context.scm"
 
 (define (make-permission! ctx expiery-time admin? maybepassword dynamic)
   (define tokens (context-tokens ctx))

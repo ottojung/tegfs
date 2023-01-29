@@ -13,26 +13,28 @@
 ;;;; You should have received a copy of the GNU Affero General Public License
 ;;;; along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
-%run guile
+(cond-expand
+ (guile
+  (define-module (tegfs webcore-share-entry)
+    :export (webcore::share-entry)
+    :use-module ((euphrates assq-or) :select (assq-or))
+    :use-module ((euphrates hashset) :select (hashset-add!))
+    :use-module ((euphrates profun-accept) :select (profun-accept))
+    :use-module ((euphrates profun-error) :select (make-profun-error))
+    :use-module ((euphrates profun-meta-key) :select (profun-meta-key))
+    :use-module ((euphrates profun-op-lambda) :select (profun-op-lambda))
+    :use-module ((euphrates profun-value) :select (profun-bound-value?))
+    :use-module ((euphrates raisu) :select (raisu))
+    :use-module ((tegfs filemap) :select (filemap-ref-by-senderid))
+    :use-module ((tegfs keyword-entry-parent-directory-senderid) :select (keyword-entry-parent-directory-senderid))
+    :use-module ((tegfs keyword-id) :select (keyword-id))
+    :use-module ((tegfs permission) :select (permission-idset))
+    :use-module ((tegfs sharedinfo) :select (sharedinfo-entry))
+    :use-module ((tegfs tegfs-login-by-key) :select (tegfs-login-by-key))
+    :use-module ((tegfs web-context) :select (context-filemap/2))
+    :use-module ((tegfs web-get-adam-info) :select (web::get-adam-info)))))
 
-%var webcore::share-entry
 
-%use (assq-or) "./euphrates/assq-or.scm"
-%use (hashset-add!) "./euphrates/hashset.scm"
-%use (profun-accept) "./euphrates/profun-accept.scm"
-%use (make-profun-error) "./euphrates/profun-error.scm"
-%use (profun-meta-key) "./euphrates/profun-meta-key.scm"
-%use (profun-op-lambda) "./euphrates/profun-op-lambda.scm"
-%use (profun-bound-value?) "./euphrates/profun-value.scm"
-%use (raisu) "./euphrates/raisu.scm"
-%use (filemap-ref-by-senderid) "./filemap.scm"
-%use (keyword-entry-parent-directory-senderid) "./keyword-entry-parent-directory-senderid.scm"
-%use (keyword-id) "./keyword-id.scm"
-%use (permission-idset) "./permission.scm"
-%use (sharedinfo-entry) "./sharedinfo.scm"
-%use (tegfs-login-by-key) "./tegfs-login-by-key.scm"
-%use (context-filemap/2) "./web-context.scm"
-%use (web::get-adam-info) "./web-get-adam-info.scm"
 
 (define webcore::share-entry
   (lambda (web::context)

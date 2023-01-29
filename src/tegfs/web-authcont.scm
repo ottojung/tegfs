@@ -13,20 +13,22 @@
 ;;;; You should have received a copy of the GNU Affero General Public License
 ;;;; along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
-%run guile
+(cond-expand
+ (guile
+  (define-module (tegfs web-authcont)
+    :export (web::authcont)
+    :use-module ((euphrates hashmap) :select (hashmap-ref))
+    :use-module ((euphrates raisu) :select (raisu))
+    :use-module ((tegfs web-bad-request) :select (web::bad-request))
+    :use-module ((tegfs web-body-not-found) :select (web::body-not-found))
+    :use-module ((tegfs web-body-to-hashmap) :select (web::body->hashmap))
+    :use-module ((tegfs web-callcontext) :select (callcontext-body))
+    :use-module ((tegfs web-iterate-profun-results) :select (web::iterate-profun-results))
+    :use-module ((tegfs web-return) :select (web::return))
+    :use-module ((tegfs web-set-cookie-header) :select (web::set-cookie-header))
+    :use-module ((tegfs webcore-ask) :select (webcore::ask)))))
 
-%var web::authcont
 
-%use (hashmap-ref) "./euphrates/hashmap.scm"
-%use (raisu) "./euphrates/raisu.scm"
-%use (web::bad-request) "./web-bad-request.scm"
-%use (web::body-not-found) "./web-body-not-found.scm"
-%use (web::body->hashmap) "./web-body-to-hashmap.scm"
-%use (callcontext-body) "./web-callcontext.scm"
-%use (web::iterate-profun-results) "./web-iterate-profun-results.scm"
-%use (web::return) "./web-return.scm"
-%use (web::set-cookie-header) "./web-set-cookie-header.scm"
-%use (webcore::ask) "./webcore-ask.scm"
 
 (define (web::authcont callctx query)
   (define yes-continue (hashmap-ref query 'yes #f))

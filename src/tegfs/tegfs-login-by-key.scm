@@ -13,13 +13,15 @@
 ;;;; You should have received a copy of the GNU Affero General Public License
 ;;;; along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
-%run guile
+(cond-expand
+ (guile
+  (define-module (tegfs tegfs-login-by-key)
+    :export (tegfs-login-by-key)
+    :use-module ((euphrates hashmap) :select (hashmap-delete! hashmap-ref))
+    :use-module ((tegfs permission-still-valid-huh) :select (permission-still-valid?))
+    :use-module ((tegfs web-context) :select (context-tokens)))))
 
-%var tegfs-login-by-key
 
-%use (hashmap-delete! hashmap-ref) "./euphrates/hashmap.scm"
-%use (permission-still-valid?) "./permission-still-valid-huh.scm"
-%use (context-tokens) "./web-context.scm"
 
 (define (tegfs-login-by-key ctx key)
   (define tokens (context-tokens ctx))

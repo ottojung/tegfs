@@ -13,14 +13,16 @@
 ;;;; You should have received a copy of the GNU Affero General Public License
 ;;;; along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
-%run guile
+(cond-expand
+ (guile
+  (define-module (tegfs make-sharedinfo)
+    :export (make-sharedinfo)
+    :use-module ((euphrates raisu) :select (raisu))
+    :use-module ((tegfs current-time-p) :select (current-time/p))
+    :use-module ((tegfs get-random-network-name) :select (get-random-network-name))
+    :use-module ((tegfs sharedinfo) :select (sharedinfo-ctr)))))
 
-%var make-sharedinfo
 
-%use (raisu) "./euphrates/raisu.scm"
-%use (current-time/p) "./current-time-p.scm"
-%use (get-random-network-name) "./get-random-network-name.scm"
-%use (sharedinfo-ctr) "./sharedinfo.scm"
 
 (define (make-sharedinfo entry target-fullpath for-duration)
   (define now (or (current-time/p) (raisu 'current-time-is-not-set)))

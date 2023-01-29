@@ -13,12 +13,14 @@
 ;;;; You should have received a copy of the GNU Affero General Public License
 ;;;; along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
-%run guile
+(cond-expand
+ (guile
+  (define-module (tegfs web-get-shared-fullpath)
+    :export (web::get-shared-fullpath)
+    :use-module ((euphrates append-posix-path) :select (append-posix-path))
+    :use-module ((tegfs get-sharedname) :select (get-sharedname)))))
 
-%var web::get-shared-fullpath
 
-%use (append-posix-path) "./euphrates/append-posix-path.scm"
-%use (get-sharedname) "./get-sharedname.scm"
 
 (define (web::get-shared-fullpath sharedir target-fullpath recepientid)
   (define sharedname (get-sharedname target-fullpath recepientid))

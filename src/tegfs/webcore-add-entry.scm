@@ -13,19 +13,21 @@
 ;;;; You should have received a copy of the GNU Affero General Public License
 ;;;; along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
-%run guile
+(cond-expand
+ (guile
+  (define-module (tegfs webcore-add-entry)
+    :export (webcore::add-entry)
+    :use-module ((euphrates profun-accept) :select (profun-set-meta))
+    :use-module ((euphrates profun-error) :select (make-profun-error))
+    :use-module ((euphrates profun-op-lambda) :select (profun-op-lambda))
+    :use-module ((euphrates profun-request-value) :select (profun-request-value))
+    :use-module ((euphrates profun-value) :select (profun-unbound-value?))
+    :use-module ((tegfs add-entry) :select (add-entry))
+    :use-module ((tegfs permission) :select (permission?))
+    :use-module ((tegfs webcore-access) :select (can-upload?))
+    :use-module ((tegfs webcore-parameters) :select (webcore::permissions/p)))))
 
-%var webcore::add-entry
 
-%use (profun-set-meta) "./euphrates/profun-accept.scm"
-%use (make-profun-error) "./euphrates/profun-error.scm"
-%use (profun-op-lambda) "./euphrates/profun-op-lambda.scm"
-%use (profun-request-value) "./euphrates/profun-request-value.scm"
-%use (profun-unbound-value?) "./euphrates/profun-value.scm"
-%use (add-entry) "./add-entry.scm"
-%use (permission?) "./permission.scm"
-%use (can-upload?) "./webcore-access.scm"
-%use (webcore::permissions/p) "./webcore-parameters.scm"
 
 (define webcore::add-entry
   (profun-op-lambda

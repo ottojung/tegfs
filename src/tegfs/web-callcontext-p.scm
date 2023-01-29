@@ -13,9 +13,11 @@
 ;;;; You should have received a copy of the GNU Affero General Public License
 ;;;; along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
-%run guile
+(cond-expand
+ (guile
+  (define-module (tegfs web-callcontext-p)
+    :export (web::callcontext/p))))
 
-%var web::callcontext/p
 
 (define web::callcontext/p
   (make-parameter #f))

@@ -13,11 +13,13 @@
 ;;;; You should have received a copy of the GNU Affero General Public License
 ;;;; along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
-%run guile
+(cond-expand
+ (guile
+  (define-module (tegfs web-body-not-found)
+    :export (web::body-not-found)
+    :use-module ((tegfs web-static-error-message) :select (web::static-error-message)))))
 
-%var web::body-not-found
 
-%use (web::static-error-message) "./web-static-error-message.scm"
 
 (define web::body-not-found
   (web::static-error-message 417 "Send user body"))

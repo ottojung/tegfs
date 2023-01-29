@@ -13,13 +13,15 @@
 ;;;; You should have received a copy of the GNU Affero General Public License
 ;;;; along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
-%run guile
+(cond-expand
+ (guile
+  (define-module (tegfs webcore-collectgarbage)
+    :export (webcore::collectgarbage)
+    :use-module ((euphrates profun-accept) :select (profun-accept))
+    :use-module ((euphrates profun-op-lambda) :select (profun-op-lambda))
+    :use-module ((tegfs web-collectgarbage-nocall) :select (web::collectgarbage/nocall)))))
 
-%var webcore::collectgarbage
 
-%use (profun-accept) "./euphrates/profun-accept.scm"
-%use (profun-op-lambda) "./euphrates/profun-op-lambda.scm"
-%use (web::collectgarbage/nocall) "./web-collectgarbage-nocall.scm"
 
 (define webcore::collectgarbage
   (lambda (web::context)

@@ -13,17 +13,19 @@
 ;;;; You should have received a copy of the GNU Affero General Public License
 ;;;; along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
-%run guile
+(cond-expand
+ (guile
+  (define-module (tegfs update-entry)
+    :export (update-entry)
+    :use-module ((euphrates assq-or) :select (assq-or))
+    :use-module ((euphrates file-delete) :select (file-delete))
+    :use-module ((euphrates raisu) :select (raisu))
+    :use-module ((tegfs entries-map-bang) :select (entries-map!))
+    :use-module ((tegfs entry-target-fullpath) :select (entry-target-fullpath))
+    :use-module ((tegfs keyword-entry-registry-path) :select (keyword-entry-registry-path))
+    :use-module ((tegfs keyword-id) :select (keyword-id)))))
 
-%var update-entry
 
-%use (assq-or) "./euphrates/assq-or.scm"
-%use (file-delete) "./euphrates/file-delete.scm"
-%use (raisu) "./euphrates/raisu.scm"
-%use (entries-map!) "./entries-map-bang.scm"
-%use (entry-target-fullpath) "./entry-target-fullpath.scm"
-%use (keyword-entry-registry-path) "./keyword-entry-registry-path.scm"
-%use (keyword-id) "./keyword-id.scm"
 
 (define (update-entry::continue id updated-entry)
   (define updated-target

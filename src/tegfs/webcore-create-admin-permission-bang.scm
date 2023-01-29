@@ -13,11 +13,13 @@
 ;;;; You should have received a copy of the GNU Affero General Public License
 ;;;; along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
-%run guile
+(cond-expand
+ (guile
+  (define-module (tegfs webcore-create-admin-permission-bang)
+    :export (webcore::create-admin-permission!)
+    :use-module ((tegfs make-permission-bang) :select (make-permission!)))))
 
-%var webcore::create-admin-permission!
 
-%use (make-permission!) "./make-permission-bang.scm"
 
 (define (webcore::create-admin-permission! webcore::context maybepassword expiery-time)
   ;; TODO: read below from the config

@@ -13,12 +13,14 @@
 ;;;; You should have received a copy of the GNU Affero General Public License
 ;;;; along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
-%run guile
+(cond-expand
+ (guile
+  (define-module (tegfs webcore-get-share-plugins-files)
+    :export (webcore::get-share-plugins-files)
+    :use-module ((euphrates directory-files) :select (directory-files))
+    :use-module ((tegfs webcore-get-share-plugins-directory) :select (webcore::get-share-plugins-directory)))))
 
-%var webcore::get-share-plugins-files
 
-%use (directory-files) "./euphrates/directory-files.scm"
-%use (webcore::get-share-plugins-directory) "./webcore-get-share-plugins-directory.scm"
 
 (define (webcore::get-share-plugins-files)
   (define dir (webcore::get-share-plugins-directory))

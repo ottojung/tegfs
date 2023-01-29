@@ -13,13 +13,15 @@
 ;;;; You should have received a copy of the GNU Affero General Public License
 ;;;; along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
-%run guile
+(cond-expand
+ (guile
+  (define-module (tegfs entry-get-target)
+    :export (entry-get-target)
+    :use-module ((euphrates assq-or) :select (assq-or))
+    :use-module ((euphrates raisu) :select (raisu))
+    :use-module ((tegfs keyword-target) :select (keyword-target)))))
 
-%var entry-get-target
 
-%use (assq-or) "./euphrates/assq-or.scm"
-%use (raisu) "./euphrates/raisu.scm"
-%use (keyword-target) "./keyword-target.scm"
 
 (define (entry-get-target entry)
   (unless (pair? entry)

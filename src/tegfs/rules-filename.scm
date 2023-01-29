@@ -13,9 +13,11 @@
 ;;;; You should have received a copy of the GNU Affero General Public License
 ;;;; along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
-%run guile
+(cond-expand
+ (guile
+  (define-module (tegfs rules-filename)
+    :export (rules-filename))))
 
-%var rules-filename
 
 (define rules-filename
   "rules.tegfs.lisp")

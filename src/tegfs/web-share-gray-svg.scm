@@ -13,11 +13,13 @@
 ;;;; You should have received a copy of the GNU Affero General Public License
 ;;;; along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
-%run guile
+(cond-expand
+ (guile
+  (define-module (tegfs web-share-gray-svg)
+    :export (web::share-gray.svg)
+    :use-module ((tegfs web-define-static-file) :select (web::define-static-file)))))
 
-%var web::share-gray.svg
 
-%use (web::define-static-file) "./web-define-static-file.scm"
 
 (define web::share-gray.svg::string
   "<?xml version='1.0' encoding='UTF-8' standalone='no'?>

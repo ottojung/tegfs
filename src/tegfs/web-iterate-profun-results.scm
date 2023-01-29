@@ -13,13 +13,15 @@
 ;;;; You should have received a copy of the GNU Affero General Public License
 ;;;; along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
-%run guile
+(cond-expand
+ (guile
+  (define-module (tegfs web-iterate-profun-results)
+    :export (web::iterate-profun-results)
+    :use-module ((euphrates fn-alist) :select (fn-alist))
+    :use-module ((euphrates raisu) :select (raisu))
+    :use-module ((tegfs web-handle-profun-results) :select (web::handle-profun-results/default-fail-fun web::handle-profun-results/or)))))
 
-%var web::iterate-profun-results
 
-%use (fn-alist) "./euphrates/fn-alist.scm"
-%use (raisu) "./euphrates/raisu.scm"
-%use (web::handle-profun-results/default-fail-fun web::handle-profun-results/or) "./web-handle-profun-results.scm"
 
 (define-syntax web::iterate-profun-results
   (syntax-rules (:or :results :onfalse)

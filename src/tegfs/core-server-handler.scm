@@ -13,22 +13,24 @@
 ;;;; You should have received a copy of the GNU Affero General Public License
 ;;;; along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
-%run guile
+(cond-expand
+ (guile
+  (define-module (tegfs core-server-handler)
+    :export (core::make-server-handler)
+    :use-module ((euphrates profun-handler) :select (profun-handler-extend))
+    :use-module ((euphrates profun-op-parameter) :select (instantiate-profun-parameter))
+    :use-module ((euphrates profun-op-value) :select (profun-op-value))
+    :use-module ((euphrates profun-standard-handler) :select (profun-standard-handler))
+    :use-module ((tegfs add-entry) :select (add-entry))
+    :use-module ((tegfs core-add-entry) :select (core::add-entry))
+    :use-module ((tegfs core-categorization) :select (core::categorization))
+    :use-module ((tegfs core-entry-field) :select (core::entry-field))
+    :use-module ((tegfs core-entry) :select (core::entry))
+    :use-module ((tegfs core-paremeters) :select (core::diropen?/p core::dirpreview?/p core::query/p))
+    :use-module ((tegfs core-set-categorization) :select (core::set-categorization))
+    :use-module ((tegfs core-update-entry) :select (core::update-entry)))))
 
-%var core::make-server-handler
 
-%use (profun-handler-extend) "./euphrates/profun-handler.scm"
-%use (instantiate-profun-parameter) "./euphrates/profun-op-parameter.scm"
-%use (profun-op-value) "./euphrates/profun-op-value.scm"
-%use (profun-standard-handler) "./euphrates/profun-standard-handler.scm"
-%use (add-entry) "./add-entry.scm"
-%use (core::add-entry) "./core-add-entry.scm"
-%use (core::categorization) "./core-categorization.scm"
-%use (core::entry-field) "./core-entry-field.scm"
-%use (core::entry) "./core-entry.scm"
-%use (core::diropen?/p core::dirpreview?/p core::query/p) "./core-paremeters.scm"
-%use (core::set-categorization) "./core-set-categorization.scm"
-%use (core::update-entry) "./core-update-entry.scm"
 
 (define (core::make-server-handler)
   (profun-handler-extend

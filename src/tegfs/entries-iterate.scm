@@ -13,18 +13,20 @@
 ;;;; You should have received a copy of the GNU Affero General Public License
 ;;;; along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
-%run guile
+(cond-expand
+ (guile
+  (define-module (tegfs entries-iterate)
+    :export (entries-iterate)
+    :use-module ((euphrates append-posix-path) :select (append-posix-path))
+    :use-module ((euphrates catch-any) :select (catch-any))
+    :use-module ((euphrates open-file-port) :select (open-file-port))
+    :use-module ((euphrates stack) :select (list->stack stack-empty? stack-pop!))
+    :use-module ((tegfs get-registry-files) :select (get-registry-files))
+    :use-module ((tegfs get-root) :select (get-root))
+    :use-module ((tegfs keyword-entry-registry-path) :select (keyword-entry-registry-path))
+    :use-module ((tegfs warning) :select (warning)))))
 
-%var entries-iterate
 
-%use (append-posix-path) "./euphrates/append-posix-path.scm"
-%use (catch-any) "./euphrates/catch-any.scm"
-%use (open-file-port) "./euphrates/open-file-port.scm"
-%use (list->stack stack-empty? stack-pop!) "./euphrates/stack.scm"
-%use (get-registry-files) "./get-registry-files.scm"
-%use (get-root) "./get-root.scm"
-%use (keyword-entry-registry-path) "./keyword-entry-registry-path.scm"
-%use (warning) "./warning.scm"
 
 ;; Iterator returns #f when done.
 (define (entries-iterate)

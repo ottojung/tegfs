@@ -13,28 +13,30 @@
 ;;;; You should have received a copy of the GNU Affero General Public License
 ;;;; along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
-%run guile
+(cond-expand
+ (guile
+  (define-module (tegfs dump-rules)
+    :export (dump-rules)
+    :use-module ((euphrates append-posix-path) :select (append-posix-path))
+    :use-module ((euphrates comp) :select (comp))
+    :use-module ((euphrates define-tuple) :select (define-tuple))
+    :use-module ((euphrates file-or-directory-exists-q) :select (file-or-directory-exists?))
+    :use-module ((euphrates list-split-on) :select (list-split-on))
+    :use-module ((euphrates open-file-port) :select (open-file-port))
+    :use-module ((euphrates raisu) :select (raisu))
+    :use-module ((euphrates read-string-line) :select (read-string-line))
+    :use-module ((euphrates string-split-simple) :select (string-split/simple))
+    :use-module ((euphrates string-to-words) :select (string->words))
+    :use-module ((euphrates write-string-file) :select (write-string-file))
+    :use-module ((tegfs fatal) :select (fatal))
+    :use-module ((tegfs get-root) :select (get-root))
+    :use-module ((tegfs parse-tag) :select (parse-tag))
+    :use-module ((tegfs prolog-cut-symbol) :select (make-prolog-cut-symbol))
+    :use-module ((tegfs prolog-query-parse) :select (prolog-query-parse))
+    :use-module ((tegfs rules-filename) :select (rules-filename))
+    :use-module ((tegfs tags-this-variable) :select (tags-this-variable/string)))))
 
-%var dump-rules
 
-%use (append-posix-path) "./euphrates/append-posix-path.scm"
-%use (comp) "./euphrates/comp.scm"
-%use (define-tuple) "./euphrates/define-tuple.scm"
-%use (file-or-directory-exists?) "./euphrates/file-or-directory-exists-q.scm"
-%use (list-split-on) "./euphrates/list-split-on.scm"
-%use (open-file-port) "./euphrates/open-file-port.scm"
-%use (raisu) "./euphrates/raisu.scm"
-%use (read-string-line) "./euphrates/read-string-line.scm"
-%use (string-split/simple) "./euphrates/string-split-simple.scm"
-%use (string->words) "./euphrates/string-to-words.scm"
-%use (write-string-file) "./euphrates/write-string-file.scm"
-%use (fatal) "./fatal.scm"
-%use (get-root) "./get-root.scm"
-%use (parse-tag) "./parse-tag.scm"
-%use (make-prolog-cut-symbol) "./prolog-cut-symbol.scm"
-%use (prolog-query-parse) "./prolog-query-parse.scm"
-%use (rules-filename) "./rules-filename.scm"
-%use (tags-this-variable/string) "./tags-this-variable.scm"
 
 (define (parse-inference yield args)
   (define split (list-split-on (comp (equal? "=>")) args))

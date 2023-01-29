@@ -13,17 +13,14 @@
 ;;;; You should have received a copy of the GNU Affero General Public License
 ;;;; along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
-%run guile
+(cond-expand
+ (guile
+  (define-module (tegfs filemap)
+    :export (filemap-make/empty filemap-set! filemap-ref-by-senderid filemap-ref-by-recepientid filemap-delete-by-senderid! filemap-delete-by-recepientid!)
+    :use-module ((euphrates hashmap) :select (hashmap-delete! hashmap-ref hashmap-set! make-hashmap))
+    :use-module ((tegfs sharedinfo) :select (sharedinfo-recepientid sharedinfo-senderid)))))
 
-%var filemap-make/empty
-%var filemap-set!
-%var filemap-ref-by-senderid
-%var filemap-ref-by-recepientid
-%var filemap-delete-by-senderid!
-%var filemap-delete-by-recepientid!
 
-%use (hashmap-delete! hashmap-ref hashmap-set! make-hashmap) "./euphrates/hashmap.scm"
-%use (sharedinfo-recepientid sharedinfo-senderid) "./sharedinfo.scm"
 
 (define (filemap-make/empty)
   (cons (make-hashmap) (make-hashmap)))

@@ -13,12 +13,14 @@
 ;;;; You should have received a copy of the GNU Affero General Public License
 ;;;; along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
-%run guile
+(cond-expand
+ (guile
+  (define-module (tegfs web-get-full-link)
+    :export (web::get-full-link)
+    :use-module ((euphrates raisu) :select (raisu))
+    :use-module ((tegfs a-weblink-q) :select (a-weblink?)))))
 
-%var web::get-full-link
 
-%use (raisu) "./euphrates/raisu.scm"
-%use (a-weblink?) "./a-weblink-q.scm"
 
 (define (web::get-full-link entry target maybe-senderid)
   (cond

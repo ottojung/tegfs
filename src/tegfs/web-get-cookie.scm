@@ -13,14 +13,16 @@
 ;;;; You should have received a copy of the GNU Affero General Public License
 ;;;; along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
-%run guile
+(cond-expand
+ (guile
+  (define-module (tegfs web-get-cookie)
+    :export (web::get-cookie)
+    :use-module ((euphrates raisu) :select (raisu))
+    :use-module ((euphrates string-split-3) :select (string-split-3))
+    :use-module ((euphrates string-split-simple) :select (string-split/simple))
+    :use-module ((euphrates string-strip) :select (string-strip)))))
 
-%var web::get-cookie
 
-%use (raisu) "./euphrates/raisu.scm"
-%use (string-split-3) "./euphrates/string-split-3.scm"
-%use (string-split/simple) "./euphrates/string-split-simple.scm"
-%use (string-strip) "./euphrates/string-strip.scm"
 
 (define (parse-cookies-string cookies/string)
   (define _aa

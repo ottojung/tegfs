@@ -13,17 +13,19 @@
 ;;;; You should have received a copy of the GNU Affero General Public License
 ;;;; along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
-%run guile
+(cond-expand
+ (guile
+  (define-module (tegfs web-not-found)
+    :export (web::not-found)
+    :use-module ((euphrates lines-to-string) :select (lines->string))
+    :use-module ((euphrates random-choice) :select (random-choice))
+    :use-module ((euphrates string-strip) :select (string-strip))
+    :use-module ((euphrates string-to-lines) :select (string->lines))
+    :use-module ((euphrates stringf) :select (stringf))
+    :use-module ((euphrates with-randomizer-seed) :select (with-randomizer-seed))
+    :use-module ((tegfs web-static-error-message) :select (web::static-error-message)))))
 
-%var web::not-found
 
-%use (lines->string) "./euphrates/lines-to-string.scm"
-%use (random-choice) "./euphrates/random-choice.scm"
-%use (string-strip) "./euphrates/string-strip.scm"
-%use (string->lines) "./euphrates/string-to-lines.scm"
-%use (stringf) "./euphrates/stringf.scm"
-%use (with-randomizer-seed) "./euphrates/with-randomizer-seed.scm"
-%use (web::static-error-message) "./web-static-error-message.scm"
 
 (define not-found-answers/0
   '("Oh dear, it seems the page you sought,

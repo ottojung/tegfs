@@ -13,12 +13,14 @@
 ;;;; You should have received a copy of the GNU Affero General Public License
 ;;;; along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
-%run guile
+(cond-expand
+ (guile
+  (define-module (tegfs web-static-error-message)
+    :export (web::static-error-message)
+    :use-module ((tegfs web-form-template) :select (web::form-template))
+    :use-module ((tegfs web-make-html-response) :select (web::make-html-response)))))
 
-%var web::static-error-message
 
-%use (web::form-template) "./web-form-template.scm"
-%use (web::make-html-response) "./web-make-html-response.scm"
 
 (define (web::static-error-message status message)
   (define body (web::form-template #f message))

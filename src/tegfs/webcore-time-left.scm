@@ -13,17 +13,19 @@
 ;;;; You should have received a copy of the GNU Affero General Public License
 ;;;; along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
-%run guile
+(cond-expand
+ (guile
+  (define-module (tegfs webcore-time-left)
+    :export (webcore::time-left)
+    :use-module ((euphrates profun-accept) :select (profun-set))
+    :use-module ((euphrates profun-error) :select (make-profun-error))
+    :use-module ((euphrates profun-op-lambda) :select (profun-op-lambda))
+    :use-module ((euphrates profun-request-value) :select (profun-request-value))
+    :use-module ((euphrates profun-value) :select (profun-bound-value? profun-unbound-value?))
+    :use-module ((tegfs permission-time-left) :select (permission-time-left))
+    :use-module ((tegfs tegfs-login-by-key) :select (tegfs-login-by-key)))))
 
-%var webcore::time-left
 
-%use (profun-set) "./euphrates/profun-accept.scm"
-%use (make-profun-error) "./euphrates/profun-error.scm"
-%use (profun-op-lambda) "./euphrates/profun-op-lambda.scm"
-%use (profun-request-value) "./euphrates/profun-request-value.scm"
-%use (profun-bound-value? profun-unbound-value?) "./euphrates/profun-value.scm"
-%use (permission-time-left) "./permission-time-left.scm"
-%use (tegfs-login-by-key) "./tegfs-login-by-key.scm"
 
 (define (webcore::time-left web::context)
   (profun-op-lambda

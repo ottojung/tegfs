@@ -13,17 +13,19 @@
 ;;;; You should have received a copy of the GNU Affero General Public License
 ;;;; along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
-%run guile
+(cond-expand
+ (guile
+  (define-module (tegfs webcore-key)
+    :export (webcore::key)
+    :use-module ((euphrates profun-accept) :select (profun-set profun-set-parameter))
+    :use-module ((euphrates profun-op-lambda) :select (profun-op-lambda))
+    :use-module ((euphrates profun-request-value) :select (profun-request-value))
+    :use-module ((euphrates profun-value) :select (profun-bound-value?))
+    :use-module ((tegfs permission) :select (permission-token))
+    :use-module ((tegfs tegfs-login-by-key) :select (tegfs-login-by-key))
+    :use-module ((tegfs webcore-parameters) :select (webcore::permissions/p)))))
 
-%var webcore::key
 
-%use (profun-set profun-set-parameter) "./euphrates/profun-accept.scm"
-%use (profun-op-lambda) "./euphrates/profun-op-lambda.scm"
-%use (profun-request-value) "./euphrates/profun-request-value.scm"
-%use (profun-bound-value?) "./euphrates/profun-value.scm"
-%use (permission-token) "./permission.scm"
-%use (tegfs-login-by-key) "./tegfs-login-by-key.scm"
-%use (webcore::permissions/p) "./webcore-parameters.scm"
 
 (define webcore::key
   (lambda (tegfs-context)

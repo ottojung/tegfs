@@ -13,14 +13,16 @@
 ;;;; You should have received a copy of the GNU Affero General Public License
 ;;;; along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
-%run guile
+(cond-expand
+ (guile
+  (define-module (tegfs web-previewunknown)
+    :export (web::previewunknown)
+    :use-module ((euphrates stringf) :select (stringf))
+    :use-module ((tegfs web-define-static-file) :select (web::define-static-file))
+    :use-module ((tegfs web-preview-height) :select (web::preview-height))
+    :use-module ((tegfs web-preview-width) :select (web::preview-width)))))
 
-%var web::previewunknown
 
-%use (stringf) "./euphrates/stringf.scm"
-%use (web::define-static-file) "./web-define-static-file.scm"
-%use (web::preview-height) "./web-preview-height.scm"
-%use (web::preview-width) "./web-preview-width.scm"
 
 (define unavailable-image-string
   (stringf
@@ -31,4 +33,4 @@
    ))
 
 (web::define-static-file web::previewunknown
-  '(image/svg+xml) unavailable-image-string)
+             '(image/svg+xml) unavailable-image-string)

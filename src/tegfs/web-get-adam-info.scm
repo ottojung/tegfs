@@ -13,14 +13,16 @@
 ;;;; You should have received a copy of the GNU Affero General Public License
 ;;;; along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
-%run guile
+(cond-expand
+ (guile
+  (define-module (tegfs web-get-adam-info)
+    :export (web::get-adam-info)
+    :use-module ((euphrates assq-or) :select (assq-or))
+    :use-module ((tegfs filemap) :select (filemap-ref-by-senderid))
+    :use-module ((tegfs keyword-entry-parent-directory-senderid) :select (keyword-entry-parent-directory-senderid))
+    :use-module ((tegfs sharedinfo) :select (sharedinfo-entry)))))
 
-%var web::get-adam-info
 
-%use (assq-or) "./euphrates/assq-or.scm"
-%use (filemap-ref-by-senderid) "./filemap.scm"
-%use (keyword-entry-parent-directory-senderid) "./keyword-entry-parent-directory-senderid.scm"
-%use (sharedinfo-entry) "./sharedinfo.scm"
 
 (define (web::get-adam-info filemap/2 info)
   (let loop ((info info))

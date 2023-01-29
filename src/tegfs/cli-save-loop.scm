@@ -13,47 +13,49 @@
 ;;;; You should have received a copy of the GNU Affero General Public License
 ;;;; along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
-%run guile
+(cond-expand
+ (guile
+  (define-module (tegfs cli-save-loop)
+    :export (CLI::save::loop)
+    :use-module ((euphrates alist-initialize-bang) :select (alist-initialize!:current-setters))
+    :use-module ((euphrates alist-initialize-loop) :select (alist-initialize-loop))
+    :use-module ((euphrates assq-or) :select (assq-or))
+    :use-module ((euphrates dprintln) :select (dprintln))
+    :use-module ((euphrates lines-to-string) :select (lines->string))
+    :use-module ((euphrates list-intersperse) :select (list-intersperse))
+    :use-module ((euphrates list-take-n) :select (list-take-n))
+    :use-module ((euphrates path-extensions) :select (path-extensions))
+    :use-module ((euphrates path-get-basename) :select (path-get-basename))
+    :use-module ((euphrates path-without-extension) :select (path-without-extension))
+    :use-module ((euphrates print-in-frame) :select (print-in-frame))
+    :use-module ((euphrates range) :select (range))
+    :use-module ((euphrates read-string-line) :select (read-string-line))
+    :use-module ((euphrates string-strip) :select (string-strip))
+    :use-module ((euphrates stringf) :select (stringf))
+    :use-module ((euphrates system-re) :select (system-re))
+    :use-module ((euphrates tilda-a) :select (~a))
+    :use-module ((euphrates tilda-s) :select (~s))
+    :use-module ((euphrates url-get-path) :select (url-get-path))
+    :use-module ((euphrates write-string-file) :select (write-string-file))
+    :use-module ((tegfs a-weblink-q) :select (a-weblink?))
+    :use-module ((tegfs categorize) :select (tegfs-categorize))
+    :use-module ((tegfs clipboard) :select (classify-clipboard-text-content dump-clipboard-to-temporary get-clipboard-text-content get-clipboard-type-extension))
+    :use-module ((tegfs download-to-temporary-file) :select (download-to-temporary-file))
+    :use-module ((tegfs fatal) :select (fatal))
+    :use-module ((tegfs file-is-audio-q) :select (file-is-audio?))
+    :use-module ((tegfs file-is-image-q) :select (file-is-image?))
+    :use-module ((tegfs file-is-video-q) :select (file-is-video?))
+    :use-module ((tegfs get-config) :select (get-config))
+    :use-module ((tegfs get-file-mimetype) :select (get-file-mimetype))
+    :use-module ((tegfs get-random-basename) :select (get-random-basename))
+    :use-module ((tegfs get-registry-files) :select (get-registry-files))
+    :use-module ((tegfs get-root) :select (get-root))
+    :use-module ((tegfs get-save-plugins) :select (get-save-plugins))
+    :use-module ((tegfs keyword-default-save-registry) :select (keyword-default-save-registry))
+    :use-module ((tegfs regfile-suffix) :select (regfile-suffix))
+    :use-module ((tegfs run-save-plugins) :select (run-save-plugins)))))
 
-%var CLI::save::loop
 
-%use (alist-initialize!:current-setters) "./euphrates/alist-initialize-bang.scm"
-%use (alist-initialize-loop) "./euphrates/alist-initialize-loop.scm"
-%use (assq-or) "./euphrates/assq-or.scm"
-%use (dprintln) "./euphrates/dprintln.scm"
-%use (lines->string) "./euphrates/lines-to-string.scm"
-%use (list-intersperse) "./euphrates/list-intersperse.scm"
-%use (list-take-n) "./euphrates/list-take-n.scm"
-%use (path-extensions) "./euphrates/path-extensions.scm"
-%use (path-get-basename) "./euphrates/path-get-basename.scm"
-%use (path-without-extension) "./euphrates/path-without-extension.scm"
-%use (print-in-frame) "./euphrates/print-in-frame.scm"
-%use (range) "./euphrates/range.scm"
-%use (read-string-line) "./euphrates/read-string-line.scm"
-%use (string-strip) "./euphrates/string-strip.scm"
-%use (stringf) "./euphrates/stringf.scm"
-%use (system-re) "./euphrates/system-re.scm"
-%use (~a) "./euphrates/tilda-a.scm"
-%use (~s) "./euphrates/tilda-s.scm"
-%use (url-get-path) "./euphrates/url-get-path.scm"
-%use (write-string-file) "./euphrates/write-string-file.scm"
-%use (a-weblink?) "./a-weblink-q.scm"
-%use (tegfs-categorize) "./categorize.scm"
-%use (classify-clipboard-text-content dump-clipboard-to-temporary get-clipboard-text-content get-clipboard-type-extension) "./clipboard.scm"
-%use (download-to-temporary-file) "./download-to-temporary-file.scm"
-%use (fatal) "./fatal.scm"
-%use (file-is-audio?) "./file-is-audio-q.scm"
-%use (file-is-image?) "./file-is-image-q.scm"
-%use (file-is-video?) "./file-is-video-q.scm"
-%use (get-config) "./get-config.scm"
-%use (get-file-mimetype) "./get-file-mimetype.scm"
-%use (get-random-basename) "./get-random-basename.scm"
-%use (get-registry-files) "./get-registry-files.scm"
-%use (get-root) "./get-root.scm"
-%use (get-save-plugins) "./get-save-plugins.scm"
-%use (keyword-default-save-registry) "./keyword-default-save-registry.scm"
-%use (regfile-suffix) "./regfile-suffix.scm"
-%use (run-save-plugins) "./run-save-plugins.scm"
 
 (define (dump-clipboard-temp data-type)
   (dprintln "Dumping clipboard...")

@@ -13,19 +13,13 @@
 ;;;; You should have received a copy of the GNU Affero General Public License
 ;;;; along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
-%run guile
+(cond-expand
+ (guile
+  (define-module (tegfs web-context)
+    :export (context-ctr context? context-passwords context-database context-tokens context-port context-fileserver context-sharedir context-filemap/2)
+    :use-module ((euphrates define-type9) :select (define-type9)))))
 
-%var context-ctr
-%var context?
-%var context-passwords
-%var context-database
-%var context-tokens
-%var context-port
-%var context-fileserver
-%var context-sharedir
-%var context-filemap/2
 
-%use (define-type9) "./euphrates/define-type9.scm"
 
 (define-type9 <context>
   (context-ctr passwords tokens port fileserver sharedir filemap/2) context?

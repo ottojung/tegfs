@@ -13,11 +13,11 @@
 ;;;; You should have received a copy of the GNU Affero General Public License
 ;;;; along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
-%run guile
+(cond-expand
+ (guile
+  (define-module (tegfs tags-this-variable)
+    :export (tags-this-variable tags-this-variable/char tags-this-variable/string))))
 
-%var tags-this-variable
-%var tags-this-variable/char
-%var tags-this-variable/string
 
 (define tags-this-variable/char #\$)
 (define tags-this-variable/string

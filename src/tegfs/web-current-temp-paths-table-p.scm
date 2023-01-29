@@ -13,9 +13,11 @@
 ;;;; You should have received a copy of the GNU Affero General Public License
 ;;;; along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
-%run guile
+(cond-expand
+ (guile
+  (define-module (tegfs web-current-temp-paths-table-p)
+    :export (web::current-temp-paths-table/p))))
 
-%var web::current-temp-paths-table/p
 
 (define web::current-temp-paths-table/p
   (make-parameter #f))

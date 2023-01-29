@@ -13,44 +13,46 @@
 ;;;; You should have received a copy of the GNU Affero General Public License
 ;;;; along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
-%run guile
+(cond-expand
+ (guile
+  (define-module (tegfs add-entry)
+    :export (add-entry)
+    :use-module ((euphrates absolute-posix-path-q) :select (absolute-posix-path?))
+    :use-module ((euphrates alphanum-lowercase-alphabet) :select (alphanum-lowercase/alphabet))
+    :use-module ((euphrates append-posix-path) :select (append-posix-path))
+    :use-module ((euphrates append-string-file) :select (append-string-file))
+    :use-module ((euphrates assoc-set-default) :select (assoc-set-default))
+    :use-module ((euphrates assoc-set-value) :select (assoc-set-value))
+    :use-module ((euphrates assq-or) :select (assq-or))
+    :use-module ((euphrates file-or-directory-exists-q) :select (file-or-directory-exists?))
+    :use-module ((euphrates list-deduplicate) :select (list-deduplicate/reverse))
+    :use-module ((euphrates make-directories) :select (make-directories))
+    :use-module ((euphrates memconst) :select (memconst))
+    :use-module ((euphrates path-get-dirname) :select (path-get-dirname))
+    :use-module ((euphrates raisu) :select (raisu))
+    :use-module ((euphrates random-choice) :select (random-choice))
+    :use-module ((euphrates read-string-file) :select (read-string-file))
+    :use-module ((euphrates string-strip) :select (string-strip))
+    :use-module ((euphrates system-re) :select (system-re))
+    :use-module ((euphrates tilda-a) :select (~a))
+    :use-module ((euphrates write-string-file) :select (write-string-file))
+    :use-module ((tegfs a-weblink-q) :select (a-weblink?))
+    :use-module ((tegfs entry-get-target) :select (entry-get-target))
+    :use-module ((tegfs entry-print) :select (entry-print))
+    :use-module ((tegfs get-config) :select (get-config))
+    :use-module ((tegfs get-file-mimetype) :select (get-file-mimetype))
+    :use-module ((tegfs get-registry-files) :select (get-registry-files))
+    :use-module ((tegfs get-root) :select (get-root))
+    :use-module ((tegfs keyword-date) :select (keyword-date))
+    :use-module ((tegfs keyword-id) :select (keyword-id))
+    :use-module ((tegfs keyword-mimetype) :select (keyword-mimetype))
+    :use-module ((tegfs keyword-prev) :select (keyword-prev))
+    :use-module ((tegfs keyword-tags) :select (keyword-tags))
+    :use-module ((tegfs last-id-filename) :select (last-id-filename))
+    :use-module ((tegfs set-config) :select (set-config))
+    :use-module ((tegfs warning) :select (warning)))))
 
-%var add-entry
 
-%use (absolute-posix-path?) "./euphrates/absolute-posix-path-q.scm"
-%use (alphanum-lowercase/alphabet) "./euphrates/alphanum-lowercase-alphabet.scm"
-%use (append-posix-path) "./euphrates/append-posix-path.scm"
-%use (append-string-file) "./euphrates/append-string-file.scm"
-%use (assoc-set-default) "./euphrates/assoc-set-default.scm"
-%use (assoc-set-value) "./euphrates/assoc-set-value.scm"
-%use (assq-or) "./euphrates/assq-or.scm"
-%use (file-or-directory-exists?) "./euphrates/file-or-directory-exists-q.scm"
-%use (list-deduplicate/reverse) "./euphrates/list-deduplicate.scm"
-%use (make-directories) "./euphrates/make-directories.scm"
-%use (memconst) "./euphrates/memconst.scm"
-%use (path-get-dirname) "./euphrates/path-get-dirname.scm"
-%use (raisu) "./euphrates/raisu.scm"
-%use (random-choice) "./euphrates/random-choice.scm"
-%use (read-string-file) "./euphrates/read-string-file.scm"
-%use (string-strip) "./euphrates/string-strip.scm"
-%use (system-re) "./euphrates/system-re.scm"
-%use (~a) "./euphrates/tilda-a.scm"
-%use (write-string-file) "./euphrates/write-string-file.scm"
-%use (a-weblink?) "./a-weblink-q.scm"
-%use (entry-get-target) "./entry-get-target.scm"
-%use (entry-print) "./entry-print.scm"
-%use (get-config) "./get-config.scm"
-%use (get-file-mimetype) "./get-file-mimetype.scm"
-%use (get-registry-files) "./get-registry-files.scm"
-%use (get-root) "./get-root.scm"
-%use (keyword-date) "./keyword-date.scm"
-%use (keyword-id) "./keyword-id.scm"
-%use (keyword-mimetype) "./keyword-mimetype.scm"
-%use (keyword-prev) "./keyword-prev.scm"
-%use (keyword-tags) "./keyword-tags.scm"
-%use (last-id-filename) "./last-id-filename.scm"
-%use (set-config) "./set-config.scm"
-%use (warning) "./warning.scm"
 
 (define (add-entry registry-file0 entry0)
 
@@ -127,12 +129,12 @@
   (define entry2
     (let ((tags0 (assq-or keyword-tags entry1 #f)))
       (if tags0
-         (assoc-set-value
-          keyword-tags
-          (list-deduplicate/reverse
-           (map tosymbol tags0))
-          entry1)
-         entry1)))
+          (assoc-set-value
+           keyword-tags
+           (list-deduplicate/reverse
+            (map tosymbol tags0))
+           entry1)
+          entry1)))
 
   (define entry3
     (let ((prev0 (assq-or keyword-prev entry2 #f)))

@@ -13,9 +13,11 @@
 ;;;; You should have received a copy of the GNU Affero General Public License
 ;;;; along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
-%run guile
+(cond-expand
+ (guile
+  (define-module (tegfs web-server-current-handler-p)
+    :export (webcore::server-current/p))))
 
-%var webcore::server-current/p
 
 (define webcore::server-current/p
   (make-parameter #f))

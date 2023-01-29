@@ -13,16 +13,18 @@
 ;;;; You should have received a copy of the GNU Affero General Public License
 ;;;; along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
-%run guile
+(cond-expand
+ (guile
+  (define-module (tegfs get-preview-path)
+    :export (get-preview-path)
+    :use-module ((euphrates append-posix-path) :select (append-posix-path))
+    :use-module ((euphrates remove-common-prefix) :select (remove-common-prefix))
+    :use-module ((euphrates string-plus-encode) :select (string-plus-encoding-make))
+    :use-module ((euphrates uri-safe-alphabet) :select (uri-safe/alphabet uri-safe/alphabet/index))
+    :use-module ((tegfs get-file-type) :select (get-file-type))
+    :use-module ((tegfs get-root) :select (get-root)))))
 
-%var get-preview-path
 
-%use (append-posix-path) "./euphrates/append-posix-path.scm"
-%use (remove-common-prefix) "./euphrates/remove-common-prefix.scm"
-%use (string-plus-encoding-make) "./euphrates/string-plus-encode.scm"
-%use (uri-safe/alphabet uri-safe/alphabet/index) "./euphrates/uri-safe-alphabet.scm"
-%use (get-file-type) "./get-file-type.scm"
-%use (get-root) "./get-root.scm"
 
 (define uri-safe/alphabet/with-slash
   (let* ((len (vector-length uri-safe/alphabet))

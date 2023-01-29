@@ -13,16 +13,18 @@
 ;;;; You should have received a copy of the GNU Affero General Public License
 ;;;; along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
-%run guile
+(cond-expand
+ (guile
+  (define-module (tegfs get-random-network-name)
+    :export (get-random-network-name)
+    :use-module ((euphrates alphanum-alphabet) :select (alphanum/alphabet))
+    :use-module ((euphrates random-choice) :select (random-choice)))))
 
 ;; Short names for users to see.
 ;; Use this only if exporting over a slow network.
 ;; Case-sensitive!
 
-%var get-random-network-name
 
-%use (alphanum/alphabet) "./euphrates/alphanum-alphabet.scm"
-%use (random-choice) "./euphrates/random-choice.scm"
 
 (define (get-random-network-name)
   (list->string

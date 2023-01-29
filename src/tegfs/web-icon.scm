@@ -13,12 +13,14 @@
 ;;;; You should have received a copy of the GNU Affero General Public License
 ;;;; along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
-%run guile
+(cond-expand
+ (guile
+  (define-module (tegfs web-icon)
+    :export (web::favicon.ico)
+    :use-module ((tegfs web-define-static-file) :select (web::define-static-file))
+    :use-module ((tegfs web-icon-bytes) :select (web::icon::bytes)))))
 
-%var web::favicon.ico
 
-%use (web::define-static-file) "./web-define-static-file.scm"
-%use (web::icon::bytes) "./web-icon-bytes.scm"
 
 (web::define-static-file
  web::favicon.ico

@@ -13,30 +13,33 @@
 ;;;; You should have received a copy of the GNU Affero General Public License
 ;;;; along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
-%run guile
+(cond-expand
+ (guile
+  (define-module (tegfs web-server)
+    :export (tegfs-serve/parse)
+    :use-module ((euphrates assq-or) :select (assq-or))
+    :use-module ((euphrates dprintln) :select (dprintln))
+    :use-module ((tegfs get-config) :select (get-config))
+    :use-module ((tegfs keyword-config-port) :select (keyword-config-port))
+    :use-module ((tegfs web-collectgarbage) :select (web::collectgarbage))
+    :use-module ((tegfs web-current-temp-paths-table-p) :select (web::current-temp-paths-table/p))
+    :use-module ((tegfs web-default-port) :select (web::default-port))
+    :use-module ((tegfs web-make-callcontext) :select (web::make-callcontext))
+    :use-module ((tegfs web-make-communicator) :select (web::make-communicator))
+    :use-module ((tegfs web-make-temp-paths-table) :select (web::make-temp-paths-table))
+    :use-module ((tegfs web-server-current-handler-p) :select (webcore::server-current/p))
+    :use-module ((tegfs web-server-handle) :select (web::server-handle))
+    :use-module ((tegfs webcore-current-communicator-p) :select (webcore::current-communicator/p))
+    :use-module ((tegfs with-current-time) :select (with-current-time)))))
 
-%var tegfs-serve/parse
 
-%use (assq-or) "./euphrates/assq-or.scm"
-%use (dprintln) "./euphrates/dprintln.scm"
-%use (get-config) "./get-config.scm"
-%use (keyword-config-port) "./keyword-config-port.scm"
-%use (web::collectgarbage) "./web-collectgarbage.scm"
-%use (web::current-temp-paths-table/p) "./web-current-temp-paths-table-p.scm"
-%use (web::default-port) "./web-default-port.scm"
-%use (web::make-callcontext) "./web-make-callcontext.scm"
-%use (web::make-communicator) "./web-make-communicator.scm"
-%use (web::make-temp-paths-table) "./web-make-temp-paths-table.scm"
-%use (webcore::server-current/p) "./web-server-current-handler-p.scm"
-%use (web::server-handle) "./web-server-handle.scm"
-%use (webcore::current-communicator/p) "./webcore-current-communicator-p.scm"
-%use (with-current-time) "./with-current-time.scm"
 
-%for (COMPILER "guile")
-(use-modules (web server))
-(use-modules (web request))
-(use-modules (web uri))
-%end
+(cond-expand
+ (guile
+  (use-modules (web server))
+  (use-modules (web request))
+  (use-modules (web uri))
+  ))
 
 (define (log-request request)
   (define uri (request-uri request))

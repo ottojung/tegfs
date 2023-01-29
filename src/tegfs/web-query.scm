@@ -13,23 +13,25 @@
 ;;;; You should have received a copy of the GNU Affero General Public License
 ;;;; along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
-%run guile
+(cond-expand
+ (guile
+  (define-module (tegfs web-query)
+    :export (web::query)
+    :use-module ((euphrates hashmap) :select (hashmap-ref))
+    :use-module ((euphrates printf) :select (printf))
+    :use-module ((euphrates string-to-words) :select (string->words))
+    :use-module ((tegfs default-full-sharing-time) :select (default-full-sharing-time))
+    :use-module ((tegfs default-preview-sharing-time) :select (default-preview-sharing-time))
+    :use-module ((tegfs web-body-to-hashmap) :select (web::body->hashmap))
+    :use-module ((tegfs web-callcontext-p) :select (web::callcontext/p))
+    :use-module ((tegfs web-callcontext) :select (callcontext-body callcontext-query callcontext-token))
+    :use-module ((tegfs web-decode-query) :select (web::decode-query))
+    :use-module ((tegfs web-handle-profun-results) :select (web::handle-profun-results))
+    :use-module ((tegfs web-make-html-response) :select (web::make-html-response))
+    :use-module ((tegfs web-query-display-results) :select (web::query-display-results))
+    :use-module ((tegfs webcore-ask) :select (webcore::ask)))))
 
-%var web::query
 
-%use (hashmap-ref) "./euphrates/hashmap.scm"
-%use (printf) "./euphrates/printf.scm"
-%use (string->words) "./euphrates/string-to-words.scm"
-%use (default-full-sharing-time) "./default-full-sharing-time.scm"
-%use (default-preview-sharing-time) "./default-preview-sharing-time.scm"
-%use (web::body->hashmap) "./web-body-to-hashmap.scm"
-%use (web::callcontext/p) "./web-callcontext-p.scm"
-%use (callcontext-body callcontext-query callcontext-token) "./web-callcontext.scm"
-%use (web::decode-query) "./web-decode-query.scm"
-%use (web::handle-profun-results) "./web-handle-profun-results.scm"
-%use (web::make-html-response) "./web-make-html-response.scm"
-%use (web::query-display-results) "./web-query-display-results.scm"
-%use (webcore::ask) "./webcore-ask.scm"
 
 (define (web::query)
   (define callctx (web::callcontext/p))
@@ -47,7 +49,7 @@
   (define query/submitted
     (if (or (not query/submitted/0)
             (string-null? query/submitted/0)) #f
-        query/submitted/0))
+            query/submitted/0))
   (define query/encoded
     (or query/submitted "%any"))
   (define query (web::decode-query query/encoded))

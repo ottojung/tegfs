@@ -13,13 +13,15 @@
 ;;;; You should have received a copy of the GNU Affero General Public License
 ;;;; along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
-%run guile
+(cond-expand
+ (guile
+  (define-module (tegfs web-hashmap-to-query)
+    :export (web::hashmap->query)
+    :use-module ((euphrates hashmap) :select (hashmap-foreach))
+    :use-module ((euphrates tilda-a) :select (~a))
+    :use-module ((euphrates uri-encode) :select (uri-encode)))))
 
-%var web::hashmap->query
 
-%use (hashmap-foreach) "./euphrates/hashmap.scm"
-%use (~a) "./euphrates/tilda-a.scm"
-%use (uri-encode) "./euphrates/uri-encode.scm"
 
 (define (web::hashmap->query qH)
   (define ret "")

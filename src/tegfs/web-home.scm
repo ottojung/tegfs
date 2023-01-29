@@ -13,11 +13,13 @@
 ;;;; You should have received a copy of the GNU Affero General Public License
 ;;;; along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
-%run guile
+(cond-expand
+ (guile
+  (define-module (tegfs web-home)
+    :export (web::home)
+    :use-module ((tegfs web-make-html-response) :select (web::make-html-response)))))
 
-%var web::home
 
-%use (web::make-html-response) "./web-make-html-response.scm"
 
 (define (web::home::page)
   (display "

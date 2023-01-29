@@ -13,34 +13,33 @@
 ;;;; You should have received a copy of the GNU Affero General Public License
 ;;;; along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
-%run guile
+(cond-expand
+ (guile
+  (define-module (tegfs prolog)
+    :export (tegfs-prolog/parse tegfs-prolog tegfs-dump-prolog translate-entry-tags)
+    :use-module ((euphrates assq-or) :select (assq-or))
+    :use-module ((euphrates comp) :select (appcomp))
+    :use-module ((euphrates dprintln) :select (dprintln))
+    :use-module ((euphrates hashset) :select (hashset->list hashset-add! make-hashset))
+    :use-module ((euphrates list-deduplicate) :select (list-deduplicate/reverse))
+    :use-module ((euphrates open-file-port) :select (open-file-port))
+    :use-module ((euphrates raisu) :select (raisu))
+    :use-module ((euphrates stack) :select (stack->list stack-make stack-push!))
+    :use-module ((euphrates system-fmt) :select (system-fmt))
+    :use-module ((euphrates tilda-a) :select (~a))
+    :use-module ((tegfs a-weblink-q) :select (a-weblink?))
+    :use-module ((tegfs dump-rules) :select (dump-rules))
+    :use-module ((tegfs entries-for-each) :select (entries-for-each))
+    :use-module ((tegfs entry-get-target) :select (entry-get-target))
+    :use-module ((tegfs keyword-id) :select (keyword-id))
+    :use-module ((tegfs keyword-tags) :select (keyword-tags))
+    :use-module ((tegfs make-temporary-filename-local) :select (make-temporary-filename/local))
+    :use-module ((tegfs parse-tag) :select (parse-tag))
+    :use-module ((tegfs print-prolog-inference) :select (print-prolog-inference))
+    :use-module ((tegfs tag-to-prolog-term) :select (print-tag-as-prolog-term))
+    :use-module ((tegfs tags-this-variable) :select (tags-this-variable/string)))))
 
-%var tegfs-prolog/parse
-%var tegfs-prolog
-%var tegfs-dump-prolog
-%var translate-entry-tags
 
-%use (assq-or) "./euphrates/assq-or.scm"
-%use (appcomp) "./euphrates/comp.scm"
-%use (dprintln) "./euphrates/dprintln.scm"
-%use (hashset->list hashset-add! make-hashset) "./euphrates/hashset.scm"
-%use (list-deduplicate/reverse) "./euphrates/list-deduplicate.scm"
-%use (open-file-port) "./euphrates/open-file-port.scm"
-%use (raisu) "./euphrates/raisu.scm"
-%use (stack->list stack-make stack-push!) "./euphrates/stack.scm"
-%use (system-fmt) "./euphrates/system-fmt.scm"
-%use (~a) "./euphrates/tilda-a.scm"
-%use (a-weblink?) "./a-weblink-q.scm"
-%use (dump-rules) "./dump-rules.scm"
-%use (entries-for-each) "./entries-for-each.scm"
-%use (entry-get-target) "./entry-get-target.scm"
-%use (keyword-id) "./keyword-id.scm"
-%use (keyword-tags) "./keyword-tags.scm"
-%use (make-temporary-filename/local) "./make-temporary-filename-local.scm"
-%use (parse-tag) "./parse-tag.scm"
-%use (print-prolog-inference) "./print-prolog-inference.scm"
-%use (print-tag-as-prolog-term) "./tag-to-prolog-term.scm"
-%use (tags-this-variable/string) "./tags-this-variable.scm"
 
 (define (tegfs-prolog/parse)
   (tegfs-prolog)

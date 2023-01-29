@@ -13,19 +13,13 @@
 ;;;; You should have received a copy of the GNU Affero General Public License
 ;;;; along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
-%run guile
+(cond-expand
+ (guile
+  (define-module (tegfs sharedinfo)
+    :export (sharedinfo-ctr sharedinfo? sharedinfo-entry sharedinfo-sourcepath sharedinfo-recepientid sharedinfo-senderid sharedinfo-ctime sharedinfo-stime set-sharedinfo-stime!)
+    :use-module ((euphrates define-type9) :select (define-type9)))))
 
-%var sharedinfo-ctr
-%var sharedinfo?
-%var sharedinfo-entry
-%var sharedinfo-sourcepath
-%var sharedinfo-recepientid
-%var sharedinfo-senderid
-%var sharedinfo-ctime
-%var sharedinfo-stime
-%var set-sharedinfo-stime!
 
-%use (define-type9) "./euphrates/define-type9.scm"
 
 (define-type9 <sharedinfo>
   (sharedinfo-ctr entry sourcepath recepientid senderid ctime stime) sharedinfo?

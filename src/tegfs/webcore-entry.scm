@@ -13,18 +13,20 @@
 ;;;; You should have received a copy of the GNU Affero General Public License
 ;;;; along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
-%run guile
+(cond-expand
+ (guile
+  (define-module (tegfs webcore-entry)
+    :export (webcore::entry)
+    :use-module ((euphrates profun-accept) :select (profun-accept profun-set profun-set-meta))
+    :use-module ((euphrates profun-reject) :select (profun-reject))
+    :use-module ((euphrates profun-value) :select (profun-unbound-value?))
+    :use-module ((tegfs core-entry-generic) :select (core::entry/generic))
+    :use-module ((tegfs entry-limit-fields) :select (entry-limit-fields))
+    :use-module ((tegfs tegfs-query-open) :select (tegfs-query/open))
+    :use-module ((tegfs web-context) :select (context-filemap/2))
+    :use-module ((tegfs webcore-parameters) :select (webcore::permissions/p)))))
 
-%var webcore::entry
 
-%use (profun-accept profun-set profun-set-meta) "./euphrates/profun-accept.scm"
-%use (profun-reject) "./euphrates/profun-reject.scm"
-%use (profun-unbound-value?) "./euphrates/profun-value.scm"
-%use (core::entry/generic) "./core-entry-generic.scm"
-%use (entry-limit-fields) "./entry-limit-fields.scm"
-%use (tegfs-query/open) "./tegfs-query-open.scm"
-%use (context-filemap/2) "./web-context.scm"
-%use (webcore::permissions/p) "./webcore-parameters.scm"
 
 (define (webcore::entry-get-iter web::context)
   (lambda (opening-properties query E-name)

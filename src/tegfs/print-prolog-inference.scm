@@ -13,12 +13,14 @@
 ;;;; You should have received a copy of the GNU Affero General Public License
 ;;;; along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
-%run guile
+(cond-expand
+ (guile
+  (define-module (tegfs print-prolog-inference)
+    :export (print-prolog-inference)
+    :use-module ((euphrates list-intersperse) :select (list-intersperse))
+    :use-module ((tegfs tag-to-prolog-term) :select (print-tag-as-prolog-term tag->prolog-term)))))
 
-%var print-prolog-inference
 
-%use (list-intersperse) "./euphrates/list-intersperse.scm"
-%use (print-tag-as-prolog-term tag->prolog-term) "./tag-to-prolog-term.scm"
 
 (define (print-prolog-inference thing)
   (define consequent-part (cadr thing))

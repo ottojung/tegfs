@@ -13,9 +13,11 @@
 ;;;; You should have received a copy of the GNU Affero General Public License
 ;;;; along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
-%run guile
+(cond-expand
+ (guile
+  (define-module (tegfs webcore-current-communicator-p)
+    :export (webcore::current-communicator/p))))
 
-%var webcore::current-communicator/p
 
 (define webcore::current-communicator/p
   (make-parameter #f))

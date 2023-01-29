@@ -13,26 +13,28 @@
 ;;;; You should have received a copy of the GNU Affero General Public License
 ;;;; along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
-%run guile
+(cond-expand
+ (guile
+  (define-module (tegfs web-make-callcontext)
+    :export (web::make-callcontext web::make-callcontext/raw)
+    :use-module ((euphrates hashmap) :select (hashmap-ref hashmap? make-hashmap))
+    :use-module ((euphrates memconst) :select (memconst))
+    :use-module ((tegfs web-callcontext) :select (add-callcontext-respheaders! callcontext-ctr))
+    :use-module ((tegfs web-get-cookie) :select (web::get-cookie))
+    :use-module ((tegfs web-iterate-profun-results) :select (web::iterate-profun-results))
+    :use-module ((tegfs web-query-to-hashmap) :select (web::query->hashmap))
+    :use-module ((tegfs web-set-cookie-header) :select (web::set-cookie-header))
+    :use-module ((tegfs webcore-ask) :select (webcore::ask)))))
 
-%var web::make-callcontext
-%var web::make-callcontext/raw
 
-%use (hashmap-ref hashmap? make-hashmap) "./euphrates/hashmap.scm"
-%use (memconst) "./euphrates/memconst.scm"
-%use (add-callcontext-respheaders! callcontext-ctr) "./web-callcontext.scm"
-%use (web::get-cookie) "./web-get-cookie.scm"
-%use (web::iterate-profun-results) "./web-iterate-profun-results.scm"
-%use (web::query->hashmap) "./web-query-to-hashmap.scm"
-%use (web::set-cookie-header) "./web-set-cookie-header.scm"
-%use (webcore::ask) "./webcore-ask.scm"
 
-%for (COMPILER "guile")
+(cond-expand
+ (guile
 
-(use-modules (web request))
-(use-modules (web uri))
+  (use-modules (web request))
+  (use-modules (web uri))
 
-%end
+  ))
 
 (define (remember-to-set-access-token callctx ret)
   (define result

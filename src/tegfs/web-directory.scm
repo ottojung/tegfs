@@ -13,21 +13,23 @@
 ;;;; You should have received a copy of the GNU Affero General Public License
 ;;;; along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
-%run guile
+(cond-expand
+ (guile
+  (define-module (tegfs web-directory)
+    :export (web::directory)
+    :use-module ((euphrates hashmap) :select (hashmap-ref))
+    :use-module ((tegfs default-full-sharing-time) :select (default-full-sharing-time))
+    :use-module ((tegfs default-preview-sharing-time) :select (default-preview-sharing-time))
+    :use-module ((tegfs web-bad-request) :select (web::bad-request))
+    :use-module ((tegfs web-callcontext-p) :select (web::callcontext/p))
+    :use-module ((tegfs web-callcontext) :select (callcontext-token))
+    :use-module ((tegfs web-get-query) :select (web::get-query))
+    :use-module ((tegfs web-handle-profun-results) :select (web::handle-profun-results))
+    :use-module ((tegfs web-make-html-response) :select (web::make-html-response))
+    :use-module ((tegfs web-query-display-results) :select (web::query-display-results))
+    :use-module ((tegfs webcore-ask) :select (webcore::ask)))))
 
-%var web::directory
 
-%use (hashmap-ref) "./euphrates/hashmap.scm"
-%use (default-full-sharing-time) "./default-full-sharing-time.scm"
-%use (default-preview-sharing-time) "./default-preview-sharing-time.scm"
-%use (web::bad-request) "./web-bad-request.scm"
-%use (web::callcontext/p) "./web-callcontext-p.scm"
-%use (callcontext-token) "./web-callcontext.scm"
-%use (web::get-query) "./web-get-query.scm"
-%use (web::handle-profun-results) "./web-handle-profun-results.scm"
-%use (web::make-html-response) "./web-make-html-response.scm"
-%use (web::query-display-results) "./web-query-display-results.scm"
-%use (webcore::ask) "./webcore-ask.scm"
 
 (define (web::directory)
   (define callctx (web::callcontext/p))

@@ -13,15 +13,17 @@
 ;;;; You should have received a copy of the GNU Affero General Public License
 ;;;; along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
-%run guile
+(cond-expand
+ (guile
+  (define-module (tegfs web-share-settings-page)
+    :export (web::share::get-settings-text)
+    :use-module ((euphrates hashmap) :select (hashmap-delete!))
+    :use-module ((euphrates stringf) :select (stringf))
+    :use-module ((tegfs web-callcontext) :select (callcontext-query))
+    :use-module ((tegfs web-form-template) :select (web::form-template))
+    :use-module ((tegfs web-hashmap-to-query) :select (web::hashmap->query)))))
 
-%var web::share::get-settings-text
 
-%use (hashmap-delete!) "./euphrates/hashmap.scm"
-%use (stringf) "./euphrates/stringf.scm"
-%use (callcontext-query) "./web-callcontext.scm"
-%use (web::form-template) "./web-form-template.scm"
-%use (web::hashmap->query) "./web-hashmap-to-query.scm"
 
 (define (web::share::settings-template query/s)
   (web::form-template

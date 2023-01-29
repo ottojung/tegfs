@@ -13,11 +13,13 @@
 ;;;; You should have received a copy of the GNU Affero General Public License
 ;;;; along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
-%run guile
+(cond-expand
+ (guile
+  (define-module (tegfs webcore-share-entry-full)
+    :export (webcore::share-entry-full)
+    :use-module ((tegfs webcore-share-entry-generic) :select (webcore::share-entry-generic)))))
 
-%var webcore::share-entry-full
 
-%use (webcore::share-entry-generic) "./webcore-share-entry-generic.scm"
 
 (define webcore::share-entry-full
   (webcore::share-entry-generic identity))

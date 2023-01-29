@@ -13,13 +13,15 @@
 ;;;; You should have received a copy of the GNU Affero General Public License
 ;;;; along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
-%run guile
+(cond-expand
+ (guile
+  (define-module (tegfs get-sharedinfo-for-perm)
+    :export (get-sharedinfo-for-perm)
+    :use-module ((euphrates hashmap) :select (hashmap-ref))
+    :use-module ((tegfs permission) :select (permission-filemap))
+    :use-module ((tegfs web-context) :select (context-filemap/2)))))
 
-%var get-sharedinfo-for-perm
 
-%use (hashmap-ref) "./euphrates/hashmap.scm"
-%use (permission-filemap) "./permission.scm"
-%use (context-filemap/2) "./web-context.scm"
 
 (define (get-sharedinfo-for-perm ctx perm target-fullpath)
   (define filemap/2 (context-filemap/2 ctx))

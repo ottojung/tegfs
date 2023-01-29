@@ -13,12 +13,14 @@
 ;;;; You should have received a copy of the GNU Affero General Public License
 ;;;; along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
-%run guile
+(cond-expand
+ (guile
+  (define-module (tegfs web-decode-query)
+    :export (web::decode-query)
+    :use-module ((euphrates comp) :select (appcomp))
+    :use-module ((tegfs web-try-uri-decode) :select (web::try-uri-decode)))))
 
-%var web::decode-query
 
-%use (appcomp) "./euphrates/comp.scm"
-%use (web::try-uri-decode) "./web-try-uri-decode.scm"
 
 (define (web::decode-query query/encoded)
   (appcomp query/encoded

@@ -13,12 +13,14 @@
 ;;;; You should have received a copy of the GNU Affero General Public License
 ;;;; along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
-%run guile
+(cond-expand
+ (guile
+  (define-module (tegfs web-display-header)
+    :export (web::display-header)
+    :use-module ((tegfs web-callcontext) :select (callcontext-headers))
+    :use-module ((tegfs web-get-cookie) :select (web::get-cookie)))))
 
-%var web::display-header
 
-%use (callcontext-headers) "./web-callcontext.scm"
-%use (web::get-cookie) "./web-get-cookie.scm"
 
 (define (web::display-header callctx)
   (define headers (callcontext-headers callctx))

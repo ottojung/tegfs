@@ -13,13 +13,15 @@
 ;;;; You should have received a copy of the GNU Affero General Public License
 ;;;; along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
-%run guile
+(cond-expand
+ (guile
+  (define-module (tegfs tegfs-make-communicator)
+    :export (tegfs-make-communicator)
+    :use-module ((euphrates profun) :select (profun-create-database))
+    :use-module ((euphrates profune-communicator) :select (make-profune-communicator))
+    :use-module ((tegfs core-server-handler) :select (core::make-server-handler)))))
 
-%var tegfs-make-communicator
 
-%use (profun-create-database) "./euphrates/profun.scm"
-%use (make-profune-communicator) "./euphrates/profune-communicator.scm"
-%use (core::make-server-handler) "./core-server-handler.scm"
 
 (define (tegfs-make-communicator)
   (define db

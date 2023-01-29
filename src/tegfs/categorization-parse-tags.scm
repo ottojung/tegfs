@@ -13,17 +13,19 @@
 ;;;; You should have received a copy of the GNU Affero General Public License
 ;;;; along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
-%run guile
+(cond-expand
+ (guile
+  (define-module (tegfs categorization-parse-tags)
+    :export (categorization-parse-tags)
+    :use-module ((euphrates curry-if) :select (curry-if))
+    :use-module ((euphrates list-deduplicate) :select (list-deduplicate))
+    :use-module ((euphrates list-map-flatten) :select (list-map/flatten))
+    :use-module ((euphrates parse-cfg-cli) :select (CFG-CLI->CFG-AST))
+    :use-module ((euphrates read-list) :select (read-list))
+    :use-module ((tegfs categorization-split) :select (categorization-split)))))
 
 ;; Returns a tree that represents the tags structure
-%var categorization-parse-tags
 
-%use (curry-if) "./euphrates/curry-if.scm"
-%use (list-deduplicate) "./euphrates/list-deduplicate.scm"
-%use (list-map/flatten) "./euphrates/list-map-flatten.scm"
-%use (CFG-CLI->CFG-AST) "./euphrates/parse-cfg-cli.scm"
-%use (read-list) "./euphrates/read-list.scm"
-%use (categorization-split) "./categorization-split.scm"
 
 (define (categorization-parse-tags categorization-text)
   (define-values (cfg-part rules-part)

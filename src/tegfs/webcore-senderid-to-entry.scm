@@ -13,22 +13,24 @@
 ;;;; You should have received a copy of the GNU Affero General Public License
 ;;;; along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
-%run guile
+(cond-expand
+ (guile
+  (define-module (tegfs webcore-senderid-to-entry)
+    :export (webcore::senderid->entry)
+    :use-module ((euphrates profun-accept) :select (profun-set profun-set-meta))
+    :use-module ((euphrates profun-error) :select (make-profun-error))
+    :use-module ((euphrates profun-op-lambda) :select (profun-op-lambda))
+    :use-module ((euphrates profun-reject) :select (profun-reject))
+    :use-module ((euphrates profun-value) :select (profun-bound-value? profun-unbound-value?))
+    :use-module ((euphrates raisu) :select (raisu))
+    :use-module ((tegfs entry-limit-fields) :select (entry-limit-fields))
+    :use-module ((tegfs filemap) :select (filemap-ref-by-senderid))
+    :use-module ((tegfs permission) :select (permission?))
+    :use-module ((tegfs sharedinfo) :select (sharedinfo-entry))
+    :use-module ((tegfs web-context) :select (context-filemap/2))
+    :use-module ((tegfs webcore-parameters) :select (webcore::permissions/p)))))
 
-%var webcore::senderid->entry
 
-%use (profun-set profun-set-meta) "./euphrates/profun-accept.scm"
-%use (make-profun-error) "./euphrates/profun-error.scm"
-%use (profun-op-lambda) "./euphrates/profun-op-lambda.scm"
-%use (profun-reject) "./euphrates/profun-reject.scm"
-%use (profun-bound-value? profun-unbound-value?) "./euphrates/profun-value.scm"
-%use (raisu) "./euphrates/raisu.scm"
-%use (entry-limit-fields) "./entry-limit-fields.scm"
-%use (filemap-ref-by-senderid) "./filemap.scm"
-%use (permission?) "./permission.scm"
-%use (sharedinfo-entry) "./sharedinfo.scm"
-%use (context-filemap/2) "./web-context.scm"
-%use (webcore::permissions/p) "./webcore-parameters.scm"
 
 (define webcore::senderid->entry
   (lambda (web::context)

@@ -13,21 +13,23 @@
 ;;;; You should have received a copy of the GNU Affero General Public License
 ;;;; along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
-%run guile
+(cond-expand
+ (guile
+  (define-module (tegfs webcore-categorization)
+    :export (webcore::categorization)
+    :use-module ((euphrates append-posix-path) :select (append-posix-path))
+    :use-module ((euphrates catch-any) :select (catch-any))
+    :use-module ((euphrates profun-accept) :select (profun-set))
+    :use-module ((euphrates profun-error) :select (make-profun-error))
+    :use-module ((euphrates profun-op-lambda) :select (profun-op-lambda))
+    :use-module ((euphrates profun-value) :select (profun-bound-value?))
+    :use-module ((euphrates read-string-file) :select (read-string-file))
+    :use-module ((tegfs categorization-filename) :select (categorization-filename))
+    :use-module ((tegfs get-root) :select (get-root))
+    :use-module ((tegfs webcore-access) :select (can-view-categorization?))
+    :use-module ((tegfs webcore-parameters) :select (webcore::permissions/p)))))
 
-%var webcore::categorization
 
-%use (append-posix-path) "./euphrates/append-posix-path.scm"
-%use (catch-any) "./euphrates/catch-any.scm"
-%use (profun-set) "./euphrates/profun-accept.scm"
-%use (make-profun-error) "./euphrates/profun-error.scm"
-%use (profun-op-lambda) "./euphrates/profun-op-lambda.scm"
-%use (profun-bound-value?) "./euphrates/profun-value.scm"
-%use (read-string-file) "./euphrates/read-string-file.scm"
-%use (categorization-filename) "./categorization-filename.scm"
-%use (get-root) "./get-root.scm"
-%use (can-view-categorization?) "./webcore-access.scm"
-%use (webcore::permissions/p) "./webcore-parameters.scm"
 
 (define (webcore::categorization web::context)
   (profun-op-lambda

@@ -13,12 +13,14 @@
 ;;;; You should have received a copy of the GNU Affero General Public License
 ;;;; along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
-%run guile
+(cond-expand
+ (guile
+  (define-module (tegfs web-main-css)
+    :export (web::main.css)
+    :use-module ((tegfs web-define-static-file) :select (web::define-static-file))
+    :use-module ((tegfs web-style) :select (web::style)))))
 
-%var web::main.css
 
-%use (web::define-static-file) "./web-define-static-file.scm"
-%use (web::style) "./web-style.scm"
 
 (web::define-static-file web::main.css
-  '(text/css) web::style)
+             '(text/css) web::style)

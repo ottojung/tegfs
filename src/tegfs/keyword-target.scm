@@ -13,10 +13,11 @@
 ;;;; You should have received a copy of the GNU Affero General Public License
 ;;;; along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
-%run guile
+(cond-expand
+ (guile
+  (define-module (tegfs keyword-target)
+    :export (keyword-target keyword-target/string))))
 
-%var keyword-target
-%var keyword-target/string
 
 (define keyword-target 'target)
 (define keyword-target/string (symbol->string keyword-target))

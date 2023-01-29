@@ -13,25 +13,27 @@
 ;;;; You should have received a copy of the GNU Affero General Public License
 ;;;; along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
-%run guile
+(cond-expand
+ (guile
+  (define-module (tegfs webcore-link-shared)
+    :export (webcore::link-shared)
+    :use-module ((euphrates profun-accept) :select (profun-set))
+    :use-module ((euphrates profun-error) :select (make-profun-error))
+    :use-module ((euphrates profun-op-lambda) :select (profun-op-lambda))
+    :use-module ((euphrates profun-request-value) :select (profun-request-value))
+    :use-module ((euphrates profun-value) :select (profun-unbound-value?))
+    :use-module ((tegfs filemap) :select (filemap-ref-by-senderid))
+    :use-module ((tegfs get-config) :select (get-config))
+    :use-module ((tegfs get-root) :select (get-root))
+    :use-module ((tegfs sharedinfo) :select (sharedinfo-entry sharedinfo-recepientid sharedinfo-sourcepath))
+    :use-module ((tegfs symlink-shared-file) :select (symlink-shared-file))
+    :use-module ((tegfs web-context) :select (context-filemap/2))
+    :use-module ((tegfs web-get-adam-info) :select (web::get-adam-info))
+    :use-module ((tegfs web-get-sharedinfo-url) :select (web::get-sharedinfo-url))
+    :use-module ((tegfs webcore-get-share-plugins) :select (webcore::get-share-plugins))
+    :use-module ((tegfs webcore-run-share-plugins) :select (webcore::run-share-plugins)))))
 
-%var webcore::link-shared
 
-%use (profun-set) "./euphrates/profun-accept.scm"
-%use (make-profun-error) "./euphrates/profun-error.scm"
-%use (profun-op-lambda) "./euphrates/profun-op-lambda.scm"
-%use (profun-request-value) "./euphrates/profun-request-value.scm"
-%use (profun-unbound-value?) "./euphrates/profun-value.scm"
-%use (filemap-ref-by-senderid) "./filemap.scm"
-%use (get-config) "./get-config.scm"
-%use (get-root) "./get-root.scm"
-%use (sharedinfo-entry sharedinfo-recepientid sharedinfo-sourcepath) "./sharedinfo.scm"
-%use (symlink-shared-file) "./symlink-shared-file.scm"
-%use (context-filemap/2) "./web-context.scm"
-%use (web::get-adam-info) "./web-get-adam-info.scm"
-%use (web::get-sharedinfo-url) "./web-get-sharedinfo-url.scm"
-%use (webcore::get-share-plugins) "./webcore-get-share-plugins.scm"
-%use (webcore::run-share-plugins) "./webcore-run-share-plugins.scm"
 
 (define webcore::link-shared
   (lambda (web::context)

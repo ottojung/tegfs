@@ -13,17 +13,19 @@
 ;;;; You should have received a copy of the GNU Affero General Public License
 ;;;; along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
-%run guile
+(cond-expand
+ (guile
+  (define-module (tegfs entries-map-bang)
+    :export (entries-map!)
+    :use-module ((euphrates append-posix-path) :select (append-posix-path))
+    :use-module ((euphrates file-delete) :select (file-delete))
+    :use-module ((euphrates open-file-port) :select (open-file-port))
+    :use-module ((tegfs entry-print) :select (entry-print))
+    :use-module ((tegfs get-registry-files) :select (get-registry-files))
+    :use-module ((tegfs get-root) :select (get-root))
+    :use-module ((tegfs make-temporary-filename-local) :select (make-temporary-filename/local)))))
 
-%var entries-map!
 
-%use (append-posix-path) "./euphrates/append-posix-path.scm"
-%use (file-delete) "./euphrates/file-delete.scm"
-%use (open-file-port) "./euphrates/open-file-port.scm"
-%use (entry-print) "./entry-print.scm"
-%use (get-registry-files) "./get-registry-files.scm"
-%use (get-root) "./get-root.scm"
-%use (make-temporary-filename/local) "./make-temporary-filename-local.scm"
 
 (define (entries-map! fun)
   (for-each

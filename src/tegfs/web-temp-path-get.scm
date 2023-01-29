@@ -13,12 +13,14 @@
 ;;;; You should have received a copy of the GNU Affero General Public License
 ;;;; along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
-%run guile
+(cond-expand
+ (guile
+  (define-module (tegfs web-temp-path-get)
+    :export (web::temp-path-get)
+    :use-module ((euphrates hashmap) :select (hashmap-ref))
+    :use-module ((tegfs web-current-temp-paths-table-p) :select (web::current-temp-paths-table/p)))))
 
-%var web::temp-path-get
 
-%use (hashmap-ref) "./euphrates/hashmap.scm"
-%use (web::current-temp-paths-table/p) "./web-current-temp-paths-table-p.scm"
 
 (define (web::temp-path-get tempid)
   (define table (web::current-temp-paths-table/p))

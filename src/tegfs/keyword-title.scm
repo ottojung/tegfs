@@ -13,10 +13,11 @@
 ;;;; You should have received a copy of the GNU Affero General Public License
 ;;;; along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
-%run guile
+(cond-expand
+ (guile
+  (define-module (tegfs keyword-title)
+    :export (keyword-title keyword-title/string))))
 
-%var keyword-title
-%var keyword-title/string
 
 (define keyword-title 'title)
 (define keyword-title/string (symbol->string keyword-title))

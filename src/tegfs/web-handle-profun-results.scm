@@ -13,20 +13,19 @@
 ;;;; You should have received a copy of the GNU Affero General Public License
 ;;;; along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
-%run guile
+(cond-expand
+ (guile
+  (define-module (tegfs web-handle-profun-results)
+    :export (web::handle-profun-results web::handle-profun-results/hooked web::handle-profun-results/or web::handle-profun-results/default-fail-fun)
+    :use-module ((euphrates comp) :select (comp))
+    :use-module ((euphrates raisu) :select (raisu))
+    :use-module ((euphrates tilda-s) :select (~s))
+    :use-module ((euphrates words-to-string) :select (words->string))
+    :use-module ((tegfs web-bad-request) :select (web::bad-request))
+    :use-module ((tegfs web-not-found) :select (web::not-found))
+    :use-module ((tegfs web-permission-denied) :select (web::permission-denied)))))
 
-%var web::handle-profun-results
-%var web::handle-profun-results/hooked
-%var web::handle-profun-results/or
-%var web::handle-profun-results/default-fail-fun
 
-%use (comp) "./euphrates/comp.scm"
-%use (raisu) "./euphrates/raisu.scm"
-%use (~s) "./euphrates/tilda-s.scm"
-%use (words->string) "./euphrates/words-to-string.scm"
-%use (web::bad-request) "./web-bad-request.scm"
-%use (web::not-found) "./web-not-found.scm"
-%use (web::permission-denied) "./web-permission-denied.scm"
 
 (define (web::handle-profun-results/2 results0 fun fail-fun)
   (define results (cdr results0))

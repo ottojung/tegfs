@@ -13,15 +13,17 @@
 ;;;; You should have received a copy of the GNU Affero General Public License
 ;;;; along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
-%run guile
+(cond-expand
+ (guile
+  (define-module (tegfs set-config)
+    :export (set-config)
+    :use-module ((euphrates append-posix-path) :select (append-posix-path))
+    :use-module ((euphrates assoc-set-value) :select (assoc-set-value))
+    :use-module ((euphrates open-file-port) :select (open-file-port))
+    :use-module ((tegfs get-config) :select (get-config))
+    :use-module ((tegfs get-root) :select (get-root)))))
 
-%var set-config
 
-%use (append-posix-path) "./euphrates/append-posix-path.scm"
-%use (assoc-set-value) "./euphrates/assoc-set-value.scm"
-%use (open-file-port) "./euphrates/open-file-port.scm"
-%use (get-config) "./get-config.scm"
-%use (get-root) "./get-root.scm"
 
 (define (set-config name value)
   (define path (append-posix-path (get-root) "config.tegfs.lisp"))

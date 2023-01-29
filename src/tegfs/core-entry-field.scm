@@ -13,19 +13,21 @@
 ;;;; You should have received a copy of the GNU Affero General Public License
 ;;;; along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
-%run guile
+(cond-expand
+ (guile
+  (define-module (tegfs core-entry-field)
+    :export (core::entry-field)
+    :use-module ((euphrates assq-or) :select (assq-or))
+    :use-module ((euphrates bool-to-profun-result) :select (bool->profun-result))
+    :use-module ((euphrates list-and-map) :select (list-and-map))
+    :use-module ((euphrates profun-accept) :select (profun-accept profun-ctx-set profun-set))
+    :use-module ((euphrates profun-answer-huh) :select (profun-answer?))
+    :use-module ((euphrates profun-error) :select (make-profun-error))
+    :use-module ((euphrates profun-op-lambda) :select (profun-op-lambda))
+    :use-module ((euphrates profun-reject) :select (profun-reject))
+    :use-module ((euphrates profun-value) :select (profun-bound-value? profun-unbound-value?)))))
 
-%var core::entry-field
 
-%use (assq-or) "./euphrates/assq-or.scm"
-%use (bool->profun-result) "./euphrates/bool-to-profun-result.scm"
-%use (list-and-map) "./euphrates/list-and-map.scm"
-%use (profun-accept profun-ctx-set profun-set) "./euphrates/profun-accept.scm"
-%use (profun-answer?) "./euphrates/profun-answer-huh.scm"
-%use (make-profun-error) "./euphrates/profun-error.scm"
-%use (profun-op-lambda) "./euphrates/profun-op-lambda.scm"
-%use (profun-reject) "./euphrates/profun-reject.scm"
-%use (profun-bound-value? profun-unbound-value?) "./euphrates/profun-value.scm"
 
 (define (profun-op-return-iter ctx initialize-iter ret-name)
   (define iter (or ctx (initialize-iter)))

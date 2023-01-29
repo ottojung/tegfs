@@ -13,11 +13,13 @@
 ;;;; You should have received a copy of the GNU Affero General Public License
 ;;;; along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
-%run guile
+(cond-expand
+ (guile
+  (define-module (tegfs entry-for-local-file-huh)
+    :export (entry-for-local-file?)
+    :use-module ((tegfs keyword-entry-parent-directory-senderid) :select (keyword-entry-parent-directory-senderid)))))
 
-%var entry-for-local-file?
 
-%use (keyword-entry-parent-directory-senderid) "./keyword-entry-parent-directory-senderid.scm"
 
 (define (entry-for-local-file? entry)
   (not (not (assoc keyword-entry-parent-directory-senderid entry))))

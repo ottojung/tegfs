@@ -13,14 +13,16 @@
 ;;;; You should have received a copy of the GNU Affero General Public License
 ;;;; along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
-%run guile
+(cond-expand
+ (guile
+  (define-module (tegfs web-query-to-hashmap)
+    :export (web::query->hashmap)
+    :use-module ((euphrates hashmap) :select (alist->hashmap))
+    :use-module ((euphrates string-split-3) :select (string-split-3))
+    :use-module ((euphrates string-split-simple) :select (string-split/simple))
+    :use-module ((tegfs web-try-uri-decode) :select (web::try-uri-decode)))))
 
-%var web::query->hashmap
 
-%use (alist->hashmap) "./euphrates/hashmap.scm"
-%use (string-split-3) "./euphrates/string-split-3.scm"
-%use (string-split/simple) "./euphrates/string-split-simple.scm"
-%use (web::try-uri-decode) "./web-try-uri-decode.scm"
 
 (define (web::query->hashmap query)
   (define split (string-split/simple query #\&))

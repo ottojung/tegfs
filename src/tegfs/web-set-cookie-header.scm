@@ -13,12 +13,14 @@
 ;;;; You should have received a copy of the GNU Affero General Public License
 ;;;; along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
-%run guile
+(cond-expand
+ (guile
+  (define-module (tegfs web-set-cookie-header)
+    :export (web::set-cookie-header)
+    :use-module ((euphrates raisu) :select (raisu))
+    :use-module ((euphrates tilda-a) :select (~a)))))
 
-%var web::set-cookie-header
 
-%use (raisu) "./euphrates/raisu.scm"
-%use (~a) "./euphrates/tilda-a.scm"
 
 (define (web::set-cookie-header key value share-time)
   (cons 'set-cookie

@@ -13,11 +13,13 @@
 ;;;; You should have received a copy of the GNU Affero General Public License
 ;;;; along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
-%run guile
+(cond-expand
+ (guile
+  (define-module (tegfs password-to-tokenlike)
+    :export (password->tokenlike)
+    :use-module ((tegfs sha256sum) :select (sha256sum)))))
 
-%var password->tokenlike
 
-%use (sha256sum) "./sha256sum.scm"
 
 (define (password->tokenlike password)
   (define hash (sha256sum password))

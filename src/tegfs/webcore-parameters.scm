@@ -13,11 +13,13 @@
 ;;;; You should have received a copy of the GNU Affero General Public License
 ;;;; along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
-%run guile
+(cond-expand
+ (guile
+  (define-module (tegfs webcore-parameters)
+    :export (webcore::permissions/p)
+    :use-module ((euphrates profun-op-parameter) :select (make-profun-parameter)))))
 
-%var webcore::permissions/p
 
-%use (make-profun-parameter) "./euphrates/profun-op-parameter.scm"
 
 (define webcore::permissions/p
   (make-profun-parameter))

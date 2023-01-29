@@ -13,34 +13,29 @@
 ;;;; You should have received a copy of the GNU Affero General Public License
 ;;;; along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
-%run guile
+(cond-expand
+ (guile
+  (define-module (tegfs webcore-access)
+    :export (has-access-for-entry? has-access-for-entry-target? has-access-for-entry-details? can-modify-entry? can-upload? can-view-categorization? can-modify-categorization? can-share-longer-than-view?)
+    :use-module ((euphrates assoc-or) :select (assoc-or))
+    :use-module ((euphrates hashmap) :select (hashmap-ref))
+    :use-module ((euphrates hashset) :select (hashset-has?))
+    :use-module ((euphrates raisu) :select (raisu))
+    :use-module ((tegfs entry-for-local-file-huh) :select (entry-for-local-file?))
+    :use-module ((tegfs filemap) :select (filemap-ref-by-senderid))
+    :use-module ((tegfs keyword-entry-parent-directory-senderid) :select (keyword-entry-parent-directory-senderid))
+    :use-module ((tegfs keyword-id) :select (keyword-id))
+    :use-module ((tegfs permission) :select (permission-admin? permission-cat-modify-access? permission-cat-view-access? permission-entry-modify-access? permission-entry-view-access? permission-filemap permission-idset permission-share-longer-than-view? permission-uploadaccess?))
+    :use-module ((tegfs sharedinfo) :select (sharedinfo-sourcepath)))))
 
-%var has-access-for-entry?
-%var has-access-for-entry-target?
-%var has-access-for-entry-details?
-%var can-modify-entry?
-%var can-upload?
-%var can-view-categorization?
-%var can-modify-categorization?
-%var can-share-longer-than-view?
 
-%use (assoc-or) "./euphrates/assoc-or.scm"
-%use (hashmap-ref) "./euphrates/hashmap.scm"
-%use (hashset-has?) "./euphrates/hashset.scm"
-%use (raisu) "./euphrates/raisu.scm"
-%use (entry-for-local-file?) "./entry-for-local-file-huh.scm"
-%use (filemap-ref-by-senderid) "./filemap.scm"
-%use (keyword-entry-parent-directory-senderid) "./keyword-entry-parent-directory-senderid.scm"
-%use (keyword-id) "./keyword-id.scm"
-%use (permission-admin? permission-cat-modify-access? permission-cat-view-access? permission-entry-modify-access? permission-entry-view-access? permission-filemap permission-idset permission-share-longer-than-view? permission-uploadaccess?) "./permission.scm"
-%use (sharedinfo-sourcepath) "./sharedinfo.scm"
 
 (define (has-access-for-entry? filemap/2 perm entry)
   (and perm
        (or (permission-admin? perm)
            (if (entry-for-local-file? entry)
                (let* ((parent-senderid (or (assoc-or keyword-entry-parent-directory-senderid entry #f)
-                                      (raisu 'entry-does-not-have-parent-senderid entry)))
+                       (raisu 'entry-does-not-have-parent-senderid entry)))
                       (info (filemap-ref-by-senderid filemap/2 parent-senderid #f))
                       (target-fullpath (and info (sharedinfo-sourcepath info)))
                       (perm-filemap (permission-filemap perm)))

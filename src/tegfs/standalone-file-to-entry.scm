@@ -13,18 +13,19 @@
 ;;;; You should have received a copy of the GNU Affero General Public License
 ;;;; along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
-%run guile
+(cond-expand
+ (guile
+  (define-module (tegfs standalone-file-to-entry)
+    :export (standalone-file->entry standalone-file->entry/prefixed)
+    :use-module ((euphrates append-posix-path) :select (append-posix-path))
+    :use-module ((euphrates path-get-basename) :select (path-get-basename))
+    :use-module ((euphrates path-normalize) :select (path-normalize))
+    :use-module ((tegfs keyword-entry-parent-directory-senderid) :select (keyword-entry-parent-directory-senderid))
+    :use-module ((tegfs keyword-entry-parent-directory) :select (keyword-entry-parent-directory))
+    :use-module ((tegfs keyword-id) :select (keyword-id))
+    :use-module ((tegfs keyword-target) :select (keyword-target)))))
 
-%var standalone-file->entry
-%var standalone-file->entry/prefixed
 
-%use (append-posix-path) "./euphrates/append-posix-path.scm"
-%use (path-get-basename) "./euphrates/path-get-basename.scm"
-%use (path-normalize) "./euphrates/path-normalize.scm"
-%use (keyword-entry-parent-directory-senderid) "./keyword-entry-parent-directory-senderid.scm"
-%use (keyword-entry-parent-directory) "./keyword-entry-parent-directory.scm"
-%use (keyword-id) "./keyword-id.scm"
-%use (keyword-target) "./keyword-target.scm"
 
 (define (standalone-file->entry filepath)
   (define norm0 (path-normalize filepath))
@@ -46,8 +47,8 @@
                    (string-append "/" norm0)))
   (define dir0 prefix)
   (define dir (if (string-prefix? "/" dir0)
-                   dir0
-                   (string-append "/" dir0)))
+                  dir0
+                  (string-append "/" dir0)))
   (define name (path-get-basename norm))
   (define id
     (path-normalize (append-posix-path dir norm)))

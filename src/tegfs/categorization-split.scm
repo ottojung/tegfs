@@ -13,17 +13,19 @@
 ;;;; You should have received a copy of the GNU Affero General Public License
 ;;;; along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
-%run guile
+(cond-expand
+ (guile
+  (define-module (tegfs categorization-split)
+    :export (categorization-split)
+    :use-module ((euphrates comp) :select (comp))
+    :use-module ((euphrates fn) :select (fn))
+    :use-module ((euphrates lines-to-string) :select (lines->string))
+    :use-module ((euphrates list-split-on) :select (list-split-on))
+    :use-module ((euphrates string-split-simple) :select (string-split/simple))
+    :use-module ((euphrates string-strip) :select (string-strip))
+    :use-module ((euphrates string-to-lines) :select (string->lines)))))
 
-%var categorization-split
 
-%use (comp) "./euphrates/comp.scm"
-%use (fn) "./euphrates/fn.scm"
-%use (lines->string) "./euphrates/lines-to-string.scm"
-%use (list-split-on) "./euphrates/list-split-on.scm"
-%use (string-split/simple) "./euphrates/string-split-simple.scm"
-%use (string-strip) "./euphrates/string-strip.scm"
-%use (string->lines) "./euphrates/string-to-lines.scm"
 
 (define (categorization-split text)
   (define lines (string->lines text))

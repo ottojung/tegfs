@@ -13,35 +13,34 @@
 ;;;; You should have received a copy of the GNU Affero General Public License
 ;;;; along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
-%run guile
+(cond-expand
+ (guile
+  (define-module (tegfs make-thumbnails)
+    :export (tegfs-make-thumbnails/parse tegfs-make-thumbnails tegfs-make-image-thumbnails tegfs-make-senderideo-thumbnails)
+    :use-module ((euphrates catchu-case) :select (catchu-case))
+    :use-module ((euphrates comp) :select (appcomp comp))
+    :use-module ((euphrates define-pair) :select (define-pair))
+    :use-module ((euphrates dprintln) :select (dprintln))
+    :use-module ((euphrates file-delete) :select (file-delete))
+    :use-module ((euphrates file-or-directory-exists-q) :select (file-or-directory-exists?))
+    :use-module ((euphrates make-directories) :select (make-directories))
+    :use-module ((euphrates make-temporary-filename) :select (make-temporary-filename))
+    :use-module ((euphrates raisu) :select (raisu))
+    :use-module ((euphrates string-strip) :select (string-strip))
+    :use-module ((euphrates string-to-lines) :select (string->lines))
+    :use-module ((euphrates string-to-seconds-columned) :select (string->seconds/columned))
+    :use-module ((euphrates string-to-words) :select (string->words))
+    :use-module ((euphrates system-fmt) :select (system-fmt))
+    :use-module ((euphrates system-re) :select (system-re))
+    :use-module ((euphrates url-goto) :select (url-goto))
+    :use-module ((tegfs a-weblink-q) :select (a-weblink?))
+    :use-module ((tegfs fatal) :select (fatal))
+    :use-module ((tegfs file-is-image-q) :select (file-is-image?))
+    :use-module ((tegfs file-is-video-q) :select (file-is-video?))
+    :use-module ((tegfs web-preview-height) :select (web::preview-height))
+    :use-module ((tegfs web-preview-width) :select (web::preview-width)))))
 
-%var tegfs-make-thumbnails/parse
-%var tegfs-make-thumbnails
-%var tegfs-make-image-thumbnails
-%var tegfs-make-senderideo-thumbnails
 
-%use (catchu-case) "./euphrates/catchu-case.scm"
-%use (appcomp comp) "./euphrates/comp.scm"
-%use (define-pair) "./euphrates/define-pair.scm"
-%use (dprintln) "./euphrates/dprintln.scm"
-%use (file-delete) "./euphrates/file-delete.scm"
-%use (file-or-directory-exists?) "./euphrates/file-or-directory-exists-q.scm"
-%use (make-directories) "./euphrates/make-directories.scm"
-%use (make-temporary-filename) "./euphrates/make-temporary-filename.scm"
-%use (raisu) "./euphrates/raisu.scm"
-%use (string-strip) "./euphrates/string-strip.scm"
-%use (string->lines) "./euphrates/string-to-lines.scm"
-%use (string->seconds/columned) "./euphrates/string-to-seconds-columned.scm"
-%use (string->words) "./euphrates/string-to-words.scm"
-%use (system-fmt) "./euphrates/system-fmt.scm"
-%use (system-re) "./euphrates/system-re.scm"
-%use (url-goto) "./euphrates/url-goto.scm"
-%use (a-weblink?) "./a-weblink-q.scm"
-%use (fatal) "./fatal.scm"
-%use (file-is-image?) "./file-is-image-q.scm"
-%use (file-is-video?) "./file-is-video-q.scm"
-%use (web::preview-height) "./web-preview-height.scm"
-%use (web::preview-width) "./web-preview-width.scm"
 
 (define (tegfs-make-thumbnails/parse <input> <output>)
   (catchu-case

@@ -13,17 +13,19 @@
 ;;;; You should have received a copy of the GNU Affero General Public License
 ;;;; along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
-%run guile
+(cond-expand
+ (guile
+  (define-module (tegfs web-body-get-data)
+    :export (web::body::get-data web::body::get-data/decode)
+    :use-module ((euphrates assq-or) :select (assq-or))
+    :use-module ((euphrates hashmap) :select (hashmap-ref)))))
 
-%var web::body::get-data
-%var web::body::get-data/decode
 
-%use (assq-or) "./euphrates/assq-or.scm"
-%use (hashmap-ref) "./euphrates/hashmap.scm"
 
-%for (COMPILER "guile")
-(use-modules (ice-9 iconv))
-%end
+(cond-expand
+ (guile
+  (use-modules (ice-9 iconv))
+  ))
 
 (define (web::body::get-data body/hash a-key)
   (define alist

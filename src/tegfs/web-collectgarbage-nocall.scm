@@ -13,21 +13,23 @@
 ;;;; You should have received a copy of the GNU Affero General Public License
 ;;;; along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
-%run guile
+(cond-expand
+ (guile
+  (define-module (tegfs web-collectgarbage-nocall)
+    :export (web::collectgarbage/nocall)
+    :use-module ((euphrates directory-files) :select (directory-files))
+    :use-module ((euphrates file-delete) :select (file-delete))
+    :use-module ((euphrates hashmap) :select (hashmap-delete! hashmap-foreach))
+    :use-module ((euphrates path-without-extension) :select (path-without-extension))
+    :use-module ((euphrates raisu) :select (raisu))
+    :use-module ((tegfs current-time-p) :select (current-time/p))
+    :use-module ((tegfs filemap) :select (filemap-delete-by-recepientid! filemap-ref-by-recepientid))
+    :use-module ((tegfs permission-still-valid-huh) :select (permission-still-valid?))
+    :use-module ((tegfs permission) :select (permission-filemap))
+    :use-module ((tegfs sharedinfo) :select (sharedinfo-ctime sharedinfo-stime))
+    :use-module ((tegfs web-context) :select (context-filemap/2 context-sharedir context-tokens)))))
 
-%var web::collectgarbage/nocall
 
-%use (directory-files) "./euphrates/directory-files.scm"
-%use (file-delete) "./euphrates/file-delete.scm"
-%use (hashmap-delete! hashmap-foreach) "./euphrates/hashmap.scm"
-%use (path-without-extension) "./euphrates/path-without-extension.scm"
-%use (raisu) "./euphrates/raisu.scm"
-%use (current-time/p) "./current-time-p.scm"
-%use (filemap-delete-by-recepientid! filemap-ref-by-recepientid) "./filemap.scm"
-%use (permission-still-valid?) "./permission-still-valid-huh.scm"
-%use (permission-filemap) "./permission.scm"
-%use (sharedinfo-ctime sharedinfo-stime) "./sharedinfo.scm"
-%use (context-filemap/2 context-sharedir context-tokens) "./web-context.scm"
 
 (define sharedinfo-time-left
   (case-lambda

@@ -13,11 +13,13 @@
 ;;;; You should have received a copy of the GNU Affero General Public License
 ;;;; along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
-%run guile
+(cond-expand
+ (guile
+  (define-module (tegfs parsed-categorization-tags-get-all)
+    :export (parsed-categorization-tags-get-all)
+    :use-module ((euphrates list-deduplicate) :select (list-deduplicate)))))
 
-%var parsed-categorization-tags-get-all
 
-%use (list-deduplicate) "./euphrates/list-deduplicate.scm"
 
 (define (parsed-categorization-tags-get-all ast/flatten)
   (define words

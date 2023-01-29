@@ -13,11 +13,13 @@
 ;;;; You should have received a copy of the GNU Affero General Public License
 ;;;; along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
-%run guile
+(cond-expand
+ (guile
+  (define-module (tegfs default-preview-sharing-time)
+    :export (default-preview-sharing-time)
+    :use-module ((euphrates string-to-seconds) :select (string->seconds)))))
 
-%var default-preview-sharing-time
 
-%use (string->seconds) "./euphrates/string-to-seconds.scm"
 
 (define default-preview-sharing-time
   (string->seconds "30m"))

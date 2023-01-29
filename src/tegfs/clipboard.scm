@@ -13,26 +13,22 @@
 ;;;; You should have received a copy of the GNU Affero General Public License
 ;;;; along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
-%run guile
+(cond-expand
+ (guile
+  (define-module (tegfs clipboard)
+    :export (dump-clipboard-to-temporary dump-clipboard-to-file get-clipboard-data-types get-clipboard-text-content classify-clipboard-text-content get-clipboard-type-extension choose-clipboard-data-type)
+    :use-module ((euphrates define-pair) :select (define-pair))
+    :use-module ((euphrates file-or-directory-exists-q) :select (file-or-directory-exists?))
+    :use-module ((euphrates lines-to-string) :select (lines->string))
+    :use-module ((euphrates mimetype-extensions) :select (mimetype/extensions))
+    :use-module ((euphrates string-strip) :select (string-strip))
+    :use-module ((euphrates string-to-lines) :select (string->lines))
+    :use-module ((euphrates system-fmt) :select (system-fmt))
+    :use-module ((euphrates system-re) :select (system-re))
+    :use-module ((tegfs a-weblink-q) :select (a-weblink?))
+    :use-module ((tegfs make-temporary-filename-local) :select (make-temporary-filename/local)))))
 
-%var dump-clipboard-to-temporary
-%var dump-clipboard-to-file
-%var get-clipboard-data-types
-%var get-clipboard-text-content
-%var classify-clipboard-text-content
-%var get-clipboard-type-extension
-%var choose-clipboard-data-type
 
-%use (define-pair) "./euphrates/define-pair.scm"
-%use (file-or-directory-exists?) "./euphrates/file-or-directory-exists-q.scm"
-%use (lines->string) "./euphrates/lines-to-string.scm"
-%use (mimetype/extensions) "./euphrates/mimetype-extensions.scm"
-%use (string-strip) "./euphrates/string-strip.scm"
-%use (string->lines) "./euphrates/string-to-lines.scm"
-%use (system-fmt) "./euphrates/system-fmt.scm"
-%use (system-re) "./euphrates/system-re.scm"
-%use (a-weblink?) "./a-weblink-q.scm"
-%use (make-temporary-filename/local) "./make-temporary-filename-local.scm"
 
 (define (classify-clipboard-text-content text-content)
   (cond

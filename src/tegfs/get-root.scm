@@ -13,20 +13,21 @@
 ;;;; You should have received a copy of the GNU Affero General Public License
 ;;;; along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
-%run guile
+(cond-expand
+ (guile
+  (define-module (tegfs get-root)
+    :export (get-root get-root/default)
+    :use-module ((euphrates absolute-posix-path-q) :select (absolute-posix-path?))
+    :use-module ((euphrates append-posix-path) :select (append-posix-path))
+    :use-module ((euphrates file-or-directory-exists-q) :select (file-or-directory-exists?))
+    :use-module ((euphrates get-current-directory) :select (get-current-directory))
+    :use-module ((euphrates make-directories) :select (make-directories))
+    :use-module ((euphrates memconst) :select (memconst))
+    :use-module ((euphrates raisu) :select (raisu))
+    :use-module ((euphrates system-environment) :select (system-environment-get))
+    :use-module ((tegfs root-p) :select (root/p)))))
 
-%var get-root
-%var get-root/default
 
-%use (absolute-posix-path?) "./euphrates/absolute-posix-path-q.scm"
-%use (append-posix-path) "./euphrates/append-posix-path.scm"
-%use (file-or-directory-exists?) "./euphrates/file-or-directory-exists-q.scm"
-%use (get-current-directory) "./euphrates/get-current-directory.scm"
-%use (make-directories) "./euphrates/make-directories.scm"
-%use (memconst) "./euphrates/memconst.scm"
-%use (raisu) "./euphrates/raisu.scm"
-%use (system-environment-get) "./euphrates/system-environment.scm"
-%use (root/p) "./root-p.scm"
 
 (define ROOT_VAR_NAME "TEGFS_ROOT")
 (define root-default

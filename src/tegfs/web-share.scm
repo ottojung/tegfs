@@ -13,30 +13,32 @@
 ;;;; You should have received a copy of the GNU Affero General Public License
 ;;;; along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
-%run guile
+(cond-expand
+ (guile
+  (define-module (tegfs web-share)
+    :export (web::share)
+    :use-module ((euphrates assq-or) :select (assq-or))
+    :use-module ((euphrates catchu-case) :select (catchu-case))
+    :use-module ((euphrates hashmap) :select (hashmap-ref))
+    :use-module ((euphrates raisu) :select (raisu))
+    :use-module ((euphrates string-to-seconds) :select (string->seconds))
+    :use-module ((euphrates string-to-words) :select (string->words))
+    :use-module ((euphrates stringf) :select (stringf))
+    :use-module ((tegfs default-share-expiery-time) :select (default-share-expiery-time))
+    :use-module ((tegfs web-bad-request) :select (web::bad-request))
+    :use-module ((tegfs web-body-to-hashmap) :select (web::body->hashmap))
+    :use-module ((tegfs web-callcontext-p) :select (web::callcontext/p))
+    :use-module ((tegfs web-callcontext) :select (callcontext-body callcontext-query callcontext-token))
+    :use-module ((tegfs web-create-temp-path) :select (web::create-temp-path))
+    :use-module ((tegfs web-decode-query) :select (web::decode-query))
+    :use-module ((tegfs web-get-query) :select (web::get-query))
+    :use-module ((tegfs web-handle-profun-results) :select (web::handle-profun-results))
+    :use-module ((tegfs web-make-html-response) :select (web::make-html-response))
+    :use-module ((tegfs web-share-default-page) :select (web::share::get-default-text))
+    :use-module ((tegfs web-share-settings-page) :select (web::share::get-settings-text))
+    :use-module ((tegfs webcore-ask) :select (webcore::ask)))))
 
-%var web::share
 
-%use (assq-or) "./euphrates/assq-or.scm"
-%use (catchu-case) "./euphrates/catchu-case.scm"
-%use (hashmap-ref) "./euphrates/hashmap.scm"
-%use (raisu) "./euphrates/raisu.scm"
-%use (string->seconds) "./euphrates/string-to-seconds.scm"
-%use (string->words) "./euphrates/string-to-words.scm"
-%use (stringf) "./euphrates/stringf.scm"
-%use (default-share-expiery-time) "./default-share-expiery-time.scm"
-%use (web::bad-request) "./web-bad-request.scm"
-%use (web::body->hashmap) "./web-body-to-hashmap.scm"
-%use (web::callcontext/p) "./web-callcontext-p.scm"
-%use (callcontext-body callcontext-query callcontext-token) "./web-callcontext.scm"
-%use (web::create-temp-path) "./web-create-temp-path.scm"
-%use (web::decode-query) "./web-decode-query.scm"
-%use (web::get-query) "./web-get-query.scm"
-%use (web::handle-profun-results) "./web-handle-profun-results.scm"
-%use (web::make-html-response) "./web-make-html-response.scm"
-%use (web::share::get-default-text) "./web-share-default-page.scm"
-%use (web::share::get-settings-text) "./web-share-settings-page.scm"
-%use (webcore::ask) "./webcore-ask.scm"
 
 (define (get-share-duration callctx)
   (define ctxq (callcontext-query callctx))

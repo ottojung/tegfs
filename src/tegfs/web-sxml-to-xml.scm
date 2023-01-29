@@ -13,12 +13,15 @@
 ;;;; You should have received a copy of the GNU Affero General Public License
 ;;;; along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
-%run guile
+(cond-expand
+ (guile
+  (define-module (tegfs web-sxml-to-xml)
+    :export (web::sxml->xml))))
 
-%var web::sxml->xml
 
-%for (COMPILER "guile")
-(use-modules (sxml simple))
-%end
+(cond-expand
+ (guile
+  (use-modules (sxml simple))
+  ))
 
 (define web::sxml->xml sxml->xml)

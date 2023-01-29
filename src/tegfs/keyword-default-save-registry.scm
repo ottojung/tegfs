@@ -13,9 +13,11 @@
 ;;;; You should have received a copy of the GNU Affero General Public License
 ;;;; along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
-%run guile
+(cond-expand
+ (guile
+  (define-module (tegfs keyword-default-save-registry)
+    :export (keyword-default-save-registry))))
 
-%var keyword-default-save-registry
 
 (define keyword-default-save-registry
   'default-save-registry)

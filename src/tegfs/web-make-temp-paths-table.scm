@@ -13,10 +13,12 @@
 ;;;; You should have received a copy of the GNU Affero General Public License
 ;;;; along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
-%run guile
+(cond-expand
+ (guile
+  (define-module (tegfs web-make-temp-paths-table)
+    :export (web::make-temp-paths-table)
+    :use-module ((euphrates hashmap) :select (make-hashmap)))))
 
-%var web::make-temp-paths-table
 
-%use (make-hashmap) "./euphrates/hashmap.scm"
 
 (define web::make-temp-paths-table make-hashmap)

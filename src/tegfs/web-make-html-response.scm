@@ -13,19 +13,21 @@
 ;;;; You should have received a copy of the GNU Affero General Public License
 ;;;; along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
-%run guile
+(cond-expand
+ (guile
+  (define-module (tegfs web-make-html-response)
+    :export (web::make-html-response)
+    :use-module ((euphrates lines-to-string) :select (lines->string))
+    :use-module ((euphrates raisu) :select (raisu))
+    :use-module ((tegfs current-time-p) :select (current-time/p))
+    :use-module ((tegfs web-callcontext-p) :select (web::callcontext/p))
+    :use-module ((tegfs web-callcontext) :select (callcontext-respheaders))
+    :use-module ((tegfs web-display-header) :select (web::display-header))
+    :use-module ((tegfs web-return) :select (web::return))
+    :use-module ((tegfs web-sxml-to-xml) :select (web::sxml->xml))
+    :use-module ((tegfs webcore-current-communicator-p) :select (webcore::current-communicator/p)))))
 
-%var web::make-html-response
 
-%use (lines->string) "./euphrates/lines-to-string.scm"
-%use (raisu) "./euphrates/raisu.scm"
-%use (current-time/p) "./current-time-p.scm"
-%use (web::callcontext/p) "./web-callcontext-p.scm"
-%use (callcontext-respheaders) "./web-callcontext.scm"
-%use (web::display-header) "./web-display-header.scm"
-%use (web::return) "./web-return.scm"
-%use (web::sxml->xml) "./web-sxml-to-xml.scm"
-%use (webcore::current-communicator/p) "./webcore-current-communicator-p.scm"
 
 (define web::og-headers
   (lines->string

@@ -13,13 +13,15 @@
 ;;;; You should have received a copy of the GNU Affero General Public License
 ;;;; along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
-%run guile
+(cond-expand
+ (guile
+  (define-module (tegfs get-file-mimetype)
+    :export (get-file-mimetype)
+    :use-module ((euphrates string-strip) :select (string-strip))
+    :use-module ((euphrates system-re) :select (system-re))
+    :use-module ((tegfs a-weblink-q) :select (a-weblink?)))))
 
-%var get-file-mimetype
 
-%use (string-strip) "./euphrates/string-strip.scm"
-%use (system-re) "./euphrates/system-re.scm"
-%use (a-weblink?) "./a-weblink-q.scm"
 
 (define (get-file-mimetype target)
   (if (a-weblink? target)

@@ -13,15 +13,17 @@
 ;;;; You should have received a copy of the GNU Affero General Public License
 ;;;; along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
-%run guile
+(cond-expand
+ (guile
+  (define-module (tegfs web-login)
+    :export (web::login)
+    :use-module ((euphrates stringf) :select (stringf))
+    :use-module ((euphrates uri-encode) :select (uri-encode))
+    :use-module ((tegfs web-callcontext-p) :select (web::callcontext/p))
+    :use-module ((tegfs web-get-safe-referer) :select (web::get-safe-referer))
+    :use-module ((tegfs web-redirect) :select (web::redirect)))))
 
-%var web::login
 
-%use (stringf) "./euphrates/stringf.scm"
-%use (uri-encode) "./euphrates/uri-encode.scm"
-%use (web::callcontext/p) "./web-callcontext-p.scm"
-%use (web::get-safe-referer) "./web-get-safe-referer.scm"
-%use (web::redirect) "./web-redirect.scm"
 
 (define (web::login)
   (define callctx (web::callcontext/p))

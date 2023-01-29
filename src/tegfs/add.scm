@@ -13,23 +13,24 @@
 ;;;; You should have received a copy of the GNU Affero General Public License
 ;;;; along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
-%run guile
+(cond-expand
+ (guile
+  (define-module (tegfs add)
+    :export (tegfs-add tegfs-add/parse)
+    :use-module ((euphrates catchu-case) :select (catchu-case))
+    :use-module ((euphrates fn-cons) :select (fn-cons))
+    :use-module ((euphrates list-zip) :select (list-zip))
+    :use-module ((euphrates raisu) :select (raisu))
+    :use-module ((euphrates tilda-a) :select (~a))
+    :use-module ((tegfs add-entry) :select (add-entry))
+    :use-module ((tegfs fatal) :select (fatal))
+    :use-module ((tegfs keyword-date) :select (keyword-date))
+    :use-module ((tegfs keyword-prev) :select (keyword-prev))
+    :use-module ((tegfs keyword-tags) :select (keyword-tags))
+    :use-module ((tegfs keyword-target) :select (keyword-target))
+    :use-module ((tegfs keyword-title) :select (keyword-title)))))
 
-%var tegfs-add
-%var tegfs-add/parse
 
-%use (catchu-case) "./euphrates/catchu-case.scm"
-%use (fn-cons) "./euphrates/fn-cons.scm"
-%use (list-zip) "./euphrates/list-zip.scm"
-%use (raisu) "./euphrates/raisu.scm"
-%use (~a) "./euphrates/tilda-a.scm"
-%use (add-entry) "./add-entry.scm"
-%use (fatal) "./fatal.scm"
-%use (keyword-date) "./keyword-date.scm"
-%use (keyword-prev) "./keyword-prev.scm"
-%use (keyword-tags) "./keyword-tags.scm"
-%use (keyword-target) "./keyword-target.scm"
-%use (keyword-title) "./keyword-title.scm"
 
 (define (tegfs-add/parse
          <target> <title> <tag...>

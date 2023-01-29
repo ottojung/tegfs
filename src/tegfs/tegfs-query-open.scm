@@ -13,19 +13,21 @@
 ;;;; You should have received a copy of the GNU Affero General Public License
 ;;;; along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
-%run guile
+(cond-expand
+ (guile
+  (define-module (tegfs tegfs-query-open)
+    :export (tegfs-query/open)
+    :use-module ((euphrates assq-or) :select (assq-or))
+    :use-module ((euphrates directory-files-depth-iter) :select (directory-files-depth-iter))
+    :use-module ((euphrates file-is-directory-q-no-readlink) :select (file-is-directory?/no-readlink))
+    :use-module ((euphrates list-singleton-q) :select (list-singleton?))
+    :use-module ((euphrates raisu) :select (raisu))
+    :use-module ((tegfs entry-target-fullpath) :select (entry-target-fullpath))
+    :use-module ((tegfs keyword-tags) :select (keyword-tags))
+    :use-module ((tegfs standalone-file-to-entry) :select (standalone-file->entry))
+    :use-module ((tegfs tegfs-query-noopen) :select (tegfs-query/noopen)))))
 
-%var tegfs-query/open
 
-%use (assq-or) "./euphrates/assq-or.scm"
-%use (directory-files-depth-iter) "./euphrates/directory-files-depth-iter.scm"
-%use (file-is-directory?/no-readlink) "./euphrates/file-is-directory-q-no-readlink.scm"
-%use (list-singleton?) "./euphrates/list-singleton-q.scm"
-%use (raisu) "./euphrates/raisu.scm"
-%use (entry-target-fullpath) "./entry-target-fullpath.scm"
-%use (keyword-tags) "./keyword-tags.scm"
-%use (standalone-file->entry) "./standalone-file-to-entry.scm"
-%use (tegfs-query/noopen) "./tegfs-query-noopen.scm"
 
 (define (tegfs-query/open opening-properties <query...>)
   (define iter #f)

@@ -13,21 +13,23 @@
 ;;;; You should have received a copy of the GNU Affero General Public License
 ;;;; along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
-%run guile
+(cond-expand
+ (guile
+  (define-module (tegfs CLI-talk)
+    :export (CLI::talk)
+    :use-module ((euphrates catch-any) :select (catch-any))
+    :use-module ((euphrates dprintln) :select (dprintln))
+    :use-module ((euphrates profune-communicator) :select (profune-communicator-handle))
+    :use-module ((euphrates read-list) :select (read-list))
+    :use-module ((euphrates read-string-line) :select (read-string-line))
+    :use-module ((euphrates serialization-short) :select (deserialize/short serialize/short))
+    :use-module ((euphrates tilda-s) :select (~s))
+    :use-module ((euphrates words-to-string) :select (words->string))
+    :use-module ((tegfs tegfs-make-communicator) :select (tegfs-make-communicator))
+    :use-module ((tegfs web-make-communicator) :select (web::make-communicator))
+    :use-module ((tegfs with-current-time) :select (with-current-time)))))
 
-%var CLI::talk
 
-%use (catch-any) "./euphrates/catch-any.scm"
-%use (dprintln) "./euphrates/dprintln.scm"
-%use (profune-communicator-handle) "./euphrates/profune-communicator.scm"
-%use (read-list) "./euphrates/read-list.scm"
-%use (read-string-line) "./euphrates/read-string-line.scm"
-%use (deserialize/short serialize/short) "./euphrates/serialization-short.scm"
-%use (~s) "./euphrates/tilda-s.scm"
-%use (words->string) "./euphrates/words-to-string.scm"
-%use (tegfs-make-communicator) "./tegfs-make-communicator.scm"
-%use (web::make-communicator) "./web-make-communicator.scm"
-%use (with-current-time) "./with-current-time.scm"
 
 (define (CLI::talk --web)
 
@@ -64,8 +66,8 @@
             (display "\nGoodbye!\n" (current-error-port))
             #f)
           (let ((answer
-                    (with-current-time
-                     (profune-communicator-handle comm sentence))))
+                 (with-current-time
+                  (profune-communicator-handle comm sentence))))
 
             (display "[server] ")
             (display (words->string (map ~s (serialize/short answer))))

@@ -13,12 +13,13 @@
 ;;;; You should have received a copy of the GNU Affero General Public License
 ;;;; along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
-%run guile
+(cond-expand
+ (guile
+  (define-module (tegfs prolog-cut-symbol)
+    :export (make-prolog-cut-symbol prolog-cut-symbol?)
+    :use-module ((euphrates define-type9) :select (define-type9)))))
 
-%var make-prolog-cut-symbol
-%var prolog-cut-symbol?
 
-%use (define-type9) "./euphrates/define-type9.scm"
 
 (define-type9 <prologcutsymbol>
   (make-prolog-cut-symbol) prolog-cut-symbol?)

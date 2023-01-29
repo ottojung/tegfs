@@ -13,15 +13,17 @@
 ;;;; You should have received a copy of the GNU Affero General Public License
 ;;;; along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
-%run guile
+(cond-expand
+ (guile
+  (define-module (tegfs core-add-entry)
+    :export (core::add-entry)
+    :use-module ((euphrates profun-accept) :select (profun-accept))
+    :use-module ((euphrates profun-op-lambda) :select (profun-op-lambda))
+    :use-module ((euphrates profun-request-value) :select (profun-request-value))
+    :use-module ((euphrates profun-value) :select (profun-unbound-value?))
+    :use-module ((tegfs add-entry) :select (add-entry)))))
 
-%var core::add-entry
 
-%use (profun-accept) "./euphrates/profun-accept.scm"
-%use (profun-op-lambda) "./euphrates/profun-op-lambda.scm"
-%use (profun-request-value) "./euphrates/profun-request-value.scm"
-%use (profun-unbound-value?) "./euphrates/profun-value.scm"
-%use (add-entry) "./add-entry.scm"
 
 (define core::add-entry
   (profun-op-lambda

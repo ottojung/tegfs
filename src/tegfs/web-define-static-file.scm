@@ -13,20 +13,23 @@
 ;;;; You should have received a copy of the GNU Affero General Public License
 ;;;; along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
-%run guile
+(cond-expand
+ (guile
+  (define-module (tegfs web-define-static-file)
+    :export (web::define-static-file)
+    :use-module ((euphrates raisu) :select (raisu))
+    :use-module ((tegfs web-return) :select (web::return)))))
 
-%var web::define-static-file
 
 
-%use (raisu) "./euphrates/raisu.scm"
-%use (web::return) "./web-return.scm"
 
-%for (COMPILER "guile")
+(cond-expand
+ (guile
 
-(use-modules (ice-9 iconv))
-(use-modules (rnrs bytevectors))
+  (use-modules (ice-9 iconv))
+  (use-modules (rnrs bytevectors))
 
-%end
+  ))
 
 (define (web::respond-with-a-file type bv)
   (web::return

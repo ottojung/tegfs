@@ -13,15 +13,18 @@
 ;;;; You should have received a copy of the GNU Affero General Public License
 ;;;; along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
-%run guile
+(cond-expand
+ (guile
+  (define-module (tegfs web-body-to-hashmap)
+    :export (web::body->hashmap)
+    :use-module ((tegfs web-query-to-hashmap) :select (web::query->hashmap)))))
 
-%var web::body->hashmap
 
-%use (web::query->hashmap) "./web-query-to-hashmap.scm"
 
-%for (COMPILER "guile")
-(use-modules (ice-9 iconv))
-%end
+(cond-expand
+ (guile
+  (use-modules (ice-9 iconv))
+  ))
 
 (define (web::body->hashmap body/bytes)
   (define body

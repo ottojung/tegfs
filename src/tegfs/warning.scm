@@ -13,11 +13,13 @@
 ;;;; You should have received a copy of the GNU Affero General Public License
 ;;;; along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
-%run guile
+(cond-expand
+ (guile
+  (define-module (tegfs warning)
+    :export (warning)
+    :use-module ((euphrates dprintln) :select (dprintln)))))
 
-%var warning
 
-%use (dprintln) "./euphrates/dprintln.scm"
 
 (define (warning fmt . args)
   (apply dprintln

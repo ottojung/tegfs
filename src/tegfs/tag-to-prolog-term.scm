@@ -13,18 +13,19 @@
 ;;;; You should have received a copy of the GNU Affero General Public License
 ;;;; along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
-%run guile
+(cond-expand
+ (guile
+  (define-module (tegfs tag-to-prolog-term)
+    :export (tag->prolog-term print-tag-as-prolog-term)
+    :use-module ((euphrates alphanum-alphabet) :select (alphanum/alphabet/index))
+    :use-module ((euphrates comp) :select (comp))
+    :use-module ((euphrates compose-under) :select (compose-under))
+    :use-module ((euphrates list-and-map) :select (list-and-map))
+    :use-module ((euphrates raisu) :select (raisu))
+    :use-module ((tegfs prolog-cut-symbol) :select (prolog-cut-symbol?))
+    :use-module ((tegfs prolog-var) :select (prolog-var-name prolog-var?)))))
 
-%var tag->prolog-term
-%var print-tag-as-prolog-term
 
-%use (alphanum/alphabet/index) "./euphrates/alphanum-alphabet.scm"
-%use (comp) "./euphrates/comp.scm"
-%use (compose-under) "./euphrates/compose-under.scm"
-%use (list-and-map) "./euphrates/list-and-map.scm"
-%use (raisu) "./euphrates/raisu.scm"
-%use (prolog-cut-symbol?) "./prolog-cut-symbol.scm"
-%use (prolog-var-name prolog-var?) "./prolog-var.scm"
 
 (define (prolog-var-needs-quoting? var/chars)
   (define first (alphanum/alphabet/index (car var/chars)))

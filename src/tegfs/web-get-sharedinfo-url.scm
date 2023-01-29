@@ -13,21 +13,23 @@
 ;;;; You should have received a copy of the GNU Affero General Public License
 ;;;; along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
-%run guile
+(cond-expand
+ (guile
+  (define-module (tegfs web-get-sharedinfo-url)
+    :export (web::get-sharedinfo-url)
+    :use-module ((euphrates append-posix-path) :select (append-posix-path))
+    :use-module ((euphrates file-is-directory-q-no-readlink) :select (file-is-directory?/no-readlink))
+    :use-module ((euphrates list-intersperse) :select (list-intersperse))
+    :use-module ((euphrates path-normalize) :select (path-normalize))
+    :use-module ((euphrates remove-common-prefix) :select (remove-common-prefix))
+    :use-module ((euphrates string-split-simple) :select (string-split/simple))
+    :use-module ((euphrates uri-encode) :select (uri-encode))
+    :use-module ((tegfs a-weblink-q) :select (a-weblink?))
+    :use-module ((tegfs sharedinfo) :select (sharedinfo-recepientid sharedinfo-senderid sharedinfo-sourcepath))
+    :use-module ((tegfs web-context) :select (context-fileserver))
+    :use-module ((tegfs web-get-shared-link) :select (web::get-shared-link)))))
 
-%var web::get-sharedinfo-url
 
-%use (append-posix-path) "./euphrates/append-posix-path.scm"
-%use (file-is-directory?/no-readlink) "./euphrates/file-is-directory-q-no-readlink.scm"
-%use (list-intersperse) "./euphrates/list-intersperse.scm"
-%use (path-normalize) "./euphrates/path-normalize.scm"
-%use (remove-common-prefix) "./euphrates/remove-common-prefix.scm"
-%use (string-split/simple) "./euphrates/string-split-simple.scm"
-%use (uri-encode) "./euphrates/uri-encode.scm"
-%use (a-weblink?) "./a-weblink-q.scm"
-%use (sharedinfo-recepientid sharedinfo-senderid sharedinfo-sourcepath) "./sharedinfo.scm"
-%use (context-fileserver) "./web-context.scm"
-%use (web::get-shared-link) "./web-get-shared-link.scm"
 
 (define (web::get-sharedinfo-url ctx container-info info)
   (define vid (sharedinfo-senderid info))

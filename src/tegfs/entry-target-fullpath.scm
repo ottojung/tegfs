@@ -13,21 +13,23 @@
 ;;;; You should have received a copy of the GNU Affero General Public License
 ;;;; along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
-%run guile
+(cond-expand
+ (guile
+  (define-module (tegfs entry-target-fullpath)
+    :export (entry-target-fullpath)
+    :use-module ((euphrates absolute-posix-path-q) :select (absolute-posix-path?))
+    :use-module ((euphrates append-posix-path) :select (append-posix-path))
+    :use-module ((euphrates assq-or) :select (assq-or))
+    :use-module ((euphrates path-normalize) :select (path-normalize))
+    :use-module ((euphrates string-drop-n) :select (string-drop-n))
+    :use-module ((tegfs a-weblink-q) :select (a-weblink?))
+    :use-module ((tegfs entry-get-target) :select (entry-get-target))
+    :use-module ((tegfs get-root) :select (get-root))
+    :use-module ((tegfs keyword-entry-parent-directory) :select (keyword-entry-parent-directory))
+    :use-module ((tegfs keyword-entry-registry-path) :select (keyword-entry-registry-path))
+    :use-module ((tegfs keyword-id) :select (keyword-id)))))
 
-%var entry-target-fullpath
 
-%use (absolute-posix-path?) "./euphrates/absolute-posix-path-q.scm"
-%use (append-posix-path) "./euphrates/append-posix-path.scm"
-%use (assq-or) "./euphrates/assq-or.scm"
-%use (path-normalize) "./euphrates/path-normalize.scm"
-%use (string-drop-n) "./euphrates/string-drop-n.scm"
-%use (a-weblink?) "./a-weblink-q.scm"
-%use (entry-get-target) "./entry-get-target.scm"
-%use (get-root) "./get-root.scm"
-%use (keyword-entry-parent-directory) "./keyword-entry-parent-directory.scm"
-%use (keyword-entry-registry-path) "./keyword-entry-registry-path.scm"
-%use (keyword-id) "./keyword-id.scm"
 
 (define (entry-target-fullpath entry)
   (define target/1 (entry-get-target entry))

@@ -13,15 +13,18 @@
 ;;;; You should have received a copy of the GNU Affero General Public License
 ;;;; along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
-%run guile
+(cond-expand
+ (guile
+  (define-module (tegfs web-return)
+    :export (web::return)
+    :use-module ((tegfs web-basic-headers) :select (web::basic-headers)))))
 
-%var web::return
 
-%use (web::basic-headers) "./web-basic-headers.scm"
 
-%for (COMPILER "guile")
-(use-modules (web response))
-%end
+(cond-expand
+ (guile
+  (use-modules (web response))
+  ))
 
 (define (web::return status-code additional-headers maybe-body)
   (values

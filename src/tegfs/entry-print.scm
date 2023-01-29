@@ -13,11 +13,13 @@
 ;;;; You should have received a copy of the GNU Affero General Public License
 ;;;; along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
-%run guile
+(cond-expand
+ (guile
+  (define-module (tegfs entry-print)
+    :export (entry-print)
+    :use-module ((tegfs keyword-entry-registry-path) :select (keyword-entry-registry-path)))))
 
-%var entry-print
 
-%use (keyword-entry-registry-path) "./keyword-entry-registry-path.scm"
 
 (define (primitive-print elem)
   (cond

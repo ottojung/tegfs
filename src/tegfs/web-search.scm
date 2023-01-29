@@ -13,11 +13,13 @@
 ;;;; You should have received a copy of the GNU Affero General Public License
 ;;;; along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
-%run guile
+(cond-expand
+ (guile
+  (define-module (tegfs web-search)
+    :export (web::search.svg)
+    :use-module ((tegfs web-define-static-file) :select (web::define-static-file)))))
 
-%var web::search.svg
 
-%use (web::define-static-file) "./web-define-static-file.scm"
 
 (define web::search.svg-string "<?xml version='1.0' encoding='UTF-8' standalone='no'?>
 <!-- Generator: Adobe Illustrator 9.0, SVG Export Plug-In  -->

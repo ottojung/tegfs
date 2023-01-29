@@ -13,21 +13,23 @@
 ;;;; You should have received a copy of the GNU Affero General Public License
 ;;;; along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
-%run guile
+(cond-expand
+ (guile
+  (define-module (tegfs web-tags)
+    :export (web::tags)
+    :use-module ((euphrates hashmap) :select (hashmap-ref))
+    :use-module ((euphrates raisu) :select (raisu))
+    :use-module ((tegfs web-body-get-data) :select (web::body::get-data/decode))
+    :use-module ((tegfs web-body-not-found) :select (web::body-not-found))
+    :use-module ((tegfs web-callcontext-p) :select (web::callcontext/p))
+    :use-module ((tegfs web-callcontext) :select (callcontext-body callcontext-query callcontext-token))
+    :use-module ((tegfs web-iterate-profun-results) :select (web::iterate-profun-results))
+    :use-module ((tegfs web-make-html-response) :select (web::make-html-response))
+    :use-module ((tegfs web-parse-multipart) :select (parse-multipart-as-hashmap))
+    :use-module ((tegfs web-tags-make-page) :select (web::tags::make-page))
+    :use-module ((tegfs webcore-ask) :select (webcore::ask)))))
 
-%var web::tags
 
-%use (hashmap-ref) "./euphrates/hashmap.scm"
-%use (raisu) "./euphrates/raisu.scm"
-%use (web::body::get-data/decode) "./web-body-get-data.scm"
-%use (web::body-not-found) "./web-body-not-found.scm"
-%use (web::callcontext/p) "./web-callcontext-p.scm"
-%use (callcontext-body callcontext-query callcontext-token) "./web-callcontext.scm"
-%use (web::iterate-profun-results) "./web-iterate-profun-results.scm"
-%use (web::make-html-response) "./web-make-html-response.scm"
-%use (parse-multipart-as-hashmap) "./web-parse-multipart.scm"
-%use (web::tags::make-page) "./web-tags-make-page.scm"
-%use (webcore::ask) "./webcore-ask.scm"
 
 (define (web::tags::continue/2 callctx query body/bytes)
   (define body/hash (parse-multipart-as-hashmap body/bytes))

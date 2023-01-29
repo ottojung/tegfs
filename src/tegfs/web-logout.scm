@@ -13,16 +13,18 @@
 ;;;; You should have received a copy of the GNU Affero General Public License
 ;;;; along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
-%run guile
+(cond-expand
+ (guile
+  (define-module (tegfs web-logout)
+    :export (web::logout)
+    :use-module ((tegfs web-callcontext-p) :select (web::callcontext/p))
+    :use-module ((tegfs web-callcontext) :select (callcontext-headers))
+    :use-module ((tegfs web-get-cookie) :select (web::get-cookie))
+    :use-module ((tegfs web-get-safe-referer) :select (web::get-safe-referer))
+    :use-module ((tegfs web-return) :select (web::return))
+    :use-module ((tegfs web-set-cookie-header) :select (web::set-cookie-header)))))
 
-%var web::logout
 
-%use (web::callcontext/p) "./web-callcontext-p.scm"
-%use (callcontext-headers) "./web-callcontext.scm"
-%use (web::get-cookie) "./web-get-cookie.scm"
-%use (web::get-safe-referer) "./web-get-safe-referer.scm"
-%use (web::return) "./web-return.scm"
-%use (web::set-cookie-header) "./web-set-cookie-header.scm"
 
 (define (web::logout)
   (define callctx (web::callcontext/p))
