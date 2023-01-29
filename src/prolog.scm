@@ -148,10 +148,7 @@
   (define convert (alpha-convert-variable cnt))
   (lambda (t)
     (define converted (map convert (cdr t)))
-    (define arg (if (null? (cdr converted))
-                    (car converted)
-                    (list->vector converted)))
-    (yield `(t ,(car t) ,arg))))
+    (yield `(t ,(car t) ,@converted))))
 
 (define (translate-variable-binding yield cnt)
   (define convert (alpha-convert-variable cnt))

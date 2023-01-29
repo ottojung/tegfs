@@ -23,7 +23,6 @@
 %use (file-delete) "./euphrates/file-delete.scm"
 %use (hashset-has? make-hashset) "./euphrates/hashset.scm"
 %use (list-intersperse) "./euphrates/list-intersperse.scm"
-%use (list-map/flatten) "./euphrates/list-map-flatten.scm"
 %use (open-file-port) "./euphrates/open-file-port.scm"
 %use (printf) "./euphrates/printf.scm"
 %use (profun-database-add-rule! profun-database-copy) "./euphrates/profun-database.scm"
@@ -50,19 +49,6 @@
       (tegfs-query/noopen/notall/profun iter0 <query...>)
       iter0))
 
-(define (devectorize-translated translated)
-  (map
-   (lambda (clause)
-     (apply
-      append
-      (map
-       (lambda (obj)
-         (if (vector? obj)
-             (vector->list obj)
-             (list obj)))
-       clause)))
-   translated))
-
 (define (generify-query query)
   (define (place-variables clause)
     (map
@@ -76,17 +62,15 @@
   (map place-variables (map cdr query)))
 
 (define (tegfs-query/noopen/notall/profun iter0 <query...>)
-  (define-values (parsed-query/0 variables) (prolog-query-parse <query...>))
-  (define parsed-query/1
-    (devectorize-translated parsed-query/0))
+  (define-values (parsed-query/1 variables) (prolog-query-parse <query...>))
   (define parsed-query
     (generify-query parsed-query/1))
   (define rules
     (let ((stack (stack-make)))
       (dump-rules
        (lambda (thing)
-         (define RHS (generify-query (devectorize-translated (cddr thing))))
-         (define consequent (generify-query (devectorize-translated (list (cadr thing)))))
+         (define RHS (generify-query (cddr thing)))
+         (define consequent (generify-query (list (cadr thing))))
          (stack-push! stack (append consequent RHS))))
       (stack->list stack)))
   (define db0
@@ -96,9 +80,8 @@
 
   (define (profun-filter entry)
     (define translated (translate-entry-tags entry))
-    (define translated* (devectorize-translated translated))
     (define db (profun-database-copy db0))
-    (for-each (lambda (t) (profun-database-add-rule! db (list t))) translated*)
+    (for-each (lambda (t) (profun-database-add-rule! db (list t))) translated)
     (profun-eval-query/boolean db parsed-query))
 
   (define (iter)

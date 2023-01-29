@@ -60,23 +60,39 @@
 (define (comma-translate lst)
   (let loop ((lst lst))
     (unless (null? lst)
-      (print-tag-as-prolog-term (car lst))
+      (print-prolog-subterm (car lst))
       (unless (null? (cdr lst))
         (display ", "))
       (loop (cdr lst)))))
 
-(define (print-tag-as-prolog-term thing)
+(define (print-prolog-subterm thing)
   (cond
    ((pair? thing)
     (print-prolog-symbol (car thing))
-    (unless (null? (cdr thing))
+    (display "(")
+    (comma-translate (cdr thing))
+    (display ")"))
+   (else
+    (print-prolog-symbol thing))))
+
+(define (print-tag-as-prolog-term thing)
+  (cond
+   ((pair? thing)
+    (cond
+     ((or (null? (cdr thing))
+          (null? (cddr thing))
+          (null? (cdddr thing)))
+      (print-prolog-symbol (car thing))
       (display "(")
       (comma-translate (cdr thing))
-      (display ")")))
-   ((vector? thing)
-    (display "[")
-    (comma-translate (vector->list thing))
-    (display "]"))
+      (display ")"))
+     (else
+      (print-prolog-symbol (car thing))
+      (display "(")
+      (print-prolog-symbol (cadr thing))
+      (display ", [")
+      (comma-translate (cddr thing))
+      (display "])"))))
    (else
     (print-prolog-symbol thing))))
 
