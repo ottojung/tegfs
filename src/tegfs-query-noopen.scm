@@ -25,7 +25,7 @@
 %use (list-intersperse) "./euphrates/list-intersperse.scm"
 %use (open-file-port) "./euphrates/open-file-port.scm"
 %use (printf) "./euphrates/printf.scm"
-%use (profun-database-add-rule! profun-database-copy) "./euphrates/profun-database.scm"
+%use (profun-database-extend) "./euphrates/profun-database.scm"
 %use (profun-standard-handler) "./euphrates/profun-standard-handler.scm"
 %use (profun-create-falsy-database profun-eval-query/boolean) "./euphrates/profun.scm"
 %use (raisu) "./euphrates/raisu.scm"
@@ -80,8 +80,7 @@
 
   (define (profun-filter entry)
     (define translated (translate-entry-tags entry))
-    (define db (profun-database-copy db0))
-    (for-each (lambda (t) (profun-database-add-rule! db (list t))) translated)
+    (define db (profun-database-extend db0 (map list translated)))
     (profun-eval-query/boolean db parsed-query))
 
   (define (iter)
