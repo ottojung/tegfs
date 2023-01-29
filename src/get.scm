@@ -35,7 +35,9 @@
       (if <get-format>
           (entry-print/formatted <get-format> entry)
           (entry-print entry))
-      (display "Not found." (current-error-port)))
+      (begin
+        (display "Not found." (current-error-port))
+        (exit 1)))
   (newline))
 
 (define (tegfs-get <showid>)
