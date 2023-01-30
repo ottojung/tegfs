@@ -141,11 +141,11 @@
            (if (and (string? value0) (< 50 (string-length value0)))
                (string-append (list->string (list-take-n 50 (string->list value0))) "...")
                value0))
-         (dprintln "   ~a~a) ~a: ~s"
+         (dprintln "   ~a~a) ~a: ~a"
                    (if (equal? current-setter (car setter)) ">" " ")
                    (+ 1 i)
                    (car setter)
-                   value))))
+                   (if value (~s value) "")))))
    setters
    (range (length setters)))
   )
