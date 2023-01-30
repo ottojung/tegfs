@@ -66,6 +66,7 @@
     (append
      (if source (list (cons "source" source)) (list))
      (if (string? note) (list (cons "note" note)) (list))
+     (if mimetype (list (cons "mimetype" mimetype)) (list))
      ))
 
   (define <date> #f)
