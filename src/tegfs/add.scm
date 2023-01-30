@@ -79,7 +79,7 @@
 
   (define entry
     (append
-     (if <title>
+     (if (and <title> (not (string-null? <title>)))
          (list (cons keyword-title <title>))
          (list))
      (if <date>
