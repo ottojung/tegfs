@@ -78,9 +78,6 @@
         (read-answer "Press enter if parameters are OK")
         'done)))
 
-(define (get-title)
-  (read-answer "Enter the title:"))
-
 (define (get-registry-file)
   (define registry-files (get-registry-files))
 
@@ -275,7 +272,7 @@
 
    :useradvice useradvice
    :user
-   ((title (get-title))
+   ((title (read-answer "Enter the title:"))
     (tags (get-tags))
     (registry-file (get-registry-file))
     (real-type (read-enumeration "Real type" '(data link localfile pasta)))
