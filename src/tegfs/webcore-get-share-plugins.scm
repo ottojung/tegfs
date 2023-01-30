@@ -17,11 +17,13 @@
  (guile
   (define-module (tegfs webcore-get-share-plugins)
     :export (webcore::get-share-plugins)
+    :use-module ((euphrates memconst) :select (memconst))
     :use-module ((tegfs load-plugin) :select (load-plugin))
     :use-module ((tegfs webcore-get-share-plugins-files) :select (webcore::get-share-plugins-files)))))
 
 
 
-(define (webcore::get-share-plugins)
-  (define files (webcore::get-share-plugins-files))
-  (map load-plugin files))
+(define webcore::get-share-plugins
+  (memconst
+   (let ((files (webcore::get-share-plugins-files)))
+     (map load-plugin files))))

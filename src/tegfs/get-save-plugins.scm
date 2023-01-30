@@ -17,11 +17,13 @@
  (guile
   (define-module (tegfs get-save-plugins)
     :export (get-save-plugins)
+    :use-module ((euphrates memconst) :select (memconst))
     :use-module ((tegfs get-save-plugins-files) :select (get-save-plugins-files))
     :use-module ((tegfs load-plugin) :select (load-plugin)))))
 
 
 
-(define (get-save-plugins)
-  (define files (get-save-plugins-files))
-  (map load-plugin files))
+(define get-save-plugins
+  (memconst
+   (let ((files (get-save-plugins-files)))
+     (map load-plugin files))))
