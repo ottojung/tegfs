@@ -18,12 +18,14 @@
   (define-module (tegfs webcore-shared-entry-contains)
     :export (webcore::shared-entry-contains)
     :use-module ((euphrates directory-files-depth-iter) :select (directory-files-depth-iter))
+    :use-module ((euphrates file-is-directory-q-no-readlink) :select (file-is-directory?/no-readlink))
     :use-module ((euphrates profun-accept) :select (profun-accept? profun-ctx-set profun-set profun-set-meta))
     :use-module ((euphrates profun-error) :select (make-profun-error))
     :use-module ((euphrates profun-op-lambda) :select (profun-op-lambda))
     :use-module ((euphrates profun-reject) :select (profun-reject))
     :use-module ((euphrates profun-value) :select (profun-bound-value? profun-unbound-value?))
     :use-module ((tegfs filemap) :select (filemap-ref-by-senderid))
+    :use-module ((tegfs keyword-mimetype) :select (keyword-mimetype))
     :use-module ((tegfs keyword-target) :select (keyword-target))
     :use-module ((tegfs sharedinfo) :select (sharedinfo-sourcepath))
     :use-module ((tegfs standalone-file-to-entry) :select (standalone-file->entry/prefixed))
@@ -57,8 +59,17 @@
                (and x (car x)))
              (define (iter)
                (define full (iter1))
-               (define full-entry (and full (standalone-file->entry/prefixed dir vid full)))
-               (define entry (and full (list (assq keyword-target full-entry))))
+               (define full-entry/0 (and full (standalone-file->entry/prefixed dir vid full)))
+               (define full-entry
+                 (and full-entry/0
+                      (if (file-is-directory?/no-readlink full)
+                          (cons (cons keyword-mimetype "inode/directory") full-entry/0)
+                          full-entry/0)))
+               (define entry
+                 (and full
+                      (filter (lambda (p) (or (eq? (car p) keyword-target)
+                                              (eq? (car p) keyword-mimetype)))
+                              full-entry)))
                (if full
                    (profun-set-meta
                     (file-name <- full-entry)
