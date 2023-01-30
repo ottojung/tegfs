@@ -30,6 +30,7 @@
     :use-module ((tegfs web-error-svg) :select (web::error.svg))
     :use-module ((tegfs web-filebinary-svg) :select (web::filebinary.svg))
     :use-module ((tegfs web-fileaudio-svg) :select (web::fileaudio.svg))
+    :use-module ((tegfs web-fileimage-svg) :select (web::fileimage.svg))
     :use-module ((tegfs web-filevideo-svg) :select (web::filevideo.svg))
     :use-module ((tegfs web-fileunknown-svg) :select (web::fileunknown.svg))
     :use-module ((tegfs web-filetextual-svg) :select (web::filetextual.svg))
@@ -90,6 +91,7 @@
     (/static/filebinary.svg ,web::filebinary.svg)
     (/static/filevideo.svg ,web::filevideo.svg)
     (/static/fileaudio.svg ,web::fileaudio.svg)
+    (/static/fileimage.svg ,web::fileimage.svg)
     ))
 
 (define handlers-funcmap
