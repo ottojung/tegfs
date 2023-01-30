@@ -69,9 +69,6 @@
   (if (string-prefix? "." input) input
       (string-append "." input)))
 
-(define (get-target-basename)
-  (read-answer "Enter target basename relative to the registry file: "))
-
 (define (get-confirm)
   (if (swiched-field?) #f
       (begin
@@ -249,6 +246,12 @@
                  (dprintln "Could not determine the file type of ~s" (-temporary-file))
                  #f)))))
 
+    (target-basename
+     (or
+      (and (equal? 'localfile (real-type))
+           (path-without-extension (path-get-basename (-text-content))))
+      (get-random-basename)))
+
     (target-extension
      (or
       (and (equal? 'pasta (real-type)) ".txt")
@@ -259,12 +262,6 @@
            'ignore)
       (and (mimetype 'or #f)
            (get-clipboard-type-extension (mimetype)))))
-
-    (target-basename
-     (or
-      (and (equal? 'localfile (real-type))
-           (path-without-extension (path-get-basename (-text-content))))
-      (get-random-basename)))
 
     (note 'none)
 
@@ -282,8 +279,8 @@
     (link? (read-enumeration "Link target to the new location?" '(yes no)))
     (series (read-enumeration "Is this item related to the one previously saved?" '(yes no)))
     (mimetype (read-answer "Enter mimetype: "))
+    (target-basename (read-answer "Enter target basename relative to the registry file: "))
     (target-extension (get-target-extension))
-    (target-basename (get-target-basename))
     (note (read-answer "Enter note: "))
     ;; (confirm (get-confirm)) ;; TODO: fix this and enable again
     )
