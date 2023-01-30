@@ -58,7 +58,7 @@
        (if (prolog-var? obj)
            (let ((name (prolog-var-name obj)))
              (if (equal? name 'This)
-                 0 name))
+                 0 (string->symbol name)))
            obj))
      clause))
   (map place-variables (map cdr query)))
