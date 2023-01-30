@@ -58,6 +58,14 @@
         lst
         (loop (- n 1) (cdr lst)))))
 
+(define (file-delete filepath)
+  (catch-any
+   (lambda _
+     (delete-file filepath)
+     #f)
+   (lambda _
+     #t)))
+
 (define-syntax list-find-first
   (syntax-rules ()
     ((_ f lst)
@@ -279,20 +287,50 @@
     (note . ,note)
     (download? . yes)))
 
+(use-modules (ice-9 ftw))
+
+(define (directory-files* dir)
+  (map
+   (lambda (name)
+     (string-append dir "/" name))
+   (scandir dir (negate (lambda (path) (member path '("." "..")))))))
+
 (define (download-youtube-media config root target current-alist)
-  (throw 'not-implemented))
+  (define download?
+    (cdr (or (assq 'download? current-alist) (cons #f #f))))
+  (define output-dir
+    (stringf "~a/tmp/youtubedl" root))
+  (define output-template
+    (stringf "~a/video" output-dir))
+
+  (and download?
+       (begin
+         (with-ignore-errors!* (mkdir root))
+         (with-ignore-errors!* (mkdir (string-append root "/tmp")))
+         (with-ignore-errors!* (mkdir output-dir))
+
+         (for-each file-delete (directory-files* output-dir))
+
+         (let ((s (system* "youtube-dl" target "-o" output-template)))
+           (unless (= 0 (status:exit-val s))
+             (throw 'download-failed)))
+
+         (let ((-temporary-file (car (directory-files* output-dir))))
+           `((-temporary-file . ,-temporary-file)
+             (download? . yes))))))
+
+(define (handle-by-url config root current-alist target site)
+  (or
+   (and (equal? "boards.4chan.org" site)
+        (download-4chan-media config root target current-alist))
+   (and (member site '("youtube.com" "youtu.be" "m.youtube.com" "yewtu.be"))
+        (download-youtube-media config root target current-alist))))
 
 (define (handle config root current-alist target)
   (define site
     (and target (url-get-hostname-and-port target)))
   (catch-any
-   (lambda _
-     (cond
-      ((equal? "boards.4chan.org" site)
-       (download-4chan-media config root target current-alist))
-      ((equal? "youtube.com" site)
-       (download-youtube-media config root target current-alist))
-      (else #f)))
+   (lambda _ (handle-by-url config root current-alist target site))
    (lambda errors
      (display "Download manager failed to handle a recognized link.")
      #f)))
@@ -312,5 +350,6 @@
 
 (check-dependency "jq")
 (check-dependency "wget")
+(check-dependency "youtube-dl")
 
 main
