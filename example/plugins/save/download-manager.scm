@@ -160,6 +160,19 @@
 
   (vector protocol netloc (string-append netloc-sep path) query fragment))
 
+(define (string->words str)
+  (filter
+   (compose not string-null?)
+   (string-split
+    str
+    (lambda (c)
+      (case c
+        ((#\newline #\space #\tab) #t)
+        (else #f))))))
+
+(define (words->string lns)
+  (string-join (filter (negate string-null?) lns) " "))
+
 (use-modules (ice-9 match))
 
 (define (url-get-path url)
@@ -228,9 +241,17 @@
     (lambda _
       (apply format (cons #t (cons fmt args))))))
 
+(use-modules (ice-9 ftw))
+
+(define (directory-files* dir)
+  (map
+   (lambda (name)
+     (string-append dir "/" name))
+   (scandir dir (negate (lambda (path) (member path '("." "..")))))))
+
 ;; Example `target' handled by this function:
 ;; https://boards.4chan.org/r/thread/18729837#p18729841
-(define (download-4chan-media config root target current-alist)
+(define (download-4chan-media config root current-alist target)
   (define path (url-get-path target))
   (define split (string-split path #\/))
   (define board (list-ref split 1))
@@ -287,15 +308,7 @@
     (note . ,note)
     (download? . yes)))
 
-(use-modules (ice-9 ftw))
-
-(define (directory-files* dir)
-  (map
-   (lambda (name)
-     (string-append dir "/" name))
-   (scandir dir (negate (lambda (path) (member path '("." "..")))))))
-
-(define (download-youtube-media config root target current-alist)
+(define (download-youtube-media config root current-alist target)
   (define download?
     (cdr (or (assq 'download? current-alist) (cons #f #f))))
   (define output-dir
@@ -319,12 +332,59 @@
            `((-temporary-file . ,-temporary-file)
              (download? . yes))))))
 
+(define (download-booru-media config root current-alist target)
+  (define _912
+    (begin
+      (with-ignore-errors!* (mkdir root))
+      (with-ignore-errors!* (mkdir (string-append root "/tmp")))))
+
+  (define pagepath (string-append root "/tmp/booru.html"))
+  (define anspath (string-append root "/tmp/booru-ans"))
+  (define -temporary-file (string-append root "/tmp/booru-download"))
+
+  (define _8123
+    (let ((s (system* "wget" target "-O" pagepath)))
+      (unless (= 0 (status:exit-val s))
+        (throw 'download-failed))))
+
+  (define download-link/0
+    (let* ((s (system (stringf "pup 'section[data-tags] attr{data-large-file-url}' -f ~s > ~s" pagepath anspath))))
+      (string-strip (read-string-file anspath))))
+
+  (define download-link
+    (if (not (string-null? download-link/0)) download-link/0
+        (let* ((s (system (stringf "pup 'section[data-tags] img attr{src}' -f ~s > ~s" pagepath anspath))))
+          (string-strip (read-string-file anspath)))))
+
+  (define _7172
+    (let ((s (system* "wget" download-link "-O" -temporary-file)))
+      (unless (= 0 (status:exit-val s))
+        (throw 'download-failed))))
+
+  (define tags/0
+    (let* ((s (system (stringf "pup 'section[data-tags] attr{data-tags}' -f ~s > ~s" pagepath anspath))))
+      (string-strip (read-string-file anspath))))
+
+  (define tags
+    (if (string-null? tags/0) #f
+        (cons 'foreign-tagged=B,$
+              (map string->symbol
+                   (map (lambda (word) (string-append word "=B")) (string->words tags/0))))))
+
+  (append
+   `((-temporary-file . ,-temporary-file)
+     (download? . yes))
+
+   (if tags (list (cons 'tags tags)) '())))
+
 (define (handle-by-url config root current-alist target site)
   (or
    (and (equal? "boards.4chan.org" site)
-        (download-4chan-media config root target current-alist))
+        (download-4chan-media config root current-alist target))
    (and (member site '("youtube.com" "youtu.be" "m.youtube.com" "yewtu.be"))
-        (download-youtube-media config root target current-alist))))
+        (download-youtube-media config root current-alist target))
+   (and (string-contains site "booru")
+        (download-booru-media config root current-alist target))))
 
 (define (handle config root current-alist target)
   (define site
@@ -348,8 +408,9 @@
         (handle config root current-alist target))
    '()))
 
-(check-dependency "jq")
 (check-dependency "wget")
+(check-dependency "pup")
+(check-dependency "jq")
 (check-dependency "youtube-dl")
 
 main
