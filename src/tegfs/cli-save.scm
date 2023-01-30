@@ -52,7 +52,7 @@
   (define tags (cdr (assoc 'tags state)))
   (define target-extension (cdr (assoc 'target-extension state)))
   (define target-basename (cdr (assoc 'target-basename state)))
-  (define data-type (cdr (assoc 'data-type state)))
+  (define mimetype (cdr (assoc 'mimetype state)))
   (define real-type (cdr (assoc 'real-type state)))
   (define series (cdr (assoc 'series state)))
   (define series? (case series ((yes) #t) ((no) #f) (else (fatal "Bad value for series ~s" series))))

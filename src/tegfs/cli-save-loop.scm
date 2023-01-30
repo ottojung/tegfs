@@ -57,9 +57,9 @@
 
 
 
-(define (dump-clipboard-temp data-type)
+(define (dump-clipboard-temp mimetype)
   (dprintln "Dumping clipboard...")
-  (let ((result (dump-clipboard-to-temporary data-type)))
+  (let ((result (dump-clipboard-to-temporary mimetype)))
     (unless result
       (fatal "Could not dump"))
     result))
@@ -230,14 +230,14 @@
            (equal? 'yes (download?))
            (download-to-temporary-file (-text-content)))
       (and (equal? 'data (real-type))
-           (data-type 'or #f)
-           (dump-clipboard-temp (data-type)))
+           (mimetype 'or #f)
+           (dump-clipboard-temp (mimetype)))
       (and (equal? 'pasta (real-type))
-           (let* ((temp-name (dump-clipboard-temp (data-type))))
+           (let* ((temp-name (dump-clipboard-temp (mimetype))))
              (write-string-file temp-name (-text-content))
              temp-name))))
 
-    (data-type
+    (mimetype
      (or
       (and (equal? (real-type) 'pasta)
            'text/plain)
@@ -258,8 +258,8 @@
       (and (equal? 'link (real-type))
            (equal? 'no (download?))
            'ignore)
-      (and (data-type 'or #f)
-           (get-clipboard-type-extension (data-type)))))
+      (and (mimetype 'or #f)
+           (get-clipboard-type-extension (mimetype)))))
 
     (target-basename
      (or
@@ -284,7 +284,7 @@
     (dirpreview? (read-enumeration "Dirpreview?" '(yes no)))
     (link? (read-enumeration "Link target to the new location?" '(yes no)))
     (series (read-enumeration "Is this item related to the one previously saved?" '(yes no)))
-    (data-type (read-answer "Enter mimetype: "))
+    (mimetype (read-answer "Enter mimetype: "))
     (target-extension (get-target-extension))
     (target-basename (get-target-basename))
     (note (read-answer "Enter note: "))
