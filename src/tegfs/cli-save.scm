@@ -48,6 +48,7 @@
 
 (define (send-state state)
   (define title (cdr (assoc 'title state)))
+  (define note (cdr (assoc 'note state)))
   (define tags (cdr (assoc 'tags state)))
   (define target-extension (cdr (assoc 'target-extension state)))
   (define target-basename (cdr (assoc 'target-basename state)))
@@ -61,7 +62,11 @@
   (define -text-content (cdr (assoc '-text-content state)))
   (define registry-dir (append-posix-path (get-root) (dirname registry-file)))
   (define source (and (a-weblink? -text-content) -temporary-file -text-content))
-  (define key-value-pairs (if source (list (cons "source" source)) (list)))
+  (define key-value-pairs
+    (append
+     (if source (list (cons "source" source)) (list))
+     (if (string? note) (list (cons "note" note)) (list))
+     ))
 
   (define <date> #f)
   (define _11

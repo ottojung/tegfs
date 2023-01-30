@@ -267,6 +267,8 @@
            (path-without-extension (path-get-basename (-text-content))))
       (get-random-basename)))
 
+    (note 'none)
+
     (* (run-save-plugins config root current plugins))
 
     )
@@ -285,6 +287,7 @@
     (data-type (read-answer "Enter mimetype: "))
     (target-extension (get-target-extension))
     (target-basename (get-target-basename))
+    (note (read-answer "Enter note: "))
     ;; (confirm (get-confirm)) ;; TODO: fix this and enable again
     )
 
