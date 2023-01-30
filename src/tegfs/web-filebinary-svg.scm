@@ -33,6 +33,7 @@
     xmlns:svg='http://www.w3.org/2000/svg'
     xmlns:ns1='http://sozi.baierouge.fr'
     id='svg1'
+    viewBox='0 0 150.61 173.03'
     sodipodi:docname='Binary-File-Plain.svg'
     height='128pt'
     sodipodi:version='0.32'
