@@ -28,6 +28,7 @@
     :use-module ((tegfs web-directory-svg) :select (web::directory.svg))
     :use-module ((tegfs web-directory) :select (web::directory))
     :use-module ((tegfs web-error-svg) :select (web::error.svg))
+    :use-module ((tegfs web-filebinary-svg) :select (web::filebinary.svg))
     :use-module ((tegfs web-fileunknown-svg) :select (web::fileunknown.svg))
     :use-module ((tegfs web-filetextual-svg) :select (web::filetextual.svg))
     :use-module ((tegfs web-full) :select (web::full))
@@ -84,6 +85,7 @@
     (/static/directory.svg ,web::directory.svg)
     (/static/fileunknown.svg ,web::fileunknown.svg)
     (/static/filetextual.svg ,web::filetextual.svg)
+    (/static/filebinary.svg ,web::filebinary.svg)
     ))
 
 (define handlers-funcmap
