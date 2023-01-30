@@ -205,6 +205,8 @@
            (print-text-content ret)
            ret)))
 
+    (* (run-save-plugins config root current plugins))
+
     (registry-file
      (define config (get-config))
      (and config
@@ -268,8 +270,6 @@
       (get-random-basename)))
 
     (note 'none)
-
-    (* (run-save-plugins config root current plugins))
 
     )
 
