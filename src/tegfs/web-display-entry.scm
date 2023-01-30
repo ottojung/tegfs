@@ -19,25 +19,59 @@
     :export (web::display-entry)
     :use-module ((euphrates assq-or) :select (assq-or))
     :use-module ((euphrates path-get-basename) :select (path-get-basename))
+    :use-module ((euphrates file-or-directory-exists-q) :select (file-or-directory-exists?))
+    :use-module ((euphrates file-is-directory-q-no-readlink) :select (file-is-directory?/no-readlink))
     :use-module ((tegfs a-weblink-q) :select (a-weblink?))
+    :use-module ((tegfs file-is-image-q) :select (file-is-image?))
+    :use-module ((tegfs file-is-audio-q) :select (file-is-audio?))
+    :use-module ((tegfs file-is-video-q) :select (file-is-video?))
+    :use-module ((tegfs file-is-text-q) :select (file-is-text?))
     :use-module ((tegfs entry-get-mimetype) :select (entry-get-mimetype))
     :use-module ((tegfs entry-get-target) :select (entry-get-target))
+    :use-module ((tegfs entry-target-fullpath) :select (entry-target-fullpath))
     :use-module ((tegfs keyword-id) :select (keyword-id))
     :use-module ((tegfs keyword-title) :select (keyword-title))
     :use-module ((tegfs web-get-full-link) :select (web::get-full-link)))))
 
+(define (get-preview-by-mimetype entry)
+  (define mimetype (entry-get-mimetype entry))
+  (and mimetype
+       (or
+        (and (equal? mimetype "text/uri-list") "static/previewunknownurl.svg")
+        (and (equal? mimetype "inode/directory") "static/directory.svg")
+        (and (string-prefix? "image/" mimetype) "static/fileimage.svg")
+        (and (string-prefix? "audio/" mimetype) "static/fileaudio.svg")
+        (and (string-prefix? "video/" mimetype) "static/filevideo.svg")
+        (and (string-prefix? "text/" mimetype) "static/filetextual.svg")
+        (and mimetype "static/filebinary.svg"))))
 
+(define (get-preview-by-filename target)
+  (and target
+       (or
+        (and (a-weblink? target) "static/previewunknownurl.svg")
+        (and (file-is-image? target) "static/fileimage.svg")
+        (and (file-is-audio? target) "static/fileaudio.svg")
+        (and (file-is-video? target) "static/filevideo.svg")
+        (and (file-is-text? target) "static/filetextual.svg"))))
+
+(define (get-preview-by-contents entry)
+  (define target-fullpath (entry-target-fullpath entry))
+  (and target-fullpath
+       (file-or-directory-exists? target-fullpath)
+       (if (file-is-directory?/no-readlink target-fullpath)
+           "static/directory.svg"
+           "static/fileunknown.svg")))
 
 (define (display-preview entry target preview-link)
-  (define mimetype (entry-get-mimetype entry))
-  (define default-preview
-    (cond
-     ((a-weblink? target) "static/previewunknownurl.svg")
-     ((equal? mimetype "inode/directory") "static/directory.svg")
-     (else "static/previewunknown.svg")))
-
   (display "<img src=")
-  (write (or preview-link default-preview))
+  (write
+   (or preview-link
+       (get-preview-by-mimetype entry)
+       (get-preview-by-filename target)
+       (get-preview-by-contents entry)
+       (if target
+           "static/fileunknown.svg"
+           "static/previewunknown.svg")))
   (display "/>"))
 
 (define (maybe-display-preview entry maybe-full-senderid preview-link)
