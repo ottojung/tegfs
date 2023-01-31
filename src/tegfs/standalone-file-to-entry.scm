@@ -23,7 +23,8 @@
     :use-module ((tegfs keyword-entry-parent-directory-senderid) :select (keyword-entry-parent-directory-senderid))
     :use-module ((tegfs keyword-entry-parent-directory) :select (keyword-entry-parent-directory))
     :use-module ((tegfs keyword-id) :select (keyword-id))
-    :use-module ((tegfs keyword-target) :select (keyword-target)))))
+    :use-module ((tegfs keyword-target) :select (keyword-target))
+    )))
 
 
 

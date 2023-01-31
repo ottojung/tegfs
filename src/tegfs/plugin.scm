@@ -17,7 +17,8 @@
  (guile
   (define-module (tegfs plugin)
     :export (plugin-ctr plugin? plugin-function)
-    :use-module ((euphrates define-type9) :select (define-type9)))))
+    :use-module ((euphrates define-type9) :select (define-type9))
+    )))
 
 
 

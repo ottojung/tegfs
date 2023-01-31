@@ -20,7 +20,8 @@
     :use-module ((euphrates hashmap) :select (alist->hashmap))
     :use-module ((euphrates string-split-3) :select (string-split-3))
     :use-module ((euphrates string-split-simple) :select (string-split/simple))
-    :use-module ((tegfs web-try-uri-decode) :select (web::try-uri-decode)))))
+    :use-module ((tegfs web-try-uri-decode) :select (web::try-uri-decode))
+    )))
 
 
 

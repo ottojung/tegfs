@@ -18,7 +18,8 @@
   (define-module (tegfs web-tags-make-page)
     :export (web::tags::make-page)
     :use-module ((euphrates printf) :select (printf))
-    :use-module ((tegfs web-form-template) :select (web::form-template)))))
+    :use-module ((tegfs web-form-template) :select (web::form-template))
+    )))
 
 
 

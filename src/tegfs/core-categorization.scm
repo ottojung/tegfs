@@ -25,7 +25,8 @@
     :use-module ((euphrates profun-value) :select (profun-bound-value?))
     :use-module ((euphrates read-string-file) :select (read-string-file))
     :use-module ((tegfs categorization-filename) :select (categorization-filename))
-    :use-module ((tegfs get-root) :select (get-root)))))
+    :use-module ((tegfs get-root) :select (get-root))
+    )))
 
 
 

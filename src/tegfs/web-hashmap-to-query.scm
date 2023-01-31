@@ -19,7 +19,8 @@
     :export (web::hashmap->query)
     :use-module ((euphrates hashmap) :select (hashmap-foreach))
     :use-module ((euphrates tilda-a) :select (~a))
-    :use-module ((euphrates uri-encode) :select (uri-encode)))))
+    :use-module ((euphrates uri-encode) :select (uri-encode))
+    )))
 
 
 

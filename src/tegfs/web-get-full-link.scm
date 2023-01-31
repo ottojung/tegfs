@@ -18,7 +18,8 @@
   (define-module (tegfs web-get-full-link)
     :export (web::get-full-link)
     :use-module ((euphrates raisu) :select (raisu))
-    :use-module ((tegfs a-weblink-q) :select (a-weblink?)))))
+    :use-module ((tegfs a-weblink-q) :select (a-weblink?))
+    )))
 
 
 

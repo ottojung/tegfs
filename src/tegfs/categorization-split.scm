@@ -23,7 +23,8 @@
     :use-module ((euphrates list-split-on) :select (list-split-on))
     :use-module ((euphrates string-split-simple) :select (string-split/simple))
     :use-module ((euphrates string-strip) :select (string-strip))
-    :use-module ((euphrates string-to-lines) :select (string->lines)))))
+    :use-module ((euphrates string-to-lines) :select (string->lines))
+    )))
 
 
 

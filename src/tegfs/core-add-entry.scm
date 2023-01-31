@@ -21,7 +21,8 @@
     :use-module ((euphrates profun-op-lambda) :select (profun-op-lambda))
     :use-module ((euphrates profun-request-value) :select (profun-request-value))
     :use-module ((euphrates profun-value) :select (profun-unbound-value?))
-    :use-module ((tegfs add-entry) :select (add-entry)))))
+    :use-module ((tegfs add-entry) :select (add-entry))
+    )))
 
 
 

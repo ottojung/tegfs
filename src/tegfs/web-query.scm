@@ -29,7 +29,8 @@
     :use-module ((tegfs web-handle-profun-results) :select (web::handle-profun-results))
     :use-module ((tegfs web-make-html-response) :select (web::make-html-response))
     :use-module ((tegfs web-query-display-results) :select (web::query-display-results))
-    :use-module ((tegfs webcore-ask) :select (webcore::ask)))))
+    :use-module ((tegfs webcore-ask) :select (webcore::ask))
+    )))
 
 
 

@@ -24,7 +24,8 @@
     :use-module ((tegfs get-registry-files) :select (get-registry-files))
     :use-module ((tegfs get-root) :select (get-root))
     :use-module ((tegfs keyword-entry-registry-path) :select (keyword-entry-registry-path))
-    :use-module ((tegfs warning) :select (warning)))))
+    :use-module ((tegfs warning) :select (warning))
+    )))
 
 
 

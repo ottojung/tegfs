@@ -20,7 +20,8 @@
     :use-module ((euphrates profun-accept) :select (profun-set))
     :use-module ((euphrates profun-reject) :select (profun-reject))
     :use-module ((tegfs core-entry-generic) :select (core::entry/generic))
-    :use-module ((tegfs tegfs-query-open) :select (tegfs-query/open)))))
+    :use-module ((tegfs tegfs-query-open) :select (tegfs-query/open))
+    )))
 
 
 

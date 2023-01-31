@@ -23,7 +23,8 @@
     :use-module ((tegfs entries-map-bang) :select (entries-map!))
     :use-module ((tegfs entry-target-fullpath) :select (entry-target-fullpath))
     :use-module ((tegfs keyword-entry-registry-path) :select (keyword-entry-registry-path))
-    :use-module ((tegfs keyword-id) :select (keyword-id)))))
+    :use-module ((tegfs keyword-id) :select (keyword-id))
+    )))
 
 
 

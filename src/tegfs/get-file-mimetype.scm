@@ -19,7 +19,8 @@
     :export (get-file-mimetype)
     :use-module ((euphrates string-strip) :select (string-strip))
     :use-module ((euphrates system-re) :select (system-re))
-    :use-module ((tegfs a-weblink-q) :select (a-weblink?)))))
+    :use-module ((tegfs a-weblink-q) :select (a-weblink?))
+    )))
 
 
 

@@ -17,7 +17,8 @@
  (guile
   (define-module (tegfs web-filetextual-svg)
     :export (web::filetextual.svg)
-    :use-module ((tegfs web-define-static-file) :select (web::define-static-file)))))
+    :use-module ((tegfs web-define-static-file) :select (web::define-static-file))
+    )))
 
 (define web::filetextual.svg::string
   "<?xml version='1.0' encoding='UTF-8' standalone='no'?>

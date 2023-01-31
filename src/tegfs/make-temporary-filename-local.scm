@@ -21,7 +21,8 @@
     :use-module ((euphrates file-or-directory-exists-q) :select (file-or-directory-exists?))
     :use-module ((euphrates make-directories) :select (make-directories))
     :use-module ((tegfs get-random-basename) :select (get-random-basename))
-    :use-module ((tegfs get-root) :select (get-root)))))
+    :use-module ((tegfs get-root) :select (get-root))
+    )))
 
 
 

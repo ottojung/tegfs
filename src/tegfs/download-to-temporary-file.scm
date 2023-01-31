@@ -23,7 +23,8 @@
     :use-module ((euphrates url-get-hostname-and-port) :select (url-get-hostname-and-port))
     :use-module ((euphrates url-get-protocol) :select (url-get-protocol))
     :use-module ((tegfs fatal) :select (fatal))
-    :use-module ((tegfs make-temporary-filename-local) :select (make-temporary-filename/local)))))
+    :use-module ((tegfs make-temporary-filename-local) :select (make-temporary-filename/local))
+    )))
 
 
 

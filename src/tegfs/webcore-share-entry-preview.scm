@@ -19,7 +19,8 @@
     :export (webcore::share-entry-preview)
     :use-module ((euphrates file-or-directory-exists-q) :select (file-or-directory-exists?))
     :use-module ((tegfs get-preview-path) :select (get-preview-path))
-    :use-module ((tegfs webcore-share-entry-generic) :select (webcore::share-entry-generic)))))
+    :use-module ((tegfs webcore-share-entry-generic) :select (webcore::share-entry-generic))
+    )))
 
 
 

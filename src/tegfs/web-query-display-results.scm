@@ -18,7 +18,8 @@
   (define-module (tegfs web-query-display-results)
     :export (web::query-display-results)
     :use-module ((euphrates fn-alist) :select (fn-alist))
-    :use-module ((tegfs web-display-entry) :select (web::display-entry)))))
+    :use-module ((tegfs web-display-entry) :select (web::display-entry))
+    )))
 
 
 

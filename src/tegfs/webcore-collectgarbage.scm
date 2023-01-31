@@ -19,7 +19,8 @@
     :export (webcore::collectgarbage)
     :use-module ((euphrates profun-accept) :select (profun-accept))
     :use-module ((euphrates profun-op-lambda) :select (profun-op-lambda))
-    :use-module ((tegfs web-collectgarbage-nocall) :select (web::collectgarbage/nocall)))))
+    :use-module ((tegfs web-collectgarbage-nocall) :select (web::collectgarbage/nocall))
+    )))
 
 
 

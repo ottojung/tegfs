@@ -17,7 +17,8 @@
  (guile
   (define-module (tegfs core-paremeters)
     :export (core::query/p core::diropen?/p core::dirpreview?/p)
-    :use-module ((euphrates profun-op-parameter) :select (make-profun-parameter)))))
+    :use-module ((euphrates profun-op-parameter) :select (make-profun-parameter))
+    )))
 
 
 

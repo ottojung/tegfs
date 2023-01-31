@@ -25,7 +25,8 @@
     :use-module ((tegfs entry-target-fullpath) :select (entry-target-fullpath))
     :use-module ((tegfs keyword-tags) :select (keyword-tags))
     :use-module ((tegfs standalone-file-to-entry) :select (standalone-file->entry))
-    :use-module ((tegfs tegfs-query-noopen) :select (tegfs-query/noopen)))))
+    :use-module ((tegfs tegfs-query-noopen) :select (tegfs-query/noopen))
+    )))
 
 
 

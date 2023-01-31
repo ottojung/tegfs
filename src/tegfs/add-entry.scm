@@ -50,7 +50,8 @@
     :use-module ((tegfs keyword-tags) :select (keyword-tags))
     :use-module ((tegfs last-id-filename) :select (last-id-filename))
     :use-module ((tegfs set-config) :select (set-config))
-    :use-module ((tegfs warning) :select (warning)))))
+    :use-module ((tegfs warning) :select (warning))
+    )))
 
 
 

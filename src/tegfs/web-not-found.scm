@@ -23,7 +23,8 @@
     :use-module ((euphrates string-to-lines) :select (string->lines))
     :use-module ((euphrates stringf) :select (stringf))
     :use-module ((euphrates with-randomizer-seed) :select (with-randomizer-seed))
-    :use-module ((tegfs web-static-error-message) :select (web::static-error-message)))))
+    :use-module ((tegfs web-static-error-message) :select (web::static-error-message))
+    )))
 
 
 

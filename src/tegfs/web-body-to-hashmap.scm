@@ -17,7 +17,8 @@
  (guile
   (define-module (tegfs web-body-to-hashmap)
     :export (web::body->hashmap)
-    :use-module ((tegfs web-query-to-hashmap) :select (web::query->hashmap)))))
+    :use-module ((tegfs web-query-to-hashmap) :select (web::query->hashmap))
+    )))
 
 
 

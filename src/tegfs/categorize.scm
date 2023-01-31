@@ -35,7 +35,8 @@
     :use-module ((tegfs make-temporary-filename-local) :select (make-temporary-filename/local))
     :use-module ((tegfs parse-tag) :select (parse-tag-structure))
     :use-module ((tegfs tags-this-variable) :select (tags-this-variable))
-    :use-module ((tegfs unparse-tag) :select (unparse-tag)))))
+    :use-module ((tegfs unparse-tag) :select (unparse-tag))
+    )))
 
 
 

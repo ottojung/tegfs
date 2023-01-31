@@ -21,7 +21,8 @@
     :use-module ((euphrates file-or-directory-exists-q) :select (file-or-directory-exists?))
     :use-module ((euphrates open-file-port) :select (open-file-port))
     :use-module ((euphrates read-list) :select (read-list))
-    :use-module ((tegfs get-root) :select (get-root)))))
+    :use-module ((tegfs get-root) :select (get-root))
+    )))
 
 
 

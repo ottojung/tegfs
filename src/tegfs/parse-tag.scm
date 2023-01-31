@@ -19,13 +19,12 @@
     :export (parse-tag parse-tag-structure)
     :use-module ((euphrates comp) :select (comp))
     :use-module ((euphrates list-intersperse) :select (list-intersperse))
-    :use-module ((euphrates list-ref-or) :select (list-ref-or))
     :use-module ((euphrates list-split-on) :select (list-split-on))
-    :use-module ((euphrates raisu) :select (raisu))
     :use-module ((euphrates tilda-a) :select (~a))
     :use-module ((tegfs tag-structure-sep1) :select (tag-structure-sep1))
     :use-module ((tegfs tag-structure-sep2) :select (tag-structure-sep2))
-    :use-module ((tegfs tags-this-variable) :select (tags-this-variable/char)))))
+    :use-module ((tegfs tags-this-variable) :select (tags-this-variable/char))
+    )))
 
 
 

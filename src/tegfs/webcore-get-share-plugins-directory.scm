@@ -19,7 +19,8 @@
     :export (webcore::get-share-plugins-directory)
     :use-module ((euphrates append-posix-path) :select (append-posix-path))
     :use-module ((euphrates make-directories) :select (make-directories))
-    :use-module ((tegfs get-root) :select (get-root)))))
+    :use-module ((tegfs get-root) :select (get-root))
+    )))
 
 
 

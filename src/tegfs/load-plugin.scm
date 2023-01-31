@@ -18,7 +18,8 @@
   (define-module (tegfs load-plugin)
     :export (load-plugin)
     :use-module ((euphrates dynamic-load) :select (dynamic-load))
-    :use-module ((tegfs plugin) :select (plugin-ctr)))))
+    :use-module ((tegfs plugin) :select (plugin-ctr))
+    )))
 
 
 

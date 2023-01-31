@@ -25,7 +25,8 @@
     :use-module ((tegfs web-display-header) :select (web::display-header))
     :use-module ((tegfs web-return) :select (web::return))
     :use-module ((tegfs web-sxml-to-xml) :select (web::sxml->xml))
-    :use-module ((tegfs webcore-current-communicator-p) :select (webcore::current-communicator/p)))))
+    :use-module ((tegfs webcore-current-communicator-p) :select (webcore::current-communicator/p))
+    )))
 
 
 

@@ -21,7 +21,8 @@
     :use-module ((euphrates assoc-set-value) :select (assoc-set-value))
     :use-module ((euphrates open-file-port) :select (open-file-port))
     :use-module ((tegfs get-config) :select (get-config))
-    :use-module ((tegfs get-root) :select (get-root)))))
+    :use-module ((tegfs get-root) :select (get-root))
+    )))
 
 
 

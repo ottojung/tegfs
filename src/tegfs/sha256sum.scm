@@ -22,7 +22,8 @@
     :use-module ((euphrates raisu) :select (raisu))
     :use-module ((euphrates string-to-lines) :select (string->lines))
     :use-module ((euphrates string-to-words) :select (string->words))
-    :use-module ((euphrates system-re) :select (system-re)))))
+    :use-module ((euphrates system-re) :select (system-re))
+    )))
 
 
 

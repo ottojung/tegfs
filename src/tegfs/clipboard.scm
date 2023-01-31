@@ -26,7 +26,8 @@
     :use-module ((euphrates system-fmt) :select (system-fmt))
     :use-module ((euphrates system-re) :select (system-re))
     :use-module ((tegfs a-weblink-q) :select (a-weblink?))
-    :use-module ((tegfs make-temporary-filename-local) :select (make-temporary-filename/local)))))
+    :use-module ((tegfs make-temporary-filename-local) :select (make-temporary-filename/local))
+    )))
 
 
 

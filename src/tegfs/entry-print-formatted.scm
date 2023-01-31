@@ -19,7 +19,8 @@
     :export (entry-print/formatted)
     :use-module ((euphrates read-list) :select (read-list))
     :use-module ((tegfs entry-target-fullpath) :select (entry-target-fullpath))
-    :use-module ((tegfs get-preview-path) :select (get-preview-path)))))
+    :use-module ((tegfs get-preview-path) :select (get-preview-path))
+    )))
 
 
 

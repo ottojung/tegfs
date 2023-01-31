@@ -17,7 +17,8 @@
  (guile
   (define-module (tegfs web-temp-path)
     :export (web::temp-path-ctr web::temp-path? web::temp-path-tempid web::temp-path-destination web::temp-path-start web::temp-path-stime)
-    :use-module ((euphrates define-type9) :select (define-type9)))))
+    :use-module ((euphrates define-type9) :select (define-type9))
+    )))
 
 
 

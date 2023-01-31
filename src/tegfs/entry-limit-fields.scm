@@ -17,9 +17,10 @@
  (guile
   (define-module (tegfs entry-limit-fields)
     :export (entry-limit-fields)
-    :use-module ((tegfs webcore-access) :select (has-access-for-entry-details? has-access-for-entry-target?))
     :use-module ((tegfs keyword-target) :select (keyword-target))
-    :use-module ((tegfs keyword-title) :select (keyword-title)))))
+    :use-module ((tegfs keyword-title) :select (keyword-title))
+    :use-module ((tegfs webcore-access) :select (has-access-for-entry-details? has-access-for-entry-target?))
+    )))
 
 
 

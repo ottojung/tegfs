@@ -17,7 +17,8 @@
  (guile
   (define-module (tegfs get-sharedname)
     :export (get-sharedname)
-    :use-module ((tegfs path-safe-extension) :select (path-safe-extension)))))
+    :use-module ((tegfs path-safe-extension) :select (path-safe-extension))
+    )))
 
 
 

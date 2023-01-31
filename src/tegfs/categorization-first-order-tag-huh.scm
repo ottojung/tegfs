@@ -17,7 +17,8 @@
  (guile
   (define-module (tegfs categorization-first-order-tag-huh)
     :export (categorization::first-order-tag?)
-    :use-module ((euphrates raisu) :select (raisu)))))
+    :use-module ((euphrates raisu) :select (raisu))
+    )))
 
 
 

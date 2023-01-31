@@ -27,7 +27,8 @@
     :use-module ((tegfs categorization-filename) :select (categorization-filename))
     :use-module ((tegfs get-root) :select (get-root))
     :use-module ((tegfs webcore-access) :select (can-view-categorization?))
-    :use-module ((tegfs webcore-parameters) :select (webcore::permissions/p)))))
+    :use-module ((tegfs webcore-parameters) :select (webcore::permissions/p))
+    )))
 
 
 

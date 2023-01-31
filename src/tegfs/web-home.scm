@@ -17,7 +17,8 @@
  (guile
   (define-module (tegfs web-home)
     :export (web::home)
-    :use-module ((tegfs web-make-html-response) :select (web::make-html-response)))))
+    :use-module ((tegfs web-make-html-response) :select (web::make-html-response))
+    )))
 
 
 

@@ -18,7 +18,8 @@
   (define-module (tegfs webcore-ask)
     :export (webcore::ask)
     :use-module ((euphrates profune-communicator) :select (profune-communicator-handle))
-    :use-module ((tegfs webcore-current-communicator-p) :select (webcore::current-communicator/p)))))
+    :use-module ((tegfs webcore-current-communicator-p) :select (webcore::current-communicator/p))
+    )))
 
 
 

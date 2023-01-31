@@ -17,7 +17,8 @@
  (guile
   (define-module (tegfs sharedinfo)
     :export (sharedinfo-ctr sharedinfo? sharedinfo-entry sharedinfo-sourcepath sharedinfo-recepientid sharedinfo-senderid sharedinfo-ctime sharedinfo-stime set-sharedinfo-stime!)
-    :use-module ((euphrates define-type9) :select (define-type9)))))
+    :use-module ((euphrates define-type9) :select (define-type9))
+    )))
 
 
 

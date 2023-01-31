@@ -18,7 +18,8 @@
   (define-module (tegfs web-try-uri-decode)
     :export (web::try-uri-decode)
     :use-module ((euphrates catch-any) :select (catch-any))
-    :use-module ((euphrates raisu) :select (raisu)))))
+    :use-module ((euphrates raisu) :select (raisu))
+    )))
 
 
 

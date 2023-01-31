@@ -25,7 +25,8 @@
     :use-module ((euphrates profun-error) :select (make-profun-error))
     :use-module ((euphrates profun-op-lambda) :select (profun-op-lambda))
     :use-module ((euphrates profun-reject) :select (profun-reject))
-    :use-module ((euphrates profun-value) :select (profun-bound-value? profun-unbound-value?)))))
+    :use-module ((euphrates profun-value) :select (profun-bound-value? profun-unbound-value?))
+    )))
 
 
 

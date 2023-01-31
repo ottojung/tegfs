@@ -23,7 +23,8 @@
     :use-module ((tegfs categorization-complete-selection-cont) :select (categorization-complete-selection/cont))
     :use-module ((tegfs categorization-parse-tags) :select (categorization-parse-tags))
     :use-module ((tegfs categorization-starred-symbol-huh) :select (categorization-starred-symbol?))
-    :use-module ((tegfs parsed-categorization-tags-get-all) :select (parsed-categorization-tags-get-all)))))
+    :use-module ((tegfs parsed-categorization-tags-get-all) :select (parsed-categorization-tags-get-all))
+    )))
 
 
 

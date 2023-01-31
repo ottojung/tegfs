@@ -23,7 +23,8 @@
     :use-module ((euphrates profun-op-lambda) :select (profun-op-lambda))
     :use-module ((euphrates profun-request-value) :select (profun-request-value))
     :use-module ((euphrates profun-value) :select (profun-unbound-value?))
-    :use-module ((tegfs update-entry) :select (update-entry)))))
+    :use-module ((tegfs update-entry) :select (update-entry))
+    )))
 
 ;; Replaces `original-entry' by the `updated-entry'.
 ;; Note that if `updated-entry' is `#f', then the `original-entry' is deleted.

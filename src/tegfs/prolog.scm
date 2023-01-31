@@ -37,7 +37,8 @@
     :use-module ((tegfs parse-tag) :select (parse-tag))
     :use-module ((tegfs print-prolog-inference) :select (print-prolog-inference))
     :use-module ((tegfs tag-to-prolog-term) :select (print-tag-as-prolog-term))
-    :use-module ((tegfs tags-this-variable) :select (tags-this-variable/string)))))
+    :use-module ((tegfs tags-this-variable) :select (tags-this-variable/string))
+    )))
 
 
 

@@ -20,7 +20,8 @@
     :use-module ((euphrates dprintln) :select (dprintln))
     :use-module ((euphrates hashmap) :select (hashmap-set! make-hashmap))
     :use-module ((tegfs entries-for-each) :select (entries-for-each))
-    :use-module ((tegfs keyword-id) :select (keyword-id)))))
+    :use-module ((tegfs keyword-id) :select (keyword-id))
+    )))
 
 
 

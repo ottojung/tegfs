@@ -27,7 +27,8 @@
     :use-module ((tegfs get-root) :select (get-root))
     :use-module ((tegfs keyword-entry-parent-directory) :select (keyword-entry-parent-directory))
     :use-module ((tegfs keyword-entry-registry-path) :select (keyword-entry-registry-path))
-    :use-module ((tegfs keyword-id) :select (keyword-id)))))
+    :use-module ((tegfs keyword-id) :select (keyword-id))
+    )))
 
 
 

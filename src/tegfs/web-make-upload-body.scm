@@ -20,7 +20,8 @@
     :use-module ((tegfs categorization-first-order-tag-huh) :select (categorization::first-order-tag?))
     :use-module ((tegfs categorization-get-all-tags) :select (categorization-get-all-tags))
     :use-module ((tegfs web-form-template-wide) :select (web::form-template/wide))
-    :use-module ((tegfs web-sxml-to-xml) :select (web::sxml->xml)))))
+    :use-module ((tegfs web-sxml-to-xml) :select (web::sxml->xml))
+    )))
 
 
 

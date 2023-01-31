@@ -18,7 +18,8 @@
   (define-module (tegfs filemap)
     :export (filemap-make/empty filemap-set! filemap-ref-by-senderid filemap-ref-by-recepientid filemap-delete-by-senderid! filemap-delete-by-recepientid!)
     :use-module ((euphrates hashmap) :select (hashmap-delete! hashmap-ref hashmap-set! make-hashmap))
-    :use-module ((tegfs sharedinfo) :select (sharedinfo-recepientid sharedinfo-senderid)))))
+    :use-module ((tegfs sharedinfo) :select (sharedinfo-recepientid sharedinfo-senderid))
+    )))
 
 
 

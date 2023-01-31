@@ -27,7 +27,8 @@
     :use-module ((tegfs update-entry) :select (update-entry))
     :use-module ((tegfs web-context) :select (context-filemap/2))
     :use-module ((tegfs webcore-access) :select (can-modify-entry?))
-    :use-module ((tegfs webcore-parameters) :select (webcore::permissions/p)))))
+    :use-module ((tegfs webcore-parameters) :select (webcore::permissions/p))
+    )))
 
 ;; Replaces `original-entry' by the `updated-entry'.
 ;; Note that if `updated-entry' is `#f', then the `original-entry' is deleted.

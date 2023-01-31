@@ -19,7 +19,8 @@
     :export (entry-get-target)
     :use-module ((euphrates assq-or) :select (assq-or))
     :use-module ((euphrates raisu) :select (raisu))
-    :use-module ((tegfs keyword-target) :select (keyword-target)))))
+    :use-module ((tegfs keyword-target) :select (keyword-target))
+    )))
 
 
 

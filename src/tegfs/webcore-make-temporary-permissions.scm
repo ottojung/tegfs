@@ -27,7 +27,8 @@
     :use-module ((tegfs permission-time-left) :select (permission-time-left))
     :use-module ((tegfs permission) :select (permission-time permission-token))
     :use-module ((tegfs webcore-access) :select (can-share-longer-than-view?))
-    :use-module ((tegfs webcore-parameters) :select (webcore::permissions/p)))))
+    :use-module ((tegfs webcore-parameters) :select (webcore::permissions/p))
+    )))
 
 
 

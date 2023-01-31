@@ -18,7 +18,8 @@
   (define-module (tegfs web-bad-request)
     :export (web::bad-request)
     :use-module ((euphrates stringf) :select (stringf))
-    :use-module ((tegfs web-static-error-message) :select (web::static-error-message)))))
+    :use-module ((tegfs web-static-error-message) :select (web::static-error-message))
+    )))
 
 
 

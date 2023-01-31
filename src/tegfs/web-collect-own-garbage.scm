@@ -20,7 +20,8 @@
     :use-module ((euphrates hashmap) :select (hashmap-delete! hashmap-foreach))
     :use-module ((tegfs current-time-p) :select (current-time/p))
     :use-module ((tegfs web-current-temp-paths-table-p) :select (web::current-temp-paths-table/p))
-    :use-module ((tegfs web-temp-path-still-valid-huh) :select (web::temp-path-still-valid?)))))
+    :use-module ((tegfs web-temp-path-still-valid-huh) :select (web::temp-path-still-valid?))
+    )))
 
 
 

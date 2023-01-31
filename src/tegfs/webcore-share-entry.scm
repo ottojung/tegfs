@@ -32,7 +32,8 @@
     :use-module ((tegfs sharedinfo) :select (sharedinfo-entry))
     :use-module ((tegfs tegfs-login-by-key) :select (tegfs-login-by-key))
     :use-module ((tegfs web-context) :select (context-filemap/2))
-    :use-module ((tegfs web-get-adam-info) :select (web::get-adam-info)))))
+    :use-module ((tegfs web-get-adam-info) :select (web::get-adam-info))
+    )))
 
 
 

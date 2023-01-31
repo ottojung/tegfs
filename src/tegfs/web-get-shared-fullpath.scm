@@ -18,7 +18,8 @@
   (define-module (tegfs web-get-shared-fullpath)
     :export (web::get-shared-fullpath)
     :use-module ((euphrates append-posix-path) :select (append-posix-path))
-    :use-module ((tegfs get-sharedname) :select (get-sharedname)))))
+    :use-module ((tegfs get-sharedname) :select (get-sharedname))
+    )))
 
 
 

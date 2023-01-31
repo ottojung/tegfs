@@ -18,7 +18,8 @@
   (define-module (tegfs print-prolog-inference)
     :export (print-prolog-inference)
     :use-module ((euphrates list-intersperse) :select (list-intersperse))
-    :use-module ((tegfs tag-to-prolog-term) :select (print-tag-as-prolog-term tag->prolog-term)))))
+    :use-module ((tegfs tag-to-prolog-term) :select (print-tag-as-prolog-term tag->prolog-term))
+    )))
 
 
 

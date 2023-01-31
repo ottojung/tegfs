@@ -17,7 +17,8 @@
  (guile
   (define-module (tegfs password-to-tokenlike)
     :export (password->tokenlike)
-    :use-module ((tegfs sha256sum) :select (sha256sum)))))
+    :use-module ((tegfs sha256sum) :select (sha256sum))
+    )))
 
 
 

@@ -20,7 +20,8 @@
     :use-module ((euphrates raisu) :select (raisu))
     :use-module ((tegfs current-time-p) :select (current-time/p))
     :use-module ((tegfs get-random-network-name) :select (get-random-network-name))
-    :use-module ((tegfs sharedinfo) :select (sharedinfo-ctr)))))
+    :use-module ((tegfs sharedinfo) :select (sharedinfo-ctr))
+    )))
 
 
 

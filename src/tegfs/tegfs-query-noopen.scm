@@ -41,7 +41,8 @@
     :use-module ((tegfs prolog-query-parse) :select (prolog-query-parse))
     :use-module ((tegfs prolog-var) :select (make-prolog-var prolog-var-name prolog-var?))
     :use-module ((tegfs prolog) :select (tegfs-dump-prolog translate-entry-tags))
-    :use-module ((tegfs tag-to-prolog-term) :select (tag->prolog-term)))))
+    :use-module ((tegfs tag-to-prolog-term) :select (tag->prolog-term))
+    )))
 
 
 

@@ -18,7 +18,8 @@
   (define-module (tegfs web-message-template)
     :export (web::message-template)
     :use-module ((tegfs web-form-template) :select (web::form-template))
-    :use-module ((tegfs web-sxml-to-xml) :select (web::sxml->xml)))))
+    :use-module ((tegfs web-sxml-to-xml) :select (web::sxml->xml))
+    )))
 
 
 

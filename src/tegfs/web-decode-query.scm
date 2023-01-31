@@ -18,7 +18,8 @@
   (define-module (tegfs web-decode-query)
     :export (web::decode-query)
     :use-module ((euphrates comp) :select (appcomp))
-    :use-module ((tegfs web-try-uri-decode) :select (web::try-uri-decode)))))
+    :use-module ((tegfs web-try-uri-decode) :select (web::try-uri-decode))
+    )))
 
 
 

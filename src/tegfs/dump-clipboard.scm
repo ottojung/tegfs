@@ -21,7 +21,8 @@
     :use-module ((euphrates raisu) :select (raisu))
     :use-module ((euphrates write-string-file) :select (write-string-file))
     :use-module ((tegfs clipboard) :select (choose-clipboard-data-type classify-clipboard-text-content dump-clipboard-to-file get-clipboard-text-content get-clipboard-type-extension))
-    :use-module ((tegfs fatal) :select (fatal)))))
+    :use-module ((tegfs fatal) :select (fatal))
+    )))
 
 
 

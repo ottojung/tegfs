@@ -17,7 +17,8 @@
  (guile
   (define-module (tegfs parsed-categorization-tags-get-all)
     :export (parsed-categorization-tags-get-all)
-    :use-module ((euphrates list-deduplicate) :select (list-deduplicate)))))
+    :use-module ((euphrates list-deduplicate) :select (list-deduplicate))
+    )))
 
 
 

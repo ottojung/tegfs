@@ -17,7 +17,8 @@
  (guile
   (define-module (tegfs read-file-head)
     :export (read-file-head)
-    :use-module ((euphrates open-file-port) :select (open-file-port)))))
+    :use-module ((euphrates open-file-port) :select (open-file-port))
+    )))
 
 
 

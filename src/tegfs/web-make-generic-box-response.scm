@@ -19,7 +19,8 @@
     :export (web::make-generic-box-response)
     :use-module ((euphrates stringf) :select (stringf))
     :use-module ((tegfs web-form-template) :select (web::form-template))
-    :use-module ((tegfs web-make-html-response) :select (web::make-html-response)))))
+    :use-module ((tegfs web-make-html-response) :select (web::make-html-response))
+    )))
 
 
 

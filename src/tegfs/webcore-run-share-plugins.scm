@@ -18,7 +18,8 @@
   (define-module (tegfs webcore-run-share-plugins)
     :export (webcore::run-share-plugins)
     :use-module ((euphrates list-map-first) :select (list-map-first))
-    :use-module ((tegfs plugin) :select (plugin-function)))))
+    :use-module ((tegfs plugin) :select (plugin-function))
+    )))
 
 
 

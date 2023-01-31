@@ -28,7 +28,8 @@
     :use-module ((tegfs permission) :select (permission?))
     :use-module ((tegfs sharedinfo) :select (sharedinfo-entry))
     :use-module ((tegfs web-context) :select (context-filemap/2))
-    :use-module ((tegfs webcore-parameters) :select (webcore::permissions/p)))))
+    :use-module ((tegfs webcore-parameters) :select (webcore::permissions/p))
+    )))
 
 
 

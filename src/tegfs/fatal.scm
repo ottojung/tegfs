@@ -17,7 +17,8 @@
  (guile
   (define-module (tegfs fatal)
     :export (fatal)
-    :use-module ((euphrates dprintln) :select (dprintln)))))
+    :use-module ((euphrates dprintln) :select (dprintln))
+    )))
 
 
 

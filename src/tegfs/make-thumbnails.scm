@@ -38,7 +38,8 @@
     :use-module ((tegfs file-is-image-q) :select (file-is-image?))
     :use-module ((tegfs file-is-video-q) :select (file-is-video?))
     :use-module ((tegfs web-preview-height) :select (web::preview-height))
-    :use-module ((tegfs web-preview-width) :select (web::preview-width)))))
+    :use-module ((tegfs web-preview-width) :select (web::preview-width))
+    )))
 
 
 

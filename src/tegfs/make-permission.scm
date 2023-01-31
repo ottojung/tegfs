@@ -21,7 +21,8 @@
     :use-module ((euphrates hashset) :select (make-hashset))
     :use-module ((tegfs current-time-p) :select (current-time/p))
     :use-module ((tegfs get-random-access-token) :select (get-random-access-token))
-    :use-module ((tegfs permission) :select (permission-constructor)))))
+    :use-module ((tegfs permission) :select (permission-constructor))
+    )))
 
 
 

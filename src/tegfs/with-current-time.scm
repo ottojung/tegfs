@@ -18,7 +18,8 @@
   (define-module (tegfs with-current-time)
     :export (with-current-time)
     :use-module ((euphrates time-get-current-unixtime) :select (time-get-current-unixtime))
-    :use-module ((tegfs current-time-p) :select (current-time/p)))))
+    :use-module ((tegfs current-time-p) :select (current-time/p))
+    )))
 
 
 

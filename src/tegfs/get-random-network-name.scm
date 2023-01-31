@@ -18,7 +18,8 @@
   (define-module (tegfs get-random-network-name)
     :export (get-random-network-name)
     :use-module ((euphrates alphanum-alphabet) :select (alphanum/alphabet))
-    :use-module ((euphrates random-choice) :select (random-choice)))))
+    :use-module ((euphrates random-choice) :select (random-choice))
+    )))
 
 ;; Short names for users to see.
 ;; Use this only if exporting over a slow network.

@@ -36,7 +36,8 @@
     :use-module ((tegfs web-make-html-response) :select (web::make-html-response))
     :use-module ((tegfs web-share-default-page) :select (web::share::get-default-text))
     :use-module ((tegfs web-share-settings-page) :select (web::share::get-settings-text))
-    :use-module ((tegfs webcore-ask) :select (webcore::ask)))))
+    :use-module ((tegfs webcore-ask) :select (webcore::ask))
+    )))
 
 
 

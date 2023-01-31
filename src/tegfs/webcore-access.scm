@@ -26,7 +26,8 @@
     :use-module ((tegfs keyword-entry-parent-directory-senderid) :select (keyword-entry-parent-directory-senderid))
     :use-module ((tegfs keyword-id) :select (keyword-id))
     :use-module ((tegfs permission) :select (permission-admin? permission-cat-modify-access? permission-cat-view-access? permission-entry-modify-access? permission-entry-view-access? permission-filemap permission-idset permission-share-longer-than-view? permission-uploadaccess?))
-    :use-module ((tegfs sharedinfo) :select (sharedinfo-sourcepath)))))
+    :use-module ((tegfs sharedinfo) :select (sharedinfo-sourcepath))
+    )))
 
 
 

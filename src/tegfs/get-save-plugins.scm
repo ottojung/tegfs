@@ -19,7 +19,8 @@
     :export (get-save-plugins)
     :use-module ((euphrates memconst) :select (memconst))
     :use-module ((tegfs get-save-plugins-files) :select (get-save-plugins-files))
-    :use-module ((tegfs load-plugin) :select (load-plugin)))))
+    :use-module ((tegfs load-plugin) :select (load-plugin))
+    )))
 
 
 

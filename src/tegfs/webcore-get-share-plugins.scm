@@ -19,7 +19,8 @@
     :export (webcore::get-share-plugins)
     :use-module ((euphrates memconst) :select (memconst))
     :use-module ((tegfs load-plugin) :select (load-plugin))
-    :use-module ((tegfs webcore-get-share-plugins-files) :select (webcore::get-share-plugins-files)))))
+    :use-module ((tegfs webcore-get-share-plugins-files) :select (webcore::get-share-plugins-files))
+    )))
 
 
 

@@ -23,7 +23,8 @@
     :use-module ((tegfs entry-print) :select (entry-print))
     :use-module ((tegfs get-registry-files) :select (get-registry-files))
     :use-module ((tegfs get-root) :select (get-root))
-    :use-module ((tegfs make-temporary-filename-local) :select (make-temporary-filename/local)))))
+    :use-module ((tegfs make-temporary-filename-local) :select (make-temporary-filename/local))
+    )))
 
 
 

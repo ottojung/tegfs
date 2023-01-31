@@ -19,15 +19,15 @@
     :export (core::entry/generic)
     :use-module ((euphrates comp) :select (appcomp comp))
     :use-module ((euphrates curry-if) :select (curry-if))
-    :use-module ((euphrates profun-RFC) :select (make-profun-RFC))
     :use-module ((euphrates profun-accept) :select (profun-accept? profun-ctx-set))
     :use-module ((euphrates profun-default) :select (profun-default))
     :use-module ((euphrates profun-error) :select (make-profun-error))
     :use-module ((euphrates profun-op-lambda) :select (profun-op-lambda))
-    :use-module ((euphrates profun-value) :select (profun-bound-value? profun-unbound-value?))
+    :use-module ((euphrates profun-value) :select (profun-bound-value?))
     :use-module ((tegfs core-paremeters) :select (core::diropen?/p core::dirpreview?/p core::query/p))
     :use-module ((tegfs keyword-diropen) :select (keyword-diropen))
-    :use-module ((tegfs keyword-dirpreview) :select (keyword-dirpreview)))))
+    :use-module ((tegfs keyword-dirpreview) :select (keyword-dirpreview))
+    )))
 
 
 

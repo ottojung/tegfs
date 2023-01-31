@@ -17,7 +17,8 @@
  (guile
   (define-module (tegfs web-make-temp-paths-table)
     :export (web::make-temp-paths-table)
-    :use-module ((euphrates hashmap) :select (make-hashmap)))))
+    :use-module ((euphrates hashmap) :select (make-hashmap))
+    )))
 
 
 

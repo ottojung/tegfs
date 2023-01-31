@@ -22,7 +22,8 @@
     :use-module ((tegfs web-callcontext) :select (callcontext-query))
     :use-module ((tegfs web-form-template) :select (web::form-template))
     :use-module ((tegfs web-get-domainname) :select (web::get-domainname))
-    :use-module ((tegfs web-hashmap-to-query) :select (web::hashmap->query)))))
+    :use-module ((tegfs web-hashmap-to-query) :select (web::hashmap->query))
+    )))
 
 
 

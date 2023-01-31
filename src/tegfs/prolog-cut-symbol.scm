@@ -17,7 +17,8 @@
  (guile
   (define-module (tegfs prolog-cut-symbol)
     :export (make-prolog-cut-symbol prolog-cut-symbol?)
-    :use-module ((euphrates define-type9) :select (define-type9)))))
+    :use-module ((euphrates define-type9) :select (define-type9))
+    )))
 
 
 

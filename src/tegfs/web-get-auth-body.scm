@@ -19,7 +19,8 @@
     :export (web::get-auth-body)
     :use-module ((euphrates stringf) :select (stringf))
     :use-module ((euphrates uri-encode) :select (uri-encode))
-    :use-module ((tegfs web-form-template) :select (web::form-template)))))
+    :use-module ((tegfs web-form-template) :select (web::form-template))
+    )))
 
 
 

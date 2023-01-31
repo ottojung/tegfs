@@ -17,7 +17,8 @@
  (guile
   (define-module (tegfs web-body-not-found)
     :export (web::body-not-found)
-    :use-module ((tegfs web-static-error-message) :select (web::static-error-message)))))
+    :use-module ((tegfs web-static-error-message) :select (web::static-error-message))
+    )))
 
 
 

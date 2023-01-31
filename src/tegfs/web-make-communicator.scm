@@ -20,7 +20,8 @@
     :use-module ((euphrates profun) :select (profun-create-database))
     :use-module ((euphrates profune-communicator) :select (make-profune-communicator))
     :use-module ((tegfs web-make-context) :select (web::make-context))
-    :use-module ((tegfs webcore-server-handler) :select (webcore::make-server-handler)))))
+    :use-module ((tegfs webcore-server-handler) :select (webcore::make-server-handler))
+    )))
 
 
 

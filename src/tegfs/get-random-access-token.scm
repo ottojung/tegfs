@@ -18,7 +18,8 @@
   (define-module (tegfs get-random-access-token)
     :export (get-random-access-token)
     :use-module ((euphrates alphanum-lowercase-alphabet) :select (alphanum-lowercase/alphabet))
-    :use-module ((euphrates random-choice) :select (random-choice)))))
+    :use-module ((euphrates random-choice) :select (random-choice))
+    )))
 
 
 

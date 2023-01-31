@@ -19,7 +19,8 @@
     :export (run-save-plugins)
     :use-module ((euphrates alist-initialize-bang) :select (alist-initialize!:return-multiple))
     :use-module ((euphrates list-fold) :select (list-fold))
-    :use-module ((tegfs plugin) :select (plugin-function)))))
+    :use-module ((tegfs plugin) :select (plugin-function))
+    )))
 
 
 

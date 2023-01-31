@@ -17,7 +17,8 @@
  (guile
   (define-module (tegfs web-settings-gear)
     :export (web::settings-gear)
-    :use-module ((tegfs web-define-static-file) :select (web::define-static-file)))))
+    :use-module ((tegfs web-define-static-file) :select (web::define-static-file))
+    )))
 
 
 

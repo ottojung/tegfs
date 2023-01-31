@@ -19,7 +19,8 @@
     :export (entry-get-mimetype)
     :use-module ((euphrates assq-or) :select (assq-or))
     :use-module ((euphrates raisu) :select (raisu))
-    :use-module ((tegfs keyword-mimetype) :select (keyword-mimetype)))))
+    :use-module ((tegfs keyword-mimetype) :select (keyword-mimetype))
+    )))
 
 
 

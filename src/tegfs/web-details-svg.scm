@@ -17,7 +17,8 @@
  (guile
   (define-module (tegfs web-details-svg)
     :export (web::details.svg)
-    :use-module ((tegfs web-define-static-file) :select (web::define-static-file)))))
+    :use-module ((tegfs web-define-static-file) :select (web::define-static-file))
+    )))
 
 
 

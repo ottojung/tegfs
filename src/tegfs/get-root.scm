@@ -25,7 +25,8 @@
     :use-module ((euphrates memconst) :select (memconst))
     :use-module ((euphrates raisu) :select (raisu))
     :use-module ((euphrates system-environment) :select (system-environment-get))
-    :use-module ((tegfs root-p) :select (root/p)))))
+    :use-module ((tegfs root-p) :select (root/p))
+    )))
 
 
 

@@ -18,7 +18,8 @@
   (define-module (tegfs permission)
     :export (permission-constructor permission? permission-token permission-start permission-time permission-admin? permission-maybepassword permission-uploadaccess? permission-entry-view-access? permission-entry-modify-access? permission-cat-view-access? permission-cat-modify-access? permission-share-longer-than-view? permission-filemap permission-idset)
     :use-module ((euphrates assq-or) :select (assq-or))
-    :use-module ((euphrates define-type9) :select (define-type9)))))
+    :use-module ((euphrates define-type9) :select (define-type9))
+    )))
 
 
 

@@ -18,7 +18,8 @@
   (define-module (tegfs get-save-plugins-files)
     :export (get-save-plugins-files)
     :use-module ((euphrates directory-files) :select (directory-files))
-    :use-module ((tegfs get-save-plugins-directory) :select (get-save-plugins-directory)))))
+    :use-module ((tegfs get-save-plugins-directory) :select (get-save-plugins-directory))
+    )))
 
 
 

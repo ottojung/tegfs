@@ -28,7 +28,9 @@
     :use-module ((tegfs core-entry) :select (core::entry))
     :use-module ((tegfs core-paremeters) :select (core::diropen?/p core::dirpreview?/p core::query/p))
     :use-module ((tegfs core-set-categorization) :select (core::set-categorization))
-    :use-module ((tegfs core-update-entry) :select (core::update-entry)))))
+    :use-module ((tegfs core-update-entry) :select (core::update-entry))
+    :use-module ((tegfs update-entry) :select (update-entry))
+    )))
 
 
 

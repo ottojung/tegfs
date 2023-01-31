@@ -28,7 +28,8 @@
     :use-module ((tegfs sha256sum) :select (sha256sum))
     :use-module ((tegfs web-context) :select (context-passwords context-tokens))
     :use-module ((tegfs webcore-create-admin-permission-bang) :select (webcore::create-admin-permission!))
-    :use-module ((tegfs webcore-parameters) :select (webcore::permissions/p)))))
+    :use-module ((tegfs webcore-parameters) :select (webcore::permissions/p))
+    )))
 
 
 

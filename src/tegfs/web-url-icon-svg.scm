@@ -17,7 +17,8 @@
  (guile
   (define-module (tegfs web-url-icon-svg)
     :export (web::url-icon/svg)
-    :use-module ((euphrates stringf) :select (stringf)))))
+    :use-module ((euphrates stringf) :select (stringf))
+    )))
 
 
 

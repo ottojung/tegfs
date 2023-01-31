@@ -18,7 +18,8 @@
   (define-module (tegfs web-icon)
     :export (web::favicon.ico)
     :use-module ((tegfs web-define-static-file) :select (web::define-static-file))
-    :use-module ((tegfs web-icon-bytes) :select (web::icon::bytes)))))
+    :use-module ((tegfs web-icon-bytes) :select (web::icon::bytes))
+    )))
 
 
 

@@ -19,7 +19,8 @@
     :export (web::iterate-profun-results)
     :use-module ((euphrates fn-alist) :select (fn-alist))
     :use-module ((euphrates raisu) :select (raisu))
-    :use-module ((tegfs web-handle-profun-results) :select (web::handle-profun-results/default-fail-fun web::handle-profun-results/or)))))
+    :use-module ((tegfs web-handle-profun-results) :select (web::handle-profun-results/default-fail-fun web::handle-profun-results/or))
+    )))
 
 
 

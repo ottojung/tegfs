@@ -24,7 +24,8 @@
     :use-module ((euphrates tilda-a) :select (~a))
     :use-module ((tegfs parse-tag) :select (parse-tag))
     :use-module ((tegfs prolog-var) :select (make-prolog-var))
-    :use-module ((tegfs tags-this-variable) :select (tags-this-variable/string)))))
+    :use-module ((tegfs tags-this-variable) :select (tags-this-variable/string))
+    )))
 
 
 

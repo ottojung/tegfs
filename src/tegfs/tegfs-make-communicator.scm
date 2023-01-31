@@ -19,7 +19,8 @@
     :export (tegfs-make-communicator)
     :use-module ((euphrates profun) :select (profun-create-database))
     :use-module ((euphrates profune-communicator) :select (make-profune-communicator))
-    :use-module ((tegfs core-server-handler) :select (core::make-server-handler)))))
+    :use-module ((tegfs core-server-handler) :select (core::make-server-handler))
+    )))
 
 
 

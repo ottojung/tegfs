@@ -17,7 +17,8 @@
  (guile
   (define-module (tegfs web-make-info-box-response)
     :export (web::make-info-box-response)
-    :use-module ((tegfs web-make-generic-box-response) :select (web::make-generic-box-response)))))
+    :use-module ((tegfs web-make-generic-box-response) :select (web::make-generic-box-response))
+    )))
 
 
 

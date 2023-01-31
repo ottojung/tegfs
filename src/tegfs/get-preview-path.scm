@@ -22,7 +22,8 @@
     :use-module ((euphrates string-plus-encode) :select (string-plus-encoding-make))
     :use-module ((euphrates uri-safe-alphabet) :select (uri-safe/alphabet uri-safe/alphabet/index))
     :use-module ((tegfs get-file-type) :select (get-file-type))
-    :use-module ((tegfs get-root) :select (get-root)))))
+    :use-module ((tegfs get-root) :select (get-root))
+    )))
 
 
 

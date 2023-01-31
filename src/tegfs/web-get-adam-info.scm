@@ -20,7 +20,8 @@
     :use-module ((euphrates assq-or) :select (assq-or))
     :use-module ((tegfs filemap) :select (filemap-ref-by-senderid))
     :use-module ((tegfs keyword-entry-parent-directory-senderid) :select (keyword-entry-parent-directory-senderid))
-    :use-module ((tegfs sharedinfo) :select (sharedinfo-entry)))))
+    :use-module ((tegfs sharedinfo) :select (sharedinfo-entry))
+    )))
 
 
 

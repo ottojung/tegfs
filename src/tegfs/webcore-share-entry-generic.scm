@@ -27,7 +27,8 @@
     :use-module ((tegfs permission) :select (permission?))
     :use-module ((tegfs sharedinfo) :select (sharedinfo-senderid sharedinfo-stime))
     :use-module ((tegfs web-share-file) :select (web::share-file/dont-link-yet))
-    :use-module ((tegfs webcore-parameters) :select (webcore::permissions/p)))))
+    :use-module ((tegfs webcore-parameters) :select (webcore::permissions/p))
+    )))
 
 
 

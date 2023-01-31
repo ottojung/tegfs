@@ -25,7 +25,8 @@
     :use-module ((tegfs entry-print-formatted) :select (entry-print/formatted))
     :use-module ((tegfs entry-print) :select (entry-print))
     :use-module ((tegfs keyword-id) :select (keyword-id))
-    :use-module ((tegfs standalone-file-to-entry) :select (standalone-file->entry)))))
+    :use-module ((tegfs standalone-file-to-entry) :select (standalone-file->entry))
+    )))
 
 
 

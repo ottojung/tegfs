@@ -21,7 +21,8 @@
     :use-module ((tegfs file-is-audio-q) :select (file-is-audio?))
     :use-module ((tegfs file-is-image-q) :select (file-is-image?))
     :use-module ((tegfs file-is-text-q) :select (file-is-text?))
-    :use-module ((tegfs file-is-video-q) :select (file-is-video?)))))
+    :use-module ((tegfs file-is-video-q) :select (file-is-video?))
+    )))
 
 
 

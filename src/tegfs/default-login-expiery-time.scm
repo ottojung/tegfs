@@ -17,7 +17,8 @@
  (guile
   (define-module (tegfs default-login-expiery-time)
     :export (default-login-expiery-time)
-    :use-module ((euphrates string-to-seconds) :select (string->seconds)))))
+    :use-module ((euphrates string-to-seconds) :select (string->seconds))
+    )))
 
 
 

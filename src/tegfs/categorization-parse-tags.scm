@@ -22,7 +22,8 @@
     :use-module ((euphrates list-map-flatten) :select (list-map/flatten))
     :use-module ((euphrates parse-cfg-cli) :select (CFG-CLI->CFG-AST))
     :use-module ((euphrates read-list) :select (read-list))
-    :use-module ((tegfs categorization-split) :select (categorization-split)))))
+    :use-module ((tegfs categorization-split) :select (categorization-split))
+    )))
 
 ;; Returns a tree that represents the tags structure
 

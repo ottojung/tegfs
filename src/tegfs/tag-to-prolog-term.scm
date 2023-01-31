@@ -23,7 +23,8 @@
     :use-module ((euphrates list-and-map) :select (list-and-map))
     :use-module ((euphrates raisu) :select (raisu))
     :use-module ((tegfs prolog-cut-symbol) :select (prolog-cut-symbol?))
-    :use-module ((tegfs prolog-var) :select (prolog-var-name prolog-var?)))))
+    :use-module ((tegfs prolog-var) :select (prolog-var-name prolog-var?))
+    )))
 
 
 

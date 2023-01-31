@@ -17,7 +17,8 @@
  (guile
   (define-module (tegfs unparse-tag)
     :export (unparse-tag)
-    :use-module ((euphrates list-intersperse) :select (list-intersperse)))))
+    :use-module ((euphrates list-intersperse) :select (list-intersperse))
+    )))
 
 
 

@@ -23,7 +23,8 @@
     :use-module ((euphrates file-or-directory-exists-q) :select (file-or-directory-exists?))
     :use-module ((euphrates get-current-directory) :select (get-current-directory))
     :use-module ((tegfs web-context) :select (context-sharedir))
-    :use-module ((tegfs web-get-shared-fullpath) :select (web::get-shared-fullpath)))))
+    :use-module ((tegfs web-get-shared-fullpath) :select (web::get-shared-fullpath))
+    )))
 
 
 

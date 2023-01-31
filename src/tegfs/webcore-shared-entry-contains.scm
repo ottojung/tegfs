@@ -29,7 +29,8 @@
     :use-module ((tegfs keyword-target) :select (keyword-target))
     :use-module ((tegfs sharedinfo) :select (sharedinfo-sourcepath))
     :use-module ((tegfs standalone-file-to-entry) :select (standalone-file->entry/prefixed))
-    :use-module ((tegfs web-context) :select (context-filemap/2)))))
+    :use-module ((tegfs web-context) :select (context-filemap/2))
+    )))
 
 
 

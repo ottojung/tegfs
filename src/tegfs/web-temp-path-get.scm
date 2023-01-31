@@ -18,7 +18,8 @@
   (define-module (tegfs web-temp-path-get)
     :export (web::temp-path-get)
     :use-module ((euphrates hashmap) :select (hashmap-ref))
-    :use-module ((tegfs web-current-temp-paths-table-p) :select (web::current-temp-paths-table/p)))))
+    :use-module ((tegfs web-current-temp-paths-table-p) :select (web::current-temp-paths-table/p))
+    )))
 
 
 

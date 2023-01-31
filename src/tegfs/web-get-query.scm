@@ -18,7 +18,8 @@
   (define-module (tegfs web-get-query)
     :export (web::get-query)
     :use-module ((tegfs web-callcontext-p) :select (web::callcontext/p))
-    :use-module ((tegfs web-callcontext) :select (callcontext-query)))))
+    :use-module ((tegfs web-callcontext) :select (callcontext-query))
+    )))
 
 
 

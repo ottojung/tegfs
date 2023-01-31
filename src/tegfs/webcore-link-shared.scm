@@ -31,7 +31,8 @@
     :use-module ((tegfs web-get-adam-info) :select (web::get-adam-info))
     :use-module ((tegfs web-get-sharedinfo-url) :select (web::get-sharedinfo-url))
     :use-module ((tegfs webcore-get-share-plugins) :select (webcore::get-share-plugins))
-    :use-module ((tegfs webcore-run-share-plugins) :select (webcore::run-share-plugins)))))
+    :use-module ((tegfs webcore-run-share-plugins) :select (webcore::run-share-plugins))
+    )))
 
 
 

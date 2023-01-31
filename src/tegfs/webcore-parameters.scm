@@ -17,7 +17,8 @@
  (guile
   (define-module (tegfs webcore-parameters)
     :export (webcore::permissions/p)
-    :use-module ((euphrates profun-op-parameter) :select (make-profun-parameter)))))
+    :use-module ((euphrates profun-op-parameter) :select (make-profun-parameter))
+    )))
 
 
 

@@ -19,7 +19,8 @@
     :export (categorization-complete-selection)
     :use-module ((tegfs categorization-complete-selection-cont) :select (categorization-complete-selection/cont))
     :use-module ((tegfs categorization-parse-tags) :select (categorization-parse-tags))
-    :use-module ((tegfs parsed-categorization-tags-get-all) :select (parsed-categorization-tags-get-all)))))
+    :use-module ((tegfs parsed-categorization-tags-get-all) :select (parsed-categorization-tags-get-all))
+    )))
 
 ;;
 ;; Returns `((ok ,list-of-chosen-tags)

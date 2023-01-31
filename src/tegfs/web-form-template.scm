@@ -17,7 +17,8 @@
  (guile
   (define-module (tegfs web-form-template)
     :export (web::form-template)
-    :use-module ((tegfs web-form-template-generic) :select (web::form-template/generic)))))
+    :use-module ((tegfs web-form-template-generic) :select (web::form-template/generic))
+    )))
 
 
 

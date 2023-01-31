@@ -17,7 +17,8 @@
  (guile
   (define-module (tegfs web-fileunknown-svg)
     :export (web::fileunknown.svg)
-    :use-module ((tegfs web-define-static-file) :select (web::define-static-file)))))
+    :use-module ((tegfs web-define-static-file) :select (web::define-static-file))
+    )))
 
 (define web::fileunknown.svg::string
   "<?xml version='1.0' encoding='UTF-8' standalone='no'?>

@@ -33,13 +33,14 @@
     :use-module ((euphrates write-string-file) :select (write-string-file))
     :use-module ((tegfs a-weblink-q) :select (a-weblink?))
     :use-module ((tegfs add) :select (tegfs-add))
+    :use-module ((tegfs cli-save-loop) :select (CLI::save::loop))
     :use-module ((tegfs clipboard) :select (classify-clipboard-text-content))
     :use-module ((tegfs dump-clipboard) :select (tegfs-dump-clipboard tegfs-dump-clipboard/pasta))
     :use-module ((tegfs fatal) :select (fatal))
     :use-module ((tegfs get-random-basename) :select (get-random-basename))
     :use-module ((tegfs get-root) :select (get-root))
     :use-module ((tegfs make-temporary-filename-local) :select (make-temporary-filename/local))
-    :use-module ((tegfs cli-save-loop) :select (CLI::save::loop)))))
+    )))
 
 
 

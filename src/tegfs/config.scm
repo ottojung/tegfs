@@ -19,7 +19,8 @@
     :export (tegfs-config/parse)
     :use-module ((tegfs fatal) :select (fatal))
     :use-module ((tegfs get-config) :select (get-config))
-    :use-module ((tegfs set-config) :select (set-config)))))
+    :use-module ((tegfs set-config) :select (set-config))
+    )))
 
 
 

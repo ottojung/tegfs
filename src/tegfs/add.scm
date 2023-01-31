@@ -20,7 +20,6 @@
     :use-module ((euphrates catchu-case) :select (catchu-case))
     :use-module ((euphrates fn-cons) :select (fn-cons))
     :use-module ((euphrates list-zip) :select (list-zip))
-    :use-module ((euphrates raisu) :select (raisu))
     :use-module ((euphrates tilda-a) :select (~a))
     :use-module ((tegfs add-entry) :select (add-entry))
     :use-module ((tegfs fatal) :select (fatal))
@@ -28,7 +27,8 @@
     :use-module ((tegfs keyword-prev) :select (keyword-prev))
     :use-module ((tegfs keyword-tags) :select (keyword-tags))
     :use-module ((tegfs keyword-target) :select (keyword-target))
-    :use-module ((tegfs keyword-title) :select (keyword-title)))))
+    :use-module ((tegfs keyword-title) :select (keyword-title))
+    )))
 
 
 

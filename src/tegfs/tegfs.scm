@@ -38,7 +38,8 @@
     :use-module ((tegfs prolog) :select (tegfs-prolog/parse))
     :use-module ((tegfs root-p) :select (root/p))
     :use-module ((tegfs tegfs-version) :select (tegfs-version))
-    :use-module ((tegfs web-server) :select (tegfs-serve/parse)))))
+    :use-module ((tegfs web-server) :select (tegfs-serve/parse))
+    )))
 
 
 (define (main)

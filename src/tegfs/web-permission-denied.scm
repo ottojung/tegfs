@@ -17,7 +17,8 @@
  (guile
   (define-module (tegfs web-permission-denied)
     :export (web::permission-denied)
-    :use-module ((tegfs web-static-error-message) :select (web::static-error-message)))))
+    :use-module ((tegfs web-static-error-message) :select (web::static-error-message))
+    )))
 
 
 

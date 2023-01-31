@@ -20,7 +20,8 @@
     :use-module ((euphrates raisu) :select (raisu))
     :use-module ((euphrates string-split-3) :select (string-split-3))
     :use-module ((euphrates string-split-simple) :select (string-split/simple))
-    :use-module ((euphrates string-strip) :select (string-strip)))))
+    :use-module ((euphrates string-strip) :select (string-strip))
+    )))
 
 
 

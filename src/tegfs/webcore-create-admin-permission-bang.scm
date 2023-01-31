@@ -17,7 +17,8 @@
  (guile
   (define-module (tegfs webcore-create-admin-permission-bang)
     :export (webcore::create-admin-permission!)
-    :use-module ((tegfs make-permission-bang) :select (make-permission!)))))
+    :use-module ((tegfs make-permission-bang) :select (make-permission!))
+    )))
 
 
 

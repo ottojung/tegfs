@@ -17,7 +17,8 @@
  (guile
   (define-module (tegfs entry-print)
     :export (entry-print)
-    :use-module ((tegfs keyword-entry-registry-path) :select (keyword-entry-registry-path)))))
+    :use-module ((tegfs keyword-entry-registry-path) :select (keyword-entry-registry-path))
+    )))
 
 
 

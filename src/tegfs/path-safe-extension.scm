@@ -21,7 +21,8 @@
     :use-module ((euphrates comp) :select (comp))
     :use-module ((euphrates compose-under) :select (compose-under))
     :use-module ((euphrates list-and-map) :select (list-and-map))
-    :use-module ((euphrates path-extension) :select (path-extension)))))
+    :use-module ((euphrates path-extension) :select (path-extension))
+    )))
 
 
 

@@ -18,7 +18,8 @@
   (define-module (tegfs entries-for-each)
     :export (entries-for-each)
     :use-module ((euphrates fn) :select (fn))
-    :use-module ((tegfs entries-iterate) :select (entries-iterate)))))
+    :use-module ((tegfs entries-iterate) :select (entries-iterate))
+    )))
 
 
 

@@ -17,7 +17,8 @@
  (guile
   (define-module (tegfs webcore-share-entry-full)
     :export (webcore::share-entry-full)
-    :use-module ((tegfs webcore-share-entry-generic) :select (webcore::share-entry-generic)))))
+    :use-module ((tegfs webcore-share-entry-generic) :select (webcore::share-entry-generic))
+    )))
 
 
 

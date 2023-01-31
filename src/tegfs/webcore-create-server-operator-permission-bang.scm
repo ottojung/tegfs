@@ -18,7 +18,8 @@
   (define-module (tegfs webcore-create-server-operator-permission-bang)
     :export (webcore::create-server-operator-permission!)
     :use-module ((tegfs webcore-create-admin-permission-bang) :select (webcore::create-admin-permission!))
-    :use-module ((tegfs with-current-time) :select (with-current-time)))))
+    :use-module ((tegfs with-current-time) :select (with-current-time))
+    )))
 
 
 

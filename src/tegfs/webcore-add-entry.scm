@@ -25,7 +25,8 @@
     :use-module ((tegfs add-entry) :select (add-entry))
     :use-module ((tegfs permission) :select (permission?))
     :use-module ((tegfs webcore-access) :select (can-upload?))
-    :use-module ((tegfs webcore-parameters) :select (webcore::permissions/p)))))
+    :use-module ((tegfs webcore-parameters) :select (webcore::permissions/p))
+    )))
 
 
 

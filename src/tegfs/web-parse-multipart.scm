@@ -25,7 +25,8 @@
     :use-module ((euphrates string-strip) :select (string-strip))
     :use-module ((euphrates string-to-lines) :select (string->lines))
     :use-module ((euphrates tilda-a) :select (~a))
-    :use-module ((euphrates un-tilda-s) :select (un~s)))))
+    :use-module ((euphrates un-tilda-s) :select (un~s))
+    )))
 
 
 

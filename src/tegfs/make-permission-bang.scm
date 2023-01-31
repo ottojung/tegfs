@@ -21,7 +21,8 @@
     :use-module ((tegfs make-permission) :select (make-permission))
     :use-module ((tegfs password-to-tokenlike) :select (password->tokenlike))
     :use-module ((tegfs permission) :select (permission-token))
-    :use-module ((tegfs web-context) :select (context-tokens)))))
+    :use-module ((tegfs web-context) :select (context-tokens))
+    )))
 
 
 

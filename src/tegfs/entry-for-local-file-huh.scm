@@ -17,7 +17,8 @@
  (guile
   (define-module (tegfs entry-for-local-file-huh)
     :export (entry-for-local-file?)
-    :use-module ((tegfs keyword-entry-parent-directory-senderid) :select (keyword-entry-parent-directory-senderid)))))
+    :use-module ((tegfs keyword-entry-parent-directory-senderid) :select (keyword-entry-parent-directory-senderid))
+    )))
 
 
 

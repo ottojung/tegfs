@@ -28,7 +28,8 @@
     :use-module ((tegfs permission) :select (permission-filemap))
     :use-module ((tegfs sharedinfo) :select (set-sharedinfo-stime! sharedinfo-stime))
     :use-module ((tegfs web-context) :select (context-filemap/2))
-    :use-module ((tegfs webcore-access) :select (can-share-longer-than-view?)))))
+    :use-module ((tegfs webcore-access) :select (can-share-longer-than-view?))
+    )))
 
 
 

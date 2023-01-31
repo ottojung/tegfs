@@ -18,7 +18,8 @@
   (define-module (tegfs web-display-header)
     :export (web::display-header)
     :use-module ((tegfs web-callcontext) :select (callcontext-headers))
-    :use-module ((tegfs web-get-cookie) :select (web::get-cookie)))))
+    :use-module ((tegfs web-get-cookie) :select (web::get-cookie))
+    )))
 
 
 

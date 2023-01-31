@@ -20,7 +20,8 @@
     :use-module ((euphrates stringf) :select (stringf))
     :use-module ((tegfs web-define-static-file) :select (web::define-static-file))
     :use-module ((tegfs web-preview-height) :select (web::preview-height))
-    :use-module ((tegfs web-preview-width) :select (web::preview-width)))))
+    :use-module ((tegfs web-preview-width) :select (web::preview-width))
+    )))
 
 
 

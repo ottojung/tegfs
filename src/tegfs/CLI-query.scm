@@ -24,7 +24,8 @@
     :use-module ((tegfs entry-print-formatted) :select (entry-print/formatted))
     :use-module ((tegfs entry-print) :select (entry-print))
     :use-module ((tegfs fatal) :select (fatal))
-    :use-module ((tegfs tegfs-make-communicator) :select (tegfs-make-communicator)))))
+    :use-module ((tegfs tegfs-make-communicator) :select (tegfs-make-communicator))
+    )))
 
 
 

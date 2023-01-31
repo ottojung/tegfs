@@ -18,7 +18,6 @@
   (define-module (tegfs CLI-talk)
     :export (CLI::talk)
     :use-module ((euphrates catch-any) :select (catch-any))
-    :use-module ((euphrates dprintln) :select (dprintln))
     :use-module ((euphrates profune-communicator) :select (profune-communicator-handle))
     :use-module ((euphrates read-list) :select (read-list))
     :use-module ((euphrates read-string-line) :select (read-string-line))
@@ -27,7 +26,8 @@
     :use-module ((euphrates words-to-string) :select (words->string))
     :use-module ((tegfs tegfs-make-communicator) :select (tegfs-make-communicator))
     :use-module ((tegfs web-make-communicator) :select (web::make-communicator))
-    :use-module ((tegfs with-current-time) :select (with-current-time)))))
+    :use-module ((tegfs with-current-time) :select (with-current-time))
+    )))
 
 
 

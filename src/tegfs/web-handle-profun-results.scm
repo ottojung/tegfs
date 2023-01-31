@@ -23,7 +23,8 @@
     :use-module ((euphrates words-to-string) :select (words->string))
     :use-module ((tegfs web-bad-request) :select (web::bad-request))
     :use-module ((tegfs web-not-found) :select (web::not-found))
-    :use-module ((tegfs web-permission-denied) :select (web::permission-denied)))))
+    :use-module ((tegfs web-permission-denied) :select (web::permission-denied))
+    )))
 
 
 

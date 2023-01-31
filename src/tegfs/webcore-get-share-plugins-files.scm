@@ -18,7 +18,8 @@
   (define-module (tegfs webcore-get-share-plugins-files)
     :export (webcore::get-share-plugins-files)
     :use-module ((euphrates directory-files) :select (directory-files))
-    :use-module ((tegfs webcore-get-share-plugins-directory) :select (webcore::get-share-plugins-directory)))))
+    :use-module ((tegfs webcore-get-share-plugins-directory) :select (webcore::get-share-plugins-directory))
+    )))
 
 
 

@@ -18,7 +18,8 @@
   (define-module (tegfs web-static-error-message)
     :export (web::static-error-message)
     :use-module ((tegfs web-form-template) :select (web::form-template))
-    :use-module ((tegfs web-make-html-response) :select (web::make-html-response)))))
+    :use-module ((tegfs web-make-html-response) :select (web::make-html-response))
+    )))
 
 
 

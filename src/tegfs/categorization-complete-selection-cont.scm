@@ -25,7 +25,8 @@
     :use-module ((euphrates list-singleton-q) :select (list-singleton?))
     :use-module ((euphrates multiset) :select (list->multiset multiset->list multiset-filter))
     :use-module ((euphrates raisu) :select (raisu))
-    :use-module ((tegfs categorization-starred-symbol-huh) :select (categorization-starred-symbol?)))))
+    :use-module ((tegfs categorization-starred-symbol-huh) :select (categorization-starred-symbol?))
+    )))
 
 
 

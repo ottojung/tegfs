@@ -18,7 +18,8 @@
   (define-module (tegfs web-main-css)
     :export (web::main.css)
     :use-module ((tegfs web-define-static-file) :select (web::define-static-file))
-    :use-module ((tegfs web-style) :select (web::style)))))
+    :use-module ((tegfs web-style) :select (web::style))
+    )))
 
 
 

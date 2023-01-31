@@ -18,7 +18,8 @@
   (define-module (tegfs permission-still-valid-huh)
     :export (permission-still-valid?)
     :use-module ((tegfs current-time-p) :select (current-time/p))
-    :use-module ((tegfs permission-time-left) :select (permission-time-left)))))
+    :use-module ((tegfs permission-time-left) :select (permission-time-left))
+    )))
 
 
 

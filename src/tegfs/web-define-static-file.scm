@@ -18,7 +18,8 @@
   (define-module (tegfs web-define-static-file)
     :export (web::define-static-file)
     :use-module ((euphrates raisu) :select (raisu))
-    :use-module ((tegfs web-return) :select (web::return)))))
+    :use-module ((tegfs web-return) :select (web::return))
+    )))
 
 
 

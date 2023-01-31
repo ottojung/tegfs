@@ -21,7 +21,8 @@
     :use-module ((euphrates compose-under) :select (compose-under))
     :use-module ((euphrates list-last) :select (list-last))
     :use-module ((euphrates list-or-map) :select (list-or-map))
-    :use-module ((tegfs tag-structure-sep1) :select (tag-structure-sep1)))))
+    :use-module ((tegfs tag-structure-sep1) :select (tag-structure-sep1))
+    )))
 
 
 

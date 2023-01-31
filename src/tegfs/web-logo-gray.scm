@@ -18,7 +18,8 @@
   (define-module (tegfs web-logo-gray)
     :export (web::logo-gray.jpeg)
     :use-module ((tegfs web-define-static-file) :select (web::define-static-file))
-    :use-module ((tegfs web-logo-gray-bytes) :select (web::logo-gray/bytes)))))
+    :use-module ((tegfs web-logo-gray-bytes) :select (web::logo-gray/bytes))
+    )))
 
 
 

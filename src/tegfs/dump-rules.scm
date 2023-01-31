@@ -34,7 +34,8 @@
     :use-module ((tegfs prolog-cut-symbol) :select (make-prolog-cut-symbol))
     :use-module ((tegfs prolog-query-parse) :select (prolog-query-parse))
     :use-module ((tegfs rules-filename) :select (rules-filename))
-    :use-module ((tegfs tags-this-variable) :select (tags-this-variable/string)))))
+    :use-module ((tegfs tags-this-variable) :select (tags-this-variable/string))
+    )))
 
 
 

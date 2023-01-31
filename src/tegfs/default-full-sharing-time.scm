@@ -17,7 +17,8 @@
  (guile
   (define-module (tegfs default-full-sharing-time)
     :export (default-full-sharing-time)
-    :use-module ((euphrates string-to-seconds) :select (string->seconds)))))
+    :use-module ((euphrates string-to-seconds) :select (string->seconds))
+    )))
 
 
 

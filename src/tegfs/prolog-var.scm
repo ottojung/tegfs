@@ -17,7 +17,8 @@
  (guile
   (define-module (tegfs prolog-var)
     :export (make-prolog-var prolog-var? prolog-var-name)
-    :use-module ((euphrates define-type9) :select (define-type9)))))
+    :use-module ((euphrates define-type9) :select (define-type9))
+    )))
 
 
 

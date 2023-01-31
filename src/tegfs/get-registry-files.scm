@@ -19,7 +19,8 @@
     :export (get-registry-files)
     :use-module ((euphrates string-split-simple) :select (string-split/simple))
     :use-module ((tegfs get-config) :select (get-config))
-    :use-module ((tegfs get-root) :select (get-root)))))
+    :use-module ((tegfs get-root) :select (get-root))
+    )))
 
 
 

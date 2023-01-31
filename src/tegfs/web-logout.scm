@@ -22,7 +22,8 @@
     :use-module ((tegfs web-get-cookie) :select (web::get-cookie))
     :use-module ((tegfs web-get-safe-referer) :select (web::get-safe-referer))
     :use-module ((tegfs web-return) :select (web::return))
-    :use-module ((tegfs web-set-cookie-header) :select (web::set-cookie-header)))))
+    :use-module ((tegfs web-set-cookie-header) :select (web::set-cookie-header))
+    )))
 
 
 
