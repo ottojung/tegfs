@@ -23,7 +23,7 @@
 
 (define (primitive-print elem)
   (cond
-   ((symbol? elem) (display (symbol->string elem)))
+   ((symbol? elem) (write elem))
    (else (write elem))))
 
 (define (prop-print prop)
@@ -39,7 +39,7 @@
           (write val))
          ((symbol? val)
           (display " . ")
-          (display (symbol->string val)))
+          (write val))
          ((list? val)
           (for-each (lambda (elem) (display " ") (primitive-print elem)) val)))
         (display ")"))))
