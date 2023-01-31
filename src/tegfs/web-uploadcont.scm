@@ -21,7 +21,7 @@
     :use-module ((euphrates comp) :select (appcomp))
     :use-module ((euphrates file-delete) :select (file-delete))
     :use-module ((euphrates file-or-directory-exists-q) :select (file-or-directory-exists?))
-    :use-module ((euphrates hashmap) :select (hashmap-foreach hashmap-ref))
+    :use-module ((euphrates hashmap) :select (hashmap-clear! hashmap-foreach hashmap-ref))
     :use-module ((euphrates make-directories) :select (make-directories))
     :use-module ((euphrates open-file-port) :select (open-file-port))
     :use-module ((euphrates path-get-dirname) :select (path-get-dirname))
@@ -124,6 +124,7 @@
         (let ((port (open-file-port full-filename "w")))
           (put-bytevector port file-content)
           (close-port port)))
+      (hashmap-clear! body/hash)
       (set! file-content #f)
       (set! body/hash #f)))
 
