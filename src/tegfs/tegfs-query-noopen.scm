@@ -71,6 +71,7 @@
     (generify-query parsed-query/1))
   (define rules
     (let ((stack (stack-make)))
+      (stack-push! stack `((%any X)))
       (dump-rules
        (lambda (thing)
          (define RHS (generify-query (cddr thing)))
