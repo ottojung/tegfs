@@ -1,4 +1,4 @@
-;;;; Copyright (C) 2022  Otto Jung
+;;;; Copyright (C) 2022, 2023  Otto Jung
 ;;;;
 ;;;; This program is free software: you can redistribute it and/or modify
 ;;;; it under the terms of the GNU Affero General Public License as published
@@ -16,12 +16,15 @@
 (cond-expand
  (guile
   (define-module (tegfs webcore-context)
-    :export (context-ctr context? context-database context-tempentries context-port context-fileserver context-sharedir context-filemap/2)
+    :export (context-ctr context? context-users context-database context-tempentries context-port context-fileserver context-sharedir context-filemap/2)
     :use-module ((euphrates define-type9) :select (define-type9))
     )))
 
+
+
 (define-type9 <context>
-  (context-ctr tempentries port fileserver sharedir filemap/2) context?
+  (context-ctr users tempentries port fileserver sharedir filemap/2) context?
+  (users context-users) ;; permanent user accounts
   (tempentries context-tempentries) ;; temporary entries. hold things like session tokens and passwords
   (port context-port) ;; port to host the server on
   (fileserver context-fileserver) ;; full URI of the file server

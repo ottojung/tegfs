@@ -34,7 +34,7 @@
 
 
 (define (web::make-context)
-  (define passwords (make-hashmap))
+  (define users-map (make-hashmap))
   (define tempentries (make-hashmap))
 
   (define filemap/2
@@ -83,7 +83,7 @@
      (define id (webcore::credentials->id name pass))
      (unless (string? pass)
        (raisu 'pass-is-no-string "User password is not a string" pass))
-     (hashmap-set! tempentries id struct))
+     (hashmap-set! users-map id struct))
    users)
 
   (unless (string? fileserver)
@@ -93,4 +93,4 @@
   (unless (and (integer? port) (exact? port) (> port 0))
     (raisu 'port-must-be-a-natural-number port))
 
-  (context-ctr passwords tempentries port fileserver sharedir filemap/2))
+  (context-ctr users-map tempentries port fileserver sharedir filemap/2))

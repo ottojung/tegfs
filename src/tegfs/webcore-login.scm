@@ -26,7 +26,7 @@
     :use-module ((tegfs default-login-expiery-time) :select (default-login-expiery-time))
     :use-module ((tegfs permission) :select (permission?))
     :use-module ((tegfs sha256sum) :select (sha256sum))
-    :use-module ((tegfs webcore-context) :select (context-tempentries))
+    :use-module ((tegfs webcore-context) :select (context-tempentries context-users))
     :use-module ((tegfs webcore-create-admin-permission-bang) :select (webcore::create-admin-permission!))
     :use-module ((tegfs webcore-credentials-to-id) :select (webcore::credentials->id))
     :use-module ((tegfs webcore-parameters) :select (webcore::permissions/p))
@@ -37,6 +37,7 @@
 
 (define webcore::login
   (lambda (webcore::context)
+    (define users (context-users webcore::context))
     (define tempentries (context-tempentries webcore::context))
 
     (profun-op-lambda
@@ -52,7 +53,9 @@
             (webcore::credentials->id name hashed)))
      (define user
        (and hashed
-            (hashmap-ref tempentries mainid #f)))
+            (or
+             (hashmap-ref users mainid #f)
+             (hashmap-ref tempentries mainid #f))))
 
      (cond
       ((profun-unbound-value? password)
