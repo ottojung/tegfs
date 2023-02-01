@@ -19,7 +19,6 @@
     :export (tegfs-query/noopen)
     :use-module ((euphrates assq-or) :select (assq-or))
     :use-module ((euphrates comp) :select (appcomp))
-    :use-module ((euphrates define-pair) :select (define-pair))
     :use-module ((euphrates file-delete) :select (file-delete))
     :use-module ((euphrates hashset) :select (hashset-has? make-hashset))
     :use-module ((euphrates list-intersperse) :select (list-intersperse))
@@ -29,10 +28,10 @@
     :use-module ((euphrates profun-standard-handler) :select (profun-standard-handler))
     :use-module ((euphrates profun) :select (profun-create-falsy-database profun-eval-query/boolean))
     :use-module ((euphrates raisu) :select (raisu))
+    :use-module ((euphrates run-syncproc-re-star) :select (run-syncproc/re*))
     :use-module ((euphrates stack) :select (stack->list stack-make stack-push!))
     :use-module ((euphrates string-strip) :select (string-strip))
     :use-module ((euphrates string-to-lines) :select (string->lines))
-    :use-module ((euphrates system-re) :select (system-re))
     :use-module ((euphrates tilda-a) :select (~a))
     :use-module ((tegfs dump-rules) :select (dump-rules))
     :use-module ((tegfs entries-iterate) :select (entries-iterate))
@@ -123,8 +122,8 @@
   (define _222
     (close-port output-port))
 
-  (define-pair (ids/string code)
-    (system-re "prolog -s ~a" output-path))
+  (define-values (ids/string code)
+    (run-syncproc/re* "prolog" "-s" output-path))
 
   (define _444
     (file-delete output-path))

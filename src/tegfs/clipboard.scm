@@ -17,14 +17,14 @@
  (guile
   (define-module (tegfs clipboard)
     :export (dump-clipboard-to-temporary dump-clipboard-to-file get-clipboard-data-types get-clipboard-text-content classify-clipboard-text-content get-clipboard-type-extension choose-clipboard-data-type)
-    :use-module ((euphrates define-pair) :select (define-pair))
+    :use-module ((euphrates asyncproc-input-text-p) :select (asyncproc-input-text/p))
     :use-module ((euphrates file-or-directory-exists-q) :select (file-or-directory-exists?))
     :use-module ((euphrates lines-to-string) :select (lines->string))
     :use-module ((euphrates mimetype-extensions) :select (mimetype/extensions))
+    :use-module ((euphrates run-syncproc-re-star) :select (run-syncproc/re*))
     :use-module ((euphrates string-strip) :select (string-strip))
     :use-module ((euphrates string-to-lines) :select (string->lines))
     :use-module ((euphrates system-fmt) :select (system-fmt))
-    :use-module ((euphrates system-re) :select (system-re))
     :use-module ((tegfs a-weblink-q) :select (a-weblink?))
     :use-module ((tegfs make-temporary-filename-local) :select (make-temporary-filename/local))
     )))
@@ -49,8 +49,8 @@
        target))
 
 (define (get-clipboard-data-types)
-  (define-pair (types-list/str status)
-    (system-re "xclip -o -target TARGETS -selection clipboard"))
+  (define-values (types-list/str status)
+    (run-syncproc/re* "xclip" "-o" "-target" "TARGETS" "-selection" "clipboard"))
 
   (and (= 0 status)
        (string->lines types-list/str)))
@@ -58,14 +58,15 @@
 (define (choose-clipboard-data-type)
   (define types-list (get-clipboard-data-types))
   (define types-list/str (lines->string types-list))
-  (define-pair (chosen status)
-    (system-re "echo ~a | fzf" types-list/str))
+  (define-values (chosen status)
+    (parameterize ((asyncproc-input-text/p types-list/str))
+      (run-syncproc/re* "fzf")))
   (and (= 0 status)
        (string-strip chosen)))
 
 (define (get-clipboard-text-content)
-  (define-pair (text status)
-    (system-re "xclip -selection clipboard -out"))
+  (define-values (text status)
+    (run-syncproc/re* "xclip" "-selection" "clipboard" "-out"))
 
   (if (= status 0) text ""))
 
