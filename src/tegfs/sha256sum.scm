@@ -1,4 +1,4 @@
-;;;; Copyright (C) 2022  Otto Jung
+;;;; Copyright (C) 2022, 2023  Otto Jung
 ;;;;
 ;;;; This program is free software: you can redistribute it and/or modify
 ;;;; it under the terms of the GNU Affero General Public License as published
@@ -17,21 +17,36 @@
  (guile
   (define-module (tegfs sha256sum)
     :export (sha256sum)
+    :use-module ((euphrates catch-any) :select (catch-any))
     :use-module ((euphrates comp) :select (appcomp))
-    :use-module ((euphrates define-pair) :select (define-pair))
+    :use-module ((euphrates file-delete) :select (file-delete))
     :use-module ((euphrates raisu) :select (raisu))
+    :use-module ((euphrates run-syncproc-re) :select (run-syncproc/re))
+    :use-module ((euphrates string-strip) :select (string-strip))
     :use-module ((euphrates string-to-lines) :select (string->lines))
     :use-module ((euphrates string-to-words) :select (string->words))
-    :use-module ((euphrates system-re) :select (system-re))
+    :use-module ((euphrates write-string-file) :select (write-string-file))
+    :use-module ((tegfs make-temporary-filename-local) :select (make-temporary-filename/local))
     )))
 
 
-
 (define (sha256sum text)
-  (define-pair (output exit-code)
-    (system-re "printf '%s' ~a | sha256sum" text))
+  (define path
+    (make-temporary-filename/local))
+  (define ret
+    (catch-any
+     (lambda _
+       (write-string-file path text)
+       (appcomp
+        (run-syncproc/re "sha256sum" path)
+        string-strip
+        string->lines
+        car
+        string->words
+        car))
+     (lambda errs
+       (file-delete path)
+       (raisu 'could-not-get-a-hash errs))))
 
-  (unless (equal? 0 exit-code)
-    (raisu 'could-not-get-a-hash exit-code))
-
-  (appcomp output string->lines car string->words car))
+  (file-delete path)
+  ret)
