@@ -27,7 +27,7 @@
     :use-module ((tegfs permission-still-valid-huh) :select (permission-still-valid?))
     :use-module ((tegfs permission) :select (permission-filemap))
     :use-module ((tegfs sharedinfo) :select (sharedinfo-ctime sharedinfo-stime))
-    :use-module ((tegfs webcore-context) :select (context-filemap/2 context-sharedir context-tokens))
+    :use-module ((tegfs webcore-context) :select (context-filemap/2 context-sharedir context-tempentries))
     )))
 
 
@@ -53,7 +53,7 @@
                   (raisu 'current-time-is-not-set)))
   (define sharedir (context-sharedir ctx))
   (define filemap/2 (context-filemap/2 ctx))
-  (define tokens (context-tokens ctx))
+  (define tempentries (context-tempentries ctx))
   (define delayed-list '())
   (define-syntax delayop
     (syntax-rules ()
@@ -82,8 +82,8 @@
                 (permission-filemap perm) target-fullpath))))
           (permission-filemap perm))
          (delayop
-          (hashmap-delete! tokens token))))
-   tokens)
+          (hashmap-delete! tempentries token))))
+   tempentries)
 
   (for-each (lambda (delayed) (delayed)) delayed-list)
 

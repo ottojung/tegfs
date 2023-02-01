@@ -25,8 +25,9 @@
     :use-module ((euphrates profun-value) :select (profun-unbound-value?))
     :use-module ((tegfs default-login-expiery-time) :select (default-login-expiery-time))
     :use-module ((tegfs password-to-tokenlike) :select (password->tokenlike))
+    :use-module ((tegfs permission) :select (permission?))
     :use-module ((tegfs sha256sum) :select (sha256sum))
-    :use-module ((tegfs webcore-context) :select (context-passwords context-tokens))
+    :use-module ((tegfs webcore-context) :select (context-passwords context-tempentries))
     :use-module ((tegfs webcore-create-admin-permission-bang) :select (webcore::create-admin-permission!))
     :use-module ((tegfs webcore-parameters) :select (webcore::permissions/p))
     )))
@@ -36,7 +37,7 @@
 (define webcore::login
   (lambda (webcore::context)
     (define passwords (context-passwords webcore::context))
-    (define tokens (context-tokens webcore::context))
+    (define tempentries (context-tempentries webcore::context))
 
     (profun-op-lambda
      :with-env
@@ -51,7 +52,7 @@
      (define temporary
        (and hashed
             (let ((tokenlike (password->tokenlike password)))
-              (hashmap-ref tokens tokenlike #f))))
+              (hashmap-ref tempentries tokenlike #f))))
 
      (cond
       ((profun-unbound-value? password)
@@ -64,7 +65,7 @@
             webcore::context password default-login-expiery-time))
          (profun-set-parameter (webcore::permissions/p <- perm))))
 
-      (temporary
+      ((permission? temporary)
        (profun-set-parameter (webcore::permissions/p <- temporary)))
 
       (else

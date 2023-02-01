@@ -33,7 +33,7 @@
 
 (define (web::make-context)
   (define passwords (make-hashmap))
-  (define tokens (make-hashmap))
+  (define tempentries (make-hashmap))
 
   (define filemap/2
     (filemap-make/empty))
@@ -86,4 +86,4 @@
   (unless (and (integer? port) (exact? port) (> port 0))
     (raisu 'port-must-be-a-natural-number port))
 
-  (context-ctr passwords tokens port fileserver sharedir filemap/2))
+  (context-ctr passwords tempentries port fileserver sharedir filemap/2))

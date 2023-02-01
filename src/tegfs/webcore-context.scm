@@ -16,16 +16,16 @@
 (cond-expand
  (guile
   (define-module (tegfs webcore-context)
-    :export (context-ctr context? context-passwords context-database context-tokens context-port context-fileserver context-sharedir context-filemap/2)
+    :export (context-ctr context? context-passwords context-database context-tempentries context-port context-fileserver context-sharedir context-filemap/2)
     :use-module ((euphrates define-type9) :select (define-type9))
     )))
 
 
 
 (define-type9 <context>
-  (context-ctr passwords tokens port fileserver sharedir filemap/2) context?
+  (context-ctr passwords tempentries port fileserver sharedir filemap/2) context?
   (passwords context-passwords) ;; user credentials passwords
-  (tokens context-tokens) ;; temporary session tokens
+  (tempentries context-tempentries) ;; temporary entries. hold things like session tokens and passwords
   (port context-port) ;; port to host the server on
   (fileserver context-fileserver) ;; full URI of the file server
   (sharedir context-sharedir) ;; directory with shared wiles

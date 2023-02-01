@@ -1,4 +1,4 @@
-;;;; Copyright (C) 2022  Otto Jung
+;;;; Copyright (C) 2022, 2023  Otto Jung
 ;;;;
 ;;;; This program is free software: you can redistribute it and/or modify
 ;;;; it under the terms of the GNU Affero General Public License as published
@@ -19,16 +19,17 @@
     :export (tegfs-login-by-key)
     :use-module ((euphrates hashmap) :select (hashmap-delete! hashmap-ref))
     :use-module ((tegfs permission-still-valid-huh) :select (permission-still-valid?))
-    :use-module ((tegfs webcore-context) :select (context-tokens))
+    :use-module ((tegfs permission) :select (permission?))
+    :use-module ((tegfs webcore-context) :select (context-tempentries))
     )))
 
 
 
 (define (tegfs-login-by-key ctx key)
-  (define tokens (context-tokens ctx))
+  (define tempentries (context-tempentries ctx))
   (define existing (hashmap-ref tokens key #f))
   (define perm
-    (and existing
+    (and (permission? existing)
          (if (permission-still-valid? existing)
              existing
              (begin
@@ -36,4 +37,3 @@
                #f))))
 
   perm)
-

@@ -21,20 +21,20 @@
     :use-module ((tegfs make-permission) :select (make-permission))
     :use-module ((tegfs password-to-tokenlike) :select (password->tokenlike))
     :use-module ((tegfs permission) :select (permission-token))
-    :use-module ((tegfs webcore-context) :select (context-tokens))
+    :use-module ((tegfs webcore-context) :select (context-tempentries))
     )))
 
 
 
 (define (make-permission! ctx expiery-time admin? maybepassword dynamic)
-  (define tokens (context-tokens ctx))
+  (define tempentries (context-tempentries ctx))
   (define perm
     (make-permission
      expiery-time admin?
      maybepassword dynamic))
   (define token (permission-token perm))
-  (hashmap-set! tokens token perm)
+  (hashmap-set! tempentries token perm)
   (when maybepassword
     (let ((tokenlike (password->tokenlike maybepassword)))
-      (hashmap-set! tokens tokenlike perm)))
+      (hashmap-set! tempentries tokenlike perm)))
   perm)
