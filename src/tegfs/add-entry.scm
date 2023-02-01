@@ -62,7 +62,7 @@
      (random-choice 30 alphanum-lowercase/alphabet)))
 
   (define (get-date)
-    (date-get-current-string "+~Y-~m-~dT~H:~M:~S+0000"))
+    (date-get-current-string "~Y-~m-~dT~H:~M:~S+0000"))
 
   (define (tosymbol x)
     (cond
