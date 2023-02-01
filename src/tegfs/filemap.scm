@@ -17,24 +17,19 @@
  (guile
   (define-module (tegfs filemap)
     :export (recepient? filemap-set! filemap-ref-by-senderid filemap-ref-by-recepientid filemap-delete-by-senderid! filemap-delete-by-recepientid!)
-    :use-module ((euphrates define-type9) :select (define-type9))
-    :use-module ((euphrates hashmap) :select (hashmap-delete! hashmap-ref hashmap-set! make-hashmap))
-    :use-module ((tegfs sharedinfo) :select (sharedinfo-recepientid sharedinfo-senderid sharedinfo?))
+    :use-module ((euphrates hashmap) :select (hashmap-delete! hashmap-ref hashmap-set!))
+    :use-module ((tegfs sharedinfo) :select (sharedinfo-ctime sharedinfo-recepientid sharedinfo-senderid sharedinfo-stime sharedinfo?))
+    :use-module ((tegfs sharereceipt) :select (sharereceipt-constructor sharereceipt-senderid sharereceipt?))
     )))
-
-
-(define-type9 <recepient>
-  (recepient-constructor id senderid) recepient?
-  (id recepient-id)
-  (senderid recepient-senderid)
-  )
 
 (define (filemap-set! filemap/2 info)
   (define vid (sharedinfo-senderid info))
   (define recepientid (sharedinfo-recepientid info))
-  (define recepient (recepient-constructor recepientid vid))
+  (define date (sharedinfo-ctime info))
+  (define stime (sharedinfo-stime info))
+  (define receipt (sharereceipt-constructor recepientid vid date stime))
   (hashmap-set! filemap/2 vid info)
-  (hashmap-set! filemap/2 recepientid recepient))
+  (hashmap-set! filemap/2 recepientid receipt))
 
 (define (filemap-ref-by-senderid filemap/2 vid default)
   (define r (hashmap-ref filemap/2 vid #f))
@@ -42,8 +37,8 @@
 
 (define (filemap-ref-by-recepientid filemap/2 recepientid default)
   (define r (hashmap-ref filemap/2 recepientid #f))
-  (if (recepient? r)
-      (filemap-ref-by-senderid filemap/2 (recepient-id r) default)
+  (if (sharereceipt? r)
+      (filemap-ref-by-senderid filemap/2 (sharereceipt-senderid r) default)
       default))
 
 (define (filemap-delete-by-senderid! filemap/2 vid)
