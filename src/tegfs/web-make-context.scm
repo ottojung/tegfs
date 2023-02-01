@@ -22,7 +22,6 @@
     :use-module ((euphrates make-directories) :select (make-directories))
     :use-module ((euphrates raisu) :select (raisu))
     :use-module ((euphrates tilda-a) :select (~a))
-    :use-module ((tegfs filemap) :select (filemap-make/empty))
     :use-module ((tegfs get-config) :select (get-config))
     :use-module ((tegfs keyword-config-port) :select (keyword-config-port))
     :use-module ((tegfs web-default-port) :select (web::default-port))
@@ -37,8 +36,6 @@
   (define users-map (make-hashmap))
   (define tempentries (make-hashmap))
 
-  (define filemap/2
-    (filemap-make/empty))
   (define config
     (get-config))
   (define _1
@@ -93,4 +90,4 @@
   (unless (and (integer? port) (exact? port) (> port 0))
     (raisu 'port-must-be-a-natural-number port))
 
-  (context-ctr users-map tempentries port fileserver sharedir filemap/2))
+  (context-ctr users-map tempentries port fileserver sharedir))

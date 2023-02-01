@@ -1,4 +1,4 @@
-;;;; Copyright (C) 2022  Otto Jung
+;;;; Copyright (C) 2022, 2023  Otto Jung
 ;;;;
 ;;;; This program is free software: you can redistribute it and/or modify
 ;;;; it under the terms of the GNU Affero General Public License as published
@@ -16,46 +16,46 @@
 (cond-expand
  (guile
   (define-module (tegfs filemap)
-    :export (filemap-make/empty filemap-set! filemap-ref-by-senderid filemap-ref-by-recepientid filemap-delete-by-senderid! filemap-delete-by-recepientid!)
+    :export (filemap-set! filemap-ref-by-senderid filemap-ref-by-recepientid filemap-delete-by-senderid! filemap-delete-by-recepientid!)
+    :use-module ((euphrates define-type9) :select (define-type9))
     :use-module ((euphrates hashmap) :select (hashmap-delete! hashmap-ref hashmap-set! make-hashmap))
-    :use-module ((tegfs sharedinfo) :select (sharedinfo-recepientid sharedinfo-senderid))
+    :use-module ((tegfs sharedinfo) :select (sharedinfo-recepientid sharedinfo-senderid sharedinfo?))
     )))
 
 
-
-(define (filemap-make/empty)
-  (cons (make-hashmap) (make-hashmap)))
+(define-type9 <recepient>
+  (recepient-constructor id senderid) recepient?
+  (id recepient-id)
+  (senderid recepient-senderid)
+  )
 
 (define (filemap-set! filemap/2 info)
   (define vid (sharedinfo-senderid info))
   (define recepientid (sharedinfo-recepientid info))
-  (define first (car filemap/2))
-  (define second (cdr filemap/2))
-  (hashmap-set! first vid info)
-  (hashmap-set! second recepientid info))
+  (define recepient (recepient-constructor recepientid vid))
+  (hashmap-set! filemap/2 vid info)
+  (hashmap-set! filemap/2 recepientid recepient))
 
-(define (filemap-ref-by-senderid filemap/2 id default)
-  (define first (car filemap/2))
-  (hashmap-ref first id default))
+(define (filemap-ref-by-senderid filemap/2 vid default)
+  (define r (hashmap-ref filemap/2 vid #f))
+  (if (sharedinfo? r) r default))
 
 (define (filemap-ref-by-recepientid filemap/2 recepientid default)
-  (define second (cdr filemap/2))
-  (hashmap-ref second recepientid default))
+  (define r (hashmap-ref filemap/2 recepientid #f))
+  (if (recepient? r)
+      (filemap-ref-by-senderid filemap/2 (recepient-id r) default)
+      default))
 
-(define (filemap-delete-by-senderid! filemap/2 id)
-  (define first (car filemap/2))
-  (define second (cdr filemap/2))
-  (define info (filemap-ref-by-senderid filemap/2 id #f))
+(define (filemap-delete-by-senderid! filemap/2 vid)
+  (define info (filemap-ref-by-senderid filemap/2 vid #f))
   (when info
     (let ((recepientid (sharedinfo-recepientid info)))
-      (hashmap-delete! first id)
-      (hashmap-delete! second recepientid))))
+      (hashmap-delete! filemap/2 vid)
+      (hashmap-delete! filemap/2 recepientid))))
 
 (define (filemap-delete-by-recepientid! filemap/2 recepientid)
-  (define first (car filemap/2))
-  (define second (cdr filemap/2))
   (define info (filemap-ref-by-recepientid filemap/2 recepientid #f))
   (when info
-    (let ((id (sharedinfo-senderid info)))
-      (hashmap-delete! first id)
-      (hashmap-delete! second recepientid))))
+    (let ((vid (sharedinfo-senderid info)))
+      (hashmap-delete! filemap/2 vid)
+      (hashmap-delete! filemap/2 recepientid))))

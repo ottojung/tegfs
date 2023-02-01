@@ -61,13 +61,14 @@
        (set! delayed-list
              (cons (lambda _ . bodies) delayed-list)))))
 
-  (hashmap-foreach
-   (lambda (recepientid info)
-     (unless (sharedinfo-still-valid? info)
-       (delayop
-        (display "UNSHARE ") (write recepientid) (newline)
-        (filemap-delete-by-recepientid! filemap/2 recepientid))))
-   (cdr filemap/2))
+  ;; ;; FIXME: DEBUG: uncomment this
+  ;; (hashmap-foreach
+  ;;  (lambda (recepientid info)
+  ;;    (unless (sharedinfo-still-valid? info)
+  ;;      (delayop
+  ;;       (display "UNSHARE ") (write recepientid) (newline)
+  ;;       (filemap-delete-by-recepientid! filemap/2 recepientid))))
+  ;;  (cdr filemap/2))
 
   (hashmap-foreach
    (lambda (token perm)

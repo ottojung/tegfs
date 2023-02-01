@@ -20,14 +20,14 @@
     :use-module ((euphrates define-type9) :select (define-type9))
     )))
 
-
-
 (define-type9 <context>
-  (context-ctr users tempentries port fileserver sharedir filemap/2) context?
+  (context-ctr users tempentries port fileserver sharedir) context?
   (users context-users) ;; permanent user accounts
-  (tempentries context-tempentries) ;; temporary entries. hold things like session tokens and passwords
+  (tempentries context-tempentries) ;; temporary entries. hold things like session tokens and shared files infos
   (port context-port) ;; port to host the server on
   (fileserver context-fileserver) ;; full URI of the file server
   (sharedir context-sharedir) ;; directory with shared wiles
-  (filemap/2 context-filemap/2) ;; cons of hashmaps of type [: vid -> info] and [: recepientid -> info]
   )
+
+(define (context-filemap/2 ctx)
+  (context-tempentries ctx))
