@@ -18,15 +18,16 @@
   (define-module (tegfs web-collectgarbage-nocall)
     :export (web::collectgarbage/nocall)
     :use-module ((euphrates directory-files) :select (directory-files))
+    :use-module ((euphrates dprintln) :select (dprintln))
     :use-module ((euphrates file-delete) :select (file-delete))
     :use-module ((euphrates hashmap) :select (hashmap-delete! hashmap-foreach))
     :use-module ((euphrates path-without-extension) :select (path-without-extension))
     :use-module ((euphrates raisu) :select (raisu))
     :use-module ((tegfs current-time-p) :select (current-time/p))
-    :use-module ((tegfs filemap) :select (filemap-delete-by-recepientid! filemap-ref-by-recepientid))
+    :use-module ((tegfs filemap) :select (filemap-delete-by-recepientid! filemap-ref-by-recepientid recepient?))
     :use-module ((tegfs permission-still-valid-huh) :select (permission-still-valid?))
     :use-module ((tegfs permission) :select (permission-filemap permission?))
-    :use-module ((tegfs sharedinfo) :select (sharedinfo-ctime sharedinfo-stime))
+    :use-module ((tegfs sharedinfo) :select (sharedinfo-ctime sharedinfo-recepientid sharedinfo-stime sharedinfo?))
     :use-module ((tegfs webcore-context) :select (context-filemap/2 context-sharedir context-tempentries))
     )))
 
@@ -52,8 +53,8 @@
   (define now (or (current-time/p)
                   (raisu 'current-time-is-not-set)))
   (define sharedir (context-sharedir ctx))
-  (define filemap/2 (context-filemap/2 ctx))
   (define tempentries (context-tempentries ctx))
+  (define filemap/2 (context-filemap/2 ctx))
   (define delayed-list '())
   (define-syntax delayop
     (syntax-rules ()
@@ -61,30 +62,32 @@
        (set! delayed-list
              (cons (lambda _ . bodies) delayed-list)))))
 
-  ;; ;; FIXME: DEBUG: uncomment this
-  ;; (hashmap-foreach
-  ;;  (lambda (recepientid info)
-  ;;    (unless (sharedinfo-still-valid? info)
-  ;;      (delayop
-  ;;       (display "UNSHARE ") (write recepientid) (newline)
-  ;;       (filemap-delete-by-recepientid! filemap/2 recepientid))))
-  ;;  (cdr filemap/2))
-
   (hashmap-foreach
-   (lambda (token perm)
-     (when (permission? perm)
-       (if (permission-still-valid? perm now)
-           (hashmap-foreach
-            (lambda (target-fullpath info)
-              (unless (sharedinfo-still-valid? info)
-                (delayop
-                 (display "UNPERM ")
-                 (write target-fullpath) (newline)
-                 (hashmap-delete!
-                  (permission-filemap perm) target-fullpath))))
-            (permission-filemap perm))
+   (lambda (token tempentry)
+     (cond
+      ((sharedinfo? tempentry)
+       (let* ((info tempentry)
+              (recepientid (sharedinfo-recepientid info)))
+         (unless (sharedinfo-still-valid? info)
            (delayop
-            (hashmap-delete! tempentries token)))))
+            (display "UNSHARE ") (write recepientid) (newline)
+            (filemap-delete-by-recepientid! filemap/2 recepientid)))))
+      ((recepient? tempentry) 0) ;; should be deleted by the above line
+      ((permission? tempentry)
+       (let ((perm tempentry))
+         (if (permission-still-valid? perm now)
+             (hashmap-foreach
+              (lambda (target-fullpath info)
+                (unless (sharedinfo-still-valid? info)
+                  (delayop
+                   (display "UNPERM ")
+                   (write target-fullpath) (newline)
+                   (hashmap-delete!
+                    (permission-filemap perm) target-fullpath))))
+              (permission-filemap perm))
+             (delayop
+              (hashmap-delete! tempentries token)))))
+      (else (dprintln "Unknown object in gc ~s" tempentry))))
    tempentries)
 
   (for-each (lambda (delayed) (delayed)) delayed-list)

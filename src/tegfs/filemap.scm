@@ -16,7 +16,7 @@
 (cond-expand
  (guile
   (define-module (tegfs filemap)
-    :export (filemap-set! filemap-ref-by-senderid filemap-ref-by-recepientid filemap-delete-by-senderid! filemap-delete-by-recepientid!)
+    :export (recepient? filemap-set! filemap-ref-by-senderid filemap-ref-by-recepientid filemap-delete-by-senderid! filemap-delete-by-recepientid!)
     :use-module ((euphrates define-type9) :select (define-type9))
     :use-module ((euphrates hashmap) :select (hashmap-delete! hashmap-ref hashmap-set! make-hashmap))
     :use-module ((tegfs sharedinfo) :select (sharedinfo-recepientid sharedinfo-senderid sharedinfo?))
