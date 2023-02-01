@@ -1,4 +1,4 @@
-;;;; Copyright (C) 2022  Otto Jung
+;;;; Copyright (C) 2022, 2023  Otto Jung
 ;;;;
 ;;;; This program is free software: you can redistribute it and/or modify
 ;;;; it under the terms of the GNU Affero General Public License as published
@@ -18,11 +18,14 @@
   (define-module (tegfs password-to-tokenlike)
     :export (password->tokenlike)
     :use-module ((tegfs sha256sum) :select (sha256sum))
+    :use-module ((tegfs webcore-credentials-to-id) :select (webcore::credentials->id))
     )))
 
 
 
 (define (password->tokenlike password)
+  (define name "")
   (define hash (sha256sum password))
-  (define wrapped `(pass ,hash))
+  (define wrapped
+    (webcore::credentials->id name hash))
   wrapped)

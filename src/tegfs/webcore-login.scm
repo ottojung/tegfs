@@ -24,49 +24,52 @@
     :use-module ((euphrates profun-request-value) :select (profun-request-value))
     :use-module ((euphrates profun-value) :select (profun-unbound-value?))
     :use-module ((tegfs default-login-expiery-time) :select (default-login-expiery-time))
-    :use-module ((tegfs password-to-tokenlike) :select (password->tokenlike))
     :use-module ((tegfs permission) :select (permission?))
     :use-module ((tegfs sha256sum) :select (sha256sum))
-    :use-module ((tegfs webcore-context) :select (context-passwords context-tempentries))
+    :use-module ((tegfs webcore-context) :select (context-tempentries))
     :use-module ((tegfs webcore-create-admin-permission-bang) :select (webcore::create-admin-permission!))
+    :use-module ((tegfs webcore-credentials-to-id) :select (webcore::credentials->id))
     :use-module ((tegfs webcore-parameters) :select (webcore::permissions/p))
+    :use-module ((tegfs webcore-user) :select (webcore::user?))
     )))
 
 
 
 (define webcore::login
   (lambda (webcore::context)
-    (define passwords (context-passwords webcore::context))
     (define tempentries (context-tempentries webcore::context))
 
     (profun-op-lambda
      :with-env
-     (ctx (password) (P-name))
+     (ctx (name password) (N-name P-name))
 
      (define hashed
        (and (string? password)
+            (string? name)
             (sha256sum password)))
-     (define registered?
+     (define mainid
        (and hashed
-            (hashmap-ref passwords hashed #f)))
-     (define temporary
+            (webcore::credentials->id name hashed)))
+     (define user
        (and hashed
-            (let ((tokenlike (password->tokenlike password)))
-              (hashmap-ref tempentries tokenlike #f))))
+            (hashmap-ref tempentries mainid #f)))
 
      (cond
       ((profun-unbound-value? password)
        (profun-request-value P-name))
 
-      (registered?
+      ((profun-unbound-value? name)
+       (profun-request-value N-name))
+
+      ((webcore::user? user)
        (let ()
          (define perm
            (webcore::create-admin-permission!
             webcore::context password default-login-expiery-time))
          (profun-set-parameter (webcore::permissions/p <- perm))))
 
-      ((permission? temporary)
-       (profun-set-parameter (webcore::permissions/p <- temporary)))
+      ((permission? user)
+       (profun-set-parameter (webcore::permissions/p <- user)))
 
       (else
        (make-profun-error 'permission-denied "Bad password here"))))))

@@ -25,7 +25,7 @@
     :use-module ((tegfs current-time-p) :select (current-time/p))
     :use-module ((tegfs filemap) :select (filemap-delete-by-recepientid! filemap-ref-by-recepientid))
     :use-module ((tegfs permission-still-valid-huh) :select (permission-still-valid?))
-    :use-module ((tegfs permission) :select (permission-filemap))
+    :use-module ((tegfs permission) :select (permission-filemap permission?))
     :use-module ((tegfs sharedinfo) :select (sharedinfo-ctime sharedinfo-stime))
     :use-module ((tegfs webcore-context) :select (context-filemap/2 context-sharedir context-tempentries))
     )))
@@ -71,18 +71,19 @@
 
   (hashmap-foreach
    (lambda (token perm)
-     (if (permission-still-valid? perm now)
-         (hashmap-foreach
-          (lambda (target-fullpath info)
-            (unless (sharedinfo-still-valid? info)
-              (delayop
-               (display "UNPERM ")
-               (write target-fullpath) (newline)
-               (hashmap-delete!
-                (permission-filemap perm) target-fullpath))))
-          (permission-filemap perm))
-         (delayop
-          (hashmap-delete! tempentries token))))
+     (when (permission? perm)
+       (if (permission-still-valid? perm now)
+           (hashmap-foreach
+            (lambda (target-fullpath info)
+              (unless (sharedinfo-still-valid? info)
+                (delayop
+                 (display "UNPERM ")
+                 (write target-fullpath) (newline)
+                 (hashmap-delete!
+                  (permission-filemap perm) target-fullpath))))
+            (permission-filemap perm))
+           (delayop
+            (hashmap-delete! tempentries token)))))
    tempentries)
 
   (for-each (lambda (delayed) (delayed)) delayed-list)

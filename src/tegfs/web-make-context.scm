@@ -25,8 +25,10 @@
     :use-module ((tegfs filemap) :select (filemap-make/empty))
     :use-module ((tegfs get-config) :select (get-config))
     :use-module ((tegfs keyword-config-port) :select (keyword-config-port))
-    :use-module ((tegfs webcore-context) :select (context-ctr))
     :use-module ((tegfs web-default-port) :select (web::default-port))
+    :use-module ((tegfs webcore-context) :select (context-ctr))
+    :use-module ((tegfs webcore-credentials-to-id) :select (webcore::credentials->id))
+    :use-module ((tegfs webcore-user) :select (webcore::user-make))
     )))
 
 

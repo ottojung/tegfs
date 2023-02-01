@@ -51,6 +51,7 @@
       (define key-values
         (web::body->hashmap body/bytes))
 
+      (define name "")
       (define password
         (or (hashmap-ref key-values 'psw #f)
             (raisu 'bad-body-key)))
@@ -58,7 +59,7 @@
       (define result
         (webcore::ask
          `(whats
-           (login ,password)
+           (login ,name ,password)
            (key K)
            (time-left K TL)
            )))

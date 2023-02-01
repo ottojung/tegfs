@@ -27,13 +27,13 @@
 
 (define (tegfs-login-by-key ctx key)
   (define tempentries (context-tempentries ctx))
-  (define existing (hashmap-ref tokens key #f))
+  (define existing (hashmap-ref tempentries key #f))
   (define perm
     (and (permission? existing)
          (if (permission-still-valid? existing)
              existing
              (begin
-               (hashmap-delete! tokens key)
+               (hashmap-delete! tempentries key)
                #f))))
 
   perm)
