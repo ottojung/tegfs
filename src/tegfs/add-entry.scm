@@ -24,6 +24,7 @@
     :use-module ((euphrates assoc-set-default) :select (assoc-set-default))
     :use-module ((euphrates assoc-set-value) :select (assoc-set-value))
     :use-module ((euphrates assq-or) :select (assq-or))
+    :use-module ((euphrates date-get-current-string) :select (date-get-current-string))
     :use-module ((euphrates file-or-directory-exists-q) :select (file-or-directory-exists?))
     :use-module ((euphrates list-deduplicate) :select (list-deduplicate/reverse))
     :use-module ((euphrates make-directories) :select (make-directories))
@@ -33,7 +34,6 @@
     :use-module ((euphrates random-choice) :select (random-choice))
     :use-module ((euphrates read-string-file) :select (read-string-file))
     :use-module ((euphrates string-strip) :select (string-strip))
-    :use-module ((euphrates system-re) :select (system-re))
     :use-module ((euphrates tilda-a) :select (~a))
     :use-module ((euphrates write-string-file) :select (write-string-file))
     :use-module ((tegfs a-weblink-q) :select (a-weblink?))
@@ -62,9 +62,7 @@
      (random-choice 30 alphanum-lowercase/alphabet)))
 
   (define (get-date)
-    (string-strip
-     (car
-      (system-re "date --utc '+%Y-%m-%dT%H:%M:%S+0000'"))))
+    (date-get-current-string "+~Y-~m-~dT~H:~M:~S+0000"))
 
   (define (tosymbol x)
     (cond
