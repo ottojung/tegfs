@@ -17,8 +17,8 @@
  (guile
   (define-module (tegfs get-file-mimetype)
     :export (get-file-mimetype)
+    :use-module ((euphrates run-syncproc-re-star) :select (run-syncproc/re*))
     :use-module ((euphrates string-strip) :select (string-strip))
-    :use-module ((euphrates system-re) :select (system-re))
     :use-module ((tegfs a-weblink-q) :select (a-weblink?))
     )))
 
@@ -27,9 +27,9 @@
 (define (get-file-mimetype target)
   (if (a-weblink? target)
       "text/uri-list"
-      (let* ((ret (system-re "file --brief --mime-type ~a" target))
-             (mimetype (car ret))
-             (code (cdr ret)))
+      (let ()
+        (define-values (mimetype code)
+          (run-syncproc/re* "file" "--brief" "--mime-type" target))
         (if (= 0 code)
             (string-strip mimetype)
             #f))))

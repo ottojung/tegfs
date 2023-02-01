@@ -18,7 +18,6 @@
   (define-module (tegfs download-to-temporary-file)
     :export (download-to-temporary-file)
     :use-module ((euphrates dprintln) :select (dprintln))
-    :use-module ((euphrates system-fmt) :select (system-fmt))
     :use-module ((euphrates tilda-s) :select (~s))
     :use-module ((euphrates url-get-hostname-and-port) :select (url-get-hostname-and-port))
     :use-module ((euphrates url-get-protocol) :select (url-get-protocol))
@@ -34,7 +33,7 @@
          ;; NOTE: some websites (looking at you 8chan) require referer to be set to its domain name, which is silly!! and which is stupid >:
          (home (string-append (url-get-protocol url) "://" (url-get-hostname-and-port url)))
          (headers (string-append "referer: " (~s home))))
-    (unless (= 0 (system-fmt "wget ~a -O ~a" url target))
-      (unless (= 0 (system-fmt "wget --header ~a ~a -O ~a" headers url target))
+    (unless (= 0 (status:exit-val (system* "wget" url "-O" target)))
+      (unless (= 0 (status:exit-val (system* "wget" "--header" headers url "-O" target)))
         (fatal "Could not download ~s" url)))
     target))

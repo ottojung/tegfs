@@ -25,7 +25,6 @@
     :use-module ((euphrates open-file-port) :select (open-file-port))
     :use-module ((euphrates raisu) :select (raisu))
     :use-module ((euphrates stack) :select (stack->list stack-make stack-push!))
-    :use-module ((euphrates system-fmt) :select (system-fmt))
     :use-module ((euphrates tilda-a) :select (~a))
     :use-module ((tegfs a-weblink-q) :select (a-weblink?))
     :use-module ((tegfs dump-rules) :select (dump-rules))
@@ -116,7 +115,7 @@
 
 (define (tegfs-prolog)
   (define output-path (tegfs-dump-prolog-file))
-  (system-fmt "prolog ~a" output-path))
+  (system* "swipl" output-path))
 
 (define (translate-registries yield)
   (define counter
