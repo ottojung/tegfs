@@ -69,14 +69,19 @@
 
   (for-each
    (lambda (user)
+     (define name
+       (cadr
+        (or (assoc 'name user) (list #f #f))))
      (define pass
        (cadr
         (or (assoc 'pass user)
             (raisu 'no-user-pass
                    "A user does not have a password"))))
+     (define struct (webcore::user-make name pass))
+     (define id (webcore::credentials->id name pass))
      (unless (string? pass)
-       (raisu 'pass-is-no-string "User passord is not a string" pass))
-     (hashmap-set! passwords pass #t))
+       (raisu 'pass-is-no-string "User password is not a string" pass))
+     (hashmap-set! tempentries id struct))
    users)
 
   (unless (string? fileserver)
