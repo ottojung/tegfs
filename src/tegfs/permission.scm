@@ -16,7 +16,7 @@
 (cond-expand
  (guile
   (define-module (tegfs permission)
-    :export (permission-constructor permission? permission-token permission-start permission-time permission-admin? permission-maybepassword permission-uploadaccess? permission-entry-view-access? permission-entry-modify-access? permission-cat-view-access? permission-cat-modify-access? permission-share-longer-than-view? permission-filemap permission-idset)
+    :export (permission-constructor permission? permission-token permission-date permission-stime permission-admin? permission-maybepassword permission-uploadaccess? permission-entry-view-access? permission-entry-modify-access? permission-cat-view-access? permission-cat-modify-access? permission-share-longer-than-view? permission-filemap permission-idset)
     :use-module ((euphrates assq-or) :select (assq-or))
     :use-module ((euphrates define-type9) :select (define-type9))
     )))
@@ -24,10 +24,10 @@
 
 
 (define-type9 <permission>
-  (permission-constructor token start time admin? dynamic filemap idset) permission?
+  (permission-constructor token date stime admin? dynamic filemap idset) permission?
   (token permission-token) ;; token string
-  (start permission-start) ;; timestamp for when this token was created
-  (time permission-time) ;; duration in secods for how long this token is valid
+  (date permission-date) ;; timestamp for when this token was created
+  (stime permission-stime) ;; duration in secods for how long this token is valid
   (admin? permission-admin?) ;; true for superuser users
   (dynamic permission-dynamic) ;; alist of particular permissions, i.e. if can upload new entries
   (filemap permission-filemap) ;; hashmap with `keys: target-fullpath that was shared with this permission` and `values: sharedinfos`

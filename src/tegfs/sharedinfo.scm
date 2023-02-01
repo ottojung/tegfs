@@ -16,18 +16,18 @@
 (cond-expand
  (guile
   (define-module (tegfs sharedinfo)
-    :export (sharedinfo-ctr sharedinfo? sharedinfo-entry sharedinfo-sourcepath sharedinfo-recepientid sharedinfo-senderid sharedinfo-ctime sharedinfo-stime set-sharedinfo-stime!)
+    :export (sharedinfo-ctr sharedinfo? sharedinfo-entry sharedinfo-sourcepath sharedinfo-recepientid sharedinfo-senderid sharedinfo-date sharedinfo-stime set-sharedinfo-stime!)
     :use-module ((euphrates define-type9) :select (define-type9))
     )))
 
 
 
 (define-type9 <sharedinfo>
-  (sharedinfo-ctr entry sourcepath recepientid senderid ctime stime) sharedinfo?
+  (sharedinfo-ctr entry sourcepath recepientid senderid date stime) sharedinfo?
   (entry sharedinfo-entry) ;; the relative entry
   (sourcepath sharedinfo-sourcepath) ;; the original file path
   (recepientid sharedinfo-recepientid) ;; uniquer virtual id visible to the recepient (so, potentially everyone). It is the linked file path suffix (without the sharedir)
   (senderid sharedinfo-senderid) ;; unique virtual id only visible to the sender.
-  (ctime sharedinfo-ctime) ;; time in seconds for when this info was created
+  (date sharedinfo-date) ;; time in seconds for when this info was created
   (stime sharedinfo-stime set-sharedinfo-stime!) ;; time in seconds for how long to share this file
   )

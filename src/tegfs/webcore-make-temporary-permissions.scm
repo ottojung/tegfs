@@ -25,7 +25,7 @@
     :use-module ((tegfs get-random-network-name) :select (get-random-network-name))
     :use-module ((tegfs make-permission-bang) :select (make-permission!))
     :use-module ((tegfs permission-time-left) :select (permission-time-left))
-    :use-module ((tegfs permission) :select (permission-time permission-token))
+    :use-module ((tegfs permission) :select (permission-stime permission-token))
     :use-module ((tegfs webcore-access) :select (can-share-longer-than-view?))
     :use-module ((tegfs webcore-parameters) :select (webcore::permissions/p))
     )))
@@ -74,7 +74,7 @@
            (make-permission! web::context live-duration*
                              admin? maybepassword dynamic))
          (define its-key (permission-token perm))
-         (define actual (permission-time perm))
+         (define actual (permission-stime perm))
 
          (define r0
            (profun-set

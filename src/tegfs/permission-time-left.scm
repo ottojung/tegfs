@@ -18,7 +18,7 @@
   (define-module (tegfs permission-time-left)
     :export (permission-time-left)
     :use-module ((tegfs current-time-p) :select (current-time/p))
-    :use-module ((tegfs permission) :select (permission-start permission-time))
+    :use-module ((tegfs permission) :select (permission-date permission-stime))
     )))
 
 
@@ -28,6 +28,6 @@
    ((perm)
     (permission-time-left perm (current-time/p)))
    ((perm current-time)
-    (define end (+ (permission-start perm)
-                   (permission-time perm)))
+    (define end (+ (permission-date perm)
+                   (permission-stime perm)))
     (max 0 (- end current-time)))))

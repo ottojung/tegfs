@@ -27,7 +27,7 @@
     :use-module ((tegfs filemap) :select (filemap-delete-by-recepientid! filemap-ref-by-recepientid))
     :use-module ((tegfs permission-still-valid-huh) :select (permission-still-valid?))
     :use-module ((tegfs permission) :select (permission-filemap permission?))
-    :use-module ((tegfs sharedinfo) :select (sharedinfo-ctime sharedinfo-recepientid sharedinfo-stime sharedinfo?))
+    :use-module ((tegfs sharedinfo) :select (sharedinfo-date sharedinfo-recepientid sharedinfo-stime sharedinfo?))
     :use-module ((tegfs sharereceipt) :select (sharereceipt?))
     :use-module ((tegfs webcore-context) :select (context-filemap/2 context-sharedir context-tempentries))
     )))
@@ -39,7 +39,7 @@
    ((info)
     (sharedinfo-time-left info (current-time/p)))
    ((info current-time)
-    (define end (+ (sharedinfo-ctime info)
+    (define end (+ (sharedinfo-date info)
                    (sharedinfo-stime info)))
     (max 0 (- end current-time)))))
 
