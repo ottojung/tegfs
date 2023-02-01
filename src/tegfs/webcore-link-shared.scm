@@ -27,7 +27,7 @@
     :use-module ((tegfs get-root) :select (get-root))
     :use-module ((tegfs sharedinfo) :select (sharedinfo-entry sharedinfo-recepientid sharedinfo-sourcepath))
     :use-module ((tegfs symlink-shared-file) :select (symlink-shared-file))
-    :use-module ((tegfs web-context) :select (context-filemap/2))
+    :use-module ((tegfs webcore-context) :select (context-filemap/2))
     :use-module ((tegfs web-get-adam-info) :select (web::get-adam-info))
     :use-module ((tegfs web-get-sharedinfo-url) :select (web::get-sharedinfo-url))
     :use-module ((tegfs webcore-get-share-plugins) :select (webcore::get-share-plugins))

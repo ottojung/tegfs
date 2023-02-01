@@ -26,7 +26,7 @@
     :use-module ((euphrates uri-encode) :select (uri-encode))
     :use-module ((tegfs a-weblink-q) :select (a-weblink?))
     :use-module ((tegfs sharedinfo) :select (sharedinfo-recepientid sharedinfo-senderid sharedinfo-sourcepath))
-    :use-module ((tegfs web-context) :select (context-fileserver))
+    :use-module ((tegfs webcore-context) :select (context-fileserver))
     :use-module ((tegfs web-get-shared-link) :select (web::get-shared-link))
     )))
 

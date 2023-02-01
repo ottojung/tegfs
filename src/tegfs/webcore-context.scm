@@ -15,7 +15,7 @@
 
 (cond-expand
  (guile
-  (define-module (tegfs web-context)
+  (define-module (tegfs webcore-context)
     :export (context-ctr context? context-passwords context-database context-tokens context-port context-fileserver context-sharedir context-filemap/2)
     :use-module ((euphrates define-type9) :select (define-type9))
     )))

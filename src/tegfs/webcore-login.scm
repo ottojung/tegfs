@@ -26,7 +26,7 @@
     :use-module ((tegfs default-login-expiery-time) :select (default-login-expiery-time))
     :use-module ((tegfs password-to-tokenlike) :select (password->tokenlike))
     :use-module ((tegfs sha256sum) :select (sha256sum))
-    :use-module ((tegfs web-context) :select (context-passwords context-tokens))
+    :use-module ((tegfs webcore-context) :select (context-passwords context-tokens))
     :use-module ((tegfs webcore-create-admin-permission-bang) :select (webcore::create-admin-permission!))
     :use-module ((tegfs webcore-parameters) :select (webcore::permissions/p))
     )))

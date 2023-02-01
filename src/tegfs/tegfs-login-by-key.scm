@@ -19,7 +19,7 @@
     :export (tegfs-login-by-key)
     :use-module ((euphrates hashmap) :select (hashmap-delete! hashmap-ref))
     :use-module ((tegfs permission-still-valid-huh) :select (permission-still-valid?))
-    :use-module ((tegfs web-context) :select (context-tokens))
+    :use-module ((tegfs webcore-context) :select (context-tokens))
     )))
 
 

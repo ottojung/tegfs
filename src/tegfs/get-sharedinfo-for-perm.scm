@@ -19,7 +19,7 @@
     :export (get-sharedinfo-for-perm)
     :use-module ((euphrates hashmap) :select (hashmap-ref))
     :use-module ((tegfs permission) :select (permission-filemap))
-    :use-module ((tegfs web-context) :select (context-filemap/2))
+    :use-module ((tegfs webcore-context) :select (context-filemap/2))
     )))
 
 

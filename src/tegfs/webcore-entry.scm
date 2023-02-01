@@ -23,7 +23,7 @@
     :use-module ((tegfs core-entry-generic) :select (core::entry/generic))
     :use-module ((tegfs entry-limit-fields) :select (entry-limit-fields))
     :use-module ((tegfs tegfs-query-open) :select (tegfs-query/open))
-    :use-module ((tegfs web-context) :select (context-filemap/2))
+    :use-module ((tegfs webcore-context) :select (context-filemap/2))
     :use-module ((tegfs webcore-parameters) :select (webcore::permissions/p))
     )))
 

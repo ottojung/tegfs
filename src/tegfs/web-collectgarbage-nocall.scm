@@ -27,7 +27,7 @@
     :use-module ((tegfs permission-still-valid-huh) :select (permission-still-valid?))
     :use-module ((tegfs permission) :select (permission-filemap))
     :use-module ((tegfs sharedinfo) :select (sharedinfo-ctime sharedinfo-stime))
-    :use-module ((tegfs web-context) :select (context-filemap/2 context-sharedir context-tokens))
+    :use-module ((tegfs webcore-context) :select (context-filemap/2 context-sharedir context-tokens))
     )))
 
 

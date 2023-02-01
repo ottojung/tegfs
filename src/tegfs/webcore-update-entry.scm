@@ -25,7 +25,7 @@
     :use-module ((euphrates profun-request-value) :select (profun-request-value))
     :use-module ((euphrates profun-value) :select (profun-unbound-value?))
     :use-module ((tegfs update-entry) :select (update-entry))
-    :use-module ((tegfs web-context) :select (context-filemap/2))
+    :use-module ((tegfs webcore-context) :select (context-filemap/2))
     :use-module ((tegfs webcore-access) :select (can-modify-entry?))
     :use-module ((tegfs webcore-parameters) :select (webcore::permissions/p))
     )))
