@@ -25,6 +25,7 @@
     :use-module ((euphrates string-strip) :select (string-strip))
     :use-module ((euphrates string-to-lines) :select (string->lines))
     :use-module ((euphrates system-fmt) :select (system-fmt))
+    :use-module ((euphrates tilda-a) :select (~a))
     :use-module ((tegfs a-weblink-q) :select (a-weblink?))
     :use-module ((tegfs make-temporary-filename-local) :select (make-temporary-filename/local))
     )))
@@ -39,7 +40,7 @@
    (else 'pasta)))
 
 (define (dump-clipboard-to-file data-type/0 target)
-  (define data-type (if (equal? data-type/0 'text/plain) 'TEXT data-type/0))
+  (define data-type (if (equal? (~a data-type/0) "text/plain") 'TEXT data-type/0))
   (= 0 (system-fmt "xclip -selection clipboard -target ~a -out > ~a"
                    data-type target)))
 
