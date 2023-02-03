@@ -19,10 +19,12 @@
     :export (webcore::make-server-handler)
     :use-module ((euphrates profun-handler) :select (profun-handler-extend))
     :use-module ((tegfs add-entry) :select (add-entry))
+    :use-module ((tegfs add-tempentry) :select (add-tempentry))
     :use-module ((tegfs core-server-handler) :select (core::make-server-handler))
     :use-module ((tegfs permission) :select (permission-token))
     :use-module ((tegfs update-entry) :select (update-entry))
     :use-module ((tegfs webcore-add-entry) :select (webcore::add-entry))
+    :use-module ((tegfs webcore-add-tempentry) :select (webcore::add-tempentry))
     :use-module ((tegfs webcore-categorization) :select (webcore::categorization))
     :use-module ((tegfs webcore-collectgarbage) :select (webcore::collectgarbage))
     :use-module ((tegfs webcore-create-server-operator-permission-bang) :select (webcore::create-server-operator-permission!))
@@ -63,6 +65,7 @@
    (make-temporary-permissions (webcore::make-temporary-permissions web::context))
    (collectgarbage (webcore::collectgarbage web::context))
    (time-left (webcore::time-left web::context))
+   (add-tempentry (webcore::add-tempentry web::context))
 
    ))
 
