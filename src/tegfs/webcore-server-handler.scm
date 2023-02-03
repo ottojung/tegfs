@@ -30,6 +30,7 @@
     :use-module ((tegfs webcore-collectgarbage) :select (webcore::collectgarbage))
     :use-module ((tegfs webcore-create-server-operator-permission-bang) :select (webcore::create-server-operator-permission!))
     :use-module ((tegfs webcore-entry) :select (webcore::entry))
+    :use-module ((tegfs webcore-get-tempentry) :select (webcore::get-tempentry))
     :use-module ((tegfs webcore-key) :select (webcore::key))
     :use-module ((tegfs webcore-link-shared) :select (webcore::link-shared))
     :use-module ((tegfs webcore-login) :select (webcore::login))
@@ -69,6 +70,7 @@
    (time-left (webcore::time-left web::context))
    (add-tempentry (webcore::add-tempentry web::context))
    (update-tempentry (webcore::update-tempentry web::context))
+   (get-tempentry (webcore::get-tempentry web::context))
 
    ))
 
