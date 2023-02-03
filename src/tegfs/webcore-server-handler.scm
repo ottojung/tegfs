@@ -41,7 +41,6 @@
     :use-module ((tegfs webcore-shared-entry-contains) :select (webcore::shared-entry-contains))
     :use-module ((tegfs webcore-time-left) :select (webcore::time-left))
     :use-module ((tegfs webcore-update-entry) :select (webcore::update-entry))
-    :use-module ((tegfs webcore-update-tempentry) :select (webcore::update-tempentry))
     )))
 
 

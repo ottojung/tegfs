@@ -24,7 +24,9 @@
     :use-module ((euphrates profun-op-lambda) :select (profun-op-lambda))
     :use-module ((euphrates profun-request-value) :select (profun-request-value))
     :use-module ((euphrates profun-value) :select (profun-bound-value? profun-unbound-value?))
+    :use-module ((euphrates stringf) :select (stringf))
     :use-module ((tegfs add-tempentry) :select (add-tempentry))
+    :use-module ((tegfs keyword-stime) :select (keyword-stime))
     :use-module ((tegfs permission) :select (permission?))
     :use-module ((tegfs webcore-access) :select (can-manage-tempentries?))
     :use-module ((tegfs webcore-context) :select (context-tempentries))
@@ -54,7 +56,9 @@
             (catchu-case
              (add-tempentry tempentries id* tempentry)
              (('tempentry-must-have-stime-set)
-              (make-profun-error 'type-error "Tempentry is missing the 'stime' field")))))
+              (make-profun-error
+               'type-error
+               (stringf "Tempentry is missing the ~s field" keyword-stime))))))
        (cond
         ((profun-error? created-id) created-id)
         ((profun-bound-value? id) (profun-accept))

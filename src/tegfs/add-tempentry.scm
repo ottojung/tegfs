@@ -19,7 +19,7 @@
     :export (add-tempentry)
     :use-module ((euphrates assoc-set-default) :select (assoc-set-default))
     :use-module ((euphrates assq-or) :select (assq-or))
-    :use-module ((euphrates fn-cons) :select (fn-cons))
+    :use-module ((euphrates fn-pair) :select (fn-pair))
     :use-module ((euphrates hashmap) :select (hashmap-set!))
     :use-module ((euphrates raisu) :select (raisu))
     :use-module ((tegfs current-time-p) :select (current-time/p))
@@ -49,14 +49,14 @@
 
   (define fields
     (filter
-     (fn-cons
+     (fn-pair
       (key val)
-      (not (member key (list keyword-id keyword-stime keyword-date))))
+      (not (memq key (list keyword-id keyword-stime keyword-date))))
      entry1))
 
   (define c
     (custom-tempentry-constructor id date stime fields))
 
-  (hashmap-set! id c)
+  (hashmap-set! tempentries id c)
 
   id)

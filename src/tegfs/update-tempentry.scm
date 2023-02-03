@@ -15,47 +15,62 @@
 
 (cond-expand
  (guile
-  (define-module (tegfs webcore-update-tempentry)
+  (define-module (tegfs update-tempentry)
     :export (update-tempentry)
     :use-module ((euphrates assq-or) :select (assq-or))
-    :use-module ((euphrates file-delete) :select (file-delete))
+    :use-module ((euphrates fn-pair) :select (fn-pair))
+    :use-module ((euphrates hashmap) :select (hashmap-ref))
     :use-module ((euphrates raisu) :select (raisu))
-    :use-module ((tegfs entries-map-bang) :select (entries-map!))
-    :use-module ((tegfs entry-target-fullpath) :select (entry-target-fullpath))
-    :use-module ((tegfs keyword-entry-registry-path) :select (keyword-entry-registry-path))
+    :use-module ((euphrates stringf) :select (stringf))
+    :use-module ((tegfs custom-tempentry) :select (custom-tempentry-date custom-tempentry-id custom-tempentry-stime custom-tempentry? set-custom-tempentry-date! set-custom-tempentry-fields! set-custom-tempentry-stime!))
+    :use-module ((tegfs keyword-date) :select (keyword-date))
     :use-module ((tegfs keyword-id) :select (keyword-id))
+    :use-module ((tegfs keyword-stime) :select (keyword-stime))
     )))
 
-(define (update-tempentry::continue id updated-entry)
-  (define updated-target
-    (and updated-entry
-         (entry-target-fullpath updated-entry)))
+(define (get-mandatory-field tempentry field-name)
+  (assq-or field-name tempentry
+           (raisu 'type-error (stringf "Updated tempentry missing ~s field" field-name))))
 
-  (define (update registry-path iterated-entry)
-    (define registry-property
-      (cons keyword-entry-registry-path registry-path))
-    (define original-target
-      (entry-target-fullpath
-       (cons registry-property iterated-entry)))
-    (unless (equal? original-target updated-target)
-      (if (and updated-target
-               (not (string-null? updated-target)))
-          (rename-file original-target updated-target)
-          (file-delete original-target)))
-    updated-entry)
+(define (modify-custom-tempentry orig updated-tempentry)
+  (define new-date
+    (get-mandatory-field updated-tempentry keyword-date))
+  (define new-stime
+    (get-mandatory-field updated-tempentry keyword-stime))
+  (define new-id
+    (assq-or keyword-id updated-tempentry #f))
+  (define new-fields
+    (filter
+     (fn-pair
+      (key val)
+      (not (memq key (list keyword-id keyword-stime keyword-date))))
+     updated-tempentry))
 
-  (define (mapper registry-path iterated-entry)
-    (define iterated-id
-      (assq-or keyword-id iterated-entry #f))
-    (if (equal? id iterated-id)
-        (update registry-path iterated-entry)
-        iterated-entry))
+  (when new-id
+    (unless (equal? new-id (custom-tempentry-id orig))
+      (raisu 'permission-denied (stringf "Cannot update ~s field of a tempentry" keyword-id))))
 
-  (entries-map! mapper))
+  (unless (equal? new-date
+                  (custom-tempentry-date orig))
+    (set-custom-tempentry-date! orig new-date))
 
-(define (update-tempentry original-entry updated-entry)
+  (unless (equal? new-stime
+                  (custom-tempentry-stime orig))
+    (set-custom-tempentry-stime! orig new-stime))
+
+  (set-custom-tempentry-fields! orig new-fields)
+
+  (when #f #t))
+
+(define (update-tempentry::continue tempentries id updated-tempentry)
+  (define get
+    (hashmap-ref tempentries id (raisu 'not-found "Original tempentry does not exist.")))
+
+  (if (custom-tempentry? get)
+      (modify-custom-tempentry get updated-tempentry)
+      (raisu 'permission-denied "Only custom created tempentries can be updated directly.")))
+
+(define (update-tempentry tempentries original-tempentry updated-tempentry)
   (define id
-    (assq-or keyword-id original-entry #f))
-  (if id
-      (update-tempentry::continue id updated-entry)
-      (raisu 'type-error:original-entry-does-not-have-an-id)))
+    (get-mandatory-field original-tempentry keyword-id))
+  (update-tempentry::continue tempentries id updated-tempentry))
