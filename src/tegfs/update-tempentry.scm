@@ -19,7 +19,7 @@
     :export (update-tempentry)
     :use-module ((euphrates assq-or) :select (assq-or))
     :use-module ((euphrates fn-pair) :select (fn-pair))
-    :use-module ((euphrates hashmap) :select (hashmap-ref))
+    :use-module ((euphrates hashmap) :select (hashmap-delete! hashmap-ref))
     :use-module ((euphrates raisu) :select (raisu))
     :use-module ((euphrates stringf) :select (stringf))
     :use-module ((tegfs custom-tempentry) :select (custom-tempentry-date custom-tempentry-id custom-tempentry-stime custom-tempentry? set-custom-tempentry-date! set-custom-tempentry-fields! set-custom-tempentry-stime!))
@@ -67,7 +67,9 @@
     (hashmap-ref tempentries id (raisu 'not-found "Original tempentry does not exist.")))
 
   (if (custom-tempentry? get)
-      (modify-custom-tempentry get updated-tempentry)
+      (if updated-tempentry
+          (modify-custom-tempentry get updated-tempentry)
+          (hashmap-delete! tempentries id))
       (raisu 'permission-denied "Only custom created tempentries can be updated directly.")))
 
 (define (update-tempentry tempentries original-tempentry updated-tempentry)
