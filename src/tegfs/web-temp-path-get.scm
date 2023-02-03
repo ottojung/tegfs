@@ -17,12 +17,26 @@
  (guile
   (define-module (tegfs web-temp-path-get)
     :export (web::temp-path-get)
-    :use-module ((euphrates hashmap) :select (hashmap-ref))
-    :use-module ((tegfs web-current-temp-paths-table-p) :select (web::current-temp-paths-table/p))
+    :use-module ((euphrates assq-or) :select (assq-or))
+    :use-module ((tegfs web-iterate-profun-results) :select (web::iterate-profun-results))
+    :use-module ((tegfs webcore-ask) :select (webcore::ask))
     )))
 
 
 
-(define (web::temp-path-get tempid)
-  (define table (web::current-temp-paths-table/p))
-  (hashmap-ref table tempid #f))
+(define (web::temp-path-get server-operator-key tempid/0)
+  (define tempid
+    (if (string-prefix? "/" tempid/0)
+        (substring tempid/0 1)
+        tempid/0))
+
+  (define results
+    (webcore::ask
+     `(whats
+       (key ,server-operator-key)
+       (get-tempentry ,tempid E))))
+
+  (web::iterate-profun-results
+   :results results
+   (E)
+   (and E (assq-or 'destination E #f))))

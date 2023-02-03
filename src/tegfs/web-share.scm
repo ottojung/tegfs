@@ -71,11 +71,13 @@
     (assq-or 'P first-binding (raisu 'unexpected-result-from-backend first-binding)))
 
   (define yes-continue
-    (web::create-temp-path share-time location))
+    (web::create-temp-path callctx share-time (const location)))
+
   (define no-continue
     (web::create-temp-path
+     callctx
      share-time
-     (lambda _
+     (lambda (no-continue)
        (stringf "auth?yes=~a&no=~a&expected=~a&failed=on"
                 yes-continue
                 no-continue
@@ -83,14 +85,16 @@
 
   (define protected-link
     (web::create-temp-path
+     callctx
      share-time
-     (stringf "auth?yes=~a&no=~a&expected=~a"
-              yes-continue
-              no-continue
-              token)))
+     (lambda _
+       (stringf "auth?yes=~a&no=~a&expected=~a"
+                yes-continue
+                no-continue
+                token))))
 
   (define unprotected-link
-    (web::create-temp-path share-time location))
+    (web::create-temp-path callctx share-time (const location)))
 
   (define body
     (web::share::get-default-text

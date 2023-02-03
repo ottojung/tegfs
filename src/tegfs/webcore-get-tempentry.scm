@@ -26,6 +26,7 @@
     :use-module ((tegfs webcore-access) :select (can-manage-tempentries?))
     :use-module ((tegfs webcore-context) :select (context-tempentries))
     :use-module ((tegfs webcore-get-current-permissions) :select (webcore::get-current-permissions))
+    :use-module ((tegfs webcore-serialize-tempentry) :select (webcore::serialize-tempentry))
     )))
 
 (define (webcore::get-tempentry webcore::context)
@@ -44,4 +45,7 @@
     ((not (can-manage-tempentries? perm))
      (make-profun-error 'permission-denied "This user cannot access tempentries directly"))
     (else
-     (profun-set (TE-name <- (hashmap-ref tempentries id #f)))))))
+     (let ()
+       (define got (hashmap-ref tempentries id #f))
+       (define enc (and got (webcore::serialize-tempentry id got)))
+       (profun-set (TE-name <- enc)))))))

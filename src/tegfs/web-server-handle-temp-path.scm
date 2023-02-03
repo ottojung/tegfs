@@ -20,14 +20,12 @@
     :use-module ((tegfs web-not-found) :select (web::not-found))
     :use-module ((tegfs web-redirect) :select (web::redirect))
     :use-module ((tegfs web-temp-path-get) :select (web::temp-path-get))
-    :use-module ((tegfs web-temp-path) :select (web::temp-path-destination))
     )))
 
 
 
-(define (web::server-handle-temp-path callctx tempid)
-  (define tpath (web::temp-path-get tempid))
-  (define destination (and tpath (web::temp-path-destination tpath)))
+(define (web::server-handle-temp-path server-operator-key callctx tempid)
+  (define destination (web::temp-path-get server-operator-key tempid))
   (if destination
       (web::redirect callctx destination #f)
       (web::not-found)))

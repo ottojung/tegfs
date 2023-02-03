@@ -58,7 +58,7 @@
 (define (web::share::get-default-text callctx share-time unprotected-link0 protected-link0 password)
   (define domainname (web::get-domainname callctx))
   (define (get-link url0)
-    (string-append domainname url0))
+    (string-append domainname "/" url0))
 
   (define unprotected-link
     (get-link unprotected-link0))

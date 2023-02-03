@@ -18,7 +18,7 @@
   (define-module (tegfs webcore-add-tempentry)
     :export (webcore::add-tempentry)
     :use-module ((euphrates catchu-case) :select (catchu-case))
-    :use-module ((euphrates profun-accept) :select (profun-accept profun-set-meta))
+    :use-module ((euphrates profun-accept) :select (profun-accept profun-set))
     :use-module ((euphrates profun-default) :select (profun-default))
     :use-module ((euphrates profun-error) :select (make-profun-error profun-error?))
     :use-module ((euphrates profun-op-lambda) :select (profun-op-lambda))
@@ -63,4 +63,4 @@
         ((profun-error? created-id) created-id)
         ((profun-bound-value? id) (profun-accept))
         (else
-         (profun-set-meta (ID-name <- created-id)))))))))
+         (profun-set (ID-name <- created-id)))))))))

@@ -101,11 +101,11 @@
     (lambda (p) (cons (~a (car p)) (cadr p)))
     handlers-config)))
 
-(define (web::server-handle callctx)
+(define (web::server-handle server-operator-key callctx)
   (parameterize ((web::callcontext/p callctx))
     (define path/ma (callcontext-path callctx))
     (define path (if (string-prefix? "/" path/ma) path/ma
                      (string-append "/" path/ma)))
     (define func (hashmap-ref handlers-funcmap path #f))
     (if func (func)
-        (web::server-handle-temp-path callctx path))))
+        (web::server-handle-temp-path server-operator-key callctx path))))

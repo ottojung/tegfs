@@ -17,27 +17,46 @@
  (guile
   (define-module (tegfs web-create-temp-path)
     :export (web::create-temp-path)
-    :use-module ((euphrates hashmap) :select (hashmap-set!))
-    :use-module ((euphrates memconst) :select (memconst))
-    :use-module ((tegfs current-time-p) :select (current-time/p))
-    :use-module ((tegfs get-random-network-name) :select (get-random-network-name))
-    :use-module ((tegfs web-current-temp-paths-table-p) :select (web::current-temp-paths-table/p))
-    :use-module ((tegfs web-temp-path) :select (web::temp-path-ctr))
+    :use-module ((euphrates assoc-set-value) :select (assoc-set-value))
+    :use-module ((tegfs add-tempentry) :select (add-tempentry))
+    :use-module ((tegfs keyword-stime) :select (keyword-stime))
+    :use-module ((tegfs update-tempentry) :select (update-tempentry))
+    :use-module ((tegfs web-callcontext) :select (callcontext-token))
+    :use-module ((tegfs web-iterate-profun-results) :select (web::iterate-profun-results))
+    :use-module ((tegfs webcore-ask) :select (webcore::ask))
     )))
 
 
 
-(define (web::create-temp-path stime destination/0)
-  (define now (current-time/p))
-  (define table (web::current-temp-paths-table/p))
-  (define tempid
-    (string-append "/" (get-random-network-name)))
-  (define destination
-    (if (procedure? destination/0)
-        (memconst (destination/0))
-        destination/0))
-  (define tpath (web::temp-path-ctr tempid destination now stime))
+(define (web::create-temp-path callctx stime destination-fun)
+  (define key (callcontext-token callctx))
 
-  (hashmap-set! table tempid tpath)
+  (define results
+    (webcore::ask
+     `(whats
+       (key ,key)
+       (add-tempentry ID ((,keyword-stime . ,stime))))))
 
-  tempid)
+  (web::iterate-profun-results
+   :results results
+   (ID)
+   (define r2
+     (webcore::ask
+      `(whats
+        (key ,key)
+        (get-tempentry ,ID E))))
+   (web::iterate-profun-results
+    :results r2
+    (E)
+    (define new
+      (assoc-set-value
+       'destination (destination-fun ID)
+       E))
+    (define r3
+      (webcore::ask
+       `(whats
+         (key ,key)
+         (get-tempentry ,ID E)
+         (update-tempentry E ,new))))
+    r3)
+   ID))
