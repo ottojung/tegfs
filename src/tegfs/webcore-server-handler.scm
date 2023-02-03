@@ -23,6 +23,7 @@
     :use-module ((tegfs core-server-handler) :select (core::make-server-handler))
     :use-module ((tegfs permission) :select (permission-token))
     :use-module ((tegfs update-entry) :select (update-entry))
+    :use-module ((tegfs update-tempentry) :select (update-tempentry))
     :use-module ((tegfs webcore-add-entry) :select (webcore::add-entry))
     :use-module ((tegfs webcore-add-tempentry) :select (webcore::add-tempentry))
     :use-module ((tegfs webcore-categorization) :select (webcore::categorization))
@@ -41,6 +42,7 @@
     :use-module ((tegfs webcore-shared-entry-contains) :select (webcore::shared-entry-contains))
     :use-module ((tegfs webcore-time-left) :select (webcore::time-left))
     :use-module ((tegfs webcore-update-entry) :select (webcore::update-entry))
+    :use-module ((tegfs webcore-update-tempentry) :select (webcore::update-tempentry))
     )))
 
 
@@ -66,6 +68,7 @@
    (collectgarbage (webcore::collectgarbage web::context))
    (time-left (webcore::time-left web::context))
    (add-tempentry (webcore::add-tempentry web::context))
+   (update-tempentry (webcore::update-tempentry web::context))
 
    ))
 
