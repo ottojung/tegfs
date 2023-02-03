@@ -16,7 +16,7 @@
 (cond-expand
  (guile
   (define-module (tegfs webcore-access)
-    :export (has-access-for-entry? has-access-for-entry-target? has-access-for-entry-details? can-modify-entry? can-upload? can-view-categorization? can-modify-categorization? can-share-longer-than-view?)
+    :export (has-access-for-entry? has-access-for-entry-target? has-access-for-entry-details? can-modify-entry? can-upload? can-view-categorization? can-modify-categorization? can-share-longer-than-view? can-manage-tempentries?)
     :use-module ((euphrates assoc-or) :select (assoc-or))
     :use-module ((euphrates hashmap) :select (hashmap-ref))
     :use-module ((euphrates hashset) :select (hashset-has?))
@@ -80,3 +80,11 @@
   (and perm
        (or (permission-admin? perm)
            (permission-share-longer-than-view? perm))))
+
+(define (can-manage-tempentries? perm)
+  ;; True if user can create and edit temporary entries.
+  ;; Generally, only admins should be allowed to do this because
+  ;;  1) temporary entries can contain security critical information,
+  ;;  2) temporary entries can be spammed with.
+
+  (and perm (permission-admin? perm)))
