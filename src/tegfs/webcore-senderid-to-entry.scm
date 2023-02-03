@@ -28,7 +28,7 @@
     :use-module ((tegfs permission) :select (permission?))
     :use-module ((tegfs sharedinfo) :select (sharedinfo-entry))
     :use-module ((tegfs webcore-context) :select (context-filemap/2))
-    :use-module ((tegfs webcore-parameters) :select (webcore::permissions/p))
+    :use-module ((tegfs webcore-get-current-permissions) :select (webcore::get-current-permissions))
     )))
 
 
@@ -42,7 +42,7 @@
      (ctx (senderid entry/out) (senderid-name entry-name))
 
      (define info (filemap-ref-by-senderid filemap/2 senderid #f))
-     (define perm (webcore::permissions/p))
+     (define perm (webcore::get-current-permissions))
 
      (cond
       ((not (permission? perm))

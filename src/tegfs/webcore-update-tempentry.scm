@@ -26,7 +26,7 @@
     :use-module ((tegfs update-tempentry) :select (update-tempentry))
     :use-module ((tegfs webcore-access) :select (can-manage-tempentries?))
     :use-module ((tegfs webcore-context) :select (context-tempentries))
-    :use-module ((tegfs webcore-parameters) :select (webcore::permissions/p))
+    :use-module ((tegfs webcore-get-current-permissions) :select (webcore::get-current-permissions))
     )))
 
 ;; Replaces `original-tempentry' by the `updated-tempentry'.
@@ -38,7 +38,7 @@
    :with-env env
    (ctx (original-tempentry updated-tempentry) (O-name U-name))
 
-   (define perm (webcore::permissions/p))
+   (define perm (webcore::get-current-permissions))
 
    (cond
     ((profun-unbound-value? original-tempentry)

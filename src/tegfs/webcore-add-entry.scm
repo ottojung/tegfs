@@ -25,7 +25,7 @@
     :use-module ((tegfs add-entry) :select (add-entry))
     :use-module ((tegfs permission) :select (permission?))
     :use-module ((tegfs webcore-access) :select (can-upload?))
-    :use-module ((tegfs webcore-parameters) :select (webcore::permissions/p))
+    :use-module ((tegfs webcore-get-current-permissions) :select (webcore::get-current-permissions))
     )))
 
 
@@ -35,7 +35,7 @@
    :with-env
    (ctx (registry-file entry) (R-name E-name))
 
-   (define perm (webcore::permissions/p))
+   (define perm (webcore::get-current-permissions))
 
    (cond
     ((not (permission? perm))

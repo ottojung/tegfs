@@ -30,7 +30,7 @@
     :use-module ((tegfs permission) :select (permission?))
     :use-module ((tegfs webcore-access) :select (can-manage-tempentries?))
     :use-module ((tegfs webcore-context) :select (context-tempentries))
-    :use-module ((tegfs webcore-parameters) :select (webcore::permissions/p))
+    :use-module ((tegfs webcore-get-current-permissions) :select (webcore::get-current-permissions))
     )))
 
 (define (webcore::add-tempentry web::context)
@@ -40,7 +40,7 @@
    :with-env
    (ctx (id tempentry) (ID-name E-name))
 
-   (define perm (webcore::permissions/p))
+   (define perm (webcore::get-current-permissions))
    (define id* (profun-default id #f))
 
    (cond

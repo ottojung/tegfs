@@ -27,7 +27,7 @@
     :use-module ((tegfs update-entry) :select (update-entry))
     :use-module ((tegfs webcore-context) :select (context-filemap/2))
     :use-module ((tegfs webcore-access) :select (can-modify-entry?))
-    :use-module ((tegfs webcore-parameters) :select (webcore::permissions/p))
+    :use-module ((tegfs webcore-get-current-permissions) :select (webcore::get-current-permissions))
     )))
 
 ;; Replaces `original-entry' by the `updated-entry'.
@@ -41,7 +41,7 @@
    :with-env env
    (ctx (original-entry/0 updated-entry) (O-name U-name))
 
-   (define perm (webcore::permissions/p))
+   (define perm (webcore::get-current-permissions))
 
    (cond
     ((profun-unbound-value? original-entry/0)

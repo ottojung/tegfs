@@ -27,7 +27,7 @@
     :use-module ((tegfs permission) :select (permission?))
     :use-module ((tegfs sharedinfo) :select (sharedinfo-senderid sharedinfo-stime))
     :use-module ((tegfs web-share-file) :select (web::share-file/dont-link-yet))
-    :use-module ((tegfs webcore-parameters) :select (webcore::permissions/p))
+    :use-module ((tegfs webcore-get-current-permissions) :select (webcore::get-current-permissions))
     )))
 
 
@@ -40,7 +40,7 @@
        (ctx (entry max-sharing-time actual-sharing-time senderid)
             (E-name MT-name AT-name R-name))
 
-       (define perm (webcore::permissions/p))
+       (define perm (webcore::get-current-permissions))
 
        (define (continue entry target-fullpath)
          (define generic-fullpath

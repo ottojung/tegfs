@@ -23,6 +23,7 @@
     :use-module ((euphrates profun-value) :select (profun-bound-value?))
     :use-module ((tegfs permission) :select (permission-token))
     :use-module ((tegfs tegfs-login-by-key) :select (tegfs-login-by-key))
+    :use-module ((tegfs webcore-get-current-permissions) :select (webcore::get-current-permissions))
     :use-module ((tegfs webcore-parameters) :select (webcore::permissions/p))
     )))
 
@@ -39,7 +40,7 @@
        (let ((perm (tegfs-login-by-key tegfs-context key)))
          (profun-set-parameter (webcore::permissions/p <- perm))))
       (else
-       (let ((perm (webcore::permissions/p)))
+       (let ((perm (webcore::get-current-permissions)))
          (if perm
              (let ((key (permission-token perm)))
                (profun-set (K-name <- key)))

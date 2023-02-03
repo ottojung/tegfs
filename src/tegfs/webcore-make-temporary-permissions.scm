@@ -27,7 +27,7 @@
     :use-module ((tegfs permission-time-left) :select (permission-time-left))
     :use-module ((tegfs permission) :select (permission-stime permission-token))
     :use-module ((tegfs webcore-access) :select (can-share-longer-than-view?))
-    :use-module ((tegfs webcore-parameters) :select (webcore::permissions/p))
+    :use-module ((tegfs webcore-get-current-permissions) :select (webcore::get-current-permissions))
     )))
 
 
@@ -41,7 +41,7 @@
      :with-env
      (ctx (live-duration actual-duration password key) (live-duration-name actual-duration-name password-name key-name))
 
-     (define perm (webcore::permissions/p))
+     (define perm (webcore::get-current-permissions))
      (define sharing-time-cap
        (and perm
             (if (can-share-longer-than-view? perm)

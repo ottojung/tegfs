@@ -26,7 +26,7 @@
     :use-module ((tegfs categorization-filename) :select (categorization-filename))
     :use-module ((tegfs get-root) :select (get-root))
     :use-module ((tegfs webcore-access) :select (can-modify-categorization?))
-    :use-module ((tegfs webcore-parameters) :select (webcore::permissions/p))
+    :use-module ((tegfs webcore-get-current-permissions) :select (webcore::get-current-permissions))
     )))
 
 
@@ -36,7 +36,7 @@
    :with-env
    (ctx (categorization-text) (categorization-text-name))
 
-   (define perm (webcore::permissions/p))
+   (define perm (webcore::get-current-permissions))
 
    (cond
     ((profun-unbound-value? categorization-text)

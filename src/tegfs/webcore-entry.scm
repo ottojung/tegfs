@@ -24,7 +24,7 @@
     :use-module ((tegfs entry-limit-fields) :select (entry-limit-fields))
     :use-module ((tegfs tegfs-query-open) :select (tegfs-query/open))
     :use-module ((tegfs webcore-context) :select (context-filemap/2))
-    :use-module ((tegfs webcore-parameters) :select (webcore::permissions/p))
+    :use-module ((tegfs webcore-get-current-permissions) :select (webcore::get-current-permissions))
     )))
 
 
@@ -32,7 +32,7 @@
 (define (webcore::entry-get-iter web::context)
   (lambda (opening-properties query E-name)
     (define filemap/2 (context-filemap/2 web::context))
-    (define perm (webcore::permissions/p))
+    (define perm (webcore::get-current-permissions))
     (define iter0 (tegfs-query/open opening-properties query))
     (define (iter)
       (define-values (x full) (iter-values))
