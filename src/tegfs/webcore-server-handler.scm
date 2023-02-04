@@ -27,6 +27,7 @@
     :use-module ((tegfs webcore-add-entry) :select (webcore::add-entry))
     :use-module ((tegfs webcore-add-tempentry) :select (webcore::add-tempentry))
     :use-module ((tegfs webcore-categorization) :select (webcore::categorization))
+    :use-module ((tegfs webcore-check-api-access) :select (webcore::check-api-access))
     :use-module ((tegfs webcore-collectgarbage) :select (webcore::collectgarbage))
     :use-module ((tegfs webcore-create-server-operator-permission-bang) :select (webcore::create-server-operator-permission!))
     :use-module ((tegfs webcore-entry) :select (webcore::entry))
@@ -73,6 +74,7 @@
    (update-tempentry (webcore::update-tempentry web::context))
    (get-tempentry (webcore::get-tempentry web::context))
    (write-tempentries (webcore::write-tempentries web::context))
+   (check-api-access (webcore::check-api-access web::context))
 
    ))
 
