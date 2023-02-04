@@ -101,7 +101,7 @@
       :synonym (--version -v version)
       :synonym (license copying)
 
-      :default (--no-series #f)
+      :default (--no-series #t)
       :exclusive (--no-series --series)
 
       :default (--entries #t)
