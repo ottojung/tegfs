@@ -45,11 +45,7 @@
      append
      (map maybe-parse <query...>)))
   (define (convert-arguments args)
-    (define mapped (map tovar args))
-    (list
-     (if (null? (cdr mapped))
-         (car mapped)
-         (list->vector mapped))))
+    (map tovar args))
 
   (define parsed-query-1 (map (curry-if pair? (fn-cons identity convert-arguments)) parsed-query-0))
   (define parsed-query (map (curry-if pair? (comp (cons 't))) parsed-query-1))
