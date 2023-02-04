@@ -44,6 +44,7 @@
     :use-module ((tegfs webcore-time-left) :select (webcore::time-left))
     :use-module ((tegfs webcore-update-entry) :select (webcore::update-entry))
     :use-module ((tegfs webcore-update-tempentry) :select (webcore::update-tempentry))
+    :use-module ((tegfs webcore-write-tempentries) :select (webcore::write-tempentries))
     )))
 
 
@@ -71,6 +72,7 @@
    (add-tempentry (webcore::add-tempentry web::context))
    (update-tempentry (webcore::update-tempentry web::context))
    (get-tempentry (webcore::get-tempentry web::context))
+   (write-tempentries (webcore::write-tempentries web::context))
 
    ))
 
