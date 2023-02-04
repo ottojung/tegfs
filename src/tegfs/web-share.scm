@@ -155,6 +155,27 @@
   (web::handle-profun-results
    result (web::share-cont callctx #f)))
 
+(define (web::share-id id)
+  (define callctx (web::callcontext/p))
+  (define key (callcontext-token callctx))
+  (define share-duration (get-share-duration callctx))
+
+  (define result
+    (webcore::ask
+     `(whats
+       (key ,key)
+       (make-temporary-permissions ,share-duration AD P K)
+       (entry _E)
+       (entry-field _E "id" ,id)
+       (share-entry _E K)
+       (share-full _E ,share-duration _2 _F)
+       (link-shared _F FL)
+       more (99999)
+       )))
+
+  (web::handle-profun-results
+   result (web::share-cont callctx #f)))
+
 (define (web::share::settings)
   (define callctx (web::callcontext/p))
   (define body (web::share::get-settings-text callctx))
@@ -164,10 +185,12 @@
   (define ctxq (web::get-query))
   (define query/encoded (hashmap-ref ctxq 'q #f))
   (define vid (hashmap-ref ctxq 'vid #f))
+  (define id (hashmap-ref ctxq 'id #f))
   (define settings? (hashmap-ref ctxq 'settings #f))
 
   (cond
    ((equal? settings? "yes") (web::share::settings))
    (query/encoded (web::share-query query/encoded))
    (vid (web::share-vid vid))
+   (id (web::share-id id))
    (else (web::bad-request "Bad arguments to share"))))
