@@ -59,7 +59,6 @@
        /      categorize
        /      query QUERYARGS
        /      get GETARGS
-       /      status
        /      serve
        /      talk TALKOPTS*
        /      prolog
@@ -139,9 +138,6 @@
          (make-thumbnails (tegfs-make-thumbnails/parse <target> <output>))
          (config (tegfs-config/parse get set <name> <value>))
          (dump-clipboard (tegfs-dump-clipboard/parse))
-         (status
-          (display "NOT IMPLEMENTED YET") (newline)
-          (exit 1))
          (license (CLI::show-license))
          (warranty (CLI::show-warranty))
          (else
