@@ -20,6 +20,7 @@
     :use-module ((euphrates assq-or) :select (assq-or))
     :use-module ((euphrates comp) :select (appcomp))
     :use-module ((euphrates dprintln) :select (dprintln))
+    :use-module ((euphrates file-delete) :select (file-delete))
     :use-module ((euphrates hashset) :select (hashset->list hashset-add! make-hashset))
     :use-module ((euphrates list-deduplicate) :select (list-deduplicate/reverse))
     :use-module ((euphrates open-file-port) :select (open-file-port))
@@ -115,7 +116,8 @@
 
 (define (tegfs-prolog)
   (define output-path (tegfs-dump-prolog-file))
-  (system* "swipl" output-path))
+  (system* "swipl" output-path)
+  (file-delete output-path))
 
 (define (translate-registries yield)
   (define counter
