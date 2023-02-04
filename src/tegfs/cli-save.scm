@@ -18,6 +18,7 @@
   (define-module (tegfs cli-save)
     :export (CLI::save)
     :use-module ((euphrates append-posix-path) :select (append-posix-path))
+    :use-module ((euphrates assq-or) :select (assq-or))
     :use-module ((euphrates dprintln) :select (dprintln))
     :use-module ((euphrates file-delete) :select (file-delete))
     :use-module ((euphrates file-or-directory-exists-q) :select (file-or-directory-exists?))
@@ -39,6 +40,7 @@
     :use-module ((tegfs fatal) :select (fatal))
     :use-module ((tegfs get-random-basename) :select (get-random-basename))
     :use-module ((tegfs get-root) :select (get-root))
+    :use-module ((tegfs keyword-id) :select (keyword-id))
     :use-module ((tegfs make-temporary-filename-local) :select (make-temporary-filename/local))
     )))
 
@@ -90,19 +92,24 @@
      ((equal? real-type 'pasta) #f)
      (else -text-content)))
 
-  (file-delete (working-file/p))
+  (define _delete-result
+    (file-delete (working-file/p)))
 
-  (tegfs-add
-   <target> title tags
-   series? key-value-pairs
-   registry-file <date>))
+  (define entry
+    (tegfs-add
+     <target> title tags
+     series? key-value-pairs
+     registry-file <date>))
+
+  (assq-or keyword-id entry (raisu 'impossible)))
 
 (define (CLI::save/no-remote --link <savetext>)
-  (parameterize ((working-file/p (make-temporary-filename/local)))
-    (let ((state (CLI::save::loop --link <savetext>)))
-      (send-state state)))
+  (define id
+    (parameterize ((working-file/p (make-temporary-filename/local)))
+      (let ((state (CLI::save::loop --link <savetext>)))
+        (send-state state))))
 
-  (dprintln "Saved!"))
+  (dprintln "Saved as ~a" id))
 
 (define (CLI::save/remote <remote> <savetext>)
   (define savetext
