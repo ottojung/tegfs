@@ -34,6 +34,7 @@
     :use-module ((tegfs web-get-query) :select (web::get-query))
     :use-module ((tegfs web-handle-profun-results) :select (web::handle-profun-results))
     :use-module ((tegfs web-make-html-response) :select (web::make-html-response))
+    :use-module ((tegfs web-not-found) :select (web::not-found))
     :use-module ((tegfs web-share-default-page) :select (web::share::get-default-text))
     :use-module ((tegfs web-share-settings-page) :select (web::share::get-settings-text))
     :use-module ((tegfs webcore-ask) :select (webcore::ask))
@@ -110,7 +111,7 @@
 (define (web::share-cont callctx query?)
   (lambda (equals)
     (if (null? equals)
-        (raisu 'unexpected-false-from-backend-71631231237)
+        (web::not-found)
         (web::share-cont/2 callctx query? (car equals)))))
 
 (define (web::share-query query/encoded)
