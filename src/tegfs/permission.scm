@@ -16,7 +16,7 @@
 (cond-expand
  (guile
   (define-module (tegfs permission)
-    :export (permission-constructor permission? permission-token permission-date permission-stime permission-admin? permission-maybepassword permission-uploadaccess? permission-entry-view-access? permission-entry-modify-access? permission-cat-view-access? permission-cat-modify-access? permission-share-longer-than-view? permission-filemap permission-idset)
+    :export (permission-constructor permission? permission-token permission-date permission-stime permission-admin? permission-maybepassword permission-uploadaccess? permission-entry-view-access? permission-entry-modify-access? permission-cat-view-access? permission-cat-modify-access? permission-share-longer-than-view? permission-filemap permission-idset permission-api-access?)
     :use-module ((euphrates assq-or) :select (assq-or))
     :use-module ((euphrates define-type9) :select (define-type9))
     )))
@@ -54,3 +54,6 @@
 
 (define (permission-share-longer-than-view? perm) ;; true if user can share entries for longer than viewing allows. useful for admins
   (assq-or 'sharelonger-than-view? (permission-dynamic perm)))
+
+(define (permission-api-access? perm) ;; true if user can directly submit profun sentences to backend.
+  (assq-or 'api-access? (permission-dynamic perm)))

@@ -16,7 +16,7 @@
 (cond-expand
  (guile
   (define-module (tegfs webcore-access)
-    :export (has-access-for-entry? has-access-for-entry-target? has-access-for-entry-details? can-modify-entry? can-upload? can-view-categorization? can-modify-categorization? can-share-longer-than-view? can-manage-tempentries?)
+    :export (has-access-for-entry? has-access-for-entry-target? has-access-for-entry-details? can-modify-entry? can-upload? can-view-categorization? can-modify-categorization? can-share-longer-than-view? can-manage-tempentries? has-api-access?)
     :use-module ((euphrates assoc-or) :select (assoc-or))
     :use-module ((euphrates hashmap) :select (hashmap-ref))
     :use-module ((euphrates hashset) :select (hashset-has?))
@@ -25,7 +25,7 @@
     :use-module ((tegfs filemap) :select (filemap-ref-by-senderid))
     :use-module ((tegfs keyword-entry-parent-directory-senderid) :select (keyword-entry-parent-directory-senderid))
     :use-module ((tegfs keyword-id) :select (keyword-id))
-    :use-module ((tegfs permission) :select (permission-admin? permission-cat-modify-access? permission-cat-view-access? permission-entry-modify-access? permission-entry-view-access? permission-filemap permission-idset permission-share-longer-than-view? permission-uploadaccess?))
+    :use-module ((tegfs permission) :select (permission-admin? permission-api-access? permission-cat-modify-access? permission-cat-view-access? permission-entry-modify-access? permission-entry-view-access? permission-filemap permission-idset permission-share-longer-than-view? permission-uploadaccess?))
     :use-module ((tegfs sharedinfo) :select (sharedinfo-sourcepath))
     )))
 
@@ -88,3 +88,8 @@
   ;;  2) temporary entries can be spammed with.
 
   (and perm (permission-admin? perm)))
+
+(define (has-api-access? perm)
+  (and perm
+       (or (permission-admin? perm)
+           (permission-api-access? perm))))
