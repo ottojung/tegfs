@@ -17,7 +17,6 @@
  (guile
   (define-module (tegfs web-collectgarbage)
     :export (web::collectgarbage)
-    :use-module ((tegfs web-collect-own-garbage) :select (web::collect-own-garbage))
     :use-module ((tegfs web-return) :select (web::return))
     :use-module ((tegfs webcore-ask) :select (webcore::ask))
     )))
@@ -26,8 +25,6 @@
 
 (define (web::collectgarbage)
   (webcore::ask `(whats (collectgarbage)))
-  (web::collect-own-garbage)
-
   (web::return
    200
    `((Cache-Control . "no-cache"))
