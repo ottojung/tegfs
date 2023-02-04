@@ -26,6 +26,7 @@
 (define (web::get-full-link entry target maybe-senderid)
   (cond
    (maybe-senderid (string-append "full?vid=" maybe-senderid))
+   ((not target) #f)
    ((a-weblink? target) target)
    (else
     (raisu 'not-enough-information-to-get-full-link entry))))

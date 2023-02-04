@@ -77,12 +77,12 @@
 
 (define (maybe-display-preview entry maybe-full-senderid preview-link)
   (define target (entry-get-target entry))
-  (when target
-    (let ((full-link (web::get-full-link entry target maybe-full-senderid)))
-      (when full-link
-        (display "<a href=") (write full-link) (display ">")
-        (display-preview entry target preview-link)
-        (display "</a>")))))
+  (let ((full-link (web::get-full-link entry target maybe-full-senderid)))
+    (when full-link
+      (display "<a href=") (write full-link) (display ">"))
+    (display-preview entry target preview-link)
+    (when full-link
+      (display "</a>"))))
 
 (define (display-actual-title entry)
   (define title (assq-or keyword-title entry #f))
@@ -99,26 +99,31 @@
 
 (define (display-title maybe-full-senderid entry)
   (define id (assq-or keyword-id entry #f))
-  (define details-link? (not (not maybe-full-senderid)))
 
-  (when details-link?
-    (display "<a href='full?vid=")
-    (display maybe-full-senderid)
-    (display "'>"))
+  (define (display-query)
+    (if maybe-full-senderid
+        (begin
+          (display "vid=")
+          (display maybe-full-senderid))
+        (begin
+          (display "id=")
+          (display id))))
 
+  (if maybe-full-senderid
+      (display "<a href='full?")
+      (display "<a href='details?"))
+  (display-query)
+  (display "'>")
   (display-actual-title entry)
+  (display "</a>")
 
-  (when details-link?
-    (display "</a>"))
+  (display "<a href='details?")
+  (display-query)
+  (display "'>")
+  (display "<img src='static/details.svg' title='Details'/>")
+  (display "</a>")
 
-  (when details-link?
-    (display "<a href='details?vid=")
-    (display maybe-full-senderid)
-    (display "'>")
-    (display "<img src='static/details.svg' title='Details'/>")
-    (display "</a>"))
-
-  (when details-link?
+  (when maybe-full-senderid
     (display "<a href='share?vid=")
     (display maybe-full-senderid)
     (display "'>")
