@@ -19,6 +19,7 @@
     :export (web::server-handle)
     :use-module ((euphrates hashmap) :select (alist->hashmap hashmap-ref))
     :use-module ((euphrates tilda-a) :select (~a))
+    :use-module ((tegfs web-api) :select (web::api))
     :use-module ((tegfs web-auth) :select (web::auth))
     :use-module ((tegfs web-callcontext-p) :select (web::callcontext/p))
     :use-module ((tegfs web-callcontext) :select (callcontext-path))
@@ -71,6 +72,7 @@
     (/auth ,web::auth)
     (/tags ,web::tags)
     (/home ,web::home)
+    (/api ,web::api)
     (/ ,web::home)
 
     (/favicon.ico ,web::favicon.ico)
