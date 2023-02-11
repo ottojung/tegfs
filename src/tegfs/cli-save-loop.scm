@@ -219,29 +219,29 @@
                 'yes))
          'no))
 
-    (real-type
+    (kind
      (classify-clipboard-text-content (-text-content)))
 
     (-temporary-file
      (or
-      (and (equal? 'localfile (real-type))
+      (and (equal? 'localfile (kind))
            (-text-content))
-      (and (equal? 'link (real-type))
+      (and (equal? 'link (kind))
            (equal? 'yes (download?))
            (download-to-temporary-file (-text-content)))
-      (and (equal? 'data (real-type))
+      (and (equal? 'data (kind))
            (mimetype 'or #f)
            (dump-clipboard-temp (mimetype)))
-      (and (equal? 'pasta (real-type))
+      (and (equal? 'pasta (kind))
            (let* ((temp-name (dump-clipboard-temp (mimetype))))
              (write-string-file temp-name (-text-content))
              temp-name))))
 
     (mimetype
      (or
-      (and (equal? (real-type) 'pasta)
+      (and (equal? (kind) 'pasta)
            "text/plain")
-      (and (equal? 'link (real-type))
+      (and (equal? 'link (kind))
            (equal? 'no (download?))
            "text/uri-list")
       (and (-temporary-file 'or #f)
@@ -252,16 +252,16 @@
 
     (target-basename
      (or
-      (and (equal? 'localfile (real-type))
+      (and (equal? 'localfile (kind))
            (path-without-extension (path-get-basename (-text-content))))
       (get-random-basename)))
 
     (target-extension
      (or
-      (and (equal? 'pasta (real-type)) ".txt")
-      (and (equal? 'localfile (real-type))
+      (and (equal? 'pasta (kind)) ".txt")
+      (and (equal? 'localfile (kind))
            (path-extensions (-text-content)))
-      (and (equal? 'link (real-type))
+      (and (equal? 'link (kind))
            (equal? 'no (download?))
            'ignore)
       (and (mimetype 'or #f)
@@ -275,17 +275,17 @@
    :user
    ((title (read-answer "Enter the title:"))
     (tags (get-tags))
-    (registry-file (get-registry-file))
-    (real-type (read-enumeration "Real type" '(data link localfile pasta)))
+    (kind (read-enumeration "Kind: " '(data link localfile pasta)))
     (download? (read-enumeration "Download target to the new location?" '(yes no)))
-    (diropen? (read-enumeration "Diropen?" '(yes no)))
-    (dirpreview? (read-enumeration "Dirpreview?" '(yes no)))
-    (link? (read-enumeration "Link target to the new location?" '(yes no)))
     (series (read-enumeration "Is this item related to the one previously saved?" '(yes no)))
     (mimetype (read-answer "Enter mimetype: "))
     (target-basename (read-answer "Enter target basename relative to the registry file: "))
     (target-extension (get-target-extension))
+    (link? (read-enumeration "Link target to the new location?" '(yes no)))
+    (diropen? (read-enumeration "Diropen?" '(yes no)))
+    (dirpreview? (read-enumeration "Dirpreview?" '(yes no)))
     (note (read-answer "Enter note: "))
+    (registry-file (get-registry-file))
     ;; (confirm (get-confirm)) ;; TODO: fix this and enable again
     )
 

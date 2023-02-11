@@ -56,7 +56,7 @@
   (define target-extension (cdr (assoc 'target-extension state)))
   (define target-basename (cdr (assoc 'target-basename state)))
   (define mimetype (cdr (assoc 'mimetype state)))
-  (define real-type (cdr (assoc 'real-type state)))
+  (define kind (cdr (assoc 'kind state)))
   (define series (cdr (assoc 'series state)))
   (define series? (case series ((yes) #t) ((no) #f) (else (fatal "Bad value for series ~s" series))))
   (define link? (case (cdr (assoc 'link? state)) ((yes) #t) ((no) #f) (else (fatal "Bad value for link? ~s" (cdr (assoc 'link? state))))))
@@ -89,7 +89,7 @@
         (when link?
           (symlink target-fullname -temporary-file))
         target-name))
-     ((equal? real-type 'pasta) #f)
+     ((equal? kind 'pasta) #f)
      (else -text-content)))
 
   (define _delete-result
@@ -118,17 +118,17 @@
            ((data) (raisu 'savetext-cannot-be-data <savetext>))
            ((link localfile) <savetext>)
            ((pasta) (tegfs-dump-clipboard/pasta <savetext>))
-           (else (raisu 'unexpected-real-type <savetext>)))))
+           (else (raisu 'unexpected-kind <savetext>)))))
   (define working-text
     (or savetext
         (tegfs-dump-clipboard)))
   (define <remote-id>
     (get-random-basename))
 
-  (define real-type (classify-clipboard-text-content working-text))
+  (define kind (classify-clipboard-text-content working-text))
 
   (define remote-name
-    (case real-type
+    (case kind
       ((localfile)
        (unless (file-or-directory-exists? working-text)
          (raisu 'file-must-have-been-created working-text))
@@ -137,11 +137,11 @@
            (fatal "Syncing to remote failed"))
          (append-posix-path "tegfs-remote-hub" (path-get-basename normalized))))
       ((link) working-text)
-      ((data pasta) (raisu 'impossible-real-type real-type working-text))
-      (else (raisu 'unhandled-real-type real-type working-text))))
+      ((data pasta) (raisu 'impossible-kind kind working-text))
+      (else (raisu 'unhandled-kind kind working-text))))
 
   (define temp-file (get-random-basename))
-  (define temp-file-content (string-append (~s real-type) ":" remote-name))
+  (define temp-file-content (string-append (~s kind) ":" remote-name))
   (write-string-file temp-file temp-file-content)
 
   (unless (= 0 (system-fmt "exec scp ~a ~a:tegfs-remote-hub/~a" temp-file <remote> <remote-id>))
@@ -159,18 +159,18 @@
   (define temp-file (append-posix-path HOME "tegfs-remote-hub" <remote-id>))
   (define temp-file-content
     (read-string-file temp-file))
-  (define-values (real-type/string col remote-name)
+  (define-values (kind/string col remote-name)
     (string-split-3 #\: temp-file-content))
   (define _12737123
     (when (string-null? col)
       (fatal "Client sent bad tegfs-remote-name")))
-  (define real-type (string->symbol real-type/string))
+  (define kind (string->symbol kind/string))
   (define <savetext>
-    (case real-type
+    (case kind
       ((localfile) (append-posix-path HOME remote-name))
       ((link) remote-name)
-      ((data pasta) (fatal "Impossible real type: ~s" real-type))
-      (else (raisu 'unhandled-real-type-in-server real-type))))
+      ((data pasta) (fatal "Impossible real type: ~s" kind))
+      (else (raisu 'unhandled-kind-in-server kind))))
   (dprintln "Remote file content: ~s" <savetext>)
   (CLI::save/no-remote #f <savetext>)
   (file-delete temp-file))
