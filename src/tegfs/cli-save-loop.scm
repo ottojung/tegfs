@@ -128,7 +128,6 @@
 
 (define (print-setter-fields current-setter)
   (define setters (alist-initialize!:current-setters))
-  (dprintln "\n\n")
   (dprintln " Enter *number* to edit one of below.")
   (for-each
    (lambda (setter i)
@@ -145,13 +144,20 @@
                    (car setter)
                    (if value (~s value) "")))))
    setters
-   (range (length setters)))
-  )
+   (range (length setters))))
 
 (define (useradvice name alist recalculate? thunk)
   (if recalculate?
       (dprintln "\n Switched to ~s" (~s name))
-      (print-setter-fields name))
+      (begin
+        (newline) (newline) (newline) (newline) (newline) (newline) (newline) (newline) (newline) (newline)
+        (newline) (newline) (newline) (newline) (newline) (newline) (newline) (newline) (newline) (newline)
+        (newline) (newline) (newline) (newline) (newline) (newline) (newline) (newline) (newline) (newline)
+        (newline) (newline) (newline) (newline) (newline) (newline) (newline) (newline) (newline) (newline)
+        (newline) (newline) (newline) (newline) (newline) (newline) (newline) (newline) (newline) (newline)
+        (newline) (newline) (newline) (newline) (newline) (newline) (newline) (newline) (newline) (newline)
+        (print-setter-fields name)))
+  (newline)
   (thunk))
 
 (define swiched-field?
