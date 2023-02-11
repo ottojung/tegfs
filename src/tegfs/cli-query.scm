@@ -15,7 +15,7 @@
 
 (cond-expand
  (guile
-  (define-module (tegfs CLI-query)
+  (define-module (tegfs cli-query)
     :export (CLI::query)
     :use-module ((euphrates comp) :select (comp))
     :use-module ((euphrates fn-alist) :select (fn-alist))

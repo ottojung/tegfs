@@ -15,7 +15,7 @@
 
 (cond-expand
  (guile
-  (define-module (tegfs CLI-talk)
+  (define-module (tegfs cli-talk)
     :export (CLI::talk)
     :use-module ((euphrates catch-any) :select (catch-any))
     :use-module ((euphrates profune-communicator) :select (profune-communicator-handle))
