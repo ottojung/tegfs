@@ -277,7 +277,7 @@
     (tags (get-tags))
     (registry-file (get-registry-file))
     (real-type (read-enumeration "Real type" '(data link localfile pasta)))
-    (download? (read-enumeration "Downloaded target to the new location?" '(yes no)))
+    (download? (read-enumeration "Download target to the new location?" '(yes no)))
     (diropen? (read-enumeration "Diropen?" '(yes no)))
     (dirpreview? (read-enumeration "Dirpreview?" '(yes no)))
     (link? (read-enumeration "Link target to the new location?" '(yes no)))
