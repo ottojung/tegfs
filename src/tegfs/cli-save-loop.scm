@@ -67,7 +67,7 @@
     result))
 
 (define (get-target-extension)
-  (define input (read-answer "Enter target extension: "))
+  (define input (read-answer "Target extension: "))
   (if (string-prefix? "." input) input
       (string-append "." input)))
 
@@ -83,7 +83,7 @@
   (case (length registry-files)
     ((0)
      (let ((answer
-            (read-answer "No existing registry files found.\nEnter a name for a new one:")))
+            (read-answer "No existing registry files found.\nName for a new one: ")))
        (string-append answer regfile-suffix)))
     ((1) (car registry-files))
     (else
@@ -102,7 +102,7 @@
   (define hint/inner
     (apply string-append (list-intersperse "/" option-list)))
   (define hint
-    (stringf "~a (~a)" name hint/inner))
+    (stringf "~a (~a)\n " name hint/inner))
   (define option-list/down
     (map string-downcase option-list))
 
@@ -175,7 +175,10 @@
 
 (define (read-answer question)
   (let loop ()
-    (define _2 (dprintln " ~a" question))
+    (define _2
+      (begin
+        (display " ")
+        (display question)))
     ;; (define state (state/p))
     (define answer (read-string-line))
     (define num (string->number answer))
@@ -279,18 +282,18 @@
 
    :useradvice useradvice
    :user
-   ((title (read-answer "Enter the title:"))
+   ((title (read-answer "Title: "))
     (tags (get-tags))
     (kind (read-enumeration "Kind: " '(data link localfile pasta)))
     (download? (read-enumeration "Download target to the new location?" '(yes no)))
     (series (read-enumeration "Is this item related to the one previously saved?" '(yes no)))
-    (mimetype (read-answer "Enter mimetype: "))
-    (target-basename (read-answer "Enter target basename relative to the registry file: "))
+    (mimetype (read-answer "Mimetype: "))
+    (target-basename (read-answer "Target basename relative to the registry file: "))
     (target-extension (get-target-extension))
     (link? (read-enumeration "Link target to the new location?" '(yes no)))
     (diropen? (read-enumeration "Diropen?" '(yes no)))
     (dirpreview? (read-enumeration "Dirpreview?" '(yes no)))
-    (note (read-answer "Enter note: "))
+    (note (read-answer "Note: "))
     (registry-file (get-registry-file))
     ;; (confirm (get-confirm)) ;; TODO: fix this and enable again
     )
