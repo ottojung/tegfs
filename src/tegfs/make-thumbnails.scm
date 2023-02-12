@@ -18,7 +18,6 @@
   (define-module (tegfs make-thumbnails)
     :export (tegfs-make-thumbnails/parse tegfs-make-thumbnails tegfs-make-image-thumbnails tegfs-make-senderideo-thumbnails)
     :use-module ((euphrates asyncproc-input-text-p) :select (asyncproc-input-text/p))
-    :use-module ((euphrates asyncproc) :select (asyncproc-status))
     :use-module ((euphrates catchu-case) :select (catchu-case))
     :use-module ((euphrates comp) :select (appcomp comp))
     :use-module ((euphrates dprintln) :select (dprintln))
@@ -144,8 +143,7 @@
     (with-output-to-string
       (lambda _
         (parameterize ((current-error-port (current-output-port)))
-          (define p (run-syncproc "ffprobe" <input>))
-          (set! status (asyncproc-status p))))))
+          (set! status (run-syncproc "ffprobe" <input>))))))
   (define _121312
     (unless (= 0 status) (raisu 'probe-failed status probe)))
 
