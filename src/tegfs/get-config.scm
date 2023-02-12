@@ -1,4 +1,4 @@
-;;;; Copyright (C) 2022  Otto Jung
+;;;; Copyright (C) 2022, 2023  Otto Jung
 ;;;;
 ;;;; This program is free software: you can redistribute it and/or modify
 ;;;; it under the terms of the GNU Affero General Public License as published
@@ -21,6 +21,7 @@
     :use-module ((euphrates file-or-directory-exists-q) :select (file-or-directory-exists?))
     :use-module ((euphrates open-file-port) :select (open-file-port))
     :use-module ((euphrates read-list) :select (read-list))
+    :use-module ((euphrates write-string-file) :select (write-string-file))
     :use-module ((tegfs get-root) :select (get-root))
     )))
 
@@ -28,9 +29,11 @@
 
 (define (get-config)
   (define path (append-posix-path (get-root) "config.tegfs.lisp"))
-  (and
-   (file-or-directory-exists? path)
-   (let* ((p (open-file-port path "r"))
-          (alist (read-list p)))
-     (close-port p)
-     alist)))
+  (if (file-or-directory-exists? path)
+      (let* ((p (open-file-port path "r"))
+             (alist (read-list p)))
+        (close-port p)
+        alist)
+      (begin
+        (write-string-file path "")
+        '())))
