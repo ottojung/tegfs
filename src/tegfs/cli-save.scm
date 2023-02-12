@@ -149,7 +149,7 @@
     (fatal "Something went wrong on the other side"))
   (file-delete temp-file)
 
-  (unless (= 0 (system-fmt "exec ssh -t ~a \"exec /bin/sh -l -c \\\"exec tegfs save --from-remote ~a\\\"\"" <remote> <remote-id>))
+  (unless (= 0 (system-fmt "exec ssh -o 'SendEnv LANG' -t ~a \"exec /bin/sh -l -c \\\"exec tegfs save --from-remote ~a\\\"\"" <remote> <remote-id>))
     (fatal "Something went wrong on the other side"))
 
   (dprintln "Saved!"))
