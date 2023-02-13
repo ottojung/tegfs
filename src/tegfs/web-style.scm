@@ -386,6 +386,7 @@ header nav ul img:hover {
     min-height: 4rem;
     text-align: center;
     max-width: 40vw;
+    word-break: break-word;
 }
 
 .card:hover {
