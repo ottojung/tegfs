@@ -54,6 +54,7 @@ The tags are:
 - `%local` - true if target is not a web link (arity = 1)
 - `%notarget` - true if the object has no target (arity = 1)
 - `%unsorted` - true if the object has no other user-defined tags (arity = 1)
+- `%upload` - true if the object was uploaded through the web interface (arity = 1)
 
 So, for example, doing `tegfs query %any` will return
  every object there is in the database.
