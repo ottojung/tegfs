@@ -33,7 +33,7 @@
 (define webcore::add-entry
   (profun-op-lambda
    :with-env
-   (ctx (registry-file entry) (R-name E-name))
+   (ctx (entry) (R-name E-name))
 
    (define perm (webcore::get-current-permissions))
 
@@ -42,12 +42,10 @@
      (make-profun-error 'permission-denied "Not authorized. Missing key?"))
     ((not (can-upload? perm))
      (make-profun-error 'permission-denied "This user cannot create new entries"))
-    ((profun-unbound-value? registry-file)
-     (profun-request-value R-name))
     ((profun-unbound-value? entry)
      (profun-request-value E-name))
 
     (else
-     (let ((created (add-entry registry-file entry)))
+     (let ((created (add-entry entry)))
        (profun-set-meta
         (E-name <- created)))))))

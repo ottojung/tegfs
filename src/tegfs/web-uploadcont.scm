@@ -154,7 +154,7 @@
       (webcore::ask
        `(whats
          (key ,(callcontext-token callctx))
-         (add-entry ,(upload-registry-filename) ,entry)
+         (add-entry ,entry)
          (share-full ,entry ,default-share-expiery-time _ F))))
 
     (web::iterate-profun-results

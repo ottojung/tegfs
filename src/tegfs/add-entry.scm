@@ -28,7 +28,6 @@
     :use-module ((euphrates file-or-directory-exists-q) :select (file-or-directory-exists?))
     :use-module ((euphrates list-deduplicate) :select (list-deduplicate/reverse))
     :use-module ((euphrates make-directories) :select (make-directories))
-    :use-module ((euphrates memconst) :select (memconst))
     :use-module ((euphrates path-get-dirname) :select (path-get-dirname))
     :use-module ((euphrates raisu) :select (raisu))
     :use-module ((euphrates random-choice) :select (random-choice))
@@ -49,13 +48,11 @@
     :use-module ((tegfs keyword-prev) :select (keyword-prev))
     :use-module ((tegfs keyword-tags) :select (keyword-tags))
     :use-module ((tegfs last-id-filename) :select (last-id-filename))
-    :use-module ((tegfs set-config) :select (set-config))
-    :use-module ((tegfs warning) :select (warning))
     )))
 
 
 
-(define (add-entry registry-file0 entry0)
+(define (add-entry entry0)
 
   (define (generate-random-id)
     (list->string
@@ -71,31 +68,9 @@
 
   (define config (get-config))
 
-  (define (init-registry-file <registry-file>)
-    (define get-default-registry
-      (memconst (assq-or 'default-save-registry config #f)))
-    (define get-existing-registries
-      (memconst (get-registry-files)))
-
-    (define registry-file1
-      (cond
-       (<registry-file> <registry-file>)
-
-       ((get-default-registry) (get-default-registry))
-
-       ((not (null? (get-existing-registries)))
-        (warning "Default registry not set. Choosing a first available one: ~s."
-                 (car (get-existing-registries)))
-        (car (get-existing-registries)))
-
-       (else
-        (warning "Default registry not set. A new one is created.")
-        (let ((new "default/default.tegfs.reg.lisp"))
-          (set-config 'registries new)
-          new))))
-
+  (define (init-registry-file)
     (define registry-file
-      (append-posix-path (get-root) registry-file1))
+      (append-posix-path (get-root) (car (get-registry-files))))
 
     (unless (file-or-directory-exists? registry-file)
       (let ((registry-dir (dirname registry-file)))
@@ -110,7 +85,7 @@
     (append-posix-path (get-root) last-id-filename))
 
   (define registry-file
-    (init-registry-file registry-file0))
+    (init-registry-file))
 
   (define registry-dir
     (path-get-dirname registry-file))

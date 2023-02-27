@@ -28,14 +28,12 @@
 
 (define core::add-entry
   (profun-op-lambda
-   (ctx (registry-file entry) (R-name E-name))
+   (ctx (entry) (R-name E-name))
 
    (cond
-    ((profun-unbound-value? registry-file)
-     (profun-request-value R-name))
     ((profun-unbound-value? entry)
      (profun-request-value E-name))
 
     (else
-     (add-entry registry-file entry)
+     (add-entry entry)
      (profun-accept)))))

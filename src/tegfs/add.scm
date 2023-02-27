@@ -35,7 +35,7 @@
 (define (tegfs-add/parse
          <target> <title> <tag...>
          --series <key...> <value...>
-         <registry-file> <date>)
+         <date>)
   (define key-value-pairs
     (list-zip (or <key...> '()) (or <value...> '())))
 
@@ -46,7 +46,7 @@
    (tegfs-add
     <target> <title> tags
     --series key-value-pairs
-    <registry-file> <date>)
+    <date>)
 
    (('no-last-id-for-series)
     (fatal "Want series, but last-id file is not present"))
@@ -62,7 +62,7 @@
 (define (tegfs-add
          <target> <title> tags
          series? key-value-pairs0
-         <registry-file> <date>)
+         <date>)
 
   (define (tosymbol x)
     (cond
@@ -93,4 +93,4 @@
          (list))
      key-value-pairs))
 
-  (add-entry <registry-file> entry))
+  (add-entry entry))

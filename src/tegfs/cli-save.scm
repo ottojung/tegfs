@@ -101,7 +101,7 @@
     (tegfs-add
      <target> title tags
      series? key-value-pairs
-     registry-file <date>))
+     <date>))
 
   (assq-or keyword-id entry (raisu 'impossible)))
 

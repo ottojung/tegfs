@@ -80,10 +80,9 @@ test-serve: dist/tegfs $(TEST_FILES) test-make-previews
 	$(TEST_FS) serve
 
 test1: dist/tegfs $(TEST_FILES)
-	touch $(TEST_ROOT)/hi.txt
+	touch $(TEST_ROOT)/db/hi.txt
 	echo hi | $(TEST_FS) add \
 		--target hi.txt \
-		--registry-file testreg.tegfs.reg.lisp \
 		--key a 1 \
 		--key b 2 \
 		--key SCHEDULED 3 \

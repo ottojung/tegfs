@@ -72,7 +72,6 @@
        /        --series
        /        --no-series
        /        --key <key...> <value...>
-       /        --registry-file <registry-file>
        /        --date <date>
        SAVEARGS : --link SAVETARGET
        /          --from-remote <remote-id>
@@ -127,7 +126,7 @@
          (--version (display tegfs-version) (newline))
          (add (tegfs-add/parse
                <add-target> <title> <tag...> --series <key...> <value...>
-               <registry-file> <date>))
+               <date>))
          (save (CLI::save <remote> --from-remote <remote-id> --link <savetext>))
          (categorize (tegfs-categorize/parse))
          (serve (tegfs-serve/parse))
