@@ -19,7 +19,6 @@
     :export (CLI::save::loop)
     :use-module ((euphrates alist-initialize-bang) :select (alist-initialize!:current-setters))
     :use-module ((euphrates alist-initialize-loop) :select (alist-initialize-loop))
-    :use-module ((euphrates assq-or) :select (assq-or))
     :use-module ((euphrates asyncproc-input-text-p) :select (asyncproc-input-text/p))
     :use-module ((euphrates dprintln) :select (dprintln))
     :use-module ((euphrates lines-to-string) :select (lines->string))
@@ -52,7 +51,6 @@
     :use-module ((tegfs get-registry-files) :select (get-registry-files))
     :use-module ((tegfs get-root) :select (get-root))
     :use-module ((tegfs get-save-plugins) :select (get-save-plugins))
-    :use-module ((tegfs keyword-default-save-registry) :select (keyword-default-save-registry))
     :use-module ((tegfs regfile-suffix) :select (regfile-suffix))
     :use-module ((tegfs run-save-plugins) :select (run-save-plugins))
     )))
@@ -214,11 +212,6 @@
 
     (* (run-save-plugins config root current plugins))
 
-    (registry-file
-     (define config (get-config))
-     (and config
-          (car (assq-or keyword-default-save-registry config (list #f)))))
-
     (download?
      (if (a-weblink? (-text-content))
          (let ((name (url-get-path (-text-content))))
@@ -288,13 +281,12 @@
     (download? (read-enumeration "Download target to the new location?" '(yes no)))
     (series (read-enumeration "Is this item related to the one previously saved?" '(yes no)))
     (mimetype (read-answer "Mimetype: "))
-    (target-basename (read-answer "Target basename relative to the registry file: "))
+    (target-basename (read-answer "Target basename: "))
     (target-extension (get-target-extension))
     (link? (read-enumeration "Link target to the new location?" '(yes no)))
     (diropen? (read-enumeration "Diropen?" '(yes no)))
     (dirpreview? (read-enumeration "Dirpreview?" '(yes no)))
     (note (read-answer "Note: "))
-    (registry-file (get-registry-file))
     ;; (confirm (get-confirm)) ;; TODO: fix this and enable again
     )
 

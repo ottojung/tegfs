@@ -29,9 +29,10 @@
 
 
 (define (entries-map! fun)
+  (define root (get-root))
   (for-each
    (lambda (registry-path)
-     (define registry-fullpath (append-posix-path (get-root) registry-path))
+     (define registry-fullpath (append-posix-path root registry-path))
      (define input-port (open-file-port registry-fullpath "r"))
      (define temp-path (make-temporary-filename/local))
      (define temp-port (open-file-port temp-path "w"))

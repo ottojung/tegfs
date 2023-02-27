@@ -23,6 +23,7 @@
     :use-module ((euphrates file-or-directory-exists-q) :select (file-or-directory-exists?))
     :use-module ((euphrates hashmap) :select (hashmap-clear! hashmap-foreach hashmap-ref))
     :use-module ((euphrates make-directories) :select (make-directories))
+    :use-module ((euphrates memconst) :select (memconst))
     :use-module ((euphrates open-file-port) :select (open-file-port))
     :use-module ((euphrates path-get-dirname) :select (path-get-dirname))
     :use-module ((euphrates string-drop-n) :select (string-drop-n))
@@ -32,8 +33,8 @@
     :use-module ((tegfs categorization-complete-selection) :select (categorization-complete-selection))
     :use-module ((tegfs default-share-expiery-time) :select (default-share-expiery-time))
     :use-module ((tegfs get-random-basename) :select (get-random-basename))
+    :use-module ((tegfs get-registry-files) :select (get-registry-files))
     :use-module ((tegfs get-root) :select (get-root))
-    :use-module ((tegfs keyword-entry-registry-path) :select (keyword-entry-registry-path))
     :use-module ((tegfs keyword-tags) :select (keyword-tags))
     :use-module ((tegfs keyword-target) :select (keyword-target))
     :use-module ((tegfs keyword-title) :select (keyword-title))
@@ -57,8 +58,9 @@
   (use-modules (ice-9 binary-ports))
   ))
 
-;; TODO: read from config
-(define upload-registry-filename "upload/upload.tegfs.reg.lisp")
+(define upload-registry-filename
+  (memconst
+   (car (get-registry-files))))
 
 (define (error-tags-list tags)
   (web::static-error-message 400 (string-append "Some tags are ambiguous: " (~a tags))))
@@ -90,7 +92,8 @@
 
   (define tags
     (map (compose string->symbol ~a)
-         (append tags/additional tags/checked)))
+         (cons "upload"
+               (append tags/additional tags/checked))))
 
   (define file-content
     (web::body::get-data body/hash "file"))
@@ -106,7 +109,7 @@
         (values #f #f)
         (let* ((f1
                 (append-posix-path (get-root)
-                                   (path-get-dirname upload-registry-filename)
+                                   (path-get-dirname (upload-registry-filename))
                                    filename))
                (t
                 (if (file-or-directory-exists? f1)
@@ -114,7 +117,7 @@
                     filename))
                (f2
                 (append-posix-path (get-root)
-                                   (path-get-dirname upload-registry-filename)
+                                   (path-get-dirname (upload-registry-filename))
                                    t)))
           (values t f2))))
 
@@ -135,9 +138,6 @@
   (let ((tags-list (cdr (assoc 'ok tags-list-result))))
     (define entry
       (append
-
-       `((,keyword-entry-registry-path . ,upload-registry-filename))
-
        (if (and title (not (string-null? title)))
            `((,keyword-title . ,title))
            '())
@@ -154,7 +154,7 @@
       (webcore::ask
        `(whats
          (key ,(callcontext-token callctx))
-         (add-entry ,upload-registry-filename ,entry)
+         (add-entry ,(upload-registry-filename) ,entry)
          (share-full ,entry ,default-share-expiery-time _ F))))
 
     (web::iterate-profun-results

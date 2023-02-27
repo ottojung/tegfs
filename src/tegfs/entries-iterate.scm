@@ -23,7 +23,6 @@
     :use-module ((euphrates stack) :select (list->stack stack-empty? stack-pop!))
     :use-module ((tegfs get-registry-files) :select (get-registry-files))
     :use-module ((tegfs get-root) :select (get-root))
-    :use-module ((tegfs keyword-entry-registry-path) :select (keyword-entry-registry-path))
     :use-module ((tegfs warning) :select (warning))
     )))
 
@@ -36,7 +35,6 @@
      (get-registry-files)))
 
   (define input-port #f)
-  (define registry-property #f)
 
   (define (init-next-registry)
     (define registry-path
@@ -53,9 +51,7 @@
 
     (cond
      (p
-      (set! input-port p)
-      (set! registry-property
-            (cons keyword-entry-registry-path registry-path)))
+      (set! input-port p))
      ((stack-empty? registries)
       (set! input-port #f))
      (else
@@ -69,7 +65,7 @@
                 (close-port input-port)
                 (set! input-port #f)
                 (next))
-              (cons registry-property x)))
+              x))
         (if (stack-empty? registries)
             #f
             (begin

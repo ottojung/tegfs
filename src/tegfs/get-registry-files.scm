@@ -1,4 +1,4 @@
-;;;; Copyright (C) 2022  Otto Jung
+;;;; Copyright (C) 2022, 2023  Otto Jung
 ;;;;
 ;;;; This program is free software: you can redistribute it and/or modify
 ;;;; it under the terms of the GNU Affero General Public License as published
@@ -17,17 +17,11 @@
  (guile
   (define-module (tegfs get-registry-files)
     :export (get-registry-files)
-    :use-module ((euphrates string-split-simple) :select (string-split/simple))
-    :use-module ((tegfs get-config) :select (get-config))
-    :use-module ((tegfs get-root) :select (get-root))
+    :use-module ((euphrates memconst) :select (memconst))
+    :use-module ((tegfs default-db-path) :select (default-db-path))
     )))
 
-
-
-(define (get-registry-files)
-  (define root (get-root))
-  (define config (get-config))
-  (define registries/string
-    (cadr (or (assoc 'registries config) '(registries ""))))
-  (define registries (string-split/simple registries/string #\:))
-  registries)
+(define get-registry-files
+  (memconst
+   (list
+    (string-append default-db-path ".lisp"))))

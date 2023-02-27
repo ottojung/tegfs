@@ -1,4 +1,4 @@
-;;;; Copyright (C) 2022  Otto Jung
+;;;; Copyright (C) 2022, 2023  Otto Jung
 ;;;;
 ;;;; This program is free software: you can redistribute it and/or modify
 ;;;; it under the terms of the GNU Affero General Public License as published
@@ -23,10 +23,10 @@
     :use-module ((euphrates path-normalize) :select (path-normalize))
     :use-module ((euphrates string-drop-n) :select (string-drop-n))
     :use-module ((tegfs a-weblink-q) :select (a-weblink?))
+    :use-module ((tegfs default-db-path) :select (default-db-path))
     :use-module ((tegfs entry-get-target) :select (entry-get-target))
     :use-module ((tegfs get-root) :select (get-root))
     :use-module ((tegfs keyword-entry-parent-directory) :select (keyword-entry-parent-directory))
-    :use-module ((tegfs keyword-entry-registry-path) :select (keyword-entry-registry-path))
     :use-module ((tegfs keyword-id) :select (keyword-id))
     )))
 
@@ -44,9 +44,8 @@
            (target (if (absolute-posix-path? target/0) (string-drop-n 1 target/0) target/0)))
       (let* ((parent-directory-p (assq keyword-entry-parent-directory entry))
              (parent-directory (and parent-directory-p (cdr parent-directory-p)))
-             (registry-p (assq keyword-entry-registry-path entry))
-             (registry-dir (and registry-p (dirname (cdr registry-p))))
+             (registry-dir default-db-path)
              (directory (or parent-directory registry-dir)))
         (and directory
-             (path-normalize
+             (path-normalize ;; TODO: is normalization really necessary?
               (append-posix-path (get-root) directory target))))))))

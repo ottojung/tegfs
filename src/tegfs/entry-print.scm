@@ -1,4 +1,4 @@
-;;;; Copyright (C) 2022  Otto Jung
+;;;; Copyright (C) 2022, 2023  Otto Jung
 ;;;;
 ;;;; This program is free software: you can redistribute it and/or modify
 ;;;; it under the terms of the GNU Affero General Public License as published
@@ -17,10 +17,7 @@
  (guile
   (define-module (tegfs entry-print)
     :export (entry-print)
-    :use-module ((tegfs keyword-entry-registry-path) :select (keyword-entry-registry-path))
     )))
-
-
 
 (define (primitive-print elem)
   (cond
@@ -30,20 +27,18 @@
 (define (prop-print prop)
   (define key (car prop))
   (define val (cdr prop))
-  (if (equal? keyword-entry-registry-path key) #f
-      (begin
-        (display "(")
-        (primitive-print key)
-        (cond
-         ((string? val)
-          (display " . ")
-          (write val))
-         ((symbol? val)
-          (display " . ")
-          (write val))
-         ((list? val)
-          (for-each (lambda (elem) (display " ") (primitive-print elem)) val)))
-        (display ")"))))
+  (display "(")
+  (primitive-print key)
+  (cond
+   ((string? val)
+    (display " . ")
+    (write val))
+   ((symbol? val)
+    (display " . ")
+    (write val))
+   ((list? val)
+    (for-each (lambda (elem) (display " ") (primitive-print elem)) val)))
+  (display ")"))
 
 (define (entry-print entry)
   (display "(")

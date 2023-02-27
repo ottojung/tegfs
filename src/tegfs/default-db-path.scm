@@ -1,4 +1,4 @@
-;;;; Copyright (C) 2022  Otto Jung
+;;;; Copyright (C) 2023  Otto Jung
 ;;;;
 ;;;; This program is free software: you can redistribute it and/or modify
 ;;;; it under the terms of the GNU Affero General Public License as published
@@ -15,9 +15,8 @@
 
 (cond-expand
  (guile
-  (define-module (tegfs keyword-default-save-registry)
-    :export (keyword-default-save-registry))))
+  (define-module (tegfs default-db-path)
+    :export (default-db-path)
+    )))
 
-
-(define keyword-default-save-registry
-  'default-save-registry)
+(define default-db-path "db")
