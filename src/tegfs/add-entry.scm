@@ -28,7 +28,6 @@
     :use-module ((euphrates file-or-directory-exists-q) :select (file-or-directory-exists?))
     :use-module ((euphrates list-deduplicate) :select (list-deduplicate/reverse))
     :use-module ((euphrates make-directories) :select (make-directories))
-    :use-module ((euphrates path-get-dirname) :select (path-get-dirname))
     :use-module ((euphrates raisu) :select (raisu))
     :use-module ((euphrates random-choice) :select (random-choice))
     :use-module ((euphrates read-string-file) :select (read-string-file))
@@ -36,6 +35,7 @@
     :use-module ((euphrates tilda-a) :select (~a))
     :use-module ((euphrates write-string-file) :select (write-string-file))
     :use-module ((tegfs a-weblink-q) :select (a-weblink?))
+    :use-module ((tegfs default-db-path) :select (default-db-path))
     :use-module ((tegfs entry-get-target) :select (entry-get-target))
     :use-module ((tegfs entry-print) :select (entry-print))
     :use-module ((tegfs get-config) :select (get-config))
@@ -67,14 +67,17 @@
      (else (string->symbol (~a x)))))
 
   (define config (get-config))
+  (define root (get-root))
+
+  (define registry-dir
+    (append-posix-path root default-db-path))
 
   (define (init-registry-file)
     (define registry-file
-      (append-posix-path (get-root) (car (get-registry-files))))
+      (append-posix-path root (car (get-registry-files))))
 
     (unless (file-or-directory-exists? registry-file)
-      (let ((registry-dir (dirname registry-file)))
-        (make-directories registry-dir))
+      (make-directories registry-dir)
       (write-string-file
        registry-file
        "\n;; This file was automatically created by tegfs-add\n\n\n"))
@@ -82,13 +85,10 @@
     registry-file)
 
   (define last-id-path
-    (append-posix-path (get-root) last-id-filename))
+    (append-posix-path root last-id-filename))
 
   (define registry-file
     (init-registry-file))
-
-  (define registry-dir
-    (path-get-dirname registry-file))
 
   (define id
     (generate-random-id))

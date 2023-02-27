@@ -28,7 +28,7 @@
 
 (define core::add-entry
   (profun-op-lambda
-   (ctx (entry) (R-name E-name))
+   (ctx (entry) (E-name))
 
    (cond
     ((profun-unbound-value? entry)

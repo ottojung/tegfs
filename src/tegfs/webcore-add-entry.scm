@@ -33,7 +33,7 @@
 (define webcore::add-entry
   (profun-op-lambda
    :with-env
-   (ctx (entry) (R-name E-name))
+   (ctx (entry) (E-name))
 
    (define perm (webcore::get-current-permissions))
 

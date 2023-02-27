@@ -37,10 +37,10 @@
     :use-module ((tegfs add) :select (tegfs-add))
     :use-module ((tegfs cli-save-loop) :select (CLI::save::loop))
     :use-module ((tegfs clipboard) :select (classify-clipboard-text-content))
+    :use-module ((tegfs default-db-path) :select (default-db-path))
     :use-module ((tegfs dump-clipboard) :select (tegfs-dump-clipboard tegfs-dump-clipboard/pasta))
     :use-module ((tegfs fatal) :select (fatal))
     :use-module ((tegfs get-random-basename) :select (get-random-basename))
-    :use-module ((tegfs get-registry-files) :select (get-registry-files))
     :use-module ((tegfs get-root) :select (get-root))
     :use-module ((tegfs keyword-id) :select (keyword-id))
     :use-module ((tegfs make-temporary-filename-local) :select (make-temporary-filename/local))
@@ -64,8 +64,7 @@
   (define link? (case (cdr (assoc 'link? state)) ((yes) #t) ((no) #f) (else (fatal "Bad value for link? ~s" (cdr (assoc 'link? state))))))
   (define -temporary-file (cdr (assoc '-temporary-file state)))
   (define -text-content (cdr (assoc '-text-content state)))
-  (define registry-file (car (get-registry-files)))
-  (define registry-dir (append-posix-path (get-root) (dirname registry-file)))
+  (define registry-dir (append-posix-path (get-root) default-db-path))
   (define source (and (a-weblink? -text-content) -temporary-file -text-content))
   (define key-value-pairs
     (append
