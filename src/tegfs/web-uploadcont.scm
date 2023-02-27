@@ -37,6 +37,7 @@
     :use-module ((tegfs keyword-tags) :select (keyword-tags))
     :use-module ((tegfs keyword-target) :select (keyword-target))
     :use-module ((tegfs keyword-title) :select (keyword-title))
+    :use-module ((tegfs keyword-upload-tag) :select (keyword-upload-tag))
     :use-module ((tegfs web-body-get-data) :select (web::body::get-data web::body::get-data/decode))
     :use-module ((tegfs web-body-not-found) :select (web::body-not-found))
     :use-module ((tegfs web-callcontext-p) :select (web::callcontext/p))
@@ -86,8 +87,8 @@
      (web::body::get-data/decode body/hash "additional-tags")))
 
   (define tags
-    (map (compose string->symbol ~a)
-         (cons "upload"
+    (cons keyword-upload-tag
+          (map (compose string->symbol ~a)
                (append tags/additional tags/checked))))
 
   (define file-content
