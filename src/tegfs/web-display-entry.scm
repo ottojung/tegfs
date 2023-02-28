@@ -82,7 +82,7 @@
   (define target (entry-get-target entry))
   (let ((full-link (web::get-full-link entry target maybe-full-senderid)))
     (when full-link
-      (display "<a href=") (write full-link) (display ">"))
+      (display "<a href=") (write full-link) (display " target='_blank'>"))
     (display-preview entry target preview-linkpath)
     (when full-link
       (display "</a>"))))
