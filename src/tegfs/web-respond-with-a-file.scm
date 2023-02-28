@@ -15,31 +15,14 @@
 
 (cond-expand
  (guile
-  (define-module (tegfs web-define-static-file)
-    :export (web::define-static-file)
-    :use-module ((euphrates raisu) :select (raisu))
-    :use-module ((tegfs web-respond-with-a-file) :select (web::respond-with-a-file))
+  (define-module (tegfs web-respond-with-a-file)
+    :export (web::respond-with-a-file)
+    :use-module ((tegfs web-return) :select (web::return))
     )))
 
-
-
-
-(cond-expand
- (guile
-
-  (use-modules (ice-9 iconv))
-  (use-modules (rnrs bytevectors))
-
-  ))
-
-(define-syntax web::define-static-file
-  (syntax-rules ()
-    ((_ name type content)
-     (define name
-       (let ()
-         (define bv
-           (cond
-            ((bytevector? content) content)
-            ((string? content) (string->utf8 content))
-            (else (raisu 'unknown-content-type content))))
-         (lambda _ (web::respond-with-a-file type bv)))))))
+(define (web::respond-with-a-file type bv)
+  (web::return
+   200
+   `((content-type . ,type)
+     (Cache-Control . "max-age=3600, public, private"))
+   bv))
