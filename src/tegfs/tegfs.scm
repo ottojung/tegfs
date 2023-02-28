@@ -59,7 +59,7 @@
        /      categorize
        /      query QUERYARGS
        /      get GETARGS
-       /      serve
+       /      serve SERVARGS*
        /      talk TALKOPTS*
        /      prolog
        /      make-thumbnails THUMBOPT
@@ -88,6 +88,7 @@
        QUERYQ : <query...>
        GETARGS : GETOPT? <getid>
        GETOPT : --format <get-format> / --entry
+       SERVARGS : --offload-filesharing <fileserver> / --no-offload-filesharing
        TALKOPTS : --web
        THUMBOPT : <target> <output>
        CONFIGOPT : get <name>
@@ -114,6 +115,9 @@
       :default (--no-dirpreview #t)
       :exclusive (--no-dirpreview --dirpreview)
 
+      :default (--no-offload-filesharing #t)
+      :exclusive (--no-offload-filesharing --offload-filesharing)
+
       :help (<remote> "A remote address like 'user1@example.com'.")
       :help (--diropen (stringf "Acknowledge <~a> property by treating elements of the ~a directory as entries having the same tags as the original entry." keyword-diropen keyword-target))
       :help (--dirpreview (stringf "Acknowledge <~a> property by treating elements of the ~a directory as entries having the same tags as the original entry." keyword-dirpreview keyword-target))
@@ -129,7 +133,7 @@
                <date>))
          (save (CLI::save <remote> --from-remote <remote-id> --link <savetext>))
          (categorize (tegfs-categorize/parse))
-         (serve (tegfs-serve/parse))
+         (serve (tegfs-serve/parse (and --offload-filesharing <fileserver>)))
          (prolog (tegfs-prolog/parse))
          (query (CLI::query --diropen --dirpreview --entries <query-format> <query...>))
          ((and get <getid>) (tegfs-get/parse <get-format> <getid>))
