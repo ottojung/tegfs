@@ -17,19 +17,27 @@
  (guile
   (define-module (tegfs web-display-header)
     :export (web::display-header)
-    :use-module ((tegfs web-callcontext) :select (callcontext-headers))
+    :use-module ((tegfs web-callcontext) :select (callcontext-headers callcontext-token))
     :use-module ((tegfs web-get-cookie) :select (web::get-cookie))
+    :use-module ((tegfs webcore-ask) :select (webcore::ask))
     )))
 
 
 
 (define (web::display-header callctx)
+  (define token (callcontext-token callctx))
+  (define result
+    (webcore::ask `(whats (time-left ,token _TL))))
+  (define loged-in?
+    (equal? 'its (car result)))
+
   (define headers (callcontext-headers callctx))
   (define usertype
-    (cond
-     ((web::get-cookie "key" headers) 'Anonymous)
-     ((web::get-cookie "pwdtoken" headers) 'Admin)
-     (else #f)))
+    (and loged-in?
+         (cond
+          ((web::get-cookie "key" headers) 'Anonymous)
+          ((web::get-cookie "pwdtoken" headers) 'Admin)
+          (else #f))))
 
   (display
    "<header>
