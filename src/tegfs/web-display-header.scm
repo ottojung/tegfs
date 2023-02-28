@@ -33,11 +33,10 @@
 
   (define headers (callcontext-headers callctx))
   (define usertype
-    (and loged-in?
-         (cond
-          ((web::get-cookie "key" headers) 'Anonymous)
-          ((web::get-cookie "pwdtoken" headers) 'Admin)
-          (else #f))))
+    (cond
+     ((web::get-cookie "key" headers) 'Anonymous)
+     ((web::get-cookie "pwdtoken" headers) 'Admin)
+     (else #f)))
 
   (display
    "<header>
@@ -61,8 +60,13 @@
     ((Admin Anonymous)
      (display "
       <div id='lst'>
-        <div>(Logged in as ")
-     (display usertype)
-     (display ")</div></div>")))
+        <div>")
+     (if loged-in?
+         (begin
+           (display "(Logged in as ")
+           (display usertype)
+           (display ")"))
+         (display "(Token expired)"))
+     (display "</div></div>")))
 
   (display "\n</nav></header>\n"))

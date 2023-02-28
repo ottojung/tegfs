@@ -81,7 +81,8 @@
        (display "</head>\n")
        (display "<body><main><div id='content'>\n")
        (when display-header?
-         (web::display-header callctx))
+         (parameterize ((current-time/p now))
+           (web::display-header callctx)))
        (cond
         ((string? body) (display body))
         ((pair? body) (web::sxml->xml body port))

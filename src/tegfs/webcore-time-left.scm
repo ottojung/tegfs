@@ -32,7 +32,9 @@
   (profun-op-lambda
    (ctx (K TL) (key-name time-left-name))
 
-   (define perm (tegfs-login-by-key web::context K))
+   (define perm
+     (and (string? K)
+          (tegfs-login-by-key web::context K)))
 
    (cond
     ((profun-bound-value? TL)
