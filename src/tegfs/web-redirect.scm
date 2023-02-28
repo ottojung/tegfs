@@ -23,13 +23,13 @@
     :use-module ((tegfs web-callcontext) :select (callcontext-headers))
     :use-module ((tegfs web-make-callcontext) :select (web::make-callcontext/raw))
     :use-module ((tegfs web-return) :select (web::return))
-    :use-module ((tegfs web-server-current-handler-p) :select (webcore::server-current/p))
+    :use-module ((tegfs web-server-current-handler-p) :select (web::server-current/p))
     )))
 
 
 
 (define (web::redirect callctx new-url new-body)
-  (define handler (webcore::server-current/p))
+  (define handler (web::server-current/p))
   (define old-headers (callcontext-headers callctx))
   (define new-path (url-get-path new-url))
   (define new-query/encoded (url-get-query new-url))

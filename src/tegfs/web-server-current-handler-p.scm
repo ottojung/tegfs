@@ -16,8 +16,8 @@
 (cond-expand
  (guile
   (define-module (tegfs web-server-current-handler-p)
-    :export (webcore::server-current/p))))
+    :export (web::server-current/p))))
 
 
-(define webcore::server-current/p
+(define web::server-current/p
   (make-parameter #f))
