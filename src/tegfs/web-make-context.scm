@@ -22,6 +22,7 @@
     :use-module ((euphrates make-directories) :select (make-directories))
     :use-module ((euphrates raisu) :select (raisu))
     :use-module ((euphrates tilda-a) :select (~a))
+    :use-module ((tegfs default-sharedir) :select (default-sharedir))
     :use-module ((tegfs get-config) :select (get-config))
     :use-module ((tegfs keyword-config-port) :select (keyword-config-port))
     :use-module ((tegfs web-default-port) :select (web::default-port))
@@ -49,7 +50,7 @@
   (define sharedir
     (cadr
      (or (assoc 'sharedir config)
-         (raisu 'no-sharedir "Variable 'sharedir is not set by the config"))))
+         (list 'sharedir default-sharedir))))
   (define port/string
     (cadr
      (or (assoc keyword-config-port config)
