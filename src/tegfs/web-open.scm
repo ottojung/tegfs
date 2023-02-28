@@ -18,11 +18,14 @@
   (define-module (tegfs web-open)
     :export (web::open)
     :use-module ((euphrates append-posix-path) :select (append-posix-path))
+    :use-module ((euphrates file-or-directory-exists-q) :select (file-or-directory-exists?))
     :use-module ((euphrates hashmap) :select (hashmap-ref))
+    :use-module ((euphrates stringf) :select (stringf))
     :use-module ((tegfs web-callcontext-p) :select (web::callcontext/p))
     :use-module ((tegfs web-callcontext) :select (callcontext-query))
     :use-module ((tegfs web-current-fileserver-p) :select (web::current-fileserver/p))
     :use-module ((tegfs web-current-sharedir-p) :select (web::current-sharedir/p))
+    :use-module ((tegfs web-make-html-response) :select (web::make-html-response))
     :use-module ((tegfs web-not-found) :select (web::not-found))
     )))
 
@@ -38,6 +41,10 @@
       (let ()
         (define sharedir (web::current-sharedir/p))
         (define fullpath (append-posix-path sharedir path))
-        (system* "/bin/sh" "-c"
-                 (string "xdg-open ~s & disown" fullpath)))
+        (if (file-or-directory-exists? fullpath)
+            (begin
+              (system* "/bin/sh" "-c"
+                       (stringf "{ xdg-open ~s & } &" fullpath))
+              (web::make-html-response "<script>window.close()</script>"))
+            (web::not-found)))
       (web::not-found)))
