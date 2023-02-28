@@ -45,16 +45,11 @@
   (define users
     (cdr
      (or (assoc 'users config)
-         (raisu 'no-config-file
-                "Config file needs to be present when starting the server"))))
-  (define fileserver
-    (cadr
-     (or (assoc 'fileserver config)
-         (raisu 'no-fileserver "Variable 'fileserver is not set by the config"))))
+         (raisu 'no-users "Variable 'users is not set by the config"))))
   (define sharedir
     (cadr
      (or (assoc 'sharedir config)
-         (raisu 'no-fileserver "Variable 'sharedir is not set by the config"))))
+         (raisu 'no-sharedir "Variable 'sharedir is not set by the config"))))
   (define port/string
     (cadr
      (or (assoc keyword-config-port config)
@@ -83,11 +78,9 @@
      (hashmap-set! users-map id struct))
    users)
 
-  (unless (string? fileserver)
-    (raisu 'fileserver-must-be-a-string fileserver))
   (unless (string? sharedir)
     (raisu 'sharedir-must-be-a-string sharedir))
   (unless (and (integer? port) (exact? port) (> port 0))
     (raisu 'port-must-be-a-natural-number port))
 
-  (context-ctr users-map tempentries port fileserver sharedir))
+  (context-ctr users-map tempentries port sharedir))

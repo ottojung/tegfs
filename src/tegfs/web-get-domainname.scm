@@ -18,8 +18,6 @@
   (define-module (tegfs web-get-domainname)
     :export (web::get-domainname)
     :use-module ((euphrates tilda-a) :select (~a))
-    :use-module ((euphrates url-get-protocol) :select (url-get-protocol))
-    :use-module ((tegfs get-config) :select (get-config))
     :use-module ((tegfs web-callcontext) :select (callcontext-headers))
     )))
 
@@ -28,16 +26,7 @@
 (define (web::get-domainname callctx)
   (define headers (callcontext-headers callctx))
   (define host/get (assoc 'host headers))
-  (define config (get-config))
-  (define fileserver
-    (cadr
-     (or (assq 'fileserver config)
-         (list #f #f))))
-  (define protocol0
-    (and fileserver
-         (url-get-protocol fileserver)))
-  (define protocol
-    (and (not (string-null? protocol0)) protocol0))
+  (define protocol "http") ;; TODO: get it from somewhere?
 
   (and host/get
        protocol

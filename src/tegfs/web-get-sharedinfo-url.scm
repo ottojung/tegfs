@@ -1,4 +1,4 @@
-;;;; Copyright (C) 2022  Otto Jung
+;;;; Copyright (C) 2022, 2023  Otto Jung
 ;;;;
 ;;;; This program is free software: you can redistribute it and/or modify
 ;;;; it under the terms of the GNU Affero General Public License as published
@@ -17,7 +17,6 @@
  (guile
   (define-module (tegfs web-get-sharedinfo-url)
     :export (web::get-sharedinfo-url)
-    :use-module ((euphrates append-posix-path) :select (append-posix-path))
     :use-module ((euphrates file-is-directory-q-no-readlink) :select (file-is-directory?/no-readlink))
     :use-module ((euphrates list-intersperse) :select (list-intersperse))
     :use-module ((euphrates path-normalize) :select (path-normalize))
@@ -25,18 +24,17 @@
     :use-module ((euphrates string-split-simple) :select (string-split/simple))
     :use-module ((euphrates uri-encode) :select (uri-encode))
     :use-module ((tegfs a-weblink-q) :select (a-weblink?))
+    :use-module ((tegfs get-sharedname) :select (get-sharedname))
     :use-module ((tegfs sharedinfo) :select (sharedinfo-recepientid sharedinfo-senderid sharedinfo-sourcepath))
-    :use-module ((tegfs webcore-context) :select (context-fileserver))
-    :use-module ((tegfs web-get-shared-link) :select (web::get-shared-link))
     )))
 
 
 
+;; FIXME: change the name to reflect that this is not a URL
 (define (web::get-sharedinfo-url ctx container-info info)
   (define vid (sharedinfo-senderid info))
   (define target-fullpath (sharedinfo-sourcepath info))
   (define recepientid (sharedinfo-recepientid info))
-  (define fileserver (context-fileserver ctx))
 
   (define (share-containerized container-path)
     (define suffix
@@ -54,10 +52,10 @@
         (sharedinfo-recepientid container-info)
         "/" escaped-suffix)))
 
-    (append-posix-path fileserver relative-path))
+    relative-path)
 
   (define (share-toplevel)
-    (web::get-shared-link fileserver target-fullpath recepientid))
+    (get-sharedname target-fullpath recepientid))
 
   (cond
    ((a-weblink? target-fullpath)
