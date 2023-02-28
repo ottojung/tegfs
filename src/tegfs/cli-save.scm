@@ -19,6 +19,7 @@
     :export (CLI::save)
     :use-module ((euphrates append-posix-path) :select (append-posix-path))
     :use-module ((euphrates assq-or) :select (assq-or))
+    :use-module ((euphrates debugs) :select (debugs))
     :use-module ((euphrates dprintln) :select (dprintln))
     :use-module ((euphrates file-delete) :select (file-delete))
     :use-module ((euphrates file-or-directory-exists-q) :select (file-or-directory-exists?))
@@ -145,12 +146,15 @@
   (define temp-file-content (string-append (~s kind) ":" remote-name))
   (write-string-file temp-file temp-file-content)
 
-  (unless (= 0 (run-syncproc "scp" temp-file (stringf "~a:tegfs-remote-hub/~a" <remote> <remote-id>)))
+  (unless (= 0 (run-syncproc "scp" "--" temp-file (stringf "~a:tegfs-remote-hub/~a" <remote> <remote-id>)))
     (file-delete temp-file)
     (fatal "Something went wrong on the other side"))
   (file-delete temp-file)
 
-  (unless (= 0 (run-syncproc "ssh" "-o" "SendEnv LANG" "-t" <remote> (stringf "exec /bin/sh -l -c \\\"exec tegfs save --from-remote ~a\\\"" <remote-id>)))
+  (define kek (stringf "exec /bin/sh -l -c \"exec tegfs save --from-remote ~a\"" <remote-id>))
+  (debugs kek)
+
+  (unless (= 0 (run-syncproc "ssh" "-o" "SendEnv LANG" "-t" <remote> kek))
     (fatal "Something went wrong on the other side"))
 
   (dprintln "Saved!"))
