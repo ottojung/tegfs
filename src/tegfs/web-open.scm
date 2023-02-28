@@ -44,7 +44,7 @@
         (if (file-or-directory-exists? fullpath)
             (begin
               (system* "/bin/sh" "-c"
-                       (stringf "{ xdg-open ~s & } &" fullpath))
+                       (stringf "{ xdg-open ~s 1>/dev/null 2>/dev/null & } &" fullpath))
               (web::make-html-response "<script>window.close()</script>"))
             (web::not-found)))
       (web::not-found)))
