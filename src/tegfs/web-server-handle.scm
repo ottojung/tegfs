@@ -44,6 +44,7 @@
     :use-module ((tegfs web-logo-white) :select (web::logo-white.jpeg))
     :use-module ((tegfs web-logout) :select (web::logout))
     :use-module ((tegfs web-main-css) :select (web::main.css))
+    :use-module ((tegfs web-open) :select (web::open))
     :use-module ((tegfs web-previewunknown) :select (web::previewunknown))
     :use-module ((tegfs web-previewunknownurl) :select (web::previewunknownurl))
     :use-module ((tegfs web-query) :select (web::query))
@@ -75,6 +76,7 @@
     (/home ,web::home)
     (/api ,web::api)
     (/file ,web::file)
+    (/open ,web::open)
     (/ ,web::home)
 
     (/favicon.ico ,web::favicon.ico)
