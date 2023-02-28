@@ -15,22 +15,13 @@
 
 (cond-expand
  (guile
-  (define-module (tegfs web-query-display-results)
-    :export (web::query-display-results)
-    :use-module ((euphrates fn-alist) :select (fn-alist))
-    :use-module ((tegfs web-display-entry) :select (web::display-entry))
+  (define-module (tegfs web-get-preview-link)
+    :export (web::get-preview-link)
+    :use-module ((tegfs web-current-fileserver-p) :select (web::current-fileserver/p))
     )))
 
-
-
-(define (web::query-display-results equals)
-  (display "<div class='cards'>")
-  (for-each
-   (fn-alist
-    (E F PL)
-    (define entry E)
-    (define maybe-full-senderid F)
-    (define preview-linkpath PL)
-    (web::display-entry entry maybe-full-senderid preview-linkpath))
-   equals)
-  (display "</div>"))
+(define (web::get-preview-link linkpath)
+  (define fileserver (web::current-fileserver/p))
+  (if fileserver
+      (string-append fileserver linkpath)
+      (string-append "file?path=" linkpath)))

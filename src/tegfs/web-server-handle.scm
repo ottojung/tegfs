@@ -29,6 +29,7 @@
     :use-module ((tegfs web-directory-svg) :select (web::directory.svg))
     :use-module ((tegfs web-directory) :select (web::directory))
     :use-module ((tegfs web-error-svg) :select (web::error.svg))
+    :use-module ((tegfs web-file) :select (web::file))
     :use-module ((tegfs web-fileaudio-svg) :select (web::fileaudio.svg))
     :use-module ((tegfs web-filebinary-svg) :select (web::filebinary.svg))
     :use-module ((tegfs web-fileimage-svg) :select (web::fileimage.svg))
@@ -73,6 +74,7 @@
     (/tags ,web::tags)
     (/home ,web::home)
     (/api ,web::api)
+    (/file ,web::file)
     (/ ,web::home)
 
     (/favicon.ico ,web::favicon.ico)

@@ -32,6 +32,7 @@
     :use-module ((tegfs keyword-id) :select (keyword-id))
     :use-module ((tegfs keyword-title) :select (keyword-title))
     :use-module ((tegfs web-get-full-link) :select (web::get-full-link))
+    :use-module ((tegfs web-get-preview-link) :select (web::get-preview-link))
     )))
 
 (define (get-preview-by-mimetype entry)
@@ -63,7 +64,9 @@
            "static/directory.svg"
            "static/fileunknown.svg")))
 
-(define (display-preview entry target preview-link)
+(define (display-preview entry target preview-linkpath)
+  (define preview-link
+    (and preview-linkpath (web::get-preview-link preview-linkpath)))
   (display "<img src=")
   (write
    (or preview-link
@@ -75,12 +78,12 @@
            "static/previewunknown.svg")))
   (display "/>"))
 
-(define (maybe-display-preview entry maybe-full-senderid preview-link)
+(define (maybe-display-preview entry maybe-full-senderid preview-linkpath)
   (define target (entry-get-target entry))
   (let ((full-link (web::get-full-link entry target maybe-full-senderid)))
     (when full-link
       (display "<a href=") (write full-link) (display ">"))
-    (display-preview entry target preview-link)
+    (display-preview entry target preview-linkpath)
     (when full-link
       (display "</a>"))))
 
@@ -132,9 +135,9 @@
 
   )
 
-(define (web::display-entry entry maybe-full-senderid preview-link)
+(define (web::display-entry entry maybe-full-senderid preview-linkpath)
   (display "<div class='card'>")
-  (maybe-display-preview entry maybe-full-senderid preview-link)
+  (maybe-display-preview entry maybe-full-senderid preview-linkpath)
   (display "<div id='sub'>")
   (display-title maybe-full-senderid entry)
   (display "</div>")
