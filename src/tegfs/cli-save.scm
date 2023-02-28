@@ -19,7 +19,6 @@
     :export (CLI::save)
     :use-module ((euphrates append-posix-path) :select (append-posix-path))
     :use-module ((euphrates assq-or) :select (assq-or))
-    :use-module ((euphrates debugs) :select (debugs))
     :use-module ((euphrates dprintln) :select (dprintln))
     :use-module ((euphrates file-delete) :select (file-delete))
     :use-module ((euphrates file-or-directory-exists-q) :select (file-or-directory-exists?))
@@ -151,11 +150,9 @@
     (fatal "Something went wrong on the other side"))
   (file-delete temp-file)
 
-  (define kek (stringf "exec /bin/sh -l -c \"exec tegfs save --from-remote ~a\"" <remote-id>))
-  (debugs kek)
-
-  (unless (= 0 (run-syncproc "ssh" "-o" "SendEnv LANG" "-t" <remote> kek))
-    (fatal "Something went wrong on the other side"))
+  (let ((s (system* "ssh" "-o" "SendEnv LANG" "-t" <remote> (stringf "exec /bin/sh -l -c \"exec tegfs save --from-remote ~a\"" <remote-id>))))
+    (unless (= 0 (status:exit-val s))
+      (fatal "Something went wrong on the other side")))
 
   (dprintln "Saved!"))
 
