@@ -27,10 +27,10 @@
     :use-module ((tegfs get-root) :select (get-root))
     :use-module ((tegfs sharedinfo) :select (sharedinfo-entry sharedinfo-recepientid sharedinfo-sourcepath))
     :use-module ((tegfs symlink-shared-file) :select (symlink-shared-file))
-    :use-module ((tegfs webcore-context) :select (context-filemap/2))
     :use-module ((tegfs web-get-adam-info) :select (web::get-adam-info))
-    :use-module ((tegfs web-get-sharedinfo-url) :select (web::get-sharedinfo-url))
+    :use-module ((tegfs webcore-context) :select (context-filemap/2))
     :use-module ((tegfs webcore-get-share-plugins) :select (webcore::get-share-plugins))
+    :use-module ((tegfs webcore-get-sharedinfo-linkpath) :select (webcore::get-sharedinfo-linkpath))
     :use-module ((tegfs webcore-run-share-plugins) :select (webcore::run-share-plugins))
     )))
 
@@ -73,7 +73,7 @@
       (else
        (if target-fullpath
            (let ()
-             (define location (web::get-sharedinfo-url web::context container-info info))
+             (define location (webcore::get-sharedinfo-linkpath web::context container-info info))
              (define entry (sharedinfo-entry info))
              (define target-fullpath* (webcore::run-share-plugins config root plugins entry target-fullpath))
              (symlink-shared-file

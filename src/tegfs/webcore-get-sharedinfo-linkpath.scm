@@ -15,8 +15,8 @@
 
 (cond-expand
  (guile
-  (define-module (tegfs web-get-sharedinfo-url)
-    :export (web::get-sharedinfo-url)
+  (define-module (tegfs webcore-get-sharedinfo-linkpath)
+    :export (webcore::get-sharedinfo-linkpath)
     :use-module ((euphrates file-is-directory-q-no-readlink) :select (file-is-directory?/no-readlink))
     :use-module ((euphrates list-intersperse) :select (list-intersperse))
     :use-module ((euphrates path-normalize) :select (path-normalize))
@@ -30,8 +30,7 @@
 
 
 
-;; FIXME: change the name to reflect that this is not a URL
-(define (web::get-sharedinfo-url ctx container-info info)
+(define (webcore::get-sharedinfo-linkpath ctx container-info info)
   (define vid (sharedinfo-senderid info))
   (define target-fullpath (sharedinfo-sourcepath info))
   (define recepientid (sharedinfo-recepientid info))
