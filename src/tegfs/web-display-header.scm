@@ -19,17 +19,15 @@
     :export (web::display-header)
     :use-module ((tegfs web-callcontext) :select (callcontext-headers callcontext-token))
     :use-module ((tegfs web-get-cookie) :select (web::get-cookie))
-    :use-module ((tegfs webcore-ask) :select (webcore::ask))
+    :use-module ((tegfs web-user-loged-in-q) :select (web::user-loged-in?))
     )))
 
 
 
 (define (web::display-header callctx)
   (define token (callcontext-token callctx))
-  (define result
-    (webcore::ask `(whats (time-left ,token _TL))))
   (define loged-in?
-    (equal? 'its (car result)))
+    (web::user-loged-in? callctx))
 
   (define headers (callcontext-headers callctx))
   (define usertype

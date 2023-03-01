@@ -17,7 +17,9 @@
  (guile
   (define-module (tegfs web-home)
     :export (web::home)
+    :use-module ((tegfs web-callcontext-p) :select (web::callcontext/p))
     :use-module ((tegfs web-make-html-response) :select (web::make-html-response))
+    :use-module ((tegfs web-user-loged-in-q) :select (web::user-loged-in?))
     )))
 
 
@@ -36,7 +38,13 @@
     <br/>
     <br/>
 
-    If you are a registered user, then you can access the full functionality of TegFS <a href='auth?yes=query'>here</a>.
+    If you are a registered user, then you can access the full functionality of TegFS <a href='")
+
+  (if (web::user-loged-in? (web::callcontext/p))
+      (display "query")
+      (display "auth?yes=query"))
+
+  (display "'>here</a>.
     After the login, you can search for files using tags, upload new files, and share them with others.
 
     <br/>
