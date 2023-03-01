@@ -10,10 +10,6 @@
 (system* "sh" "-c" "command -v sh")
 (flush-all-ports)
 
-(display "export DEFAULT_TEGFS_ROOT=")
-(write root)
-(newline)
-
 (display "exec guile -L ")
 (write code_root)
 (display " -s ")
