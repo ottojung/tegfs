@@ -39,8 +39,8 @@ TegFS offers a featureful CLI for power users, and a web-based UI for easy acces
   - `ffmpeg` for video previews production
   - `imagemagick` for image previews production
   - `entr` for checking if new previews need to be made (MUST HAVE)
-  - third-party file server, such as `Nginx`, if using `--offload-fileserver` option for `tegfs serve`
-  - `xdg-open` if not using `--offload-fileserver` option for `tegfs serve`
+  - third-party file server, such as `Nginx`, if using `--offload-filesharing` option for `tegfs serve`
+  - `xdg-open` if not using `--offload-filesharing` option for `tegfs serve`
   - [pup](https://github.com/ericchiang/pup) for generating weblink thumbnails
 
 # Note on query
