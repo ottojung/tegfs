@@ -92,8 +92,13 @@
        SERVARGS : --offload-filesharing <fileserver> / --no-offload-filesharing
        TALKOPTS : --web
        THUMBOPT : <target> <output>
-       CONFIGOPT : get <name>
-       /           set <name> <value>
+       CONFIGOPT  : CONFIGFORMAT? CONFIGFORK
+       CONFIGFORK : get <name>
+       /            set <name> <value>
+       /            get-user <user-name> USER_FIELD?
+       /            set-user <user-name> USER_FIELD? <user-value>
+       CONFIGFORMAT : --display / --write
+       USER_FIELD : <user-field>
        ROOT : --root <root>
        )
 
@@ -119,6 +124,9 @@
       :default (--no-offload-filesharing #t)
       :exclusive (--no-offload-filesharing --offload-filesharing)
 
+      :default (--display #t)
+      :exclusive (--display --write)
+
       :help (<remote> "A remote address like 'user1@example.com'.")
       :help (--diropen (stringf "Acknowledge <~a> property by treating elements of the ~a directory as entries having the same tags as the original entry." keyword-diropen keyword-target))
       :help (--dirpreview (stringf "Acknowledge <~a> property by treating elements of the ~a directory as entries having the same tags as the original entry." keyword-dirpreview keyword-target))
@@ -140,7 +148,7 @@
          ((and get <getid>) (tegfs-get/parse <get-format> <getid>))
          (talk (CLI::talk --web))
          (make-thumbnails (tegfs-make-thumbnails/parse <target> <output>))
-         (config (tegfs-config/parse get set <name> <value>))
+         (config (tegfs-config/parse --display --write get set <name> <value> get-user set-user <user-name> <user-field> <user-value>))
          (dump-clipboard (tegfs-dump-clipboard/parse))
          (license (CLI::show-license))
          (warranty (CLI::show-warranty))
