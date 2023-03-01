@@ -96,7 +96,7 @@
    (else
     (let ()
       (define orig (entry-get-target entry))
-      (unless (string-null? orig)
+      (unless (or (not orig) (string-null? orig))
         (let ((relative (if (a-weblink? orig) orig (path-get-basename orig))))
           (display relative)))))))
 

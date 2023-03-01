@@ -38,6 +38,11 @@
      ((web::get-cookie "pwdtoken" headers) 'Admin)
      (else #f)))
 
+  (define logout-link
+    "<a class='highlighted last' href='logout'><li>Logout</li></a>")
+  (define login-link
+    "<a class='highlighted last' href='login'><li>Login</li></a>")
+
   (display
    "<header>
     <nav>
@@ -48,11 +53,14 @@
         <a class='highlighted' href='tags'><li>Tags</li></a>
     ")
 
-  (case usertype
-    ((Admin Anonymous)
-     (display "<a class='highlighted last' href='logout'><li>Logout</li></a>"))
-    (else
-     (display "<a class='highlighted last' href='login'><li>Login</li></a>")))
+  (display
+   (if loged-in?
+       (case usertype
+         ((Admin Anonymous)
+          logout-link)
+         (else
+          login-link))
+       login-link))
 
   (display "\n</ul>\n")
 
