@@ -32,6 +32,7 @@
     :use-module ((tegfs web-create-temp-path) :select (web::create-temp-path))
     :use-module ((tegfs web-decode-query) :select (web::decode-query))
     :use-module ((tegfs web-get-query) :select (web::get-query))
+    :use-module ((tegfs web-get-target-link) :select (web::get-target-link))
     :use-module ((tegfs web-handle-profun-results) :select (web::handle-profun-results))
     :use-module ((tegfs web-make-html-response) :select (web::make-html-response))
     :use-module ((tegfs web-not-found) :select (web::not-found))
@@ -65,7 +66,8 @@
   (define location
     (if query?
         (stringf "query?q=&show-filter=off&key=~a" token)
-        (assq-or 'FL first-binding (raisu 'unexpected-result-from-backend first-binding))))
+        (web::get-target-link
+         (assq-or 'FL first-binding (raisu 'unexpected-result-from-backend first-binding)))))
   (define share-time
     (assq-or 'AD first-binding (raisu 'unexpected-result-from-backend first-binding)))
   (define password
