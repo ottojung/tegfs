@@ -24,6 +24,7 @@
     :use-module ((tegfs web-iterate-profun-results) :select (web::iterate-profun-results))
     :use-module ((tegfs web-query-to-hashmap) :select (web::query->hashmap))
     :use-module ((tegfs web-set-cookie-header) :select (web::set-cookie-header))
+    :use-module ((tegfs web-token-override-p) :select (web::token-override/p))
     :use-module ((tegfs webcore-ask) :select (webcore::ask))
     )))
 
@@ -91,7 +92,8 @@
       headers)))
 
   (letrec
-      ((tokenfn (memconst (get-access-token callctx (queryfn) headers)))
+      ((tokenfn (memconst (or (web::token-override/p)
+                              (get-access-token callctx (queryfn) headers))))
        (callctx (callcontext-ctr url path headersfn queryfn body '() tokenfn)))
     callctx))
 
