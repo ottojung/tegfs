@@ -322,8 +322,10 @@ header nav ul {
 }
 
 header nav ul a {
-    padding-left: 0.3rem;
-    padding-right: 0.3rem;
+    padding-left: 2.3rem;
+    margin-left: -2rem;
+    padding-right: 2.3rem;
+    margin-right: -2rem;
     display: flex;
     align-items: center;
     text-align: center;
