@@ -94,7 +94,7 @@ test2: dist/tegfs $(TEST_FILES)
 
 test2-m: dist/tegfs $(TEST_FILES)
 	cp guix.scm dist/
-	$(TEST_FS) save --target dist/guix.scm
+	$(TEST_FS) save --content dist/guix.scm
 
 test3: dist/tegfs $(TEST_FILES)
 	$(TEST_FS) categorize

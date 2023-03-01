@@ -78,7 +78,7 @@
        /          --from-remote <remote-id>
        /          REMOTEOPT? SAVETARGET?
        REMOTEOPT : --remote <remote>
-       SAVETARGET : --target <savetext>
+       SAVETARGET : --content <savetext>
        QUERYARGS : QUERYOPT* QUERYQ*
        QUERYOPT : --format <query-format>
        /          --entries
