@@ -45,7 +45,6 @@
     :use-module ((tegfs file-is-audio-q) :select (file-is-audio?))
     :use-module ((tegfs file-is-image-q) :select (file-is-image?))
     :use-module ((tegfs file-is-video-q) :select (file-is-video?))
-    :use-module ((tegfs get-config) :select (get-config))
     :use-module ((tegfs get-file-mimetype) :select (get-file-mimetype))
     :use-module ((tegfs get-random-basename) :select (get-random-basename))
     :use-module ((tegfs get-registry-files) :select (get-registry-files))
@@ -193,7 +192,6 @@
 
 (define (CLI::save::loop --link <savetext>)
   (define plugins (get-save-plugins))
-  (define config (get-config))
   (define root (get-root))
   (alist-initialize-loop
    :current current
@@ -210,7 +208,7 @@
            (print-text-content ret)
            ret)))
 
-    (* (run-save-plugins config root current plugins))
+    (* (run-save-plugins root current plugins))
 
     (download?
      (if (a-weblink? (-text-content))

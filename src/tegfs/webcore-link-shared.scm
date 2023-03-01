@@ -23,7 +23,6 @@
     :use-module ((euphrates profun-request-value) :select (profun-request-value))
     :use-module ((euphrates profun-value) :select (profun-unbound-value?))
     :use-module ((tegfs filemap) :select (filemap-ref-by-senderid))
-    :use-module ((tegfs get-config) :select (get-config))
     :use-module ((tegfs get-root) :select (get-root))
     :use-module ((tegfs sharedinfo) :select (sharedinfo-entry sharedinfo-recepientid sharedinfo-sourcepath))
     :use-module ((tegfs symlink-shared-file) :select (symlink-shared-file))
@@ -39,7 +38,6 @@
 (define webcore::link-shared
   (lambda (web::context)
     (define plugins (webcore::get-share-plugins))
-    (define config (get-config))
     (define root (get-root))
     (profun-op-lambda
      (ctx (R L) (R-name L-name))
@@ -75,7 +73,7 @@
            (let ()
              (define location (webcore::get-sharedinfo-linkpath web::context container-info info))
              (define entry (sharedinfo-entry info))
-             (define target-fullpath* (webcore::run-share-plugins config root plugins entry target-fullpath))
+             (define target-fullpath* (webcore::run-share-plugins root plugins entry target-fullpath))
              (symlink-shared-file
               web::context target-fullpath* recepientid)
              (profun-set (L-name <- location)))

@@ -23,11 +23,11 @@
 
 
 
-(define (webcore::run-share-plugins config root plugins entry generic-fullpath/0)
+(define (webcore::run-share-plugins root plugins entry generic-fullpath/0)
   (or
    (list-map-first
     (lambda (plugin)
       (define fun (plugin-function plugin))
-      (fun config root entry generic-fullpath/0))
+      (fun root entry generic-fullpath/0))
     #f plugins)
    generic-fullpath/0))

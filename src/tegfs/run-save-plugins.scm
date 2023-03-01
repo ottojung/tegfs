@@ -24,11 +24,11 @@
 
 
 
-(define (run-save-plugins config root current-alist plugins)
+(define (run-save-plugins root current-alist plugins)
   (alist-initialize!:return-multiple
    (list-fold
     (ret '())
     (cur plugins)
     (begin
       (define fun (plugin-function cur))
-      (append (fun config root current-alist) ret)))))
+      (append (fun root current-alist) ret)))))
