@@ -26,6 +26,8 @@ install: $(BINARY_PATH)
 uninstall:
 	rm -f $(BINARY_PATH)
 	rm -rf $(CODE_INSTALL_ROOT)
+	rmdir $(INSTALL_ROOT) || true
+	rmdir $(PREFIX_SHARE)/tegfs || true
 
 $(BINARY_PATH): dist/tegfs $(PREFIX_BIN)
 	mkdir -p "$(CODE_INSTALL_ROOT)"
