@@ -24,6 +24,7 @@
     :use-module ((euphrates make-directories) :select (make-directories))
     :use-module ((euphrates memconst) :select (memconst))
     :use-module ((euphrates raisu) :select (raisu))
+    :use-module ((euphrates stringf) :select (stringf))
     :use-module ((euphrates system-environment) :select (system-environment-get))
     :use-module ((tegfs root-p) :select (root/p))
     )))
@@ -63,4 +64,4 @@
 (define (get-root)
   (or (get-root/default)
       (raisu 'unknown-root
-             "Root is unknown because $~a env variable is not defined" ROOT_VAR_NAME)))
+             (stringf "Root is unknown because $~a env variable is not defined" ROOT_VAR_NAME))))
