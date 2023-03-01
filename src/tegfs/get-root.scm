@@ -1,4 +1,4 @@
-;;;; Copyright (C) 2022  Otto Jung
+;;;; Copyright (C) 2022, 2023  Otto Jung
 ;;;;
 ;;;; This program is free software: you can redistribute it and/or modify
 ;;;; it under the terms of the GNU Affero General Public License as published
@@ -30,24 +30,19 @@
     )))
 
 
-
 (define ROOT_VAR_NAME "TEGFS_ROOT")
-(define root-default
-  (memconst
-   (system-environment-get ROOT_VAR_NAME)))
-
 (define DEFAULT_ROOT_VAR_NAME "DEFAULT_TEGFS_ROOT")
-(define root-default-default
+
+(define get-root/env
   (memconst
-   (system-environment-get DEFAULT_ROOT_VAR_NAME)))
+   (or (system-environment-get ROOT_VAR_NAME)
+       (system-environment-get DEFAULT_ROOT_VAR_NAME))))
 
 (define get-root/default
   (let ((root-made? #f))
     (lambda _
       (define root0
-        (or (root/p)
-            (root-default)
-            (root-default-default)))
+        (or (root/p) (get-root/env)))
       (define root
         (and root0
              (if (absolute-posix-path? root0) root0
