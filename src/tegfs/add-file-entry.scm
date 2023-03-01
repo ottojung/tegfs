@@ -23,7 +23,9 @@
     :use-module ((euphrates assq-set-default) :select (assq-set-default))
     :use-module ((euphrates catch-any) :select (catch-any))
     :use-module ((euphrates file-or-directory-exists-q) :select (file-or-directory-exists?))
+    :use-module ((euphrates make-directories) :select (make-directories))
     :use-module ((euphrates path-get-basename) :select (path-get-basename))
+    :use-module ((euphrates path-get-dirname) :select (path-get-dirname))
     :use-module ((euphrates raisu) :select (raisu))
     :use-module ((euphrates random-choice) :select (random-choice))
     :use-module ((tegfs add-entry) :select (add-entry))
@@ -71,6 +73,8 @@
 
   (unless (file-or-directory-exists? full-filepath)
     (raisu 'cannot-move "Could not move the original file" full-filepath))
+
+  (make-directories (path-get-dirname full-target))
 
   (catch-any
    (lambda _
