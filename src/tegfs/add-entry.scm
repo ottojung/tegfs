@@ -38,7 +38,6 @@
     :use-module ((tegfs default-db-path) :select (default-db-path))
     :use-module ((tegfs entry-get-target) :select (entry-get-target))
     :use-module ((tegfs entry-print) :select (entry-print))
-    :use-module ((tegfs get-config) :select (get-config))
     :use-module ((tegfs get-file-mimetype) :select (get-file-mimetype))
     :use-module ((tegfs get-registry-files) :select (get-registry-files))
     :use-module ((tegfs get-root) :select (get-root))
@@ -66,7 +65,6 @@
      ((symbol? x) x)
      (else (string->symbol (~a x)))))
 
-  (define config (get-config))
   (define root (get-root))
 
   (define registry-dir
