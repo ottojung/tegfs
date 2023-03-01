@@ -21,9 +21,10 @@
     :use-module ((euphrates catch-any) :select (catch-any))
     :use-module ((euphrates open-file-port) :select (open-file-port))
     :use-module ((euphrates stack) :select (list->stack stack-empty? stack-pop!))
+    :use-module ((euphrates write-string-file) :select (write-string-file))
     :use-module ((tegfs get-registry-files) :select (get-registry-files))
     :use-module ((tegfs get-root) :select (get-root))
-    :use-module ((tegfs warning) :select (warning))
+    :use-module ((tegfs message-info) :select (message-info))
     )))
 
 
@@ -46,7 +47,8 @@
        (lambda _
          (open-file-port registry-fullpath "r"))
        (lambda _
-         (warning "Could not open registry ~s" registry-path)
+         (message-info "Registry created")
+         (write-string-file registry-fullpath "\n;; Registry created with a query request\n\n")
          #f)))
 
     (cond
