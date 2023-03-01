@@ -17,6 +17,7 @@
  (guile
   (define-module (tegfs web-uploadcont)
     :export (web::uploadcont)
+    :use-module ((euphrates append-posix-path) :select (append-posix-path))
     :use-module ((euphrates comp) :select (appcomp))
     :use-module ((euphrates file-delete) :select (file-delete))
     :use-module ((euphrates hashmap) :select (hashmap-clear! hashmap-foreach hashmap-ref))
@@ -26,6 +27,7 @@
     :use-module ((euphrates string-drop-n) :select (string-drop-n))
     :use-module ((euphrates string-to-words) :select (string->words))
     :use-module ((euphrates tilda-a) :select (~a))
+    :use-module ((tegfs add-file-entry) :select (add-file-entry))
     :use-module ((tegfs categorization-complete-selection) :select (categorization-complete-selection))
     :use-module ((tegfs default-share-expiery-time) :select (default-share-expiery-time))
     :use-module ((tegfs keyword-tags) :select (keyword-tags))
@@ -93,10 +95,16 @@
              (assoc 'Content-Disposition:filename)
              cdr))
 
-  (define full-filename
+  (define full-dir
     (and filename
          (not (string-null? filename))
          (make-temporary-filename/local)))
+
+  (define full-filename
+    (and full-dir
+         (begin
+           (make-directories full-dir)
+           (append-posix-path full-dir filename))))
 
   (define _44
     (begin
@@ -126,7 +134,7 @@
       (webcore::ask
        `(whats
          (key ,(callcontext-token callctx))
-         (add-file-entry ,filename ,entry)
+         (add-file-entry ,full-filename ,entry)
          (share-full ,entry ,default-share-expiery-time _ F))))
 
     (web::iterate-profun-results
