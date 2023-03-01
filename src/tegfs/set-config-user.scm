@@ -20,7 +20,6 @@
     :use-module ((euphrates append-posix-path) :select (append-posix-path))
     :use-module ((euphrates assoc-set-value) :select (assoc-set-value))
     :use-module ((euphrates open-file-port) :select (open-file-port))
-    :use-module ((tegfs config-check-value-format) :select (config-check-value-format))
     :use-module ((tegfs get-config) :select (get-config))
     :use-module ((tegfs get-root) :select (get-root))
     )))
@@ -32,7 +31,6 @@
     (map
      (lambda (u)
        (define name (assoc 'name u))
-       (config-check-value-format 'users.name name)
        (if (and name (equal? <user-name>  (cadr name)))
            (begin
              (set! found? #t)
@@ -56,7 +54,6 @@
   (parameterize ((current-output-port p))
     (for-each
      (lambda (x)
-       (config-check-value-format (car x) x)
        (if (equal? (car x) 'users)
            (begin
              (set! found? #t)

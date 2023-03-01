@@ -19,7 +19,6 @@
     :export (tegfs-config/parse)
     :use-module ((euphrates list-find-first) :select (list-find-first))
     :use-module ((euphrates raisu) :select (raisu))
-    :use-module ((tegfs config-check-value-format) :select (config-check-value-format))
     :use-module ((tegfs fatal) :select (fatal))
     :use-module ((tegfs get-config) :select (get-config))
     :use-module ((tegfs set-config-user) :select (set-config-user))
@@ -50,7 +49,6 @@
   (cond
    (get
     (let ((p (assoc name config)))
-      (config-check-value-format name p)
       (if p
           (out (cadr p))
           (fatal "Not set"))))
@@ -61,21 +59,18 @@
 
    (get-user
     (let ((p (assoc 'users config)))
-      (config-check-value-format 'users p)
       (if p
           (let ((users (cadr p)))
             (define the-user
               (list-find-first
                (lambda (u)
                  (define name (assoc 'name u))
-                 (config-check-value-format 'users.name name)
                  (and name (equal? <user-name>  (cadr name))))
                #f
                users))
             (if the-user
                 (if user-field
                     (let ((f (assoc user-field the-user)))
-                      (config-check-value-format (string-append "users" "." <user-field>) f)
                       (if f
                           (out (cadr f))
                           (fatal "Field ~s is missing for the user named ~s" user-field <user-name>)))
