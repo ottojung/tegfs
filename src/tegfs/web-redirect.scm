@@ -21,7 +21,7 @@
     :use-module ((euphrates url-get-protocol) :select (url-get-protocol))
     :use-module ((euphrates url-get-query) :select (url-get-query))
     :use-module ((tegfs web-callcontext) :select (callcontext-headers))
-    :use-module ((tegfs web-make-callcontext) :select (web::make-callcontext/raw))
+    :use-module ((tegfs web-make-callcontext) :select (web::make-callcontext/redirect))
     :use-module ((tegfs web-return) :select (web::return))
     :use-module ((tegfs web-server-current-handler-p) :select (web::server-current/p))
     )))
@@ -34,9 +34,8 @@
   (define new-path (url-get-path new-url))
   (define new-query/encoded (url-get-query new-url))
   (define new-callctx
-    (web::make-callcontext/raw
-     new-url new-path new-query/encoded old-headers
-     new-body))
+    (web::make-callcontext/redirect
+     callctx new-url new-path new-query/encoded new-body))
 
   (if (string-null? (url-get-protocol new-url))
       (handler new-callctx)
