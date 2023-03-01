@@ -44,7 +44,7 @@
       (raisu 'no-config-file
              "Config file needs to be present when starting the server")))
   (define users
-    (cdr
+    (cadr
      (or (assoc 'users config)
          (raisu 'no-users "Variable 'users is not set by the config"))))
   (define sharedir
@@ -65,8 +65,10 @@
   (for-each
    (lambda (user)
      (define name
-       (cadr
-        (or (assoc 'name user) (list #f #f))))
+       #f)
+     ;; TODO: actually have the name here
+       ;; (cadr
+       ;;  (or (assoc 'name user) (list #f #f))))
      (define pass
        (cadr
         (or (assoc 'pass user)
