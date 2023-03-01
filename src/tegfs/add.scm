@@ -20,6 +20,7 @@
     :use-module ((euphrates catchu-case) :select (catchu-case))
     :use-module ((euphrates fn-cons) :select (fn-cons))
     :use-module ((euphrates list-zip) :select (list-zip))
+    :use-module ((euphrates path-get-basename) :select (path-get-basename))
     :use-module ((euphrates tilda-a) :select (~a))
     :use-module ((tegfs add-entry) :select (add-entry))
     :use-module ((tegfs add-file-entry) :select (add-file-entry))
@@ -34,7 +35,7 @@
 
 
 (define (tegfs-add/parse
-         <target> <title> <tag...>
+         <add-file> <target> <title> <tag...>
          --series <key...> <value...>
          <date>)
   (define key-value-pairs
@@ -44,10 +45,15 @@
 
   (catchu-case
 
-   (tegfs-add
-    <target> <title> tags
-    --series key-value-pairs
-    <date>)
+   (if <add-file>
+       (tegfs-add-file
+        <add-file> (path-get-basename <add-file>) <title> tags
+        --series key-value-pairs
+        <date>)
+       (tegfs-add
+        <target> <title> tags
+        --series key-value-pairs
+        <date>))
 
    (('no-last-id-for-series)
     (fatal "Want series, but last-id file is not present"))

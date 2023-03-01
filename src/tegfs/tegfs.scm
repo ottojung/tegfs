@@ -66,13 +66,14 @@
        /      config CONFIGOPT
        /      dump-clipboard
 
-       ADDOPT : --target <add-target>
+       ADDOPT : --file <add-file>
        /        --title <title>
        /        --tag <tag...>
        /        --series
        /        --no-series
        /        --key <key...> <value...>
        /        --date <date>
+       /        --target <add-target>
        SAVEARGS : --link SAVETARGET
        /          --from-remote <remote-id>
        /          REMOTEOPT? SAVETARGET?
@@ -129,7 +130,7 @@
         (cond
          (--version (display tegfs-version) (newline))
          (add (tegfs-add/parse
-               <add-target> <title> <tag...> --series <key...> <value...>
+               <add-file> <add-target> <title> <tag...> --series <key...> <value...>
                <date>))
          (save (CLI::save <remote> --from-remote <remote-id> --link <savetext>))
          (categorize (tegfs-categorize/parse))
