@@ -24,16 +24,21 @@
     :use-module ((tegfs get-config) :select (get-config))
     :use-module ((tegfs set-config-user) :select (set-config-user))
     :use-module ((tegfs set-config) :select (set-config))
+    :use-module ((tegfs sha256sum) :select (sha256sum))
     )))
 
 
-;; TODO: Handle config file format errors
-(define (tegfs-config/parse --display --write get set <name> <value> get-user set-user <user-name> <user-field> <user-value>)
+(define (tegfs-config/parse --display --write get set <name> <value> get-user set-user <user-name> <user-field> --password <user-value>)
   (define config (get-config))
   (define name (and <name> (string->symbol <name>)))
-  (define user-field (and <user-field> (string->symbol <user-field>)))
+  (define user-field
+    (if --password 'pass
+        (and <user-field> (string->symbol <user-field>))))
   (define value (and <value> (or (string->number <value>) <value>)))
-  (define user-value (and <user-value> (or (string->number <user-value>) <user-value>)))
+  (define user-value
+    (if --password
+        (sha256sum <user-value>)
+        (and <user-value> (or (string->number <user-value>) <user-value>))))
 
   (define (out x)
     (if --write (write x) (display x))

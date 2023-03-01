@@ -98,7 +98,7 @@
        /            get-user <user-name> USER_FIELD?
        /            set-user <user-name> USER_FIELD <user-value>
        CONFIGFORMAT : --display / --write
-       USER_FIELD : <user-field>
+       USER_FIELD : --password / <user-field>
        ROOT : --root <root>
        )
 
@@ -148,7 +148,7 @@
          ((and get <getid>) (tegfs-get/parse <get-format> <getid>))
          (talk (CLI::talk --web))
          (make-thumbnails (tegfs-make-thumbnails/parse <target> <output>))
-         (config (tegfs-config/parse --display --write get set <name> <value> get-user set-user <user-name> <user-field> <user-value>))
+         (config (tegfs-config/parse --display --write get set <name> <value> get-user set-user <user-name> <user-field> --password <user-value>))
          (dump-clipboard (tegfs-dump-clipboard/parse))
          (license (CLI::show-license))
          (warranty (CLI::show-warranty))
