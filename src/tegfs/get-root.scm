@@ -35,12 +35,18 @@
   (memconst
    (system-environment-get ROOT_VAR_NAME)))
 
+(define DEFAULT_ROOT_VAR_NAME "DEFAULT_TEGFS_ROOT")
+(define root-default-default
+  (memconst
+   (system-environment-get DEFAULT_ROOT_VAR_NAME)))
+
 (define get-root/default
   (let ((root-made? #f))
     (lambda _
       (define root0
         (or (root/p)
-            (root-default)))
+            (root-default)
+            (root-default-default)))
       (define root
         (and root0
              (if (absolute-posix-path? root0) root0
