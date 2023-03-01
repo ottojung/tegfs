@@ -31,12 +31,14 @@
 
 
 (define ROOT_VAR_NAME "TEGFS_ROOT")
-(define DEFAULT_ROOT_VAR_NAME "DEFAULT_TEGFS_ROOT")
 
 (define get-root/env
   (memconst
    (or (system-environment-get ROOT_VAR_NAME)
-       (system-environment-get DEFAULT_ROOT_VAR_NAME))))
+       (let ((home (system-environment-get "XDG_DATA_HOME")))
+         (and home (append-posix-path home "tegfs" "root")))
+       (let ((home (system-environment-get "HOME")))
+         (and home (append-posix-path home ".local" "share" "tegfs" "root"))))))
 
 (define get-root/default
   (let ((root-made? #f))
