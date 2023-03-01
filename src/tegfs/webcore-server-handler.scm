@@ -19,12 +19,14 @@
     :export (webcore::make-server-handler)
     :use-module ((euphrates profun-handler) :select (profun-handler-extend))
     :use-module ((tegfs add-entry) :select (add-entry))
+    :use-module ((tegfs add-file-entry) :select (add-file-entry))
     :use-module ((tegfs add-tempentry) :select (add-tempentry))
     :use-module ((tegfs core-server-handler) :select (core::make-server-handler))
     :use-module ((tegfs permission) :select (permission-token))
     :use-module ((tegfs update-entry) :select (update-entry))
     :use-module ((tegfs update-tempentry) :select (update-tempentry))
     :use-module ((tegfs webcore-add-entry) :select (webcore::add-entry))
+    :use-module ((tegfs webcore-add-file-entry) :select (webcore::add-file-entry))
     :use-module ((tegfs webcore-add-tempentry) :select (webcore::add-tempentry))
     :use-module ((tegfs webcore-categorization) :select (webcore::categorization))
     :use-module ((tegfs webcore-check-api-access) :select (webcore::check-api-access))
@@ -58,6 +60,7 @@
    (key (webcore::key web::context))
    (entry (webcore::entry web::context)) ;; OVERRIDES
    (add-entry webcore::add-entry) ;; OVERRIDES
+   (add-file-entry webcore::add-file-entry) ;; OVERRIDES
    (update-entry (webcore::update-entry web::context)) ;; OVERRIDES
    (categorization (webcore::categorization web::context)) ;; OVERRIDES
    (set-categorization (webcore::set-categorization web::context)) ;; OVERRIDES
