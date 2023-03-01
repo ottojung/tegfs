@@ -16,12 +16,13 @@
 (cond-expand
  (guile
   (define-module (tegfs add)
-    :export (tegfs-add tegfs-add/parse)
+    :export (tegfs-add tegfs-add-file tegfs-add/parse)
     :use-module ((euphrates catchu-case) :select (catchu-case))
     :use-module ((euphrates fn-cons) :select (fn-cons))
     :use-module ((euphrates list-zip) :select (list-zip))
     :use-module ((euphrates tilda-a) :select (~a))
     :use-module ((tegfs add-entry) :select (add-entry))
+    :use-module ((tegfs add-file-entry) :select (add-file-entry))
     :use-module ((tegfs fatal) :select (fatal))
     :use-module ((tegfs keyword-date) :select (keyword-date))
     :use-module ((tegfs keyword-prev) :select (keyword-prev))
@@ -59,7 +60,7 @@
 
   (display "Added!\n"))
 
-(define (tegfs-add
+(define (tegfs-add/make-entry
          <target> <title> tags
          series? key-value-pairs0
          <date>)
@@ -93,4 +94,26 @@
          (list))
      key-value-pairs))
 
+  entry)
+
+(define (tegfs-add
+         <target> <title> tags
+         series? key-value-pairs0
+         <date>)
+  (define entry
+    (tegfs-add/make-entry
+     <target> <title> tags
+     series? key-value-pairs0
+     <date>))
   (add-entry entry))
+
+(define (tegfs-add-file
+         full-filepath filename <title> tags
+         series? key-value-pairs0
+         <date>)
+  (define entry
+    (tegfs-add/make-entry
+     #f <title> tags
+     series? key-value-pairs0
+     <date>))
+  (add-file-entry (cons full-filepath filename) entry))

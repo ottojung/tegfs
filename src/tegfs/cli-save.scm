@@ -34,7 +34,7 @@
     :use-module ((euphrates tilda-s) :select (~s))
     :use-module ((euphrates write-string-file) :select (write-string-file))
     :use-module ((tegfs a-weblink-q) :select (a-weblink?))
-    :use-module ((tegfs add) :select (tegfs-add))
+    :use-module ((tegfs add) :select (tegfs-add tegfs-add-file))
     :use-module ((tegfs cli-save-loop) :select (CLI::save::loop))
     :use-module ((tegfs clipboard) :select (classify-clipboard-text-content))
     :use-module ((tegfs default-db-path) :select (default-db-path))
@@ -77,30 +77,22 @@
   (define _11
     (unless (file-or-directory-exists? registry-dir)
       (make-directories registry-dir)))
-  (define <target>
-    (cond
-     (-temporary-file
-      (let* ((target-name0 (string-append target-basename target-extension))
-             (target-name (if (file-or-directory-exists?
-                               (append-posix-path registry-dir target-name0))
-                              (string-append target-basename "-" (get-random-basename) target-extension)
-                              target-name0))
-             (target-fullname (append-posix-path registry-dir target-name)))
-        (rename-file -temporary-file target-fullname)
-        (when link?
-          (symlink target-fullname -temporary-file))
-        target-name))
-     ((equal? kind 'pasta) #f)
-     (else -text-content)))
+  (define filename (string-append target-basename target-extension))
 
   (define _delete-result
     (file-delete (working-file/p)))
 
   (define entry
-    (tegfs-add
-     <target> title tags
-     series? key-value-pairs
-     <date>))
+    (if -temporary-file
+        (tegfs-add-file
+         -temporary-file filename title tags
+         series? key-value-pairs
+         <date>)
+        (let ((<target> (if (equal? kind 'pasta) #f -text-content)))
+          (tegfs-add
+           <target> title tags
+           series? key-value-pairs
+           <date>))))
 
   (assq-or keyword-id entry (raisu 'impossible)))
 
