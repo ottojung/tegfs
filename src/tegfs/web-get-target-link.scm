@@ -17,11 +17,16 @@
  (guile
   (define-module (tegfs web-get-target-link)
     :export (web::get-target-link)
+    :use-module ((tegfs a-weblink-q) :select (a-weblink?))
     :use-module ((tegfs web-current-fileserver-p) :select (web::current-fileserver/p))
     )))
 
 (define (web::get-target-link linkpath)
   (define fileserver (web::current-fileserver/p))
-  (if fileserver
-      (string-append fileserver linkpath)
-      (string-append "open?path=" linkpath)))
+  (cond
+   ((a-weblink? linkpath)
+    linkpath)
+   (else
+    (if fileserver
+        (string-append fileserver linkpath)
+        (string-append "open?path=" linkpath)))))
