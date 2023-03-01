@@ -96,7 +96,7 @@
        CONFIGFORK : get <name>
        /            set <name> <value>
        /            get-user <user-name> USER_FIELD?
-       /            set-user <user-name> USER_FIELD? <user-value>
+       /            set-user <user-name> USER_FIELD <user-value>
        CONFIGFORMAT : --display / --write
        USER_FIELD : <user-field>
        ROOT : --root <root>
