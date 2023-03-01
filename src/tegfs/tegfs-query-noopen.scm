@@ -47,7 +47,7 @@
 
 (define (tegfs-query/noopen <query...>)
   (define iter0 (entries-iterate))
-  (if <query...>
+  (if (and <query...> (not (null? <query...>)))
       ;; (tegfs-query/noopen/notall iter0 <query...>)
       (tegfs-query/noopen/notall/profun iter0 <query...>)
       iter0))
