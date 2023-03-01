@@ -34,7 +34,7 @@ TegFS offers a featureful CLI for power users, and a web-based UI for easy acces
   - `file` for determining file types
   - `fzf` for making choices during `tegfs save` (MUST HAVE)
   - `rsync` and `ssh` for sending files to remote servers if using `tegfs save` with `--remote`
-  - `prolog` for `tegfs prolog` command
+  - `swi-prolog` for `tegfs prolog` command
 - Web server
   - `ffmpeg` for video previews production
   - `imagemagick` for image previews production
