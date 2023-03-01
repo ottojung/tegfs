@@ -17,10 +17,11 @@
  (guile
   (define-module (tegfs config)
     :export (tegfs-config/parse)
-    :use-module ((euphrates assq-or) :select (assq-or))
     :use-module ((euphrates dprintln) :select (dprintln))
     :use-module ((euphrates list-find-first) :select (list-find-first))
     :use-module ((euphrates raisu) :select (raisu))
+    :use-module ((euphrates stringf) :select (stringf))
+    :use-module ((euphrates tilda-a) :select (~a))
     :use-module ((tegfs fatal) :select (fatal))
     :use-module ((tegfs get-config) :select (get-config))
     :use-module ((tegfs set-config) :select (set-config))
@@ -35,8 +36,17 @@
   (define value (and <value> (or (string->number <value>) <value>)))
   (define user-value (and <user-value> (or (string->number <user-value>) <user-value>)))
 
-  (define out
-    (if --write write display))
+  (define (out x)
+    (if --write (write x) (display x))
+    (newline))
+
+  (define (check-value-format name p)
+    (when p
+      (unless (and (list? p) (= 2 (length p)))
+        (fatal "Bad config format~a"
+               (if name
+                   (stringf ", field ~s is the issue" (~a name))
+                   "")))))
 
   (unless config
     (fatal "Could not parse the config"))
@@ -44,32 +54,40 @@
   (cond
    (get
     (let ((p (assoc name config)))
+      (check-value-format name p)
       (if p
           (out (cadr p))
           (display "Not set\n" (current-error-port)))))
+
    (set
     (set-config name (list value))
     (display "Ok\n" (current-error-port)))
+
    (get-user
     (let ((p (assoc 'users config)))
+      (check-value-format 'users p)
       (if p
           (let ((users (cadr p)))
             (define the-user
               (list-find-first
                (lambda (u)
-                 (equal? <user-name> (car (assq-or 'name u (list #f)))))
+                 (define name (assoc 'name u))
+                 (check-value-format 'users.name name)
+                 (and name (equal? <user-name>  (cadr name))))
                #f
                users))
             (if the-user
                 (if user-field
-                    (let ((f (assq-or user-field the-user #f)))
+                    (let ((f (assoc user-field the-user)))
+                      (check-value-format (string-append "users" "." <user-field>) f)
                       (if f
-                          (out (car f))
+                          (out (cadr f))
                           (parameterize ((current-output-port (current-error-port)))
                             (dprintln "Field ~s is missing for the user named ~s" user-field <user-name>))))
                     (out the-user))
                 (parameterize ((current-output-port (current-error-port)))
                   (dprintln "No user named ~s" <user-name>))))
           (display "No users\n" (current-error-port)))))
+
    (else
     (raisu 'Impossible-case-7236123))))
