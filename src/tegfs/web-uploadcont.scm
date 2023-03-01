@@ -17,7 +17,6 @@
  (guile
   (define-module (tegfs web-uploadcont)
     :export (web::uploadcont)
-    :use-module ((euphrates append-posix-path) :select (append-posix-path))
     :use-module ((euphrates comp) :select (appcomp))
     :use-module ((euphrates file-delete) :select (file-delete))
     :use-module ((euphrates hashmap) :select (hashmap-clear! hashmap-foreach hashmap-ref))
@@ -27,6 +26,7 @@
     :use-module ((euphrates string-drop-n) :select (string-drop-n))
     :use-module ((euphrates string-to-words) :select (string->words))
     :use-module ((euphrates tilda-a) :select (~a))
+    :use-module ((tegfs add-entry) :select (add-entry))
     :use-module ((tegfs add-file-entry) :select (add-file-entry))
     :use-module ((tegfs categorization-complete-selection) :select (categorization-complete-selection))
     :use-module ((tegfs default-share-expiery-time) :select (default-share-expiery-time))
@@ -95,16 +95,9 @@
              (assoc 'Content-Disposition:filename)
              cdr))
 
-  (define full-dir
-    (and filename
-         (not (string-null? filename))
-         (make-temporary-filename/local)))
-
   (define full-filename
-    (and full-dir
-         (begin
-           (make-directories full-dir)
-           (append-posix-path full-dir filename))))
+    (and filename (not (string-null? filename))
+         (make-temporary-filename/local)))
 
   (define _44
     (begin
@@ -131,11 +124,17 @@
            '())))
 
     (define result
-      (webcore::ask
-       `(whats
-         (key ,(callcontext-token callctx))
-         (add-file-entry ,full-filename ,entry)
-         (share-full ,entry ,default-share-expiery-time _ F))))
+      (if full-filename
+          (webcore::ask
+           `(whats
+             (key ,(callcontext-token callctx))
+             (add-file-entry ,(cons full-filename filename) ,entry)
+             (share-full ,entry ,default-share-expiery-time _ F)))
+          (webcore::ask
+           `(whats
+             (key ,(callcontext-token callctx))
+             (add-entry ,entry)
+             (share-full ,entry ,default-share-expiery-time _ F)))))
 
     (web::iterate-profun-results
      :or (lambda _
