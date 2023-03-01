@@ -17,10 +17,8 @@
  (guile
   (define-module (tegfs web-uploadcont)
     :export (web::uploadcont)
-    :use-module ((euphrates append-posix-path) :select (append-posix-path))
     :use-module ((euphrates comp) :select (appcomp))
     :use-module ((euphrates file-delete) :select (file-delete))
-    :use-module ((euphrates file-or-directory-exists-q) :select (file-or-directory-exists?))
     :use-module ((euphrates hashmap) :select (hashmap-clear! hashmap-foreach hashmap-ref))
     :use-module ((euphrates make-directories) :select (make-directories))
     :use-module ((euphrates open-file-port) :select (open-file-port))
@@ -28,16 +26,12 @@
     :use-module ((euphrates string-drop-n) :select (string-drop-n))
     :use-module ((euphrates string-to-words) :select (string->words))
     :use-module ((euphrates tilda-a) :select (~a))
-    :use-module ((tegfs add-entry) :select (add-entry))
     :use-module ((tegfs categorization-complete-selection) :select (categorization-complete-selection))
-    :use-module ((tegfs default-db-path) :select (default-db-path))
     :use-module ((tegfs default-share-expiery-time) :select (default-share-expiery-time))
-    :use-module ((tegfs get-random-basename) :select (get-random-basename))
-    :use-module ((tegfs get-root) :select (get-root))
     :use-module ((tegfs keyword-tags) :select (keyword-tags))
-    :use-module ((tegfs keyword-target) :select (keyword-target))
     :use-module ((tegfs keyword-title) :select (keyword-title))
     :use-module ((tegfs keyword-upload-tag) :select (keyword-upload-tag))
+    :use-module ((tegfs make-temporary-filename-local) :select (make-temporary-filename/local))
     :use-module ((tegfs web-body-get-data) :select (web::body::get-data web::body::get-data/decode))
     :use-module ((tegfs web-body-not-found) :select (web::body-not-found))
     :use-module ((tegfs web-callcontext-p) :select (web::callcontext/p))
@@ -99,23 +93,10 @@
              (assoc 'Content-Disposition:filename)
              cdr))
 
-  (define-values (<target> full-filename)
-    (if (or (not filename)
-            (string-null? filename))
-        (values #f #f)
-        (let* ((f1
-                (append-posix-path (get-root)
-                                   default-db-path
-                                   filename))
-               (t
-                (if (file-or-directory-exists? f1)
-                    (string-append (get-random-basename) "-" filename)
-                    filename))
-               (f2
-                (append-posix-path (get-root)
-                                   default-db-path
-                                   t)))
-          (values t f2))))
+  (define full-filename
+    (and filename
+         (not (string-null? filename))
+         (make-temporary-filename/local)))
 
   (define _44
     (begin
@@ -137,11 +118,6 @@
        (if (and title (not (string-null? title)))
            `((,keyword-title . ,title))
            '())
-
-       (if (and <target> (not (string-null? <target>)))
-           `((,keyword-target . ,<target>))
-           '())
-
        (if (and tags-list (not (null? tags-list)))
            `((,keyword-tags ,@tags-list))
            '())))
@@ -150,7 +126,7 @@
       (webcore::ask
        `(whats
          (key ,(callcontext-token callctx))
-         (add-entry ,entry)
+         (add-file-entry ,filename ,entry)
          (share-full ,entry ,default-share-expiery-time _ F))))
 
     (web::iterate-profun-results
