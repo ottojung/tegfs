@@ -34,9 +34,16 @@
     :use-module ((tegfs keyword-target) :select (keyword-target))
     )))
 
-(define (add-file-entry full-filepath entry)
+(define (add-file-entry full-filepath/0 entry)
   (define root (get-root))
-  (define filename (path-get-basename full-filepath))
+  (define full-filepath
+    (if (pair? full-filepath/0)
+        (car full-filepath/0)
+        full-filepath/0))
+  (define filename
+    (if (pair? full-filepath/0)
+        (cdr full-filepath/0)
+        (path-get-basename full-filepath)))
 
   (define (to-fullpath target)
     (append-posix-path root default-db-path target))
