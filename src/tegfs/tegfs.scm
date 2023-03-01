@@ -89,7 +89,10 @@
        QUERYQ : <query...>
        GETARGS : GETOPT? <getid>
        GETOPT : --format <get-format> / --entry
-       SERVARGS : --offload-filesharing <fileserver> / --no-offload-filesharing
+       SERVARGS : --offload-filesharing <fileserver>
+       /          --no-offload-filesharing
+       /          --authorization
+       /          --no-authorization
        TALKOPTS : --web
        THUMBOPT : <target> <output>
        CONFIGOPT  : CONFIGFORMAT? CONFIGFORK
@@ -123,6 +126,8 @@
 
       :default (--no-offload-filesharing #t)
       :exclusive (--no-offload-filesharing --offload-filesharing)
+      :default (--authorization #t)
+      :exclusive (--authorization --no-authorization)
 
       :default (--display #t)
       :exclusive (--display --write)
@@ -142,7 +147,7 @@
                <date>))
          (save (CLI::save <remote> --from-remote <remote-id> --link <savetext>))
          (categorize (tegfs-categorize/parse))
-         (serve (tegfs-serve/parse (and --offload-filesharing <fileserver>)))
+         (serve (tegfs-serve/parse (and --offload-filesharing <fileserver>) --no-authorization))
          (prolog (tegfs-prolog/parse))
          (query (CLI::query --diropen --dirpreview --entries <query-format> <query...>))
          ((and get <getid>) (tegfs-get/parse <get-format> <getid>))
