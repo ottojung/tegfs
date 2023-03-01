@@ -22,7 +22,7 @@
     :use-module ((euphrates dprintln) :select (dprintln))
     :use-module ((euphrates write-string-file) :select (write-string-file))
     :use-module ((tegfs default-sharedir) :select (default-sharedir))
-    :use-module ((tegfs get-config) :select (get-config))
+    :use-module ((tegfs get-config) :select (get-config/fatal))
     :use-module ((tegfs keyword-config-port) :select (keyword-config-port))
     :use-module ((tegfs keyword-config-sharedir) :select (keyword-config-sharedir))
     :use-module ((tegfs web-collectgarbage) :select (web::collectgarbage))
@@ -62,7 +62,7 @@
     (with-current-time (web::server-handle server-operator-key callctx))))
 
 (define (tegfs-serve/parse <fileserver>)
-  (define config (get-config))
+  (define config (get-config/fatal))
   (define sharedir (car (assq-or keyword-config-sharedir config `(,default-sharedir))))
   (define port (car (assq-or keyword-config-port config `(,web::default-port))))
   (define-values (comm server-operator-key) (web::make-communicator))

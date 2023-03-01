@@ -20,7 +20,7 @@
     :use-module ((euphrates list-find-first) :select (list-find-first))
     :use-module ((euphrates raisu) :select (raisu))
     :use-module ((tegfs fatal) :select (fatal))
-    :use-module ((tegfs get-config) :select (get-config))
+    :use-module ((tegfs get-config) :select (get-config/fatal))
     :use-module ((tegfs set-config-user) :select (set-config-user))
     :use-module ((tegfs set-config) :select (set-config))
     :use-module ((tegfs sha256sum) :select (sha256sum))
@@ -28,7 +28,7 @@
 
 
 (define (tegfs-config/parse --display --write get set <name> <value> get-user set-user <user-name> <user-field> --password <user-value>)
-  (define config (get-config))
+  (define config (get-config/fatal))
   (define name (and <name> (string->symbol <name>)))
   (define user-field
     (if --password 'pass

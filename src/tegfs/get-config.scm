@@ -16,14 +16,16 @@
 (cond-expand
  (guile
   (define-module (tegfs get-config)
-    :export (get-config)
+    :export (get-config get-config/fatal)
     :use-module ((euphrates append-posix-path) :select (append-posix-path))
     :use-module ((euphrates catch-any) :select (catch-any))
+    :use-module ((euphrates catchu-case) :select (catchu-case))
     :use-module ((euphrates file-or-directory-exists-q) :select (file-or-directory-exists?))
     :use-module ((euphrates open-file-port) :select (open-file-port))
     :use-module ((euphrates raisu) :select (raisu))
     :use-module ((euphrates read-list) :select (read-list))
     :use-module ((euphrates write-string-file) :select (write-string-file))
+    :use-module ((tegfs fatal) :select (fatal))
     :use-module ((tegfs get-root) :select (get-root))
     :use-module ((tegfs validate-config) :select (validate-config))
     )))
@@ -47,3 +49,10 @@
       (begin
         (write-string-file path "")
         '())))
+
+(define (get-config/fatal)
+  (catchu-case
+   (get-config)
+
+   (('config-format-error message . args)
+    (fatal "Config format error: ~a" message))))
