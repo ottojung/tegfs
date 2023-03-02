@@ -26,6 +26,8 @@
   (cond
    ((a-weblink? linkpath)
     linkpath)
+   ((string-prefix? "/directory" linkpath)
+    linkpath)
    (else
     (if fileserver
         (string-append fileserver linkpath)
