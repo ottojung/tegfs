@@ -20,6 +20,7 @@
     :use-module ((euphrates assq-or) :select (assq-or))
     :use-module ((euphrates remove-common-prefix) :select (remove-common-prefix))
     :use-module ((euphrates url-get-hostname-and-port) :select (url-get-hostname-and-port))
+    :use-module ((euphrates url-get-protocol) :select (url-get-protocol))
     :use-module ((tegfs web-callcontext) :select (callcontext-headers callcontext-url))
     :use-module ((tegfs web-get-domainname) :select (web::get-domainname))
     )))
@@ -38,7 +39,10 @@
   (define referer2
     (if (equal? (url-get-hostname-and-port domainname)
                 (url-get-hostname-and-port referer1))
-        (remove-common-prefix referer1 domainname)
+        (let* ((ref-p (url-get-protocol referer1))
+               (ref-h (url-get-hostname-and-port referer1))
+               (ref-r (string-append ref-p "://" ref-h)))
+          (remove-common-prefix referer1 ref-r))
         referer1))
   (define referer
     (if (equal? referer2 (callcontext-url callctx))
