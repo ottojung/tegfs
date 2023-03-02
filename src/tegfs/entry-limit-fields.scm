@@ -17,6 +17,7 @@
  (guile
   (define-module (tegfs entry-limit-fields)
     :export (entry-limit-fields)
+    :use-module ((tegfs keyword-mimetype) :select (keyword-mimetype))
     :use-module ((tegfs keyword-target) :select (keyword-target))
     :use-module ((tegfs keyword-title) :select (keyword-title))
     :use-module ((tegfs webcore-access) :select (has-access-for-entry-details? has-access-for-entry-target?))
@@ -26,7 +27,8 @@
 
 (define target-fields
   (list keyword-target
-        keyword-title))
+        keyword-title
+        keyword-mimetype))
 
 (define (entry-limit-fields filemap/2 perm entry0)
   (cond

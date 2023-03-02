@@ -24,12 +24,13 @@
     :use-module ((euphrates profun-op-lambda) :select (profun-op-lambda))
     :use-module ((euphrates profun-reject) :select (profun-reject))
     :use-module ((euphrates profun-value) :select (profun-bound-value? profun-unbound-value?))
+    :use-module ((tegfs entry-limit-fields) :select (entry-limit-fields))
     :use-module ((tegfs filemap) :select (filemap-ref-by-senderid))
     :use-module ((tegfs keyword-mimetype) :select (keyword-mimetype))
-    :use-module ((tegfs keyword-target) :select (keyword-target))
     :use-module ((tegfs sharedinfo) :select (sharedinfo-sourcepath))
     :use-module ((tegfs standalone-file-to-entry) :select (standalone-file->entry/prefixed))
     :use-module ((tegfs webcore-context) :select (context-filemap/2))
+    :use-module ((tegfs webcore-get-current-permissions) :select (webcore::get-current-permissions))
     )))
 
 
@@ -39,6 +40,7 @@
     (define filemap/2 (context-filemap/2 web::context))
 
     (profun-op-lambda
+     :with-env
      (ctx (vid file)
           (vid-name file-name))
 
@@ -51,6 +53,7 @@
           ((and (profun-bound-value? vid)
                 (profun-unbound-value? file))
            (let ()
+             (define perm (webcore::get-current-permissions))
              (define info (filemap-ref-by-senderid filemap/2 vid #f))
              (define dir (and info (sharedinfo-sourcepath info)))
              (define iter0
@@ -68,9 +71,7 @@
                           full-entry/0)))
                (define entry
                  (and full
-                      (filter (lambda (p) (or (eq? (car p) keyword-target)
-                                              (eq? (car p) keyword-mimetype)))
-                              full-entry)))
+                      (entry-limit-fields filemap/2 perm full-entry)))
                (if full
                    (profun-set-meta
                     (file-name <- full-entry)
