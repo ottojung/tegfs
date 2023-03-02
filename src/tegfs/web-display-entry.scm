@@ -35,8 +35,7 @@
     :use-module ((tegfs web-get-preview-link) :select (web::get-preview-link))
     )))
 
-(define (get-preview-by-mimetype entry)
-  (define mimetype (entry-get-mimetype entry))
+(define (get-preview-by-mimetype mimetype)
   (and mimetype
        (or
         (and (equal? mimetype "text/uri-list") "static/previewunknownurl.svg")
@@ -64,13 +63,13 @@
            "static/directory.svg"
            "static/fileunknown.svg")))
 
-(define (display-preview entry target preview-linkpath)
+(define (display-preview entry mimetype target preview-linkpath)
   (define preview-link
     (and preview-linkpath (web::get-preview-link preview-linkpath)))
   (display "<img src=")
   (write
    (or preview-link
-       (get-preview-by-mimetype entry)
+       (get-preview-by-mimetype mimetype)
        (get-preview-by-filename target)
        (get-preview-by-contents entry)
        (if target
@@ -78,15 +77,15 @@
            "static/previewunknown.svg")))
   (display "/>"))
 
-(define (maybe-display-preview entry maybe-full-senderid preview-linkpath)
+(define (maybe-display-preview entry mimetype maybe-full-senderid preview-linkpath)
   (define target (entry-get-target entry))
   (let ((full-link (web::get-full-link entry target maybe-full-senderid)))
     (when full-link
       (display "<a href=") (write full-link)
-      (unless (equal? "inode/directory" (entry-get-mimetype entry))
+      (unless (equal? mimetype "inode/directory")
         (display " target='_blank'"))
       (display ">"))
-    (display-preview entry target preview-linkpath)
+    (display-preview entry mimetype target preview-linkpath)
     (when full-link
       (display "</a>"))))
 
@@ -134,15 +133,14 @@
     (display maybe-full-senderid)
     (display "'>")
     (display "<img src='static/share.svg' title='Share'/>")
-    (display "</a>"))
-
-  )
+    (display "</a>")))
 
 (define (web::display-entry entry maybe-full-senderid preview-linkpath)
+  (define mimetype (entry-get-mimetype entry))
+
   (display "<div class='card'>")
-  (maybe-display-preview entry maybe-full-senderid preview-linkpath)
+  (maybe-display-preview entry mimetype maybe-full-senderid preview-linkpath)
   (display "<div id='sub'>")
   (display-title maybe-full-senderid entry)
   (display "</div>")
-  (display "</div>")
-  )
+  (display "</div>"))
