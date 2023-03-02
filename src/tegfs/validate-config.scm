@@ -59,7 +59,7 @@
           (lambda (u)
             (unless (list? (cadr p))
               (error "One of the users turned out to not be a list"))
-            (loop u (cons 'users pref)))
+            (loop u (cons "users" pref)))
           (cadr p))))
 
      config)))
