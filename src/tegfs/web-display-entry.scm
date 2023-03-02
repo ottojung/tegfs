@@ -56,13 +56,15 @@
         (and (file-is-video? target) "static/filevideo.svg")
         (and (file-is-text? target) "static/filetextual.svg"))))
 
-(define (get-preview-by-contents target-fullpath is-directory? exists?)
-  (and exists?
-       (if is-directory?
+(define (get-preview-by-contents entry)
+  (define target-fullpath (entry-target-fullpath entry))
+  (and target-fullpath
+       (file-or-directory-exists? target-fullpath)
+       (if (file-is-directory?/no-readlink target-fullpath)
            "static/directory.svg"
            "static/fileunknown.svg")))
 
-(define (display-preview entry target target-fullpath is-directory? exists? preview-linkpath)
+(define (display-preview entry target preview-linkpath)
   (define preview-link
     (and preview-linkpath (web::get-preview-link preview-linkpath)))
   (display "<img src=")
@@ -70,21 +72,21 @@
    (or preview-link
        (get-preview-by-mimetype entry)
        (get-preview-by-filename target)
-       (get-preview-by-contents target-fullpath is-directory? exists?)
+       (get-preview-by-contents entry)
        (if target
            "static/fileunknown.svg"
            "static/previewunknown.svg")))
   (display "/>"))
 
-(define (maybe-display-preview entry target-fullpath is-directory? exists? maybe-full-senderid preview-linkpath)
+(define (maybe-display-preview entry maybe-full-senderid preview-linkpath)
   (define target (entry-get-target entry))
   (let ((full-link (web::get-full-link entry target maybe-full-senderid)))
     (when full-link
       (display "<a href=") (write full-link)
-      (unless is-directory?
+      (unless (equal? "inode/directory" (entry-get-mimetype entry))
         (display " target='_blank'"))
       (display ">"))
-    (display-preview entry target-fullpath is-directory? exists? target preview-linkpath)
+    (display-preview entry target preview-linkpath)
     (when full-link
       (display "</a>"))))
 
@@ -132,20 +134,15 @@
     (display maybe-full-senderid)
     (display "'>")
     (display "<img src='static/share.svg' title='Share'/>")
-    (display "</a>")))
+    (display "</a>"))
+
+  )
 
 (define (web::display-entry entry maybe-full-senderid preview-linkpath)
-  (define target-fullpath (entry-target-fullpath entry))
-  (define exists?
-    (and target-fullpath
-         (file-or-directory-exists? target-fullpath)))
-  (define is-directory?
-    (and exists?
-         (file-is-directory?/no-readlink target-fullpath)))
-
   (display "<div class='card'>")
-  (maybe-display-preview entry target-fullpath is-directory? exists? maybe-full-senderid preview-linkpath)
+  (maybe-display-preview entry maybe-full-senderid preview-linkpath)
   (display "<div id='sub'>")
   (display-title maybe-full-senderid entry)
   (display "</div>")
-  (display "</div>"))
+  (display "</div>")
+  )
