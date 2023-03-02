@@ -37,7 +37,7 @@
 
   (if (and path
            (not fileserver)
-           (not (string-index path #\/)))
+           (not (string-contains path ".."))) ;; TODO: be less crude with the .. check
       (let ()
         (define sharedir (web::current-sharedir/p))
         (define fullpath (append-posix-path sharedir path))
