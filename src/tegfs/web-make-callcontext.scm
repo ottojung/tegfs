@@ -104,14 +104,11 @@
         (lambda _ new-query/encoded)
         (memconst (initialize-query new-query/encoded))))
 
-  (define headers
-    (append
-     (callcontext-respheaders callctx)
-     (callcontext-headers callctx)))
+  (define headers (callcontext-headers callctx))
   (define headersfn (const headers))
 
   (letrec
       ((tokenfn (memconst (or (get-access-token ret queryfn headers)
                               (callcontext-token callctx))))
-       (ret (callcontext-ctr new-url new-path headersfn queryfn new-body '() tokenfn)))
+       (ret (callcontext-ctr new-url new-path headersfn queryfn new-body (callcontext-respheaders callctx) tokenfn)))
     ret))
