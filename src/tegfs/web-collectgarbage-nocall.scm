@@ -24,6 +24,8 @@
     :use-module ((euphrates path-without-extension) :select (path-without-extension))
     :use-module ((euphrates raisu) :select (raisu))
     :use-module ((tegfs current-time-p) :select (current-time/p))
+    :use-module ((tegfs custom-tempentry-still-valid-huh) :select (custom-tempentry-still-valid?))
+    :use-module ((tegfs custom-tempentry) :select (custom-tempentry?))
     :use-module ((tegfs filemap) :select (filemap-delete-by-recepientid! filemap-ref-by-recepientid))
     :use-module ((tegfs permission-still-valid-huh) :select (permission-still-valid?))
     :use-module ((tegfs permission) :select (permission-filemap permission?))
@@ -88,6 +90,9 @@
               (permission-filemap perm))
              (delayop
               (hashmap-delete! tempentries token)))))
+      ((custom-tempentry? tempentry)
+       (unless (custom-tempentry-still-valid? tempentry now)
+         (delayop (hashmap-delete! tempentries token))))
       (else (dprintln "Unknown object in gc ~s" tempentry))))
    tempentries)
 
