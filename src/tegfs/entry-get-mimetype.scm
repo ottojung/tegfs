@@ -25,7 +25,7 @@
 
 
 (define (entry-get-mimetype entry)
-  (unless (pair? entry)
+  (unless (or (pair? entry) (null? entry))
     (raisu 'entry-is-not-a-list entry))
 
   (let ()
