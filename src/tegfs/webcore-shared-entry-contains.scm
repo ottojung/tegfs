@@ -19,6 +19,7 @@
     :export (webcore::shared-entry-contains)
     :use-module ((euphrates directory-files-depth-iter) :select (directory-files-depth-iter))
     :use-module ((euphrates file-is-directory-q-no-readlink) :select (file-is-directory?/no-readlink))
+    :use-module ((euphrates file-or-directory-exists-q) :select (file-or-directory-exists?))
     :use-module ((euphrates profun-accept) :select (profun-accept? profun-ctx-set profun-set profun-set-meta))
     :use-module ((euphrates profun-error) :select (make-profun-error))
     :use-module ((euphrates profun-op-lambda) :select (profun-op-lambda))
@@ -57,7 +58,9 @@
              (define info (filemap-ref-by-senderid filemap/2 vid #f))
              (define dir (and info (sharedinfo-sourcepath info)))
              (define iter0
-               (and dir (directory-files-depth-iter #t 1 dir)))
+               (and dir
+                    (file-or-directory-exists? dir)
+                    (directory-files-depth-iter #t 1 dir)))
              (define (iter1)
                (define x (iter0))
                (and x (car x)))
