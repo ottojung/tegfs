@@ -1,25 +1,18 @@
 ---
 title: Disabling layout and features
 icon: config
-order: 3
+order: 2
 category:
   - Guide
 tag:
   - disable
 
 navbar: false
-sidebar: false
-
-breadcrumb: false
 pageInfo: false
 contributors: false
 editLink: false
-lastUpdated: false
-prev: false
-next: false
 comment: false
 footer: false
-
 backtotop: false
 ---
 
