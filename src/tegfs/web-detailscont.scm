@@ -36,7 +36,7 @@
     :use-module ((tegfs web-make-info-box-response) :select (web::make-info-box-response))
     :use-module ((tegfs web-not-found) :select (web::not-found))
     :use-module ((tegfs web-parse-multipart) :select (parse-multipart-as-hashmap))
-    :use-module ((tegfs web-return) :select (web::return))
+    :use-module ((tegfs web-redirect) :select (web::redirect))
     :use-module ((tegfs webcore-ask) :select (webcore::ask))
     )))
 
@@ -113,11 +113,7 @@
       ((equal? action "delete")
        (web::make-info-box-response "Entry deleted"))
       ((equal? action "update")
-       (web::return
-        303
-        `((Location . ,L)
-          (Cache-Control . "no-cache"))
-        #f))
+       (web::redirect callctx L #f))
       (else
        (raisu 'bad-action "Bad action. Expected 'update' or 'delete'"))))))
 

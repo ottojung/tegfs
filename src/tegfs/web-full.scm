@@ -18,32 +18,30 @@
   (define-module (tegfs web-full)
     :export (web::full)
     :use-module ((euphrates hashmap) :select (hashmap-ref))
-    :use-module ((tegfs web-get-query) :select (web::get-query))
+    :use-module ((tegfs web-callcontext-p) :select (web::callcontext/p))
+    :use-module ((tegfs web-callcontext) :select (callcontext-query))
     :use-module ((tegfs web-get-target-link) :select (web::get-target-link))
     :use-module ((tegfs web-iterate-profun-results) :select (web::iterate-profun-results))
     :use-module ((tegfs web-not-found) :select (web::not-found))
-    :use-module ((tegfs web-return) :select (web::return))
+    :use-module ((tegfs web-redirect) :select (web::redirect))
     :use-module ((tegfs webcore-ask) :select (webcore::ask))
     )))
 
 
 
 (define (web::full)
-  (define ctxq (web::get-query))
+  (define callctx (web::callcontext/p))
+  (define ctxq (callcontext-query callctx))
   (define senderid (hashmap-ref ctxq 'vid #f))
 
   (define result
     (webcore::ask
      `(whats
-       (link-shared ,senderid L)
-       )))
+       (link-shared ,senderid L))))
 
   (web::iterate-profun-results
    result (L)
    (if L
-       (web::return
-        303
-        `((Location . ,(web::get-target-link L))
-          (Cache-Control . "no-cache"))
-        #f)
+       (let ((target (web::get-target-link L)))
+         (web::redirect callctx target #f))
        (web::not-found))))

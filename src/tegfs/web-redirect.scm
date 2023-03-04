@@ -20,7 +20,7 @@
     :use-module ((euphrates url-get-path) :select (url-get-path))
     :use-module ((euphrates url-get-protocol) :select (url-get-protocol))
     :use-module ((euphrates url-get-query) :select (url-get-query))
-    :use-module ((tegfs web-callcontext) :select (callcontext-headers))
+    :use-module ((tegfs web-callcontext) :select (callcontext-respheaders))
     :use-module ((tegfs web-make-callcontext) :select (web::make-callcontext/redirect))
     :use-module ((tegfs web-return) :select (web::return))
     :use-module ((tegfs web-server-current-handler-p) :select (web::server-current/p))
@@ -30,7 +30,6 @@
 
 (define (web::redirect callctx new-url new-body)
   (define handler (web::server-current/p))
-  (define old-headers (callcontext-headers callctx))
   (define new-path (url-get-path new-url))
   (define new-query/encoded (url-get-query new-url))
   (define new-callctx
@@ -41,6 +40,8 @@
       (handler new-callctx)
       (web::return
        303
-       `((Location . ,new-url)
-         (Cache-Control . "no-cache"))
+       (append
+        (callcontext-respheaders callctx)
+        `((Location . ,new-url)
+          (Cache-Control . "no-cache")))
        #f)))

@@ -19,7 +19,7 @@
     :export (web::make-callcontext web::make-callcontext/redirect)
     :use-module ((euphrates hashmap) :select (hashmap-ref hashmap? make-hashmap))
     :use-module ((euphrates memconst) :select (memconst))
-    :use-module ((tegfs web-callcontext) :select (add-callcontext-respheaders! callcontext-ctr callcontext-headers))
+    :use-module ((tegfs web-callcontext) :select (add-callcontext-respheaders! callcontext-ctr callcontext-headers callcontext-respheaders callcontext-token))
     :use-module ((tegfs web-get-cookie) :select (web::get-cookie))
     :use-module ((tegfs web-iterate-profun-results) :select (web::iterate-profun-results))
     :use-module ((tegfs web-query-to-hashmap) :select (web::query->hashmap))
@@ -104,10 +104,14 @@
         (lambda _ new-query/encoded)
         (memconst (initialize-query new-query/encoded))))
 
-  (define headers (callcontext-headers callctx))
+  (define headers
+    (append
+     (callcontext-respheaders callctx)
+     (callcontext-headers callctx)))
   (define headersfn (const headers))
 
   (letrec
-      ((tokenfn (memconst (get-access-token callctx queryfn headers)))
-       (callctx (callcontext-ctr new-url new-path headersfn queryfn new-body '() tokenfn)))
-    callctx))
+      ((tokenfn (memconst (or (get-access-token ret queryfn headers)
+                              (callcontext-token callctx))))
+       (ret (callcontext-ctr new-url new-path headersfn queryfn new-body '() tokenfn)))
+    ret))

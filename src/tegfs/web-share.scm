@@ -32,7 +32,6 @@
     :use-module ((tegfs web-create-temp-path) :select (web::create-temp-path))
     :use-module ((tegfs web-decode-query) :select (web::decode-query))
     :use-module ((tegfs web-get-query) :select (web::get-query))
-    :use-module ((tegfs web-get-target-link) :select (web::get-target-link))
     :use-module ((tegfs web-handle-profun-results) :select (web::handle-profun-results))
     :use-module ((tegfs web-make-html-response) :select (web::make-html-response))
     :use-module ((tegfs web-not-found) :select (web::not-found))
@@ -66,8 +65,8 @@
   (define location
     (if query?
         (stringf "query?q=&show-filter=off&key=~a" token)
-        (web::get-target-link
-         (assq-or 'FL first-binding (raisu 'unexpected-result-from-backend first-binding)))))
+        (let ((vid (assq-or 'F first-binding (raisu 'unexpected-result-from-backend first-binding))))
+          (stringf "full?vid=~a&key=~a" vid token))))
   (define share-time
     (assq-or 'AD first-binding (raisu 'unexpected-result-from-backend first-binding)))
   (define password
@@ -149,8 +148,7 @@
        (make-temporary-permissions ,share-duration AD P K)
        (senderid->entry ,senderid _E)
        (share-entry _E K)
-       (share-full _E ,share-duration _2 _F)
-       (link-shared _F FL)
+       (share-full _E ,share-duration _2 F)
        more (99999)
        )))
 
@@ -170,8 +168,7 @@
        (entry _E)
        (entry-field _E "id" ,id)
        (share-entry _E K)
-       (share-full _E ,share-duration _2 _F)
-       (link-shared _F FL)
+       (share-full _E ,share-duration _2 F)
        more (99999)
        )))
 
