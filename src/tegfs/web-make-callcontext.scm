@@ -19,7 +19,7 @@
     :export (web::make-callcontext web::make-callcontext/redirect)
     :use-module ((euphrates hashmap) :select (hashmap-ref hashmap? make-hashmap))
     :use-module ((euphrates memconst) :select (memconst))
-    :use-module ((tegfs web-callcontext) :select (add-callcontext-respheaders! callcontext-ctr callcontext-headers callcontext-token))
+    :use-module ((tegfs web-callcontext) :select (add-callcontext-respheaders! callcontext-ctr callcontext-headers))
     :use-module ((tegfs web-get-cookie) :select (web::get-cookie))
     :use-module ((tegfs web-iterate-profun-results) :select (web::iterate-profun-results))
     :use-module ((tegfs web-query-to-hashmap) :select (web::query->hashmap))
@@ -51,13 +51,15 @@
     (list (web::set-cookie-header "key" ret expiery)))
   (add-callcontext-respheaders! callctx additional-headers))
 
-(define (get-access-token callctx qH headers)
-  (or
-   (let ((ret (hashmap-ref qH 'key #f)))
-     (when ret (remember-to-set-access-token callctx ret))
-     ret)
-   (or (web::get-cookie "key" headers)
-       (web::get-cookie "pwdtoken" headers))))
+(define (get-access-token callctx queryfn headers)
+  (or (web::token-override/p)
+      (let ((qH (queryfn)))
+        (or
+         (let ((ret (hashmap-ref qH 'key #f)))
+           (when ret (remember-to-set-access-token callctx ret))
+           ret)
+         (web::get-cookie "key" headers)
+         (web::get-cookie "pwdtoken" headers)))))
 
 (define (initialize-query query/encoded)
   (if query/encoded
@@ -92,8 +94,7 @@
       headers)))
 
   (letrec
-      ((tokenfn (memconst (or (web::token-override/p)
-                              (get-access-token callctx (queryfn) headers))))
+      ((tokenfn (memconst (get-access-token callctx queryfn headers)))
        (callctx (callcontext-ctr url path headersfn queryfn body '() tokenfn)))
     callctx))
 
@@ -103,12 +104,10 @@
         (lambda _ new-query/encoded)
         (memconst (initialize-query new-query/encoded))))
 
-  (define headersfn
-    (memconst
-     (callcontext-headers callctx)))
+  (define headers (callcontext-headers callctx))
+  (define headersfn (const headers))
 
-  (define tokenfn
-    (memconst
-     (callcontext-token callctx)))
-
-  (callcontext-ctr new-url new-path headersfn queryfn new-body '() tokenfn))
+  (letrec
+      ((tokenfn (memconst (get-access-token callctx queryfn headers)))
+       (callctx (callcontext-ctr new-url new-path headersfn queryfn new-body '() tokenfn)))
+    callctx))
