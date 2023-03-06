@@ -1,0 +1,11 @@
+{
+  "name": "tegfs-docs",
+  "version": "1.0.0",
+  "description": "TegFS documentation",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "Otto Jung",
+  "license": "AGPL-3.0-or-later"
+}
