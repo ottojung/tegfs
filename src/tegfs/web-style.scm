@@ -306,14 +306,15 @@ header nav {
     margin: 0 auto;
     height: 4.2rem;
 
-    border-bottom-left-radius: 9999rem;
-    border-bottom-right-radius: 9999rem;
-    width: 77rem;
-    max-width: 95vw;
-    min-width: 45rem;
+    /* border-bottom-left-radius: 9999rem; */
+    /* border-bottom-right-radius: 9999rem; */
+    /* width: 77rem; */
+    /* max-width: 95vw; */
+    /* min-width: 45rem; */
+    width: 100%;
 }
 
-header nav ul {
+header nav {
     list-style: none;
     margin: 0;
     padding: 0;
@@ -321,11 +322,19 @@ header nav ul {
     justify-content: space-between;
 }
 
+header nav ul {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    justify-content: right;
+}
+
 header nav ul a {
     padding-left: 2.3rem;
-    margin-left: -2rem;
+    /* margin-left: -2rem; */
     padding-right: 2.3rem;
-    margin-right: -2rem;
+    /* margin-right: -2rem; */
     display: flex;
     align-items: center;
     text-align: center;
@@ -333,7 +342,6 @@ header nav ul a {
 }
 
 header nav ul a li {
-    background-color: #24313c;
     font-size: 140%;
     font-family: sans-serif;
     color: white;
@@ -355,11 +363,12 @@ header #lst {
 }
 
 header #lst div {
-    margin-top: -0.9rem;
-    margin-right: 3rem;
+    margin-top: 2.9rem;
+    margin-right: 6rem;
+    margin-left: -7.5rem;
 }
 
-header nav ul img {
+header nav img {
     padding-top: 0.32rem;
     margin-left: 3rem;
     height: 3.5rem;
@@ -374,7 +383,7 @@ header .highlighted.last {
     margin-right: 4rem;
 }
 
-header nav ul img:hover {
+header nav img:hover {
     transform: scale(1.05);
 }
 

@@ -40,13 +40,14 @@
      (else #f)))
 
   (display
-   "<header>
-    <nav>
-      <ul>
-        <a href='home'><img src='static/logo-gray.jpeg'/></a>
-        <a class='highlighted first' href='query'><li>Search</li></a>
-        <a class='highlighted' href='upload'><li>Upload</li></a>
-        <a class='highlighted")
+   "
+<header>
+  <nav>
+    <a href='home'><img src='static/logo-gray.jpeg'/></a>
+    <ul>
+      <a class='highlighted first' href='query'><li>Search</li></a>
+      <a class='highlighted' href='upload'><li>Upload</li></a>
+      <a class='highlighted")
 
   (when authoriation-disabled?
     (display " last"))
@@ -68,8 +69,6 @@
             login-link))
          login-link)))
 
-  (display "\n</ul>\n")
-
   (unless authoriation-disabled?
     (case usertype
       ((Admin Anonymous)
@@ -82,6 +81,12 @@
              (display usertype)
              (display ")"))
            (display "(Token expired)"))
-       (display "</div></div>"))))
+       (display "    </div>
+      </div>"))))
 
-  (display "\n</nav></header>\n"))
+  (display "
+    </ul>
+  </nav>
+</header>
+
+"))
