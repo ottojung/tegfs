@@ -81,7 +81,7 @@
              (display usertype)
              (display ")"))
            (display "(Token expired)"))
-       (display "    </div>
+       (display "</div>
       </div>"))))
 
   (display "
