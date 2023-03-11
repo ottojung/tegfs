@@ -77,7 +77,9 @@
   (define _11
     (unless (file-or-directory-exists? registry-dir)
       (make-directories registry-dir)))
-  (define filename (string-append target-basename target-extension))
+  (define filename
+    (and (string? target-extension)
+         (string-append target-basename target-extension)))
 
   (define _delete-result
     (file-delete (working-file/p)))
