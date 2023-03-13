@@ -58,12 +58,14 @@
 
 (define (choose-clipboard-data-type)
   (define types-list (get-clipboard-data-types))
-  (define types-list/str (lines->string types-list))
-  (define-values (chosen status)
-    (parameterize ((asyncproc-input-text/p types-list/str))
-      (run-syncproc/re* "fzf")))
-  (and (= 0 status)
-       (string-strip chosen)))
+  (and types-list
+       (let ()
+         (define types-list/str (lines->string types-list))
+         (define-values (chosen status)
+           (parameterize ((asyncproc-input-text/p types-list/str))
+             (run-syncproc/re* "fzf")))
+         (and (= 0 status)
+              (string-strip chosen)))))
 
 (define (get-clipboard-text-content)
   (define-values (text status)
