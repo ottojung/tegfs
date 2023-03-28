@@ -88,8 +88,11 @@
     (raisu 'could-not-recognize-filetype))))
 
 (define (tegfs-make-url-thumbnails <input> <output>)
+  (define user-agent
+    "--user-agent=Mozilla/5.0 (X11; Fedora; Linux x86_64; rv:52.0) Gecko/20100101 Firefox/52.0")
+
   (define-values (html status0)
-    (run-syncproc/re* "wget" "--quiet" <input> "-O" "-"))
+    (run-syncproc/re* "wget" user-agent "--quiet" <input> "-O" "-"))
 
   (define _123121
     (unless (= 0 status0)
@@ -113,7 +116,7 @@
 
   (let* ((link/full (url-goto <input> link1))
          (temp (make-temporary-filename/local))
-         (do (unless (= 0 (status:exit-val (system* "wget" "--no-verbose" link/full "-O" temp)))
+         (do (unless (= 0 (status:exit-val (system* "wget" user-agent "--no-verbose" link/full "-O" temp)))
                (raisu 'could-not-download-the-preview link/full)))
          (ret (tegfs-make-image-thumbnails temp <output>)))
     (file-delete temp)
