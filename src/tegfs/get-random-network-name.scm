@@ -1,4 +1,4 @@
-;;;; Copyright (C) 2022  Otto Jung
+;;;; Copyright (C) 2022, 2023  Otto Jung
 ;;;;
 ;;;; This program is free software: you can redistribute it and/or modify
 ;;;; it under the terms of the GNU Affero General Public License as published
@@ -18,7 +18,7 @@
   (define-module (tegfs get-random-network-name)
     :export (get-random-network-name)
     :use-module ((euphrates alphanum-alphabet) :select (alphanum/alphabet))
-    :use-module ((euphrates random-choice) :select (random-choice))
+    :use-module ((euphrates big-random-int) :select (big-random-int))
     )))
 
 ;; Short names for users to see.
@@ -27,6 +27,21 @@
 
 
 
-(define (get-random-network-name)
-  (list->string
-   (random-choice 10 alphanum/alphabet)))
+(define get-random-network-name
+  (let* ((a alphanum/alphabet)
+         (size (vector-length a))
+         (groupsize 4)
+         (ngroups 4)
+         (n (+ (* ngroups groupsize)
+               (- ngroups 1))))
+    (lambda _
+      (define ret (make-string n))
+      (let loop ((i n))
+        (when (< 0 i)
+          (string-set!
+           ret (- i 1)
+           (case (modulo i (+ 1 groupsize))
+             ((0) #\-)
+             (else (vector-ref a (big-random-int size)))))
+          (loop (- i 1))))
+      ret)))
