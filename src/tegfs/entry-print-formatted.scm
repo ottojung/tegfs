@@ -1,4 +1,4 @@
-;;;; Copyright (C) 2022  Otto Jung
+;;;; Copyright (C) 2022, 2023  Otto Jung
 ;;;;
 ;;;; This program is free software: you can redistribute it and/or modify
 ;;;; it under the terms of the GNU Affero General Public License as published
@@ -24,7 +24,7 @@
 
 
 
-(define (entry-print/formatted <query-format> entry)
+(define (entry-print/formatted/full <query-format> entry port)
   (define format-elements
     (with-input-from-string <query-format>
       (lambda _
@@ -35,16 +35,23 @@
      (cond
       ((equal? '%F element) ;; target-fullpath
        (let ((fullpath (entry-target-fullpath entry)))
-         (display (or fullpath "//NA//"))))
+         (display (or fullpath "//NA//") port)))
       ((equal? '%P element) ;; preview-fullpath
        (let* ((target-fullpath (entry-target-fullpath entry))
               (preview (and target-fullpath
                             (get-preview-path target-fullpath))))
-         (display (or preview "//NA//"))))
+         (display (or preview "//NA//") port)))
       ((symbol? element)
        (let ((p (assoc element entry)))
          (if p
-             (display (cdr p))
-             (display "//NA//"))))
-      (else (display element))))
+             (display (cdr p) port)
+             (display "//NA//" port))))
+      (else (display element port))))
    format-elements))
+
+(define entry-print/formatted
+  (case-lambda
+   ((<query-format> entry)
+    (entry-print/formatted/full <query-format> entry (current-output-port)))
+   ((<query-format> entry port)
+    (entry-print/formatted/full <query-format> entry port))))
