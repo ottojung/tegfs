@@ -31,6 +31,7 @@
     (define entry E)
     (define maybe-full-senderid F)
     (define preview-linkpath PL)
-    (web::display-entry entry maybe-full-senderid preview-linkpath))
+    (define selectable? #f)
+    (web::display-entry entry selectable? maybe-full-senderid preview-linkpath))
    equals)
   (display "</div>"))

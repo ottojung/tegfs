@@ -135,7 +135,7 @@
     (display "<img src='static/share.svg' title='Share'/>")
     (display "</a>")))
 
-(define (web::display-entry entry maybe-full-senderid preview-linkpath)
+(define (web::display-entry entry selectable? maybe-full-senderid preview-linkpath)
   (define mimetype (entry-get-mimetype entry))
 
   (display "<div class='card'>")
