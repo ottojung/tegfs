@@ -8,14 +8,10 @@ BINARY_PATH=$(PREFIX_BIN)/tegfs
 CODE_INSTALL_ROOT=$(PREFIX_SHARE)/tegfs/src
 CODE_ROOT=$(PWD)/src
 
-TEST_ROOT=$(PWD)/dist/exampleroot
-TEST_FILES=$(TEST_ROOT) $(TEST_ROOT)/categorization.tegfs.txt $(TEST_ROOT)/config.tegfs.lisp
-
 SUBMODULES = deps/euphrates/.git
 
-GUILE = guile -L $(CODE_ROOT) -s
-
-TEST_FS = TEGFS_ROOT=$(TEST_ROOT) dist/tegfs
+TEST_ROOT=$(PWD)/dist/exampleroot
+TEST_FILES=$(TEST_ROOT) $(TEST_ROOT)/categorization.tegfs.txt $(TEST_ROOT)/config.tegfs.lisp
 
 all: dist/tegfs
 
@@ -57,8 +53,6 @@ dist/tegfs: src/tegfs/*.scm src/euphrates/*.scm dist $(SUBMODULES)
 dist:
 	mkdir -p "$@"
 
-.PHONY: test1 test2 test3 test4 all clean install reinstall uninstall
-
 dist/exampleroot.tar:
 	mkdir -p dist
 	wget "https://vau.place/static/tegfs-example-root.tar" -O "$@"
@@ -74,48 +68,6 @@ $(TEST_ROOT)/categorization.tegfs.txt: test/make-example-categorization.sh
 $(TEST_ROOT)/config.tegfs.lisp: test/make-example-config.sh
 	TEST_ROOT=$(TEST_ROOT) sh test/make-example-config.sh
 
-test-preview-daemon: dist/tegfs $(TEST_FILES)
-	TEGFS_ROOT=$(TEST_ROOT) TEST_ROOT=$(TEST_ROOT) sh ./scripts/preview-maker-daemon.sh
+test-files: $(TEST_FILES)
 
-test-make-previews: dist/tegfs $(TEST_FILES)
-	TEGFS_ROOT=$(TEST_ROOT) TEST_ROOT=$(TEST_ROOT) sh ./scripts/make-all-previews.sh
-
-test-serve: dist/tegfs $(TEST_FILES) test-make-previews
-	$(TEST_FS) serve
-
-test1: dist/tegfs $(TEST_FILES)
-	touch $(TEST_ROOT)/db/hi.txt
-	echo hi | $(TEST_FS) add \
-		--target hi.txt \
-		--key a 1 \
-		--key b 2 \
-		--key SCHEDULED 3 \
-
-test2: dist/tegfs $(TEST_FILES)
-	$(TEST_FS) save
-
-test2-m: dist/tegfs $(TEST_FILES)
-	cp guix.scm dist/
-	$(TEST_FS) save --content dist/guix.scm
-
-test3: dist/tegfs $(TEST_FILES)
-	$(TEST_FS) categorize
-
-test4: dist/tegfs $(TEST_FILES)
-	$(TEST_FS) serve
-
-test5: dist/tegfs $(TEST_FILES)
-	$(TEST_FS) prolog
-
-test6: dist/tegfs $(TEST_FILES)
-	$(TEST_FS) query hi
-
-test7: dist/tegfs $(TEST_FILES)
-	$(TEST_FS) get "non-existent-id"
-	$(TEST_FS) get "$(shell cat $(TEST_ROOT)/lastid.tegfs.txt)"
-
-test8: dist/tegfs $(TEST_FILES)
-	TEGFS_ROOT=$(TEST_ROOT) $(GUILE) example/rename-tag.scm
-
-test9: dist/tegfs $(TEST_FILES)
-	$(TEST_FS) query --talk
+.PHONY: all clean install reinstall uninstall test-files
