@@ -191,10 +191,9 @@ input[type=text], input[type=password] {
     box-sizing: border-box;
 }
 
-button[type=submit] {
+.form-block button[type=submit] {
     font-size: 140%;
     border: 0;
-    border-radius: 0;
     padding: 0.93rem 0;
     text-transform: uppercase;
     letter-spacing: 0.1rem;
@@ -247,12 +246,12 @@ button[type=submit] {
 .tagsbox input[type='checkbox'] + label:before {
     width: 1rem;
     height: 1rem;
-    background-color: white;
+    background-color: blue;
 }
 
 .tagsbox input[type='checkbox']:checked + label {
     background-color: #8ddf36;
-    color: black;
+    color: green;
 }
 
 .tagsbox label {
@@ -292,6 +291,18 @@ button[type=submit] {
 
 .search-input .tiled {
     width: 50rem;
+}
+
+.selectbtn {
+    border-width: 0.31rem;
+    border-radius: 2.19rem;
+    border-color: #1ab188;
+}
+
+.selectbtn {
+    margin-left: 0.94rem;
+    width: 12rem;
+    height: 3.5rem;
 }
 
 /*****************
@@ -420,6 +431,10 @@ header nav img:hover {
     color: black;
     text-decoration: none;
     font-size: 130%;
+}
+
+.card input {
+    height: 1rem;
 }
 
 .card img {

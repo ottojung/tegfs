@@ -18,20 +18,106 @@
   (define-module (tegfs web-query-display-results)
     :export (web::query-display-results)
     :use-module ((euphrates fn-alist) :select (fn-alist))
+    :use-module ((euphrates hashmap) :select (hashmap-copy hashmap-set!))
+    :use-module ((euphrates raisu) :select (raisu))
+    :use-module ((tegfs web-callcontext) :select (callcontext-path callcontext-query))
     :use-module ((tegfs web-display-entry) :select (web::display-entry))
+    :use-module ((tegfs web-hashmap-to-query) :select (web::hashmap->query))
     )))
 
+(define (web::query-display-results-header callctx initial? select? show-filter? maybe-value show-menu?)
+  (define show-input? (or show-filter? select?))
+  (define current-query (callcontext-query callctx))
+  (define current-path (callcontext-path callctx))
 
+  (when (and show-filter? select?)
+    (raisu 'cannot-have-both-show-filter-and-select))
+  (when (and initial? select?)
+    (raisu 'cannot-have-both-show-initial-and-select))
+  (when (and initial? (not show-filter?))
+    (raisu 'cannot-have-initial-without-filter))
 
-(define (web::query-display-results equals)
-  (display "<div class='cards'>")
-  (for-each
-   (fn-alist
-    (E F PL)
-    (define entry E)
-    (define maybe-full-senderid F)
-    (define preview-linkpath PL)
-    (define selectable? #f)
-    (web::display-entry entry selectable? maybe-full-senderid preview-linkpath))
-   equals)
-  (display "</div>"))
+  (display "<div class='search-input")
+  (when initial?
+    (display " centering-container"))
+  (display "'>\n")
+  (display "<br/>\n")
+  (display "<div class='tiled light smooth-edged'>\n")
+  (display "<div>\n")
+  (display "<form class='split-container' action=")
+  (cond
+   (select?
+    (write "select"))
+   (else
+    (write "query")))
+  (display ">\n")
+
+  (when show-input?
+    (display "  <input class='split-left' ")
+    (write maybe-value))
+
+  (cond
+   (select?
+    (display " autofocus type='text' name='q' placeholder='Tags to add' />\n")
+    (display " <button type='submit' class='")
+    (when show-input?
+      (display "split-right "))
+    (display "selectbtn' title='Add tags'>Add tags</button>"))
+   (show-filter?
+    (display " autofocus type='text' name='q' placeholder='Filter by tags' />\n")
+    (display " <input type='image' class='")
+    (when show-input?
+      (display "split-right "))
+    (display "split-right' src='static/search.svg' title='Search' alt='Submit'/>")))
+
+  (when show-menu?
+    (display "<div class='")
+    (when show-input?
+      (display "split-right"))
+    (display "'>\n")
+
+    (let ((new-path "share")
+          (new-query current-query))
+      (display " <a href='")
+      (display new-path)
+      (display "?")
+      (display (web::hashmap->query new-query))
+      (display "'>\n")
+      (display "   <img src='static/share-gray.svg' title='Share this query'/>\n")
+      (display " </a>\n"))
+
+    (let ((new-path current-path)
+          (new-query
+           (let ((q (hashmap-copy current-query)))
+             (hashmap-set! q 'select "on")
+             q)))
+      (display " <a href='")
+      (display new-path)
+      (display "?")
+      (display (web::hashmap->query new-query))
+      (display "'>\n")
+      (display "   <img src='static/select.svg' title='Select objects'/>\n")
+      (display " </a>\n"))
+
+    (display "</div>\n"))
+
+  (display "</form>\n")
+  (display "</div>\n")
+  (display "</div>\n")
+  (display "</div>\n")
+  (display "<br/>\n"))
+
+(define (web::query-display-results callctx initial? select? show-filter? maybe-value show-menu? equals)
+  (web::query-display-results-header callctx initial? select? show-filter? maybe-value show-menu?)
+
+  (unless initial?
+    (display "<div class='cards'>")
+    (for-each
+     (fn-alist
+      (E F PL)
+      (define entry E)
+      (define maybe-full-senderid F)
+      (define preview-linkpath PL)
+      (web::display-entry entry select? maybe-full-senderid preview-linkpath))
+     equals)
+    (display "</div>")))

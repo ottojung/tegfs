@@ -102,18 +102,23 @@
         (let ((relative (if (a-weblink? orig) orig (path-get-basename orig))))
           (display relative)))))))
 
-(define (display-title maybe-full-senderid entry)
-  (define id (assq-or keyword-id entry #f))
-
+(define (display-title entry selectable? id maybe-full-senderid)
   (define (display-query)
-    (if maybe-full-senderid
-        (begin
-          (display "vid=")
-          (display maybe-full-senderid))
-        (begin
-          (display "id=")
-          (display id))))
+    (cond
+     (maybe-full-senderid
+      (display "vid=")
+      (display maybe-full-senderid))
+     (id
+      (display "id=")
+      (display id))))
 
+  (define (display-select-flag)
+    (display "<input")
+    (display " id=") (write (string-append "select:" (or maybe-full-senderid id)))
+    (display " type='checkbox' ")
+    (display "/>"))
+
+  (when selectable? (display-select-flag))
   (if maybe-full-senderid
       (display "<a href='full?")
       (display "<a href='details?"))
@@ -137,10 +142,17 @@
 
 (define (web::display-entry entry selectable? maybe-full-senderid preview-linkpath)
   (define mimetype (entry-get-mimetype entry))
+  (define id (assq-or keyword-id entry #f))
 
-  (display "<div class='card'>")
+  (display "<label class='card'")
+  (when selectable?
+    (display " for=")
+    (write (string-append "select:" (or maybe-full-senderid id))))
+  (display ">")
+
   (maybe-display-preview entry mimetype maybe-full-senderid preview-linkpath)
   (display "<div id='sub'>")
-  (display-title maybe-full-senderid entry)
+  (display-title entry selectable? id maybe-full-senderid)
   (display "</div>")
-  (display "</div>"))
+  (display "</label>")
+  )

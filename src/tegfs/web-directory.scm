@@ -36,6 +36,9 @@
   (define callctx (web::callcontext/p))
   (define ctxq (web::get-query))
   (define vid (hashmap-ref ctxq 'vid #f))
+  (define select? (equal? "on" (hashmap-ref ctxq 'select #f)))
+  (define show-filter? #f)
+
   (if (not vid)
       (web::bad-request "Request query missing requiered 'd' argument")
       (web::handle-profun-results
@@ -48,10 +51,15 @@
           (link-shared _P PL)
           more (99999)
           ))
-       web::directory-handle)))
+       (web::directory-handle callctx select? show-filter?))))
 
-(define (web::directory-handle equals)
-  (web::make-html-response
-   (lambda _
-     (display "<br/>")
-     (web::query-display-results equals))))
+(define (web::directory-handle callctx select? show-filter?)
+  (define maybe-value #f)
+  (define show-menu? (not select?))
+  (define initial? #f)
+
+  (lambda (equals)
+    (web::make-html-response
+     (lambda _
+       (display "<br/>")
+       (web::query-display-results callctx initial? select? show-filter? maybe-value show-menu? equals)))))

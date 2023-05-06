@@ -18,7 +18,6 @@
   (define-module (tegfs web-query)
     :export (web::query)
     :use-module ((euphrates hashmap) :select (hashmap-ref))
-    :use-module ((euphrates printf) :select (printf))
     :use-module ((euphrates string-to-words) :select (string->words))
     :use-module ((tegfs default-full-sharing-time) :select (default-full-sharing-time))
     :use-module ((tegfs default-preview-sharing-time) :select (default-preview-sharing-time))
@@ -38,8 +37,10 @@
   (define callctx (web::callcontext/p))
   (define ctxq (callcontext-query callctx))
 
-  (define show-filter-v (hashmap-ref ctxq 'show-filter #f))
-  (define show-filter? (not (equal? show-filter-v "off")))
+  (define select? (equal? "on" (hashmap-ref ctxq 'select #f)))
+  (define show-filter?/0 (not (equal? "off" (hashmap-ref ctxq 'show-filter #f))))
+  (define show-filter? (and show-filter?/0 (not select?)))
+
   (define query/submitted/0
     (or
      (hashmap-ref ctxq 'q #f)
@@ -71,50 +72,22 @@
 
   (web::handle-profun-results
    (or result '(its (false)))
-   (web::query-handle-results show-filter? query/submitted query)))
+   (web::query-handle-results callctx show-filter? select? query/submitted query)))
 
-(define (web::query-handle-results show-filter? query/submitted query)
+(define (web::query-handle-results callctx show-filter? select? query/submitted query)
   (lambda (equals)
     (web::make-html-response
      (lambda _
        (define maybe-value
-         (if query/submitted
+         (if (and query/submitted (not select?))
              (string-append " value='" query "'")
              ""))
+
        (define initial?
-         (and (null? equals) (not query/submitted)))
+         (and (null? equals)
+              (not query/submitted)))
+       (define show-menu?
+         (and (not select?)
+              (not initial?)))
 
-       (when show-filter?
-         (display "<div class='search-input")
-         (when initial?
-           (display " centering-container"))
-         (display "'>\n")
-         (display "<br/>\n")
-         (display "<div class='tiled light smooth-edged'>\n")
-         (display "<div>\n")
-         (display "<form class='split-container' action='query'>\n")
-         (printf "  <input class='split-left' ~a autofocus type='text' name='q' placeholder='Filter by tags' />\n"
-                 maybe-value)
-         (display " <input type='image' class='split-right' src='static/search.svg' title='Search' alt='Submit'/>")
-         (unless initial?
-           (display "<div class='split-right'>\n")
-           (display " <a href='share?q=")
-           (display (or query/submitted ""))
-           (display "'>\n")
-           (display "   <img src='static/share-gray.svg' title='Share this query'/>\n")
-           (display " </a>\n")
-           (display " <a href='select?q=")
-           (display (or query/submitted ""))
-           (display "'>\n")
-           (display "   <img src='static/select.svg' title='Select objects'/>\n")
-           (display " </a>\n")
-           (display "</div>\n"))
-         (display "</form>\n")
-         (display "</div>\n")
-         (display "</div>\n")
-         (display "</div>\n"))
-
-       (display "<br/>\n")
-
-       (unless (null? equals)
-         (web::query-display-results equals))))))
+       (web::query-display-results callctx initial? select? show-filter? maybe-value show-menu? equals)))))
