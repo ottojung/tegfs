@@ -38,8 +38,6 @@
     (raisu 'cannot-have-initial-without-filter))
 
   (display "<div class='search-input")
-  (when initial?
-    (display " centering-container"))
   (display "'>\n")
   (display "<br/>\n")
   (display "<div class='tiled light smooth-edged'>\n")
@@ -108,6 +106,8 @@
       (display " enctype='multipart/form-data' method='post'"))
      (else
       (write "query")))
+    (when initial?
+      (display " class='centering-container'"))
     (display ">\n"))
 
   (web::query-display-results-header callctx initial? select? show-filter? maybe-value show-menu?)
