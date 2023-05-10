@@ -114,7 +114,7 @@
 
   (define (display-select-flag)
     (display "<input")
-    (display " name=") (write (string-append "s:" (or maybe-full-senderid id)))
+    (display " name=") (write (string-append (if maybe-full-senderid "s" "i") ":" (or maybe-full-senderid id)))
     (display " type='checkbox' ")
     (display "/>"))
 
