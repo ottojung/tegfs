@@ -50,6 +50,7 @@
     :use-module ((tegfs web-query) :select (web::query))
     :use-module ((tegfs web-search) :select (web::search.svg))
     :use-module ((tegfs web-select-svg) :select (web::select.svg))
+    :use-module ((tegfs web-select) :select (web::select))
     :use-module ((tegfs web-server-handle-temp-path) :select (web::server-handle-temp-path))
     :use-module ((tegfs web-settings-gear) :select (web::settings-gear))
     :use-module ((tegfs web-share-gray-svg) :select (web::share-gray.svg))
@@ -78,6 +79,7 @@
     (/api ,web::api)
     (/file ,web::file)
     (/open ,web::open)
+    (/select ,web::select)
     (/ ,web::home)
 
     (/favicon.ico ,web::favicon.ico)

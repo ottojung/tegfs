@@ -43,14 +43,7 @@
   (display "'>\n")
   (display "<br/>\n")
   (display "<div class='tiled light smooth-edged'>\n")
-  (display "<div>\n")
-  (display "<form class='split-container' action=")
-  (cond
-   (select?
-    (write "select"))
-   (else
-    (write "query")))
-  (display ">\n")
+  (display "<div class='split-container'>")
 
   (when show-input?
     (display "  <input class='split-left' ")
@@ -58,7 +51,7 @@
 
   (cond
    (select?
-    (display " autofocus type='text' name='q' placeholder='Tags to add' />\n")
+    (display " autofocus type='text' name='aditional' placeholder='Tags to add' />\n")
     (display " <button type='submit' class='")
     (when show-input?
       (display "split-right "))
@@ -101,13 +94,22 @@
 
     (display "</div>\n"))
 
-  (display "</form>\n")
   (display "</div>\n")
   (display "</div>\n")
   (display "</div>\n")
   (display "<br/>\n"))
 
 (define (web::query-display-results callctx initial? select? show-filter? maybe-value show-menu? equals)
+  (let ()
+    (display "<form action=")
+    (cond
+     (select?
+      (write "select")
+      (display " enctype='multipart/form-data' method='post'"))
+     (else
+      (write "query")))
+    (display ">\n"))
+
   (web::query-display-results-header callctx initial? select? show-filter? maybe-value show-menu?)
 
   (unless initial?
@@ -120,4 +122,6 @@
       (define preview-linkpath PL)
       (web::display-entry entry select? maybe-full-senderid preview-linkpath))
      equals)
-    (display "</div>")))
+    (display "</div>"))
+
+  (display "</form>\n"))
