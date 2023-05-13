@@ -32,7 +32,7 @@
     (and updated-entry
          (entry-target-fullpath updated-entry)))
 
-  (define (update registry-path iterated-entry)
+  (define (update iterated-entry)
     (define original-target
       (entry-target-fullpath iterated-entry))
     (unless (equal? original-target updated-target)
@@ -42,11 +42,11 @@
           (file-delete original-target)))
     updated-entry)
 
-  (define (mapper registry-path iterated-entry)
+  (define (mapper iterated-entry)
     (define iterated-id
       (assq-or keyword-id iterated-entry #f))
     (if (equal? id iterated-id)
-        (update registry-path iterated-entry)
+        (update iterated-entry)
         iterated-entry))
 
   (entries-map! mapper))

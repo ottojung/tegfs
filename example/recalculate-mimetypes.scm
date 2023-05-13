@@ -11,7 +11,7 @@
     :use-module ((tegfs keyword-mimetype) :select (keyword-mimetype)))))
 
 (entries-map!
- (lambda (registry-path entry)
+ (lambda (entry)
    (define fullpath
      (entry-target-fullpath entry))
    (if (not fullpath) entry

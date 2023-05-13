@@ -14,7 +14,7 @@
 (define to 'picture)
 
 (entries-map!
- (lambda (registry-path entry)
+ (lambda (entry)
    (define tags (assoc-or 'tags entry '()))
    (define new-tags
      (map (curry-if (comp (equal? from)) (const to)) tags))
