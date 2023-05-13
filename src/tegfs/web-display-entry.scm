@@ -102,6 +102,11 @@
         (let ((relative (if (a-weblink? orig) orig (path-get-basename orig))))
           (display relative)))))))
 
+(define (get-entry-card-name maybe-full-senderid id)
+  (string-append (if maybe-full-senderid "s" "i")
+                 ":"
+                 (or maybe-full-senderid id)))
+
 (define (display-title entry selectable? id maybe-full-senderid)
   (define (display-query)
     (cond
@@ -114,7 +119,8 @@
 
   (define (display-select-flag)
     (display "<input")
-    (display " name=") (write (string-append (if maybe-full-senderid "s" "i") ":" (or maybe-full-senderid id)))
+    (display " name=") (write (get-entry-card-name maybe-full-senderid id))
+    (display " id=") (write (get-entry-card-name maybe-full-senderid id))
     (display " type='checkbox' ")
     (display "/>"))
 
@@ -147,7 +153,7 @@
   (display "<label class='card'")
   (when selectable?
     (display " for=")
-    (write (string-append (if maybe-full-senderid "s" "i") ":" (or maybe-full-senderid id))))
+    (write (get-entry-card-name maybe-full-senderid id)))
   (display ">")
 
   (maybe-display-preview entry mimetype maybe-full-senderid preview-linkpath)
