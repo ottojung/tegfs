@@ -29,12 +29,12 @@
 
 
 
-(define (CLI::query --diropen --dirpreview --entries <query-format> <query...>)
+(define (CLI::query --diropen --dirpreview --sexp-format <format> <query...>)
   (define print-func
     (cond
-     (--entries (lambda (entry) (entry-print entry) (newline)))
-     (<query-format> (comp (entry-print/formatted <query-format>)))
-     (else (fatal "Unexpected mode: both --entries and <query-format> were not set"))))
+     (--sexp-format (lambda (entry) (entry-print entry) (newline)))
+     (<format> (comp (entry-print/formatted <format>)))
+     (else (fatal "Unexpected mode: both --sexp-format and <format> were not set"))))
 
   (define query
     (or <query...> '("%any")))
