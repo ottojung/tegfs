@@ -80,15 +80,14 @@
        REMOTEOPT : --remote <remote>
        SAVETARGET : --content <savetext>
        QUERYARGS : QUERYOPT* QUERYQ*
-       QUERYOPT : --format <query-format>
-       /          --entries
-       /          --diropen
+       QUERYOPT : --diropen
        /          --no-diropen
        /          --dirpreview
        /          --no-dirpreview
+       /          FORMAT
+       FORMAT : --format <format> / --sexp-format
        QUERYQ : <query...>
-       GETARGS : GETOPT? <getid>
-       GETOPT : --format <get-format> / --entry
+       GETARGS : FORMAT? <getid>
        SERVARGS : --offload-filesharing <fileserver>
        /          --no-offload-filesharing
        /          --authorization
@@ -113,10 +112,8 @@
       :default (--no-series #t)
       :exclusive (--no-series --series)
 
-      :default (--entries #t)
-      :exclusive (--entries --format)
-      :default (--entry #t)
-      :exclusive (--entry --format)
+      :default (--sexp-format #t)
+      :exclusive (--sexp-format --format)
 
       :default (--diropen #t)
       :exclusive (--diropen --no-diropen)
@@ -149,8 +146,8 @@
          (categorize (tegfs-categorize/parse))
          (serve (tegfs-serve/parse (and --offload-filesharing <fileserver>) --no-authorization))
          (prolog (tegfs-prolog/parse))
-         (query (CLI::query --diropen --dirpreview --entries <query-format> <query...>))
-         ((and get <getid>) (tegfs-get/parse <get-format> <getid>))
+         (query (CLI::query --diropen --dirpreview --sexp-format <format> <query...>))
+         ((and get <getid>) (tegfs-get/parse <format> <getid>))
          (talk (CLI::talk --web))
          (make-thumbnails (tegfs-make-thumbnails/parse <target> <output>))
          (config (tegfs-config/parse --display --write get set <name> <value> get-user set-user <user-name> <user-field> --password <user-value>))
