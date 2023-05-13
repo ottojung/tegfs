@@ -147,7 +147,7 @@
   (display "<label class='card'")
   (when selectable?
     (display " for=")
-    (write (string-append "select:" (or maybe-full-senderid id))))
+    (write (string-append (if maybe-full-senderid "s" "i") ":" (or maybe-full-senderid id))))
   (display ">")
 
   (maybe-display-preview entry mimetype maybe-full-senderid preview-linkpath)
