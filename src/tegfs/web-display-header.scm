@@ -45,19 +45,19 @@
   <nav>
     <a href='home'><img src='static/logo-gray.jpeg'/></a>
     <ul>
-      <a class='highlighted first' href='query'><li>Search</li></a>
-      <a class='highlighted' href='upload'><li>Upload</li></a>
-      <a class='highlighted")
+      <li class='highlighted first'><a href='query'>Search</a></li>
+      <li class='highlighted'><a href='upload'>Upload</a></li>
+      <li class='highlighted")
 
   (when authoriation-disabled?
     (display " last"))
 
-  (display "' href='tags'><li>Tags</li></a>\n")
+  (display "'><a href='tags'>Tags</a></li>\n")
 
   (define logout-link
-    "<a class='highlighted last' href='logout'><li>Logout</li></a>")
+    "<li class='highlighted last'><a href='logout'>Logout</a></li>")
   (define login-link
-    "<a class='highlighted last' href='login'><li>Login</li></a>")
+    "<li class='highlighted last'><a href='login'>Login</a></li>")
 
   (unless authoriation-disabled?
     (display

@@ -341,7 +341,7 @@ header nav ul {
     justify-content: right;
 }
 
-header nav ul a {
+header nav ul li {
     padding-left: 2.3rem;
     /* margin-left: -2rem; */
     padding-right: 2.3rem;
@@ -352,7 +352,7 @@ header nav ul a {
     text-decoration: none;
 }
 
-header nav ul a li {
+header nav ul li a {
     font-size: 140%;
     font-family: sans-serif;
     color: white;
