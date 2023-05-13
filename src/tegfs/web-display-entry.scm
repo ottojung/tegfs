@@ -22,6 +22,7 @@
     :use-module ((euphrates file-or-directory-exists-q) :select (file-or-directory-exists?))
     :use-module ((euphrates path-get-basename) :select (path-get-basename))
     :use-module ((tegfs a-weblink-q) :select (a-weblink?))
+    :use-module ((tegfs entry-card-name) :select (make-entry-card-name))
     :use-module ((tegfs entry-get-mimetype) :select (entry-get-mimetype))
     :use-module ((tegfs entry-get-target) :select (entry-get-target))
     :use-module ((tegfs entry-target-fullpath) :select (entry-target-fullpath))
@@ -102,11 +103,6 @@
         (let ((relative (if (a-weblink? orig) orig (path-get-basename orig))))
           (display relative)))))))
 
-(define (get-entry-card-name maybe-full-senderid id)
-  (string-append (if maybe-full-senderid "s" "i")
-                 ":"
-                 (or maybe-full-senderid id)))
-
 (define (display-title entry selectable? id maybe-full-senderid)
   (define (display-query)
     (cond
@@ -119,8 +115,8 @@
 
   (define (display-select-flag)
     (display "<input")
-    (display " name=") (write (get-entry-card-name maybe-full-senderid id))
-    (display " id=") (write (get-entry-card-name maybe-full-senderid id))
+    (display " name=") (write (make-entry-card-name maybe-full-senderid id))
+    (display " id=") (write (make-entry-card-name maybe-full-senderid id))
     (display " type='checkbox' ")
     (display "/>"))
 
@@ -153,7 +149,7 @@
   (display "<label class='card'")
   (when selectable?
     (display " for=")
-    (write (get-entry-card-name maybe-full-senderid id)))
+    (write (make-entry-card-name maybe-full-senderid id)))
   (display ">")
 
   (maybe-display-preview entry mimetype maybe-full-senderid preview-linkpath)
