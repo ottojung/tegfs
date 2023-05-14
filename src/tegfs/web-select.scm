@@ -131,6 +131,7 @@
       ;; Now we know that all our ids are filepaths.
       ;; Using hashsed ids for them.
       (let ()
+        (define db-path (get-db-path))
         (define hashed
           (alist->hashmap
            (map
@@ -138,7 +139,7 @@
              (id type)
              (define relative
                (remove-common-prefix
-                id (get-db-path)))
+                id db-path))
              (when (string-null? relative)
                (raisu 'bad-selected-file-path/1 relative id))
              (unless (absolute-posix-path? relative)
