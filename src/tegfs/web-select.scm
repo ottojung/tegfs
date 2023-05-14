@@ -41,7 +41,7 @@
     :use-module ((tegfs web-callcontext-p) :select (web::callcontext/p))
     :use-module ((tegfs web-callcontext) :select (callcontext-body callcontext-token))
     :use-module ((tegfs web-iterate-profun-results) :select (web::iterate-profun-results))
-    :use-module ((tegfs web-make-html-response) :select (web::make-html-response))
+    :use-module ((tegfs web-make-info-box-response) :select (web::make-info-box-response))
     :use-module ((tegfs web-parse-multipart) :select (parse-multipart-as-hashmap))
     :use-module ((tegfs webcore-ask) :select (webcore::ask))
     )))
@@ -170,4 +170,5 @@
              (add-entry ,new-entry))))
          (hashmap->alist hashed))
 
-        (web::make-html-response "OKAY YOUR GOOD"))))))
+        (web::make-info-box-response
+         "Tagged ~a entries" (length ids)))))))
