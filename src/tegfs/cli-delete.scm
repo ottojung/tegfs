@@ -17,6 +17,7 @@
  (guile
   (define-module (tegfs cli-delete)
     :export (CLI::delete)
+    :use-module ((euphrates debugs) :select (debugs))
     :use-module ((euphrates file-delete) :select (file-delete))
     :use-module ((euphrates profune-communicator) :select (profune-communicator-handle))
     :use-module ((euphrates raisu) :select (raisu))
@@ -45,7 +46,9 @@
 
     (unless --keep-files
       (let ()
-        (define E (cdr (cadr result)))
+        (debugs (cadr result))
+        (define E (cddr (cadr result)))
+        (debugs E)
         (define fullpath (entry-target-fullpath E))
         (when fullpath
           (file-delete fullpath)))))
