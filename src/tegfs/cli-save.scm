@@ -87,7 +87,8 @@
   (define entry
     (if -temporary-file
         (tegfs-add-file
-         -temporary-file filename title tags
+         -temporary-file filename link?
+         title tags
          series? key-value-pairs
          <date>)
         (let ((<target> (if (equal? kind 'pasta) #f -text-content)))

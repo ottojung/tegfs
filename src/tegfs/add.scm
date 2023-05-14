@@ -23,7 +23,7 @@
     :use-module ((euphrates path-get-basename) :select (path-get-basename))
     :use-module ((euphrates tilda-a) :select (~a))
     :use-module ((tegfs add-entry) :select (add-entry))
-    :use-module ((tegfs add-file-entry) :select (add-file-entry))
+    :use-module ((tegfs add-file-entry) :select (add-file-entry add-file-entry/link))
     :use-module ((tegfs fatal) :select (fatal))
     :use-module ((tegfs keyword-date) :select (keyword-date))
     :use-module ((tegfs keyword-prev) :select (keyword-prev))
@@ -35,7 +35,7 @@
 
 
 (define (tegfs-add/parse
-         <add-file> <target> <title> <tag...>
+         <add-file> --link <target> <title> <tag...>
          --series <key...> <value...>
          <date>)
   (define key-value-pairs
@@ -47,7 +47,8 @@
 
    (if <add-file>
        (tegfs-add-file
-        <add-file> (path-get-basename <add-file>) <title> tags
+        <add-file> (path-get-basename <add-file>) --link
+        <title> tags
         --series key-value-pairs
         <date>)
        (tegfs-add
@@ -117,7 +118,8 @@
   (add-entry entry))
 
 (define (tegfs-add-file
-         full-filepath filename <title> tags
+         full-filepath filename --link
+         <title> tags
          series? key-value-pairs0
          <date>)
   (define entry
@@ -125,4 +127,6 @@
      #f <title> tags
      series? key-value-pairs0
      <date>))
-  (add-file-entry (cons full-filepath filename) entry))
+  (if --link
+      (add-file-entry/link (cons full-filepath filename) entry)
+      (add-file-entry (cons full-filepath filename) entry)))

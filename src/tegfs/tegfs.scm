@@ -68,7 +68,7 @@
        /      config CONFIGOPT
        /      dump-clipboard
 
-       ADDOPT : --file <add-file>
+       ADDOPT : --file <add-file> FILELINK?
        /        --title <title>
        /        --tag <tag...>
        /        --series
@@ -76,9 +76,10 @@
        /        --key <key...> <value...>
        /        --date <date>
        /        --target <add-target>
-       SAVEARGS : --link SAVETARGET
+       SAVEARGS : FILELINK SAVETARGET
        /          --from-remote <remote-id>
        /          REMOTEOPT? SAVETARGET?
+       FILELINK : --link
        REMOTEOPT : --remote <remote>
        SAVETARGET : --content <savetext>
        QUERYARGS : QUERYOPT* QUERYQ*
@@ -148,7 +149,7 @@
         (cond
          (--version (display tegfs-version) (newline))
          (add (tegfs-add/parse
-               <add-file> <add-target> <title> <tag...> --series <key...> <value...>
+               <add-file> --link <add-target> <title> <tag...> --series <key...> <value...>
                <date>))
          (save (CLI::save <remote> --from-remote <remote-id> --link <savetext>))
          (categorize (tegfs-categorize/parse))

@@ -16,7 +16,7 @@
 (cond-expand
  (guile
   (define-module (tegfs add-file-entry)
-    :export (add-file-entry)
+    :export (add-file-entry add-file-entry/link)
     :use-module ((euphrates alphanum-lowercase-alphabet) :select (alphanum-lowercase/alphabet))
     :use-module ((euphrates append-posix-path) :select (append-posix-path))
     :use-module ((euphrates assq-or) :select (assq-or))
@@ -34,7 +34,13 @@
     :use-module ((tegfs keyword-target) :select (keyword-target))
     )))
 
+(define (add-file-entry/link full-filepath/0 entry)
+  (add-file-entry/generic #t full-filepath/0 entry))
+
 (define (add-file-entry full-filepath/0 entry)
+  (add-file-entry/generic #f full-filepath/0 entry))
+
+(define (add-file-entry/generic --link full-filepath/0 entry)
   (define root (get-root))
   (define full-filepath
     (if (pair? full-filepath/0)
@@ -91,5 +97,11 @@
        (system* "mv" "--" full-filepath full-target))
      (unless (= 0 (status:exit-val status))
        (raisu 'cannot-move "Could not move the original file" full-filepath))))
+
+  (when --link
+    (catch-any
+     (lambda _ (symlink full-filepath full-target))
+     (lambda errs
+       (raisu 'cannot-symlink "Could not create the symlink" full-filepath full-target))))
 
   (add-entry entry1))
