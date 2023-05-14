@@ -20,6 +20,8 @@
     :use-module ((euphrates assq-or) :select (assq-or))
     :use-module ((euphrates comp) :select (comp))
     :use-module ((euphrates dprintln) :select (dprintln))
+    :use-module ((euphrates make-directories) :select (make-directories))
+    :use-module ((euphrates path-get-dirname) :select (path-get-dirname))
     :use-module ((euphrates write-string-file) :select (write-string-file))
     :use-module ((tegfs default-sharedir) :select (default-sharedir))
     :use-module ((tegfs get-config) :select (get-config/fatal))
@@ -69,7 +71,9 @@
   (define-values (comm server-operator-key) (web::make-communicator))
   (define token-override (if --no-authorization server-operator-key #f))
 
+  (make-directories (path-get-dirname (web::get-server-operator-key-file)))
   (write-string-file (web::get-server-operator-key-file) server-operator-key)
+
   (dprintln "Starting the server")
   (parameterize ((webcore::current-communicator/p comm)
                  (web::current-fileserver/p <fileserver>)
