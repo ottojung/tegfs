@@ -44,107 +44,110 @@
 
 
 (define (main)
-  (with-randomizer-seed
-   :random
-   (parameterize ((current-program-path/p "tegfs"))
-     (with-cli
-      (MAIN
-       MAIN : OPT* FUNC
-       /      --help
-       /      --version
-       /      license
-       /      warranty
+  (parameterize ((current-program-path/p "tegfs"))
+    (with-cli
+     (MAIN
+      MAIN : OPT* FUNC
+      /      --help
+      /      --version
+      /      license
+      /      warranty
 
-       FUNC : add ADDOPT+
-       /      get GETARGS
-       /      delete DELETEARGS
-       /      query QUERYARGS
-       /      config CONFIGOPT
-       /      serve SERVARGS*
-       /      save SAVEARGS
-       /      categorize
-       /      talk TALKOPTS*
-       /      prolog
-       /      make-thumbnails THUMBOPT
-       /      dump-clipboard
+      FUNC : add ADDOPT+
+      /      get GETARGS
+      /      delete DELETEARGS
+      /      query QUERYARGS
+      /      config CONFIGOPT
+      /      serve SERVARGS*
+      /      save SAVEARGS
+      /      categorize
+      /      talk TALKOPTS*
+      /      prolog
+      /      make-thumbnails THUMBOPT
+      /      dump-clipboard
 
-       ADDOPT : --file <add-file> FILELINK?
-       /        --title <title>
-       /        --tag <tag...>
-       /        --series
-       /        --no-series
-       /        --key <key...> <value...>
-       /        --date <date>
-       /        --target <add-target>
-       SAVEARGS : FILELINK SAVETARGET
-       /          --from-remote <remote-id>
-       /          REMOTEOPT? SAVETARGET?
-       FILELINK : --link
-       REMOTEOPT : --remote <remote>
-       SAVETARGET : --content <savetext>
-       QUERYARGS : QUERYOPT* QUERYQ*
-       QUERYOPT : --diropen
-       /          --no-diropen
-       /          --dirpreview
-       /          --no-dirpreview
-       /          FORMAT
-       FORMAT : --format <format> / --sexp-format
-       QUERYQ : <query...>
-       GETARGS : FORMAT? <entry-id>
-       DELETEARGS : <entry-id> MAYBEKEEPFILES?
-       MAYBEKEEPFILES : --keep-files / --no-keep-files
-       SERVARGS : --offload-filesharing <fileserver>
-       /          --no-offload-filesharing
-       /          --authorization
-       /          --no-authorization
-       TALKOPTS : --web
-       THUMBOPT : <target> <output>
-       CONFIGOPT  : CONFIGFORMAT? CONFIGFORK
-       CONFIGFORK : get <name>
-       /            set <name> <value>
-       /            get-user <user-name> USER_FIELD?
-       /            set-user <user-name> USER_FIELD <user-value>
-       CONFIGFORMAT : --display / --write
-       USER_FIELD : --password / <user-field>
-       OPT : --root <root>
-       )
+      ADDOPT : --file <add-file> FILELINK?
+      /        --title <title>
+      /        --tag <tag...>
+      /        --series
+      /        --no-series
+      /        --key <key...> <value...>
+      /        --date <date>
+      /        --target <add-target>
+      SAVEARGS : FILELINK SAVETARGET
+      /          --from-remote <remote-id>
+      /          REMOTEOPT? SAVETARGET?
+      FILELINK : --link
+      REMOTEOPT : --remote <remote>
+      SAVETARGET : --content <savetext>
+      QUERYARGS : QUERYOPT* QUERYQ*
+      QUERYOPT : --diropen
+      /          --no-diropen
+      /          --dirpreview
+      /          --no-dirpreview
+      /          FORMAT
+      FORMAT : --format <format> / --sexp-format
+      QUERYQ : <query...>
+      GETARGS : FORMAT? <entry-id>
+      DELETEARGS : <entry-id> MAYBEKEEPFILES?
+      MAYBEKEEPFILES : --keep-files / --no-keep-files
+      SERVARGS : --offload-filesharing <fileserver>
+      /          --no-offload-filesharing
+      /          --authorization
+      /          --no-authorization
+      TALKOPTS : --web
+      THUMBOPT : <target> <output>
+      CONFIGOPT  : CONFIGFORMAT? CONFIGFORK
+      CONFIGFORK : get <name>
+      /            set <name> <value>
+      /            get-user <user-name> USER_FIELD?
+      /            set-user <user-name> USER_FIELD <user-value>
+      CONFIGFORMAT : --display / --write
+      USER_FIELD : --password / <user-field>
+      OPT : --root <root>
+      /     --seed <seed>
+      )
 
-      :default (<root> (get-root/default))
+     :default (<root> (get-root/default))
 
-      :synonym (--version -v version)
-      :synonym (license copying)
+     :synonym (--version -v version)
+     :synonym (license copying)
 
-      :default (--no-series #t)
-      :exclusive (--no-series --series)
+     :default (--no-series #t)
+     :exclusive (--no-series --series)
 
-      :default (--sexp-format #t)
-      :exclusive (--sexp-format --format)
+     :default (--sexp-format #t)
+     :exclusive (--sexp-format --format)
 
-      :default (--diropen #t)
-      :exclusive (--diropen --no-diropen)
+     :default (--diropen #t)
+     :exclusive (--diropen --no-diropen)
 
-      :default (--no-dirpreview #t)
-      :exclusive (--no-dirpreview --dirpreview)
+     :default (--no-dirpreview #t)
+     :exclusive (--no-dirpreview --dirpreview)
 
-      :default (--no-offload-filesharing #t)
-      :exclusive (--no-offload-filesharing --offload-filesharing)
-      :default (--authorization #t)
-      :exclusive (--authorization --no-authorization)
+     :default (--no-offload-filesharing #t)
+     :exclusive (--no-offload-filesharing --offload-filesharing)
+     :default (--authorization #t)
+     :exclusive (--authorization --no-authorization)
 
-      :default (--display #t)
-      :exclusive (--display --write)
+     :default (--display #t)
+     :exclusive (--display --write)
 
-      :default (--keep-files #t)
-      :exclusive (--keep-files --no-keep-files)
-      :synonym (--no-keep-files --delete-files-too)
+     :default (--keep-files #t)
+     :exclusive (--keep-files --no-keep-files)
+     :synonym (--no-keep-files --delete-files-too)
 
-      :help (<remote> "A remote address like 'user1@example.com'.")
-      :help (--diropen (stringf "Acknowledge <~a> property by treating elements of the ~a directory as entries having the same tags as the original entry." keyword-diropen keyword-target))
-      :help (--dirpreview (stringf "Acknowledge <~a> property by treating elements of the ~a directory as entries having the same tags as the original entry." keyword-dirpreview keyword-target))
+     :type (<seed> 'number)
 
-      (when --help
-        (define-cli:show-help))
+     :help (<remote> "A remote address like 'user1@example.com'.")
+     :help (--diropen (stringf "Acknowledge <~a> property by treating elements of the ~a directory as entries having the same tags as the original entry." keyword-diropen keyword-target))
+     :help (--dirpreview (stringf "Acknowledge <~a> property by treating elements of the ~a directory as entries having the same tags as the original entry." keyword-dirpreview keyword-target))
 
+     (when --help
+       (define-cli:show-help))
+
+     (with-randomizer-seed
+      (or <seed> 'random)
       (parameterize ((root/p <root>))
         (cond
          (--version (display tegfs-version) (newline))
