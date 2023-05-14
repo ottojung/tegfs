@@ -36,6 +36,8 @@
   (for-each
    (lambda (element)
      (cond
+      ((equal? '\n element) ;; used as default separator
+       (newline port))
       ((equal? '%F element) ;; target-fullpath
        (let ((fullpath (entry-target-fullpath entry)))
          (display (or fullpath "//NA//") port)))
