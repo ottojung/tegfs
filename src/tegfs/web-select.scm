@@ -32,6 +32,7 @@
     :use-module ((tegfs entry-get-id) :select (entry-get-id))
     :use-module ((tegfs entry-get-tags) :select (entry-get-tags))
     :use-module ((tegfs get-db-path) :select (get-db-path))
+    :use-module ((tegfs keyword-file-entry-tag) :select (keyword-file-entry-tag))
     :use-module ((tegfs keyword-id) :select (keyword-id))
     :use-module ((tegfs keyword-tags) :select (keyword-tags))
     :use-module ((tegfs keyword-target) :select (keyword-target))
@@ -131,6 +132,8 @@
       ;; Now we know that all our ids are filepaths.
       ;; Using hashsed ids for them.
       (let ()
+        (define tags-that-new-entries-have
+          (cons keyword-file-entry-tag additional))
         (define db-path (get-db-path))
         (define hashed
           (alist->hashmap
@@ -161,7 +164,7 @@
             (list
              (cons keyword-id id-hashed)
              (cons keyword-target relative)
-             (cons keyword-tags additional)))
+             (cons keyword-tags tags-that-new-entries-have)))
 
           ;; TODO: Am I intentionally ignoring the result here???
           (webcore::ask
