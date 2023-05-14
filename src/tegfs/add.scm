@@ -55,6 +55,9 @@
         --series key-value-pairs
         <date>))
 
+   (('entry-with-such-id-already-exists existing-id)
+    (fatal "Want an original id, but this one (~a) already exists" existing-id))
+
    (('no-last-id-for-series)
     (fatal "Want series, but last-id file is not present"))
 

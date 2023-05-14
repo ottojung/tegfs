@@ -36,11 +36,13 @@
     :use-module ((euphrates write-string-file) :select (write-string-file))
     :use-module ((tegfs a-weblink-q) :select (a-weblink?))
     :use-module ((tegfs default-db-path) :select (default-db-path))
+    :use-module ((tegfs entry-get-id) :select (entry-get-id))
     :use-module ((tegfs entry-get-target) :select (entry-get-target))
     :use-module ((tegfs entry-print) :select (entry-print))
     :use-module ((tegfs get-file-mimetype) :select (get-file-mimetype))
     :use-module ((tegfs get-registry-files) :select (get-registry-files))
     :use-module ((tegfs get-root) :select (get-root))
+    :use-module ((tegfs get) :select (tegfs-get))
     :use-module ((tegfs keyword-date) :select (keyword-date))
     :use-module ((tegfs keyword-id) :select (keyword-id))
     :use-module ((tegfs keyword-mimetype) :select (keyword-mimetype))
@@ -88,8 +90,16 @@
   (define registry-file
     (init-registry-file))
 
+  (define existing-id
+    (entry-get-id entry0))
+
+  (define added-check
+    (when (tegfs-get existing-id)
+      (raisu 'entry-with-such-id-already-exists existing-id)))
+
   (define id
-    (generate-random-id))
+    (or existing-id
+        (generate-random-id)))
 
   (define entry1
     (assoc-set-default
