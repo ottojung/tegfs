@@ -42,9 +42,10 @@
        (unless (eof-object? x)
          (let ((ret (fun x)))
            (when ret
-             (newline temp-port)
-             (entry-print ret temp-port)
-             (newline temp-port)))
+             (unless (null? ret)
+               (newline temp-port)
+               (entry-print ret temp-port)
+               (newline temp-port))))
          (loop)))
      (close-port temp-port)
      (file-delete registry-fullpath)
