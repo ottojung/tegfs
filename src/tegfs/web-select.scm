@@ -151,13 +151,13 @@
         ;; so we add them now.
         (for-each
          (fn-pair
-          (id-hased relative/0)
+          (id-hashed relative/0)
           (define relative
             (if (string-prefix? "/" relative/0)
                 (string-drop-n 1 relative/0) relative/0))
           (define new-entry
             (list
-             (cons keyword-id id-hased)
+             (cons keyword-id id-hashed)
              (cons keyword-target relative)
              (cons keyword-tags additional)))
 
