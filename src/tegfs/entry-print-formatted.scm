@@ -18,8 +18,11 @@
   (define-module (tegfs entry-print-formatted)
     :export (entry-print/formatted)
     :use-module ((euphrates read-list) :select (read-list))
+    :use-module ((euphrates words-to-string) :select (words->string))
+    :use-module ((tegfs entry-get-tags) :select (entry-get-tags))
     :use-module ((tegfs entry-target-fullpath) :select (entry-target-fullpath))
     :use-module ((tegfs get-preview-path) :select (get-preview-path))
+    :use-module ((tegfs keyword-tags) :select (keyword-tags))
     )))
 
 
@@ -41,6 +44,11 @@
               (preview (and target-fullpath
                             (get-preview-path target-fullpath))))
          (display (or preview "//NA//") port)))
+      ((equal? keyword-tags element)
+       (let ((tags (entry-get-tags entry)))
+         (display
+          (or (and tags (words->string (map symbol->string tags))) "//NA//")
+          port)))
       ((symbol? element)
        (let ((p (assoc element entry)))
          (if p
