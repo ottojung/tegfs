@@ -88,7 +88,8 @@
          (webcore::ask
           `(whats
             (key ,token)
-            (entry E)))
+            (entry E)
+            more (99999)))
          (E)
          (begin
            (define id (entry-get-id E))
