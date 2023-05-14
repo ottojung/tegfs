@@ -49,7 +49,7 @@
    (parameterize ((current-program-path/p "tegfs"))
      (with-cli
       (MAIN
-       MAIN : ROOT? FUNC
+       MAIN : OPT* FUNC
        /      --help
        /      --version
        /      license
@@ -106,7 +106,7 @@
        /            set-user <user-name> USER_FIELD <user-value>
        CONFIGFORMAT : --display / --write
        USER_FIELD : --password / <user-field>
-       ROOT : --root <root>
+       OPT : --root <root>
        )
 
       :default (<root> (get-root/default))
