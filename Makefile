@@ -59,6 +59,7 @@ dist/exampleroot.tar:
 
 $(TEST_ROOT): dist/exampleroot.tar
 	cd dist && tar -xf ./exampleroot.tar
+	touch "$@" # update the glitching timestamp
 	rm -f $(TEST_ROOT)/categorization.tegfs.txt
 	rm -f $(TEST_ROOT)/config.tegfs.lisp
 
