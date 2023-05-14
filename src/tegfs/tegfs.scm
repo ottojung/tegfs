@@ -89,7 +89,7 @@
        /          FORMAT
        FORMAT : --format <format> / --sexp-format
        QUERYQ : <query...>
-       GETARGS : FORMAT? <getid>
+       GETARGS : FORMAT? <entry-id>
        DELETEARGS : <entry-id> MAYBEKEEPFILES?
        MAYBEKEEPFILES : --keep-files / --no-keep-files
        SERVARGS : --offload-filesharing <fileserver>
@@ -155,7 +155,7 @@
          (serve (tegfs-serve/parse (and --offload-filesharing <fileserver>) --no-authorization))
          (prolog (tegfs-prolog/parse))
          (query (CLI::query --diropen --dirpreview --sexp-format <format> <query...>))
-         ((and get <getid>) (tegfs-get/parse <format> <getid>))
+         ((and get <entry-id>) (tegfs-get/parse <format> <entry-id>))
          (delete (CLI::delete <entry-id> --keep-files))
          (talk (CLI::talk --web))
          (make-thumbnails (tegfs-make-thumbnails/parse <target> <output>))
