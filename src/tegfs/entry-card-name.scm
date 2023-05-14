@@ -16,17 +16,42 @@
 (cond-expand
  (guile
   (define-module (tegfs entry-card-name)
-    :export (make-entry-card-name entry-card-name-id)
+    :export (make-entry-card-name entry-card-name-id entry-card-name-type)
+    :use-module ((euphrates raisu) :select (raisu))
     :use-module ((euphrates string-split-3) :select (string-split-3))
+    :use-module ((tegfs web-callcontext) :select (callcontext-token))
+    :use-module ((tegfs web-iterate-profun-results) :select (web::iterate-profun-results))
+    :use-module ((tegfs webcore-ask) :select (webcore::ask))
     )))
 
 (define (make-entry-card-name maybe-full-senderid id)
-  (string-append (if maybe-full-senderid "s" "i")
+  (string-append (if id "i" "s")
                  ":"
-                 (or maybe-full-senderid id)))
+                 (or id maybe-full-senderid)))
 
-(define (entry-card-name-id name)
-  (define-values (pref sep id)
+(define (entry-card-name-type name)
+  (define-values (pref sep id-or-senderid)
     (string-split-3 ":" name))
 
-  (and (not (string-null? sep)) id))
+  (cond
+   ((string-null? sep) #f)
+   ((equal? pref "s") 'entry-card-name-senderid)
+   ((equal? pref "i") 'entry-card-name-id)
+   (else (raisu 'unexpected-entry-card-name-type pref name))))
+
+(define (entry-card-name-id callctx name)
+  (define-values (pref sep id-or-senderid)
+    (string-split-3 ":" name))
+
+  (and (not (string-null? sep))
+       (if (equal? pref "i") id-or-senderid
+           (web::iterate-profun-results
+            :onfalse (lambda _ #f)
+            :results
+            (webcore::ask
+             `(whats
+               (key ,(callcontext-token callctx))
+               (senderid->entry ,id-or-senderid _E)
+               (entry-field _E "id" id)))
+
+            (id) id))))
