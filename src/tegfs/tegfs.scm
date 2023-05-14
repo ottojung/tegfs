@@ -56,16 +56,16 @@
        /      warranty
 
        FUNC : add ADDOPT+
-       /      save SAVEARGS
-       /      categorize
-       /      query QUERYARGS
        /      get GETARGS
        /      delete DELETEARGS
+       /      query QUERYARGS
+       /      config CONFIGOPT
        /      serve SERVARGS*
+       /      save SAVEARGS
+       /      categorize
        /      talk TALKOPTS*
        /      prolog
        /      make-thumbnails THUMBOPT
-       /      config CONFIGOPT
        /      dump-clipboard
 
        ADDOPT : --file <add-file> FILELINK?
