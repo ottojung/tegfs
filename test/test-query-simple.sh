@@ -1,7 +1,7 @@
 #! /bin/sh
 
 set -e
-make test-files
+make test-files build
 
 TEST_FS=dist/tegfs
 GUILE="guile -L src/ -s"
