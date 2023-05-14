@@ -22,6 +22,7 @@
     :use-module ((euphrates with-randomizer-seed) :select (with-randomizer-seed))
     :use-module ((tegfs add) :select (tegfs-add/parse))
     :use-module ((tegfs categorize) :select (tegfs-categorize/parse))
+    :use-module ((tegfs cli-delete) :select (CLI::delete))
     :use-module ((tegfs cli-query) :select (CLI::query))
     :use-module ((tegfs cli-save) :select (CLI::save))
     :use-module ((tegfs cli-show-license) :select (CLI::show-license))
@@ -59,6 +60,7 @@
        /      categorize
        /      query QUERYARGS
        /      get GETARGS
+       /      delete DELETEARGS
        /      serve SERVARGS*
        /      talk TALKOPTS*
        /      prolog
@@ -88,6 +90,8 @@
        FORMAT : --format <format> / --sexp-format
        QUERYQ : <query...>
        GETARGS : FORMAT? <getid>
+       DELETEARGS : <entry-id> MAYBEKEEPFILES?
+       MAYBEKEEPFILES : --keep-files / --no-keep-files
        SERVARGS : --offload-filesharing <fileserver>
        /          --no-offload-filesharing
        /          --authorization
@@ -129,6 +133,10 @@
       :default (--display #t)
       :exclusive (--display --write)
 
+      :default (--keep-files #t)
+      :exclusive (--keep-files --no-keep-files)
+      :synonym (--no-keep-files --delete-files-too)
+
       :help (<remote> "A remote address like 'user1@example.com'.")
       :help (--diropen (stringf "Acknowledge <~a> property by treating elements of the ~a directory as entries having the same tags as the original entry." keyword-diropen keyword-target))
       :help (--dirpreview (stringf "Acknowledge <~a> property by treating elements of the ~a directory as entries having the same tags as the original entry." keyword-dirpreview keyword-target))
@@ -148,6 +156,7 @@
          (prolog (tegfs-prolog/parse))
          (query (CLI::query --diropen --dirpreview --sexp-format <format> <query...>))
          ((and get <getid>) (tegfs-get/parse <format> <getid>))
+         (delete (CLI::delete <entry-id> --keep-files))
          (talk (CLI::talk --web))
          (make-thumbnails (tegfs-make-thumbnails/parse <target> <output>))
          (config (tegfs-config/parse --display --write get set <name> <value> get-user set-user <user-name> <user-field> --password <user-value>))
