@@ -46,7 +46,7 @@ clean:
 deps/euphrates/.git:
 	git submodule update --init
 
-dist/tegfs: src/tegfs/*.scm src/euphrates/*.scm dist $(SUBMODULES)
+dist/tegfs: $(SUBMODULES) src/tegfs/*.scm src/euphrates/*.scm dist
 	guile -s scripts/make-binary.scm "$(TEST_ROOT)" "$(CODE_ROOT)" > "$@"
 	chmod +x "$@"
 
