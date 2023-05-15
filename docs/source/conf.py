@@ -24,5 +24,10 @@ exclude_patterns = []
 # -- Options for HTML output -------------------------------------------------
 # https://www.sphinx-doc.org/en/master/usage/configuration.html#options-for-html-output
 
-html_theme = 'sphinx_book_theme'
+# html_theme = 'sphinx_book_theme'
 html_static_path = ['_static']
+
+def setup(app):
+    app.add_css_file('custom.css')
+    app.add_css_file('_static/custom.css')
+    app.add_css_file('customddd.css')
