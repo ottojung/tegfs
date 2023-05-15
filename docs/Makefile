@@ -12,6 +12,15 @@ BUILDDIR      = build
 help:
 	@$(SPHINXBUILD) -M help "$(SOURCEDIR)" "$(BUILDDIR)" $(SPHINXOPTS) $(O)
 
+filelist:
+	find source > build/files
+
+live:
+	$(MAKE) html filelist
+	while true ; do \
+		find build/files source | entr -z -p $(MAKE) filelist html ; sleep 0.1 ; \
+	done
+
 .PHONY: help Makefile
 
 # Catch-all target: route all unknown targets to Sphinx using the new
