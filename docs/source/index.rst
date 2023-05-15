@@ -1,89 +1,43 @@
-======================
-|theme_display| Sample
-======================
 
-This is a demo site for |theme_display|, generated as part of
-`Sphinx Themes Gallery <https://sphinx-themes.org>`_.
+Welcome to TegFS's documentation!
+=================================
 
-.. important::
+Introduction
+------------
 
-    This sample documentation was generated on |today|, and is rebuilt weekly.
+TegFS is a virtual file system that utilizes a tag-based system for file organization,
+categorization and searching.
+It provides an alternative to classical directory-based file organization
+and cloud-based solutions, such as Nextcloud and Google Drive.
+TegFS is built with a focus on simplicity, security and performance,
+making it an efficient and user-friendly solution for personal and professional file management.
 
+Similar to Nextcloud,
+TegFS allows users to have full control over their data and the way it is organized.
+But TegFS does not do as much, so unlike Nextcloud, it is simpler and more lightweight,
+making it easy to use and set up.
+It also shares similarities with Hydrus,
+another tag-based file manager,
+but TegFS is designed to be even more intuitive and user-friendly,
+while providing more actual features.
 
-Quickstart
-==========
+With TegFS, you can easily categorize and locate your files by tagging them,
+and searching for them later.
+It also provides advanced sharing capabilities, making it perfect for anyone who wants to keep their files organized and accessible.
+Plus, it's completely free and libre software, so everyone can use and contribute to it.
 
-1. Install this theme:
+Whether you prefer working on the command line or through a user-friendly interface, TegFS has got you covered.
+TegFS offers a featureful CLI for power users, and a web-based UI for easy access and file management.
 
-   .. theme-install::
+Installation
+------------
 
-2. Set the following in your existing Sphinx documentation's ``conf.py`` file:
+To install TegFS, please follow the instructions provided in the :doc:`installation` page.
 
-   .. theme-configuration::
-
-3. Build your Sphinx documentation with the new theme! [1]_
-
-
-Documentation
-=============
-
-|theme_documentation_message|
-
-
-Exploration
-===========
-
-The :doc:`kitchen-sink/index` section contains pages that contains basically
-everything that you can with Sphinx "out-of-the-box".
-
-.. toctree::
-    :titlesonly:
-
-    kitchen-sink/index
-
-Browsing through that section should give you a good idea of how stuff looks
-in this theme.
-
-
-Navigation
-==========
-
-This is the most important part of a documentation theme. If you like
-the general look of the theme, please make sure that it is possible to
-easily navigate through this sample documentation.
-
-Ideally, the pages listed below should also be reachable via links
-somewhere else on this page (like the sidebar, or a topbar). If they are
-not, then this theme might need additional configuration to provide the
-sort of site navigation that's necessary for "real" documentation.
+Contents
+==================
 
 .. toctree::
-    :caption: This is a caption
-    :titlesonly:
+   :maxdepth: 1
 
-    placeholder-one
-    placeholder-two
-    really-long-title
-    long-page
-    External Link <https://www.sphinx-doc.org>
-
-.. toctree::
-    :hidden:
-    :caption: Additional "hidden" Pages
-
-    placeholder-three
-    placeholder-four
-    Sphinx Theme Gallery <https://sphinx-themes.org>
-
-Some pages like :doc:`placeholder-three` are declared in a "hidden"
-toctree, and thus would not be visible above. However, they are still a
-part of the overall site hierarchy and some themes may choose to present
-them to the user in the site navigation.
-
------
-
-.. [1] If you hit an error while building documentation with a new theme,
-    it is likely due to some theme-specific configuration in the ``conf.py``
-    file of that documentation. These are usually ``html_sidebars``,
-    ``html_theme_path`` or ``html_theme_config``. Unsetting those will likely
-    allow the build to proceed.
+   installation
