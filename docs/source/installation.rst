@@ -33,7 +33,7 @@ The following dependencies are required to install and use TegFS:
 | Dependency        | Description                                    |
 +===================+================================================+
 | GNU guile         | version >1.8 for running the main              |
-|                   | program                                        |
+|                   | program  **(MUST HAVE)**                       |
 +-------------------+------------------------------------------------+
 | wget              | for saving stuff from the internet             |
 +-------------------+------------------------------------------------+
@@ -42,7 +42,7 @@ The following dependencies are required to install and use TegFS:
 | file              | for determining file types                     |
 +-------------------+------------------------------------------------+
 | fzf               | for making choices during ``tegfs              |
-|                   | save`` (MUST HAVE)                             |
+|                   | save`` **(MUST HAVE)**                         |
 +-------------------+------------------------------------------------+
 | rsync, ssh        | for sending files to remote servers            |
 |                   | if using ``tegfs save``                        |
@@ -55,7 +55,7 @@ The following dependencies are required to install and use TegFS:
 | imagemagick       | for image previews production                  |
 +-------------------+------------------------------------------------+
 | entr              | for checking if new previews need              |
-|                   | to be made (MUST HAVE)                         |
+|                   | to be made **(MUST HAVE)**                     |
 +-------------------+------------------------------------------------+
 | third-party file  | server, such as ``Nginx``, if using            |
 | server            | ``--offload-filesharing`` option for           |
@@ -68,6 +68,6 @@ The following dependencies are required to install and use TegFS:
 | pup               | for generating weblink thumbnails              |
 +-------------------+------------------------------------------------+
 
-Note that the dependencies listed as "MUST HAVE" are required for basic TegFS functionality, while the others are only needed for certain features.
+Note that the dependencies listed as **MUST HAVE** are required for basic TegFS functionality, while the others are only needed for certain features.
 
 If you encounter any issues during the installation process, please consult the TegFS documentation or open an issue on the project's Codeberg repository.
