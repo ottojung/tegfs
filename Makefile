@@ -53,6 +53,7 @@ dist:
 	mkdir -p "$@"
 
 dist/dockerimage: scripts/Dockerfile
+	export DOCKER_BUILDKIT=1 ; \
 	docker build -f scripts/Dockerfile -t tegfs .
 	touch "$@"
 
