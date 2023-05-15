@@ -54,7 +54,7 @@
   (define port/string
     (cadr
      (or (assoc keyword-config-port config)
-         (list (number->string web::default-port)))))
+         (list keyword-config-port (number->string web::default-port)))))
   (define port
     (or (string->number (~a port/string))
         (raisu 'port-is-not-a-number "Variable 'port must be a number" port/string)))
