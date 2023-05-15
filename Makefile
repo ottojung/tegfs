@@ -40,8 +40,7 @@ $(PREFIX_BIN):
 reinstall: | uninstall clean install
 
 clean:
-	git submodule foreach --recursive 'git clean -dfx'
-	git clean -dfx
+	rm -rf dist
 
 deps/euphrates/.git:
 	git submodule update --init
