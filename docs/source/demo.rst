@@ -11,7 +11,7 @@ First, navigate to the TegFS directory and run the following command:
       $ cd tegfs
       $ sh test/test-serve-noauth.sh
 
-This command starts a local TegFS server that you can access at ``http://localhost:8082``
+This command starts a local TegFS server that you can access at ``http://localhost:8081``
 
 When the server starts, you should see the TegFS welcome page. Click the "here" button to proceed.
 
