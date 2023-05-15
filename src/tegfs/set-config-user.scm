@@ -59,10 +59,10 @@
              (set! found? #t)
              (transform-users <user-name> user-field value (cadr x)))
            (begin (write x) (newline))))
-     existing))
-  (unless found?
-    (write `(users (((name ,<user-name>) (,user-field ,value)))))
-    (newline))
+     existing)
+    (unless found?
+      (write `(users (((name ,<user-name>) (,user-field ,value)))))
+      (newline)))
 
   (close-port p)
   (values))
