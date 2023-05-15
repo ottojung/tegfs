@@ -52,8 +52,8 @@ dist/tegfs: $(SUBMODULES) src/tegfs/*.scm src/euphrates/*.scm dist
 dist:
 	mkdir -p "$@"
 
-dist/dockerimage: Dockerfile
-	docker build -t tegfs .
+dist/dockerimage: scripts/Dockerfile
+	docker build -f scripts/Dockerfile -t tegfs .
 	touch "$@"
 
 dist/exampleroot.tar:
