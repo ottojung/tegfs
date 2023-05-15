@@ -52,6 +52,10 @@ dist/tegfs: $(SUBMODULES) src/tegfs/*.scm src/euphrates/*.scm dist
 dist:
 	mkdir -p "$@"
 
+dist/dockerimage: Dockerfile
+	docker build -t tegfs .
+	touch "$@"
+
 dist/exampleroot.tar:
 	mkdir -p dist
 	wget "https://vau.place/static/tegfs-example-root.tar" -O "$@"
