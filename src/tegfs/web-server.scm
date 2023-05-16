@@ -84,4 +84,4 @@
     (with-current-time (web::collectgarbage))
     (dprintln "Done")
     (dprintln "Listening on port ~s" port)
-    (run-server (make-handler server-operator-key) 'http `(#:port ,port))))
+    (run-server (make-handler server-operator-key) 'http `(#:host "0.0.0.0" #:port ,port))))

@@ -58,7 +58,7 @@ dist/dockerfile: dist/tegfs test/* scripts/* assets/* deps/* example/*
 	touch "$@"
 
 rundocker: dist/dockerfile
-	docker run --name tegfsc -p 33470:33470 tegfs
+	docker run -p 33470:80 --name tegfs tegfs
 	touch "$@"
 
 dist/exampleroot.tar:
