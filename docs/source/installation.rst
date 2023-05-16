@@ -12,7 +12,7 @@ To install TegFS, follow these steps:
 
       $ git clone https://codeberg.org/otto/tegfs
 
-3. Change into the ``tegfs`` directory:
+3. Change into the TegFS directory:
 
    .. code-block:: bash
 
@@ -79,14 +79,14 @@ TegFS can also be run inside a Docker container. To get started, follow these st
 
 1. Install Docker on your machine by following the official instructions for your operating system.
 2. Clone the TegFS repository: ``git clone https://codeberg.org/otto/tegfs``
-3. Navigate to the ``tegfs`` directory: ``cd tegfs``
+3. Navigate to the TegFS directory: ``cd tegfs``
 4. Build the Docker image: ``export DOCKER_BUILDKIT=1 docker build -f scripts/Dockerfile -t tegfs .``
 5. Run the container: ``docker run --rm -p 33470:80 --name tegfs tegfs``
 6. Open ``http://localhost:33470`` in your web browser to access TegFS.
 
 Alternatively, you can use the provided Makefile to run the Docker container:
 
-1. Navigate to the ``tegfs`` directory: ``cd tegfs``
+1. Navigate to the TegFS directory: ``cd tegfs``
 2. Run ``make rundocker``
 3. Open ``http://localhost:33470`` in your web browser to access TegFS.
 
@@ -103,3 +103,16 @@ Then you will have access to the running TegFS instance which you can test by ex
    .. code-block:: bash
 
       $ tegfs config get port
+
+Guix
+----
+
+If you're using the Guix package manager, there is a TegFS package definition available in the ``scripts/guix.scm`` file included in the source code. You can install TegFS by running the following commands:
+
+   .. code-block:: bash
+
+      $ git clone https://codeberg.org/otto/tegfs
+      $ cd tegfs
+      $ guix package -f scripts/guix.scm
+
+Once TegFS is installed, you can start using it by running ``tegfs`` in your terminal.
