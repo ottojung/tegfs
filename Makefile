@@ -52,9 +52,13 @@ dist/tegfs: $(SUBMODULES) src/tegfs/*.scm src/euphrates/*.scm dist
 dist:
 	mkdir -p "$@"
 
-dockerbuild:
+dist/dockerfile: dist/tegfs test/* scripts/* assets/* deps/* example/*
 	export DOCKER_BUILDKIT=1 ; \
 	docker build -f scripts/Dockerfile -t tegfs .
+	touch "$@"
+
+rundocker: dist/dockerfile
+	docker run --name tegfsc -p 33470:33470 tegfs
 	touch "$@"
 
 dist/exampleroot.tar:
@@ -75,4 +79,4 @@ $(TEST_ROOT)/config.tegfs.lisp: test/make-example-config.sh
 
 test-files: $(TEST_FILES)
 
-.PHONY: all build clean install reinstall uninstall test-files dockerbuild
+.PHONY: all build clean install reinstall uninstall test-files rundocker
