@@ -36,7 +36,7 @@ First, let's make sure we are working on the test database by issuing the follow
 
    .. code-block:: bash
 
-       $ # In tegfs repository
+       # In tegfs repository
        $ make test-files
        $ export TEGFS_ROOT="$PWD/dist/exampleroot"
 
