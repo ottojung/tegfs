@@ -8,7 +8,6 @@ First, navigate to the TegFS directory and run the following command:
 
    .. code-block:: bash
 
-      $ cd tegfs
       $ sh test/test-serve-noauth.sh
 
 This command starts a local TegFS server that you can access at ``http://localhost:8081``
@@ -19,6 +18,7 @@ When the server starts, you should see the TegFS welcome page. Click the "here" 
       :alt: TegFS welcome page
       :align: center
 
+Then press enter.
 This will take you to the TegFS file browser page, where you can view and manage your files.
 
 .. image:: _static/file-browser.png
