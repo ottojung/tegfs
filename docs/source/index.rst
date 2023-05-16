@@ -42,3 +42,4 @@ Contents
 
    installation
    demo
+   query
