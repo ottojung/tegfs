@@ -2,8 +2,7 @@
 Query
 ===========
 
-Along with usual tags,
- query provides special tags that are auto generated.
+Along with usual tags, query provides special tags that are auto generated.
 The tags are:
 
 - `%any` - true for all arguments (arity = 1)
