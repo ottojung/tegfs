@@ -52,7 +52,7 @@ dist/tegfs: $(SUBMODULES) src/tegfs/*.scm src/euphrates/*.scm dist
 dist:
 	mkdir -p "$@"
 
-dist/dockerimage: scripts/Dockerfile
+dockerbuild:
 	export DOCKER_BUILDKIT=1 ; \
 	docker build -f scripts/Dockerfile -t tegfs .
 	touch "$@"
@@ -75,4 +75,4 @@ $(TEST_ROOT)/config.tegfs.lisp: test/make-example-config.sh
 
 test-files: $(TEST_FILES)
 
-.PHONY: all clean install reinstall uninstall test-files
+.PHONY: all build clean install reinstall uninstall test-files dockerbuild
