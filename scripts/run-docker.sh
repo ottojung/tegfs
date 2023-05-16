@@ -10,7 +10,7 @@ if ! tegfs config get-user admin pass
 then tegfs config set-user admin --password 1234
 fi
 
-tegfs config set port 8081
+tegfs config set port 33470
 tegfs config set sharedir /tmp/tegfs-share
 
 sh scripts/garbage-collector.sh &

@@ -12,4 +12,4 @@ COPY . .
 RUN make clean && make install && tegfs version
 
 CMD ["bash", "scripts/run-docker.sh"]
-EXPOSE 8081
+EXPOSE 33470
