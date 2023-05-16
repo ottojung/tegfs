@@ -42,7 +42,7 @@ First, let's make sure we are working on the test database by issuing the follow
 
 This sets the root of the TegFS database to the dist/exampleroot directory relative to the current working directory.
 
-Now, let's generate some date for testing. In the terminal, type the following commands:
+Now, let's generate some data for testing. In the terminal, type the following commands:
 
    .. code-block:: bash
 
