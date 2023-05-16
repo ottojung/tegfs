@@ -81,7 +81,7 @@ TegFS can also be run inside a Docker container. To get started, follow these st
 2. Clone the TegFS repository: ``git clone https://codeberg.org/otto/tegfs``
 3. Navigate to the ``tegfs`` directory: ``cd tegfs``
 4. Build the Docker image: ``export DOCKER_BUILDKIT=1 docker build -f scripts/Dockerfile -t tegfs .``
-5. Run the container: ``docker run -p 33470:80 --name tegfs tegfs``
+5. Run the container: ``docker run --rm -p 33470:80 --name tegfs tegfs``
 6. Open ``http://localhost:33470`` in your web browser to access TegFS.
 
 Alternatively, you can use the provided Makefile to run the Docker container:
