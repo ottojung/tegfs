@@ -25,24 +25,6 @@ Plus, it's completely free and libre software, so everyone can use and contribut
 Whether you prefer working on the command line or through a user-friendly interface, TegFS has got you covered.
 TegFS offers a featureful CLI for power users, and a web-based UI for easy access and file management.
 
-# Dependencies
-
-- Main program
-  - `GNU guile` version >1.8 for running the main program (MUST HAVE)
-  - `wget` for saving stuff from the internet
-  - `xclip` for dumping clipboard content
-  - `file` for determining file types
-  - `fzf` for making choices during `tegfs save` (MUST HAVE)
-  - `rsync` and `ssh` for sending files to remote servers if using `tegfs save` with `--remote`
-  - `swi-prolog` for `tegfs prolog` command
-- Web server
-  - `ffmpeg` for video previews production
-  - `imagemagick` for image previews production
-  - `entr` for checking if new previews need to be made (MUST HAVE)
-  - third-party file server, such as `Nginx`, if using `--offload-filesharing` option for `tegfs serve`
-  - `xdg-open` if not using `--offload-filesharing` option for `tegfs serve`
-  - [pup](https://github.com/ericchiang/pup) for generating weblink thumbnails
-
 # Note on query
 
 Along with usual tags,
