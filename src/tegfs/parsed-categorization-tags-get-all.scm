@@ -27,6 +27,7 @@
     (apply append ast/flatten))
 
   (define without-special
-    (cdr words))
+    (if (null? words) '()
+        (cdr words)))
 
   (list-deduplicate without-special))
