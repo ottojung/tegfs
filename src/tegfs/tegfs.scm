@@ -23,6 +23,7 @@
     :use-module ((tegfs add) :select (tegfs-add/parse))
     :use-module ((tegfs categorize) :select (tegfs-categorize/parse))
     :use-module ((tegfs cli-delete) :select (CLI::delete))
+    :use-module ((tegfs cli-edit) :select (CLI::edit))
     :use-module ((tegfs cli-print) :select (CLI::print))
     :use-module ((tegfs cli-query) :select (CLI::query))
     :use-module ((tegfs cli-save) :select (CLI::save))
@@ -58,6 +59,7 @@
       /      get GETARGS
       /      delete DELETEARGS
       /      print PRINTARGS
+      /      edit EDITARGS
       /      query QUERYARGS
       /      config CONFIGOPT
       /      serve SERVARGS*
@@ -93,6 +95,7 @@
       GETARGS : FORMAT? <entry-id>
       DELETEARGS : <entry-id> MAYBEKEEPFILES?
       PRINTARGS : <entry-id>
+      EDITARGS : <entry-id>
       MAYBEKEEPFILES : --keep-files / --no-keep-files
       SERVARGS : --offload-filesharing <fileserver>
       /          --no-offload-filesharing
@@ -143,6 +146,7 @@
      :type (<seed> 'number)
 
      :help (print (stringf "Print the contents of entry's ~a, or nothing if entry is not a file entry" keyword-target))
+     :help (edit (stringf "Edit the contents of entry's ~a, or exit with an error if entry is not a file entry" keyword-target))
      :help (<remote> "A remote address like 'user1@example.com'.")
      :help (--diropen (stringf "Acknowledge <~a> property by treating elements of the ~a directory as entries having the same tags as the original entry." keyword-diropen keyword-target))
      :help (--dirpreview (stringf "Acknowledge <~a> property by treating elements of the ~a directory as entries having the same tags as the original entry." keyword-dirpreview keyword-target))
@@ -166,6 +170,7 @@
          ((and get <entry-id>) (tegfs-get/parse <format> <entry-id>))
          (delete (CLI::delete <entry-id> --keep-files))
          (print (CLI::print <entry-id>))
+         (edit (CLI::edit <entry-id>))
          (talk (CLI::talk --web))
          (make-thumbnails (tegfs-make-thumbnails/parse <target> <output>))
          (config (tegfs-config/parse --display --write get set <name> <value> get-user set-user <user-name> <user-field> --password <user-value>))
