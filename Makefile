@@ -27,7 +27,7 @@ uninstall:
 
 $(BINARY_PATH): dist/tegfs $(PREFIX_BIN)
 	mkdir -p "$(INSTALL_ROOT)"
-	chown "$(USER):" "$(INSTALL_ROOT)"
+	chown "$(USER):" "$(INSTALL_ROOT)" || true
 	mkdir -p "$(CODE_INSTALL_ROOT)"
 	rm -rf "$(CODE_INSTALL_ROOT)"
 	cp -p -T -L -r "src" "$(CODE_INSTALL_ROOT)"
