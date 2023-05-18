@@ -63,7 +63,6 @@ We can now search for files using queries:
    .. code-block:: bash
 
        $ tegfs query text testing
-
        ((tags text testing small)
         (target . "8h/file1.txt")
         (id . "neidahutmnqjwhd83p2xcfn8rv7qkf")
@@ -77,7 +76,6 @@ We can now search for files using queries:
        Total of 2 matches.
 
        $ tegfs query small testing
-
        ((tags text testing small)
         (target . "8h/file1.txt")
         (id . "neidahutmnqjwhd83p2xcfn8rv7qkf")
@@ -87,7 +85,14 @@ We can now search for files using queries:
 
 The tegfs query command searches for files in the TegFS database that match the specified criteria. In this example, we are searching for files with the tags "text" and "small", and "text" respectively.
 
-These files are also visible in the web interface:
+We can also print the contents of a database file by addressing it by its entries' id:
+
+   .. code-block:: bash
+
+       $ tegfs print "neidahutmnqjwhd83p2xcfn8rv7qkf"
+       file content
+
+The newly added files are also visible in the web interface:
 
 .. image:: _static/demo-cli.png
 
