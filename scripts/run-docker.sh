@@ -7,7 +7,7 @@ make clean
 make install
 
 if ! tegfs config get-user admin pass
-then tegfs config set-user admin --password 1234
+then tegfs config set-user admin --password $(cat /dev/urandom | base32 | head -c 20)
 fi
 
 tegfs config set port 80
