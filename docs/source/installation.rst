@@ -105,6 +105,13 @@ TegFS can also be run inside a Docker container. To get started, follow these st
 
 6. Open ``http://localhost:33470`` in your web browser to access TegFS.
 
+
+.. important::
+
+    The password for TegFS in a docker container is randomly generated.
+    Look for ``--password`` string in the docker logs to get it.
+
+
 Alternatively, you can use the provided Makefile to run the Docker container:
 
 1. Navigate to the TegFS directory:
@@ -121,7 +128,9 @@ Alternatively, you can use the provided Makefile to run the Docker container:
 
 3. Open ``http://localhost:33470`` in your web browser to access TegFS.
 
-Note that the Docker container is configured to use port ``33470`` by default. If you need to use a different port, you can specify it when running the container, e.g. ``docker run -p 8080:80 tegfs``.
+.. note::
+
+    Docker container is configured to use port ``33470`` by default. If you need to use a different port, you can specify it when running the container, e.g. ``docker run -p 8080:80 tegfs``.
 
 To access TegFS command line interface, run
 
