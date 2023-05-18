@@ -41,7 +41,8 @@
     (list-map/flatten (curry-if pair? identity list) words))
 
   (define ast
-    (CFG-CLI->CFG-AST words-flat))
+    (if (null? words-flat) '()
+        (CFG-CLI->CFG-AST words-flat)))
 
   (define ast/flatten
     (map (lambda (production)
