@@ -24,6 +24,7 @@
     :use-module ((euphrates tilda-a) :select (~a))
     :use-module ((tegfs add-entry) :select (add-entry))
     :use-module ((tegfs add-file-entry) :select (add-file-entry add-file-entry/link))
+    :use-module ((tegfs entry-get-id) :select (entry-get-id))
     :use-module ((tegfs fatal) :select (fatal))
     :use-module ((tegfs keyword-date) :select (keyword-date))
     :use-module ((tegfs keyword-prev) :select (keyword-prev))
@@ -43,32 +44,34 @@
 
   (define tags (or <tag...> '()))
 
-  (catchu-case
+  (define entry
+    (catchu-case
 
-   (if <add-file>
-       (tegfs-add-file
-        <add-file> (path-get-basename <add-file>) --link
-        <title> tags
-        --series key-value-pairs
-        <date>)
-       (tegfs-add
-        <target> <title> tags
-        --series key-value-pairs
-        <date>))
+     (if <add-file>
+         (tegfs-add-file
+          <add-file> (path-get-basename <add-file>) --link
+          <title> tags
+          --series key-value-pairs
+          <date>)
+         (tegfs-add
+          <target> <title> tags
+          --series key-value-pairs
+          <date>))
 
-   (('entry-with-such-id-already-exists existing-id)
-    (fatal "Want an original id, but this one (~a) already exists" existing-id))
+     (('entry-with-such-id-already-exists existing-id)
+      (fatal "Want an original id, but this one (~a) already exists" existing-id))
 
-   (('no-last-id-for-series)
-    (fatal "Want series, but last-id file is not present"))
+     (('no-last-id-for-series)
+      (fatal "Want series, but last-id file is not present"))
 
-   (('target-absolute-but-should-relative target)
-    (fatal "Target ~s must be a path relative to the registry file, not an absolute path" target))
+     (('target-absolute-but-should-relative target)
+      (fatal "Target ~s must be a path relative to the registry file, not an absolute path" target))
 
-   (('target-does-not-exist target)
-    (fatal "Target ~s does not exist. Note that filepath must be relative to the registry file" target)))
+     (('target-does-not-exist target)
+      (fatal "Target ~s does not exist. Note that filepath must be relative to the registry file" target))))
 
-  (display "Added!\n"))
+  (display (entry-get-id entry))
+  (newline))
 
 (define (tegfs-add/make-entry
          <target> <title> tags
