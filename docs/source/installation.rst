@@ -68,7 +68,9 @@ The following dependencies are required to install and use TegFS:
 | pup               | for generating weblink thumbnails              |
 +-------------------+------------------------------------------------+
 
-Note that the dependencies listed as **MUST HAVE** are required for basic TegFS functionality, while the others are only needed for certain features.
+.. note::
+
+   Dependencies listed as **MUST HAVE** are required for basic TegFS functionality, while the others are only needed for certain features.
 
 If you encounter any issues during the installation process, please consult the TegFS documentation or open an issue on the project's Codeberg repository.
 
