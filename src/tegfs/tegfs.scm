@@ -20,7 +20,6 @@
     :use-module ((euphrates define-cli) :select (define-cli:show-help with-cli))
     :use-module ((euphrates stringf) :select (stringf))
     :use-module ((euphrates with-randomizer-seed) :select (with-randomizer-seed))
-    :use-module ((tegfs add) :select (tegfs-add/parse))
     :use-module ((tegfs categorize) :select (tegfs-categorize/parse))
     :use-module ((tegfs cli-delete) :select (CLI::delete))
     :use-module ((tegfs cli-edit) :select (CLI::edit))
@@ -63,27 +62,35 @@
       /      query QUERYARGS
       /      config CONFIGOPT
       /      serve SERVARGS*
-      /      save SAVEARGS
       /      categorize
       /      talk TALKOPTS*
       /      prolog
       /      make-thumbnails THUMBOPT
       /      dump-clipboard
 
-      ADDOPT : --file <add-file> FILELINK?
+      ADDOPT : --content <savetext>
       /        --title <title>
       /        --tag <tag...>
       /        --series
       /        --no-series
-      /        --key <key...> <value...>
-      /        --date <date>
+      /        --kind <kind>
+      /        --interactive
+      /        --no-interactive
+      /        --diropen
+      /        --no-diropen
+      /        --dirpreview
+      /        --no-dirpreview
+      /        --download
+      /        --no-download
+      /        --unsure-if-download
       /        --target <add-target>
-      SAVEARGS : FILELINK SAVETARGET
-      /          --from-remote <remote-id>
-      /          REMOTEOPT? SAVETARGET?
-      FILELINK : --link
-      REMOTEOPT : --remote <remote>
-      SAVETARGET : --content <savetext>
+      /        --mimetype <mimetype>
+      /        --note <note>
+      /        --link
+      /        --remote <remote>
+      /        --from-remote <remote-id>
+      /        --date <date>
+      /        --key <key...> <value...>
       QUERYARGS : QUERYOPT* QUERYQ*
       QUERYOPT : --diropen
       /          --no-diropen
@@ -122,11 +129,17 @@
      :default (--no-series #t)
      :exclusive (--no-series --series)
 
+     :default (--no-interactive #t)
+     :exclusive (--no-interactive --interactive)
+
      :default (--sexp-format #t)
      :exclusive (--sexp-format --format)
 
      :default (--diropen #t)
      :exclusive (--diropen --no-diropen)
+
+     :default (--unsure-if-download #t)
+     :exclusive (--unsure-if-download --download --no-download)
 
      :default (--no-dirpreview #t)
      :exclusive (--no-dirpreview --dirpreview)
@@ -143,6 +156,8 @@
      :exclusive (--keep-files --no-keep-files)
      :synonym (--no-keep-files --delete-files-too)
 
+     :type (<kind> '(localfile link pasta data))
+
      :type (<seed> 'number)
 
      :help (print (stringf "Print the contents of entry's ~a, or nothing if entry is not a file entry" keyword-target))
@@ -150,6 +165,8 @@
      :help (<remote> "A remote address like 'user1@example.com'.")
      :help (--diropen (stringf "Acknowledge <~a> property by treating elements of the ~a directory as entries having the same tags as the original entry." keyword-diropen keyword-target))
      :help (--dirpreview (stringf "Acknowledge <~a> property by treating elements of the ~a directory as entries having the same tags as the original entry." keyword-dirpreview keyword-target))
+     :help (<savetext> "This could be a filename, a URL, or simply text. TegFS will try to figure out the type.")
+     :help (<kind> (stringf "This forces ~s to be recognized as of certain type." (quote <savetext>)))
 
      (when --help
        (define-cli:show-help))
@@ -159,10 +176,33 @@
       (parameterize ((root/p <root>))
         (cond
          (--version (display tegfs-version) (newline))
-         (add (tegfs-add/parse
-               <add-file> --link <add-target> <title> <tag...> --series <key...> <value...>
-               <date>))
-         (save (CLI::save <remote> --from-remote <remote-id> --link <savetext>))
+         (add (CLI::save
+
+               --content <savetext>
+               --kind <kind>
+               --interactive
+               --no-interactive
+               --title <title>
+               --tag <tag...>
+               --series
+               --no-series
+               --diropen
+               --no-diropen
+               --dirpreview
+               --no-dirpreview
+               --download
+               --no-download
+               --unsure-if-download
+               --target <add-target>
+               --mimetype <mimetype>
+               --note <note>
+               --link
+               --remote <remote>
+               --from-remote <remote-id>
+               --date <date>
+               --key <key...> <value...>
+
+               ))
          (categorize (tegfs-categorize/parse))
          (serve (tegfs-serve/parse (and --offload-filesharing <fileserver>) --no-authorization))
          (prolog (tegfs-prolog/parse))

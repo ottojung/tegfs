@@ -19,9 +19,7 @@
     :export (CLI::save::loop)
     :use-module ((euphrates alist-initialize-bang) :select (alist-initialize!:current-setters))
     :use-module ((euphrates alist-initialize-loop) :select (alist-initialize-loop))
-    :use-module ((euphrates asyncproc-input-text-p) :select (asyncproc-input-text/p))
     :use-module ((euphrates dprintln) :select (dprintln))
-    :use-module ((euphrates lines-to-string) :select (lines->string))
     :use-module ((euphrates list-intersperse) :select (list-intersperse))
     :use-module ((euphrates list-take-n) :select (list-take-n))
     :use-module ((euphrates path-extensions) :select (path-extensions))
@@ -30,8 +28,6 @@
     :use-module ((euphrates print-in-frame) :select (print-in-frame))
     :use-module ((euphrates range) :select (range))
     :use-module ((euphrates read-string-line) :select (read-string-line))
-    :use-module ((euphrates run-syncproc-re-star) :select (run-syncproc/re*))
-    :use-module ((euphrates string-strip) :select (string-strip))
     :use-module ((euphrates stringf) :select (stringf))
     :use-module ((euphrates tilda-a) :select (~a))
     :use-module ((euphrates tilda-s) :select (~s))
@@ -47,10 +43,8 @@
     :use-module ((tegfs file-is-video-q) :select (file-is-video?))
     :use-module ((tegfs get-file-mimetype) :select (get-file-mimetype))
     :use-module ((tegfs get-random-basename) :select (get-random-basename))
-    :use-module ((tegfs get-registry-files) :select (get-registry-files))
     :use-module ((tegfs get-root) :select (get-root))
     :use-module ((tegfs get-save-plugins) :select (get-save-plugins))
-    :use-module ((tegfs regfile-suffix) :select (regfile-suffix))
     :use-module ((tegfs run-save-plugins) :select (run-save-plugins))
     )))
 
@@ -73,26 +67,6 @@
       (begin
         (read-answer "Press enter if parameters are OK")
         'done)))
-
-(define (get-registry-file)
-  (define registry-files (get-registry-files))
-
-  (case (length registry-files)
-    ((0)
-     (let ((answer
-            (read-answer "No existing registry files found.\nName for a new one: ")))
-       (string-append answer regfile-suffix)))
-    ((1) (car registry-files))
-    (else
-     (let ()
-       (define fzf-input (lines->string registry-files))
-       (define-values (output code)
-         (parameterize ((asyncproc-input-text/p fzf-input))
-           (run-syncproc/re* "fzf")))
-       (define chosen (string-strip output))
-       (unless (= 0 code)
-         (fatal "Cancelled"))
-       chosen))))
 
 (define (read-enumeration name option-list/0)
   (define option-list (map ~a option-list/0))
@@ -143,19 +117,23 @@
    setters
    (range (length setters))))
 
-(define (useradvice name alist recalculate? thunk)
-  (if recalculate?
-      (dprintln "\n Switched to ~s" (~s name))
-      (begin
-        (newline) (newline) (newline) (newline) (newline) (newline) (newline) (newline) (newline) (newline)
-        (newline) (newline) (newline) (newline) (newline) (newline) (newline) (newline) (newline) (newline)
-        (newline) (newline) (newline) (newline) (newline) (newline) (newline) (newline) (newline) (newline)
-        (newline) (newline) (newline) (newline) (newline) (newline) (newline) (newline) (newline) (newline)
-        (newline) (newline) (newline) (newline) (newline) (newline) (newline) (newline) (newline) (newline)
-        (newline) (newline) (newline) (newline) (newline) (newline) (newline) (newline) (newline) (newline)
-        (print-setter-fields name)))
-  (newline)
-  (thunk))
+(define (useradvice --interactive)
+  (lambda (name alist recalculate? thunk)
+    (unless --interactive
+      (fatal "Cannot infer the value of ~s" name))
+
+    (if recalculate?
+        (dprintln "\n Switched to ~s" (~s name))
+        (begin
+          (newline) (newline) (newline) (newline) (newline) (newline) (newline) (newline) (newline) (newline)
+          (newline) (newline) (newline) (newline) (newline) (newline) (newline) (newline) (newline) (newline)
+          (newline) (newline) (newline) (newline) (newline) (newline) (newline) (newline) (newline) (newline)
+          (newline) (newline) (newline) (newline) (newline) (newline) (newline) (newline) (newline) (newline)
+          (newline) (newline) (newline) (newline) (newline) (newline) (newline) (newline) (newline) (newline)
+          (newline) (newline) (newline) (newline) (newline) (newline) (newline) (newline) (newline) (newline)
+          (print-setter-fields name)))
+    (newline)
+    (thunk)))
 
 (define swiched-field?
   (make-parameter #f))
@@ -190,17 +168,48 @@
         answer)))
 
 
-(define (CLI::save::loop --link <savetext>)
+(define (CLI::save::loop
+
+         --content <savetext>
+         --kind <kind>
+         --interactive
+         --no-interactive
+         --title <title>
+         --tag <tag...>
+         --series
+         --no-series
+         --diropen
+         --no-diropen
+         --dirpreview
+         --no-dirpreview
+         --download
+         --no-download
+         --unsure-if-download
+         --target <add-target>
+         --mimetype <mimetype>
+         --note <note>
+         --link
+         --remote <remote>
+         --from-remote <remote-id>
+         --date <date>
+         --key <key...> <value...>
+
+         )
+
   (define plugins (get-save-plugins))
   (define root (get-root))
   (alist-initialize-loop
    :current current
    :initial
-   ((series 'no)
-    (confirm 'no)
-    (diropen? 'no)
-    (dirpreview? 'no)
+   ((confirm 'no)
+    (diropen? (if --diropen 'yes 'no))
+    (dirpreview? (if --dirpreview 'yes 'no))
+    (series (if --series 'yes 'no))
     (link? (if --link 'yes 'no))
+    (title (or <title> (if --interactive #f 'none)))
+    (tags (or <tag...> (if --interactive #f 'none)))
+    (additional-properties
+     (if <key...> (map cons (map string->symbol <key...>) <value...>) '()))
 
     (-text-content
      (or <savetext>
@@ -211,16 +220,23 @@
     (* (run-save-plugins root current plugins))
 
     (download?
-     (if (a-weblink? (-text-content))
+     (cond
+      (--download 'yes)
+      (--no-download 'no)
+      (else
+       (cond
+        ((equal? <kind> 'localfile) 'no)
+        ((a-weblink? (-text-content))
          (let ((name (url-get-path (-text-content))))
            (and (or (file-is-video? name)
                     (file-is-image? name)
                     (file-is-audio? name))
-                'yes))
-         'no))
+                'yes)))
+        (else 'no)))))
 
     (kind
-     (classify-clipboard-text-content (-text-content)))
+     (or <kind>
+         (classify-clipboard-text-content (-text-content))))
 
     (-temporary-file
      (or
@@ -239,6 +255,7 @@
 
     (mimetype
      (or
+      <mimetype>
       (and (equal? (kind) 'pasta)
            "text/plain")
       (and (equal? 'link (kind))
@@ -252,12 +269,16 @@
 
     (target-basename
      (or
+      (and <add-target>
+           (path-without-extension <add-target>))
       (and (equal? 'localfile (kind))
            (path-without-extension (path-get-basename (-text-content))))
       (get-random-basename)))
 
     (target-extension
      (or
+      (and <add-target>
+           (path-extensions <add-target>))
       (and (equal? 'pasta (kind)) ".txt")
       (and (equal? 'localfile (kind))
            (path-extensions (-text-content)))
@@ -267,11 +288,11 @@
       (and (mimetype 'or #f)
            (get-clipboard-type-extension (mimetype)))))
 
-    (note 'none)
+    (note (or <note> 'none))
 
     )
 
-   :useradvice useradvice
+   :useradvice (useradvice --interactive)
    :user
    ((title (read-answer "Title: "))
     (tags (get-tags))
