@@ -156,6 +156,11 @@
      :exclusive (--keep-files --no-keep-files)
      :synonym (--no-keep-files --delete-files-too)
 
+     :synonym (get read)
+     :synonym (get-user read-user)
+     :synonym (set update)
+     :synonym (set-user update-user)
+
      :type (<kind> '(localfile link pasta data))
 
      :type (<seed> 'number)
