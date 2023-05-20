@@ -20,7 +20,6 @@
     :use-module ((euphrates file-delete) :select (file-delete))
     :use-module ((euphrates get-command-line-arguments) :select (get-command-line-arguments))
     :use-module ((euphrates run-syncproc) :select (run-syncproc))
-    :use-module ((euphrates stringf) :select (stringf))
     :use-module ((euphrates words-to-string) :select (words->string))
     :use-module ((euphrates write-string-file) :select (write-string-file))
     :use-module ((tegfs fatal) :select (fatal))
@@ -47,6 +46,6 @@
         (fatal "Could not copy the command to the other side"))))
   (file-delete temp-file)
 
-  (let ((s (system* "ssh" "-q" "-o" "SendEnv LANG" "-t" <remote> (stringf "exec /bin/sh -l ~s" remote-file-name))))
+  (let ((s (system* "ssh" "-q" "-o" "SendEnv LANG" "-t" <remote> "/bin/sh" "-l" remote-file-name)))
     (unless (= 0 (status:exit-val s))
       (fatal "Something went wrong on the other side"))))
