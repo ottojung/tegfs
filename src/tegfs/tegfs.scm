@@ -25,6 +25,7 @@
     :use-module ((tegfs cli-edit) :select (CLI::edit))
     :use-module ((tegfs cli-print) :select (CLI::print))
     :use-module ((tegfs cli-query) :select (CLI::query))
+    :use-module ((tegfs cli-remote) :select (CLI::remote/parse))
     :use-module ((tegfs cli-save) :select (CLI::save))
     :use-module ((tegfs cli-show-license) :select (CLI::show-license))
     :use-module ((tegfs cli-show-warranty) :select (CLI::show-warranty))
@@ -63,6 +64,7 @@
       /      config CONFIGOPT
       /      serve SERVARGS*
       /      categorize
+      /      remote <remote> MAIN
       /      talk TALKOPTS*
       /      prolog
       /      make-thumbnails THUMBOPT
@@ -173,14 +175,13 @@
      :help (<savetext> "This could be a filename, a URL, or simply text. TegFS will try to figure out the type.")
      :help (<kind> (stringf "This forces ~s to be recognized as of certain type." (quote <savetext>)))
 
-     (when --help
-       (define-cli:show-help))
-
      (with-randomizer-seed
       (or <seed> 'random)
       (parameterize ((root/p <root>))
         (cond
+         (remote (CLI::remote/parse <remote>))
          (--version (display tegfs-version) (newline))
+         (--help (define-cli:show-help))
          (add (CLI::save
 
                --content <savetext>
