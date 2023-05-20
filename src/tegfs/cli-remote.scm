@@ -39,11 +39,9 @@
   (define remote-file-name (string-append "tegfs-remote-hub/" <remote-id>))
   (write-string-file temp-file temp-file-content)
 
-  (with-output-to-string
-    (lambda _
-      (unless (= 0 (run-syncproc "scp" "--" temp-file (string-append <remote> ":" remote-file-name)))
-        (file-delete temp-file)
-        (fatal "Could not copy the command to the other side"))))
+  (unless (= 0 (run-syncproc "scp" "-q" "--" temp-file (string-append <remote> ":" remote-file-name)))
+    (file-delete temp-file)
+    (fatal "Could not copy the command to the other side"))
   (file-delete temp-file)
 
   (let ((s (system* "ssh" "-q" "-o" "SendEnv LANG" "-t" <remote> "/bin/sh" "-l" remote-file-name)))
