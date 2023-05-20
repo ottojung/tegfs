@@ -53,8 +53,8 @@ Next, we will add these files into the TegFS database. In the terminal, type the
 
    .. code-block:: bash
 
-       $ tegfs add --file file1.txt --tag text --tag testing --tag small
-       $ tegfs add --file file2.txt --tag text --tag testing --tag big
+       $ tegfs add --content file1.txt --tag text --tag testing --tag small
+       $ tegfs add --content file2.txt --tag text --tag testing --tag big
 
 The ``tegfs add`` command adds files to the TegFS database. In this example, we are adding ``file1.txt`` and ``file2.txt`` with tags **text**, **testing**, **small**, and **big**.
 
