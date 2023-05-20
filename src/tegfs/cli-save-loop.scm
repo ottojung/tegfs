@@ -190,7 +190,6 @@
          --note <note>
          --link
          --remote <remote>
-         --from-remote <remote-id>
          --date <date>
          --key <key...> <value...>
 

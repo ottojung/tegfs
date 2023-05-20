@@ -90,7 +90,6 @@
       /        --note <note>
       /        --link
       /        --remote <remote>
-      /        --from-remote <remote-id>
       /        --date <date>
       /        --key <key...> <value...>
       QUERYARGS : QUERYOPT* QUERYQ*
@@ -204,7 +203,6 @@
                --note <note>
                --link
                --remote <remote>
-               --from-remote <remote-id>
                --date <date>
                --key <key...> <value...>
 
