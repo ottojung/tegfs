@@ -17,13 +17,10 @@
  (guile
   (define-module (tegfs cli-remote)
     :export (CLI::remote/parse CLI::remote)
-    :use-module ((euphrates file-delete) :select (file-delete))
     :use-module ((euphrates get-command-line-arguments) :select (get-command-line-arguments))
-    :use-module ((euphrates run-syncproc) :select (run-syncproc))
+    :use-module ((euphrates shell-quote) :select (shell-quote))
     :use-module ((euphrates words-to-string) :select (words->string))
-    :use-module ((euphrates write-string-file) :select (write-string-file))
     :use-module ((tegfs fatal) :select (fatal))
-    :use-module ((tegfs get-random-basename) :select (get-random-basename))
     )))
 
 
@@ -33,17 +30,8 @@
   (CLI::remote <remote> my-cli-arguments))
 
 (define (CLI::remote <remote> args)
-  (define <remote-id> (get-random-basename))
-  (define temp-file (get-random-basename))
-  (define temp-file-content (string-append "tegfs " (words->string args) " ; rm -f $0"))
-  (define remote-file-name (string-append "tegfs-remote-hub/" <remote-id>))
-  (write-string-file temp-file temp-file-content)
-
-  (unless (= 0 (run-syncproc "scp" "-q" "--" temp-file (string-append <remote> ":" remote-file-name)))
-    (file-delete temp-file)
-    (fatal "Could not copy the command to the other side"))
-  (file-delete temp-file)
-
-  (let ((s (system* "ssh" "-q" "-o" "SendEnv LANG" "-t" <remote> "/bin/sh" "-l" remote-file-name)))
+  (let ((s (system* "ssh" "-q" "-o" "SendEnv LANG" "-t" <remote>
+                    "/bin/sh" "-l" "-c"
+                    (shell-quote (words->string (cons "tegfs" (map shell-quote args)))))))
     (unless (= 0 (status:exit-val s))
       (fatal "Something went wrong on the other side"))))
