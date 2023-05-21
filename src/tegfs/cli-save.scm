@@ -32,6 +32,7 @@
     :use-module ((tegfs add) :select (tegfs-add tegfs-add-file))
     :use-module ((tegfs cli-remote) :select (CLI::remote))
     :use-module ((tegfs cli-save-loop) :select (CLI::save::loop))
+    :use-module ((tegfs cli-save-working-file-p) :select (CLI::save-working-file/p))
     :use-module ((tegfs clipboard) :select (classify-clipboard-text-content))
     :use-module ((tegfs default-db-path) :select (default-db-path))
     :use-module ((tegfs dump-clipboard) :select (tegfs-dump-clipboard tegfs-dump-clipboard/pasta))
@@ -41,11 +42,6 @@
     :use-module ((tegfs keyword-id) :select (keyword-id))
     :use-module ((tegfs make-temporary-filename-local) :select (make-temporary-filename/local))
     )))
-
-
-
-(define working-file/p
-  (make-parameter #f))
 
 (define (send-state state)
   (define title/0 (cdr (assoc 'title state)))
@@ -82,7 +78,7 @@
          (string-append target-basename target-extension)))
 
   (define _delete-result
-    (file-delete (working-file/p)))
+    (file-delete (CLI::save-working-file/p)))
 
   (define entry
     (if -temporary-file
@@ -128,7 +124,7 @@
          )
   (define (CLI::save/no-remote)
     (define id
-      (parameterize ((working-file/p (make-temporary-filename/local)))
+      (parameterize ((CLI::save-working-file/p (make-temporary-filename/local)))
         (let ()
           (define state
             (CLI::save::loop

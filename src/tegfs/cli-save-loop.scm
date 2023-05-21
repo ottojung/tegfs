@@ -35,6 +35,7 @@
     :use-module ((euphrates write-string-file) :select (write-string-file))
     :use-module ((tegfs a-weblink-q) :select (a-weblink?))
     :use-module ((tegfs categorize) :select (tegfs-categorize))
+    :use-module ((tegfs cli-save-working-file-p) :select (CLI::save-working-file/p))
     :use-module ((tegfs clipboard) :select (classify-clipboard-text-content dump-clipboard-to-temporary get-clipboard-text-content get-clipboard-type-extension))
     :use-module ((tegfs download-to-temporary-file) :select (download-to-temporary-file))
     :use-module ((tegfs fatal) :select (fatal))
@@ -85,10 +86,8 @@
           (dprintln "\nPlease choose on of the following: ~a" hint/inner)
           (loop)))))
 
-(define working-file/p (make-parameter #f))
-
 (define (get-tags)
-  (cdr (tegfs-categorize (working-file/p))))
+  (cdr (tegfs-categorize (CLI::save-working-file/p))))
 
 (define (print-text-content ret)
   (newline)
