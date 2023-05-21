@@ -25,4 +25,4 @@ Plus, it's completely free and libre software, so everyone can use and contribut
 Whether you prefer working on the command line or through a user-friendly interface, TegFS has got you covered.
 TegFS offers a featureful CLI for power users, and a web-based UI for easy access and file management.
 
-Join TegFS development on [Codeberg](https://codeberg.org/otto/tegfs>).
+Join TegFS development on [Codeberg](https://codeberg.org/otto/tegfs).
