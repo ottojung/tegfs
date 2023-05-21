@@ -90,6 +90,7 @@
       /        --note <note>
       /        --link
       /        --remote <remote>
+      /        --no-remote
       /        --date <date>
       /        --key <key...> <value...>
       QUERYARGS : QUERYOPT* QUERYQ*
@@ -153,6 +154,9 @@
      :default (--display #t)
      :exclusive (--display --write)
 
+     :default (--no-remote #t)
+     :exclusive (--no-remote --remote)
+
      :default (--keep-files #t)
      :exclusive (--keep-files --no-keep-files)
      :synonym (--no-keep-files --delete-files-too)
@@ -203,6 +207,7 @@
                --note <note>
                --link
                --remote <remote>
+               --no-remote
                --date <date>
                --key <key...> <value...>
 

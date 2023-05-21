@@ -177,6 +177,7 @@
          --note <note>
          --link
          --remote <remote>
+         --no-remote
          --date <date>
          --key <key...> <value...>
 
@@ -208,6 +209,7 @@
              --note <note>
              --link
              --remote <remote>
+             --no-remote
              --date <date>
              --key <key...> <value...>
 
