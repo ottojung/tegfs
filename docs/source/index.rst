@@ -1,9 +1,10 @@
 
-Welcome to TegFS's documentation!
+Welcome to TegFS documentation!
 =================================
 
-Introduction
-------------
+.. image:: _static/logo-white.jpeg
+      :alt: TegFS logo
+      :align: center
 
 TegFS is a virtual file system that utilizes a tag-based system for file organization,
 categorization and searching.
@@ -28,6 +29,8 @@ Plus, it's completely free and libre software, so everyone can use and contribut
 
 Whether you prefer working on the command line or through a user-friendly interface, TegFS has got you covered.
 TegFS offers a featureful CLI for power users, and a web-based UI for easy access and file management.
+
+Join TegFS development on `Codeberg <https://codeberg.org/otto/tegfs>`_.
 
 Installation
 ------------
