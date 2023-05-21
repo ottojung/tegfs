@@ -21,13 +21,22 @@
     :use-module ((euphrates assq-or) :select (assq-or))
     :use-module ((euphrates file-delete) :select (file-delete))
     :use-module ((euphrates file-or-directory-exists-q) :select (file-or-directory-exists?))
+    :use-module ((euphrates get-command-line-arguments) :select (get-command-line-arguments))
     :use-module ((euphrates make-directories) :select (make-directories))
+    :use-module ((euphrates path-get-basename) :select (path-get-basename))
+    :use-module ((euphrates path-normalize) :select (path-normalize))
     :use-module ((euphrates raisu) :select (raisu))
+    :use-module ((euphrates run-syncproc) :select (run-syncproc))
+    :use-module ((euphrates stringf) :select (stringf))
     :use-module ((tegfs a-weblink-q) :select (a-weblink?))
     :use-module ((tegfs add) :select (tegfs-add tegfs-add-file))
+    :use-module ((tegfs cli-remote) :select (CLI::remote))
     :use-module ((tegfs cli-save-loop) :select (CLI::save::loop))
+    :use-module ((tegfs clipboard) :select (classify-clipboard-text-content))
     :use-module ((tegfs default-db-path) :select (default-db-path))
+    :use-module ((tegfs dump-clipboard) :select (tegfs-dump-clipboard tegfs-dump-clipboard/pasta))
     :use-module ((tegfs fatal) :select (fatal))
+    :use-module ((tegfs get-random-basename) :select (get-random-basename))
     :use-module ((tegfs get-root) :select (get-root))
     :use-module ((tegfs keyword-id) :select (keyword-id))
     :use-module ((tegfs make-temporary-filename-local) :select (make-temporary-filename/local))
@@ -220,10 +229,48 @@
     (display id)
     (newline))
 
+  (define (CLI::save/remote)
+    (define savetext
+      (and <savetext>
+           (case (classify-clipboard-text-content <savetext>)
+             ((data) (raisu 'savetext-cannot-be-data <savetext>))
+             ((link localfile) <savetext>)
+             ((pasta) (tegfs-dump-clipboard/pasta <savetext>))
+             (else (raisu 'unexpected-kind <savetext>)))))
+    (define working-text
+      (or savetext
+          (tegfs-dump-clipboard)))
+    (define <remote-id>
+      (get-random-basename))
+
+    (define kind
+      (or <kind>
+          (classify-clipboard-text-content working-text)))
+
+    (define remote-content
+      (case kind
+        ((localfile)
+         (unless (file-or-directory-exists? working-text)
+           (raisu 'file-must-have-been-created working-text))
+         (let ((normalized (path-normalize working-text)))
+           (unless (= 0 (run-syncproc "rsync" "--info=progress2" "--mkpath" "--partial" "--recursive" "--chmod=u=rwX,g=rX,o=" normalized (stringf "~a:tegfs-remote-hub/" <remote>)))
+             (fatal "Syncing to remote failed"))
+           (append-posix-path "tegfs-remote-hub" (path-get-basename normalized))))
+        ((link) working-text)
+        ((data pasta) (raisu 'unexpected-save-kind kind working-text))
+        (else (raisu 'unhandled-kind kind working-text))))
+
+    (define new-args
+      (append
+       (get-command-line-arguments)
+       (list
+        "--no-remote"
+        "--content" remote-content)))
+
+    (CLI::remote <remote> new-args))
+
   (cond
-   ;; (<remote>
-   ;;  (CLI::save/remote <remote> <savetext>))
-   ;; (--from-remote
-   ;;  (CLI::save/from-remote <remote-id>))
+   (--remote
+    (CLI::save/remote))
    (else
     (CLI::save/no-remote))))
