@@ -28,3 +28,27 @@
   --ifm-color-primary-lightest: #4fddbf;
   --docusaurus-highlighted-code-line-bg: rgba(0, 0, 0, 0.3);
 }
+
+.split-code {
+  display: flex;
+  flex-direction: column;
+}
+
+.split-code pre {
+  margin: 0;
+}
+
+.split-code pre code {
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  padding: 10px;
+  margin-bottom: 10px;
+}
+
+.split-code .command {
+  background-color: #f1f1f1;
+}
+
+.split-code .output {
+  background-color: #fafafa;
+}

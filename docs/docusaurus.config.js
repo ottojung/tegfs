@@ -132,8 +132,11 @@ const config = {
       prism: {
         theme: lightCodeTheme,
         darkTheme: darkCodeTheme,
+        plugins: ['command-line'],
+        additionalLanguages: ['bash']
       },
     }),
+    staticDirectories: ['public', 'static'],
 };
 
 module.exports = config;
