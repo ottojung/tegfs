@@ -2,7 +2,8 @@
 const fs = require('fs');
 const { JSDOM } = require('jsdom');
 const domino = require('domino');
-const input = fs.readFileSync('input.txt', 'utf8');
+let input = fs.readFileSync('input.txt', 'utf8');
+if (input.endsWith("\n")) { input = input.slice(0, -1); }
 const content = fs.readFileSync('input.html', 'utf8').replace('{{code}}', input);
 
 // Create a basic DOM environment using domino
@@ -35,8 +36,12 @@ Prism.highlightAllUnder(div);
 // Get the modified HTML after highlighting
 const modifiedHtml = div.innerHTML;
 
-// You can then do whatever you want with the modified HTML
-console.log(modifiedHtml);
+// Print it out
+const lines = modifiedHtml.split("\n");
+for (const line of lines) {
+  const paddedLine = " ".repeat(3) + line;
+  console.log(paddedLine);
+}
 
 const template = fs.readFileSync("template.html", "utf8");
 const processedData = template.replace('{{code}}', modifiedHtml);
