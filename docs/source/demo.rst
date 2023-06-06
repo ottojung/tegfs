@@ -58,6 +58,29 @@ Next, we will add these files into the TegFS database. In the terminal, type the
 
 The ``tegfs add`` command adds files to the TegFS database. In this example, we are adding ``file1.txt`` and ``file2.txt`` with tags **text**, **testing**, **small**, and **big**.
 
+.. raw:: html
+
+   <pre class="command-line language-bash" data-user="chris" data-host="localhost" data-filter-output=">" tabindex="0"><code class="language-bash"><span class="command-line-prompt"><span data-user="chris" data-host="localhost"></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span data-user="chris" data-host="localhost"></span><span></span><span></span><span></span><span></span><span></span><span></span></span><span class="token command">tegfs query text testing</span>
+   <span class="token output">((tags text testing small)</span>
+   <span class="token output"> (target . "8h/file1.txt")</span>
+   <span class="token output"> (id . "neidahutmnqjwhd83p2xcfn8rv7qkf")</span>
+   <span class="token output"> (date . "2023-05-15T22:52:28+0000"))</span>
+   <span class="token output"></span>
+   <span class="token output">((tags text testing big)</span>
+   <span class="token output"> (target . "q1/file2.txt")</span>
+   <span class="token output"> (id . "8dnsoawapkn136znuzogkudim1selj")</span>
+   <span class="token output"> (date . "2023-05-15T22:52:54+0000"))</span>
+   <span class="token output"></span>
+   <span class="token output">Total of 2 matches.</span>
+   <span class="token output"></span>
+   <span class="token command">tegfs query small testing</span>
+   <span class="token output">((tags text testing small)</span>
+   <span class="token output"> (target . "8h/file1.txt")</span>
+   <span class="token output"> (id . "neidahutmnqjwhd83p2xcfn8rv7qkf")</span>
+   <span class="token output"> (date . "2023-05-15T22:52:28+0000"))</span>
+   <span class="token output"></span>
+   <span class="token output">Total of 1 matches.</span></code></pre>
+
 We can now search for files using queries:
 
    .. code-block:: bash

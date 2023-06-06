@@ -29,5 +29,4 @@ html_static_path = ['_static']
 
 def setup(app):
     app.add_css_file('custom.css')
-    app.add_css_file('_static/custom.css')
-    app.add_css_file('customddd.css')
+    app.add_css_file('prism.css')
