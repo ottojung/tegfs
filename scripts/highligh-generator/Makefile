@@ -1,5 +1,5 @@
 
-output.html: template.html node_modules/ generate.js input.txt
+output.html: template.html node_modules/ generate.js input.html
 	npm run generate
 
 node_modules/: package.json
