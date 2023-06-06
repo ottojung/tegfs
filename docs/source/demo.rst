@@ -87,10 +87,10 @@ The tegfs query command searches for files in the TegFS database that match the 
 
 We can also print the contents of a database file by addressing it by its entries' id:
 
-   .. code-block:: bash
+.. raw:: html
 
-      tegfs print "neidahutmnqjwhd83p2xcfn8rv7qkf"
-      file content
+   <pre class="command-line language-bash" data-user="chris" data-host="localhost" data-filter-output=">" tabindex="0"><code class="language-bash"><span class="command-line-prompt"><span data-user="chris" data-host="localhost"></span><span></span></span><span class="token command">tegfs print <span class="token string">"neidahutmnqjwhd83p2xcfn8rv7qkf"</span></span>
+   <span class="token output">file content</span></code></pre>
 
 The newly added files are also visible in the web interface:
 
