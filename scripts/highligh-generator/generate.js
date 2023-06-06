@@ -27,7 +27,7 @@ fs.readFile('template.html', 'utf8', (err, data) => {
 // Function to process the template data and include Prism.js code highlighting
 function processData(data) {
   // Replace placeholder code block in the template with Prism.js highlighted code
-  const code = `console.log('Hello, World!');`;
+  const code = fs.readFileSync('input.txt', 'utf8');
   const highlightedCode = Prism.highlight(code, Prism.languages.javascript, 'javascript');
   const processedData = data.replace('{{code}}', highlightedCode);
 
