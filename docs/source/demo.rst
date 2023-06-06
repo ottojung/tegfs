@@ -6,9 +6,9 @@ To get a better idea of how TegFS works, you can run a demo and test the file sy
 
 First, navigate to the TegFS directory and run the following command:
 
-   .. code-block:: bash
+.. code-block:: bash
 
-      sh test/test-serve-noauth.sh
+   sh test/test-serve-noauth.sh
 
 This command starts a local TegFS server that you can access at ``http://localhost:33470``
 
@@ -34,27 +34,27 @@ The command line interface (CLI) is the primary way of interacting with TegFS. I
 
 First, let's make sure we are working on the test database by issuing the following command:
 
-   .. code-block:: bash
+.. code-block:: bash
 
-      # In tegfs repository
-      make test-files
-      export TEGFS_ROOT="$PWD/dist/exampleroot"
+   cd tegfs
+   make test-files
+   export TEGFS_ROOT="$PWD/dist/exampleroot"
 
 This sets the root of the TegFS database to the dist/exampleroot directory relative to the current working directory.
 
 Now, let's generate some data for testing. In the terminal, type the following commands:
 
-   .. code-block:: bash
+.. code-block:: bash
 
-      echo file content > file1.txt
-      man man > file2.txt
+   echo file content > file1.txt
+   man man > file2.txt
 
 Next, we will add these files into the TegFS database. In the terminal, type the following commands:
 
-   .. code-block:: bash
+.. code-block:: bash
 
-      tegfs add --content file1.txt --tag text --tag testing --tag small
-      tegfs add --content file2.txt --tag text --tag testing --tag big
+   tegfs add --content file1.txt --tag text --tag testing --tag small
+   tegfs add --content file2.txt --tag text --tag testing --tag big
 
 The ``tegfs add`` command adds files to the TegFS database. In this example, we are adding ``file1.txt`` and ``file2.txt`` with tags **text**, **testing**, **small**, and **big**.
 
