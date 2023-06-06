@@ -1,6 +1,9 @@
 # Dependencies
 /node_modules
 
+template.html
+output.html
+
 # Production
 /build
 
