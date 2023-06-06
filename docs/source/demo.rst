@@ -58,6 +58,8 @@ Next, we will add these files into the TegFS database. In the terminal, type the
 
 The ``tegfs add`` command adds files to the TegFS database. In this example, we are adding ``file1.txt`` and ``file2.txt`` with tags **text**, **testing**, **small**, and **big**.
 
+We can now search for files using queries:
+
 .. raw:: html
 
    <pre class="command-line language-bash" data-user="chris" data-host="localhost" data-filter-output=">" tabindex="0"><code class="language-bash"><span class="command-line-prompt"><span data-user="chris" data-host="localhost"></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span data-user="chris" data-host="localhost"></span><span></span><span></span><span></span><span></span><span></span><span></span></span><span class="token command">tegfs query text testing</span>
@@ -80,31 +82,6 @@ The ``tegfs add`` command adds files to the TegFS database. In this example, we 
    <span class="token output"> (date . "2023-05-15T22:52:28+0000"))</span>
    <span class="token output"></span>
    <span class="token output">Total of 1 matches.</span></code></pre>
-
-We can now search for files using queries:
-
-   .. code-block:: bash
-
-      tegfs query text testing
-      ((tags text testing small)
-       (target . "8h/file1.txt")
-       (id . "neidahutmnqjwhd83p2xcfn8rv7qkf")
-       (date . "2023-05-15T22:52:28+0000"))
-
-      ((tags text testing big)
-       (target . "q1/file2.txt")
-       (id . "8dnsoawapkn136znuzogkudim1selj")
-       (date . "2023-05-15T22:52:54+0000"))
-
-      Total of 2 matches.
-
-      tegfs query small testing
-      ((tags text testing small)
-       (target . "8h/file1.txt")
-       (id . "neidahutmnqjwhd83p2xcfn8rv7qkf")
-       (date . "2023-05-15T22:52:28+0000"))
-
-      Total of 1 matches.
 
 The tegfs query command searches for files in the TegFS database that match the specified criteria. In this example, we are searching for files with the tags "text" and "small", and "text" respectively.
 
