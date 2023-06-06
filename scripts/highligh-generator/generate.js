@@ -2,7 +2,8 @@
 const fs = require('fs');
 const { JSDOM } = require('jsdom');
 const domino = require('domino');
-const content = fs.readFileSync('input.html', 'utf8');
+const input = fs.readFileSync('input.txt', 'utf8');
+const content = fs.readFileSync('input.html', 'utf8').replace('{{code}}', input);
 
 // Create a basic DOM environment using domino
 const dom = new JSDOM(content, {
