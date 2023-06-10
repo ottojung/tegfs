@@ -17,7 +17,9 @@
  (guile
   (define-module (tegfs web-server-handle)
     :export (web::server-handle)
+    :use-module ((euphrates fn-cons) :select (fn-cons))
     :use-module ((euphrates hashmap) :select (alist->hashmap hashmap-ref))
+    :use-module ((euphrates key-value-map) :select (key-value-map/list))
     :use-module ((euphrates tilda-a) :select (~a))
     :use-module ((tegfs web-api) :select (web::api))
     :use-module ((tegfs web-auth) :select (web::auth))
@@ -64,52 +66,90 @@
 
 
 (define handlers-config
-  `((/login ,web::login)
-    (/logout ,web::logout)
-    (/collectgarbage ,web::collectgarbage)
-    (/query ,web::query)
-    (/directory ,web::directory)
-    (/details ,web::details)
-    (/full ,web::full)
-    (/upload ,web::upload)
-    (/share ,web::share)
-    (/auth ,web::auth)
-    (/tags ,web::tags)
-    (/home ,web::home)
-    (/api ,web::api)
-    (/file ,web::file)
-    (/open ,web::open)
-    (/select ,web::select)
-    (/ ,web::home)
-
-    (/favicon.ico ,web::favicon.ico)
-    (/static/logo-white.jpeg ,web::logo-white.jpeg)
-    (/static/logo-gray.jpeg ,web::logo-gray.jpeg)
-    (/static/main.css ,web::main.css)
-    (/static/previewunknown.svg ,web::previewunknown)
-    (/static/previewunknownurl.svg ,web::previewunknownurl)
-    (/static/gear.svg ,web::settings-gear)
-    (/static/search.svg ,web::search.svg)
-    (/static/details.svg ,web::details.svg)
-    (/static/select.svg ,web::select.svg)
-    (/static/share.svg ,web::share.svg)
-    (/static/share-gray.svg ,web::share-gray.svg)
-    (/static/error.svg ,web::error.svg)
-    (/static/what.svg ,web::what.svg)
-    (/static/directory.svg ,web::directory.svg)
-    (/static/fileunknown.svg ,web::fileunknown.svg)
-    (/static/filetextual.svg ,web::filetextual.svg)
-    (/static/filebinary.svg ,web::filebinary.svg)
-    (/static/filevideo.svg ,web::filevideo.svg)
-    (/static/fileaudio.svg ,web::fileaudio.svg)
-    (/static/fileimage.svg ,web::fileimage.svg)
-    ))
+  (key-value-map/list
+   + ------------------------------------------------------------------ +
+   ! /                               ! web::home                        !
+   + ------------------------------------------------------------------ +
+   ! /login                          ! web::login                       !
+   + ------------------------------------------------------------------ +
+   ! /logout                         ! web::logout                      !
+   + ------------------------------------------------------------------ +
+   ! /collectgarbage                 ! web::collectgarbage              !
+   + ------------------------------------------------------------------ +
+   ! /query                          ! web::query                       !
+   + ------------------------------------------------------------------ +
+   ! /directory                      ! web::directory                   !
+   + ------------------------------------------------------------------ +
+   ! /details                        ! web::details                     !
+   + ------------------------------------------------------------------ +
+   ! /full                           ! web::full                        !
+   + ------------------------------------------------------------------ +
+   ! /upload                         ! web::upload                      !
+   + ------------------------------------------------------------------ +
+   ! /share                          ! web::share                       !
+   + ------------------------------------------------------------------ +
+   ! /auth                           ! web::auth                        !
+   + ------------------------------------------------------------------ +
+   ! /tags                           ! web::tags                        !
+   + ------------------------------------------------------------------ +
+   ! /home                           ! web::home                        !
+   + ------------------------------------------------------------------ +
+   ! /api                            ! web::api                         !
+   + ------------------------------------------------------------------ +
+   ! /file                           ! web::file                        !
+   + ------------------------------------------------------------------ +
+   ! /open                           ! web::open                        !
+   + ------------------------------------------------------------------ +
+   ! /select                         ! web::select                      !
+   + ------------------------------------------------------------------ +
+   ! /favicon.ico                    ! web::favicon.ico                 !
+   + ------------------------------------------------------------------ +
+   ! /static/logo-white.jpeg         ! web::logo-white.jpeg             !
+   + ------------------------------------------------------------------ +
+   ! /static/logo-gray.jpeg          ! web::logo-gray.jpeg              !
+   + ------------------------------------------------------------------ +
+   ! /static/main.css                ! web::main.css                    !
+   + ------------------------------------------------------------------ +
+   ! /static/previewunknown.svg      ! web::previewunknown              !
+   + ------------------------------------------------------------------ +
+   ! /static/previewunknownurl.svg   ! web::previewunknownurl           !
+   + ------------------------------------------------------------------ +
+   ! /static/gear.svg                ! web::settings-gear               !
+   + ------------------------------------------------------------------ +
+   ! /static/search.svg              ! web::search.svg                  !
+   + ------------------------------------------------------------------ +
+   ! /static/details.svg             ! web::details.svg                 !
+   + ------------------------------------------------------------------ +
+   ! /static/select.svg              ! web::select.svg                  !
+   + ------------------------------------------------------------------ +
+   ! /static/share.svg               ! web::share.svg                   !
+   + ------------------------------------------------------------------ +
+   ! /static/share-gray.svg          ! web::share-gray.svg              !
+   + ------------------------------------------------------------------ +
+   ! /static/error.svg               ! web::error.svg                   !
+   + ------------------------------------------------------------------ +
+   ! /static/what.svg                ! web::what.svg                    !
+   + ------------------------------------------------------------------ +
+   ! /static/directory.svg           ! web::directory.svg               !
+   + ------------------------------------------------------------------ +
+   ! /static/fileunknown.svg         ! web::fileunknown.svg             !
+   + ------------------------------------------------------------------ +
+   ! /static/filetextual.svg         ! web::filetextual.svg             !
+   + ------------------------------------------------------------------ +
+   ! /static/filebinary.svg          ! web::filebinary.svg              !
+   + ------------------------------------------------------------------ +
+   ! /static/filevideo.svg           ! web::filevideo.svg               !
+   + ------------------------------------------------------------------ +
+   ! /static/fileaudio.svg           ! web::fileaudio.svg               !
+   + ------------------------------------------------------------------ +
+   ! /static/fileimage.svg           ! web::fileimage.svg               !
+   + ------------------------------------------------------------------ +
+   ))
 
 (define handlers-funcmap
   (alist->hashmap
-   (map
-    (lambda (p) (cons (~a (car p)) (cadr p)))
-    handlers-config)))
+   (map (fn-cons ~a identity)
+        handlers-config)))
 
 (define (web::server-handle server-operator-key callctx)
   (parameterize ((web::callcontext/p callctx))
