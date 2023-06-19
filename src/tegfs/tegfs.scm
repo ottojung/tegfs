@@ -49,13 +49,14 @@
   (parameterize ((current-program-path/p "tegfs"))
     (with-cli
      (MAIN
-      MAIN : OPT* FUNC
+      MAIN : OPT* COMMAND
       /      --help
       /      --version
       /      license
       /      warranty
 
-      FUNC : add ADDOPT+
+      COMMAND
+      :      add ADDOPT+
       /      get GETARGS
       /      delete DELETEARGS
       /      print PRINTARGS
