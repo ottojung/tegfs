@@ -41,7 +41,7 @@
   (define fileserver (web::current-fileserver/p))
 
   (if (and path
-           (not fileserver)
+           (not (string? fileserver))
            (not (string-index path #\/)))
       (let ()
         (define sharedir (web::current-sharedir/p))

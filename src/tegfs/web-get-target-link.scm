@@ -17,7 +17,9 @@
  (guile
   (define-module (tegfs web-get-target-link)
     :export (web::get-target-link)
+    :use-module ((euphrates raisu) :select (raisu))
     :use-module ((tegfs a-weblink-q) :select (a-weblink?))
+    :use-module ((tegfs keyword-config-xdgopen-fileserver) :select (keyword-config-xdgopen-fileserver))
     :use-module ((tegfs web-current-fileserver-p) :select (web::current-fileserver/p))
     )))
 
@@ -29,6 +31,10 @@
    ((string-prefix? "/directory" linkpath)
     linkpath)
    (else
-    (if fileserver
-        (string-append fileserver linkpath)
-        (string-append "open?path=" linkpath)))))
+    (cond
+     ((string? fileserver)
+      (string-append fileserver linkpath))
+     ((equal? fileserver keyword-config-xdgopen-fileserver)
+      (string-append "open?path=" linkpath))
+     (else
+      (raisu 'unexpected-value-of-fileserver fileserver))))))

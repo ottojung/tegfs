@@ -15,19 +15,9 @@
 
 (cond-expand
  (guile
-  (define-module (tegfs web-get-preview-link)
-    :export (web::get-preview-link)
-    :use-module ((euphrates raisu) :select (raisu))
-    :use-module ((tegfs keyword-config-xdgopen-fileserver) :select (keyword-config-xdgopen-fileserver))
-    :use-module ((tegfs web-current-fileserver-p) :select (web::current-fileserver/p))
+  (define-module (tegfs keyword-config-xdgopen-fileserver)
+    :export (keyword-config-xdgopen-fileserver)
     )))
 
-(define (web::get-preview-link linkpath)
-  (define fileserver (web::current-fileserver/p))
-  (cond
-   ((string? fileserver)
-    (string-append fileserver linkpath))
-   ((equal? fileserver keyword-config-xdgopen-fileserver)
-    (string-append "file?path=" linkpath))
-   (else
-    (raisu 'unexpected-value-of-fileserver fileserver))))
+(define keyword-config-xdgopen-fileserver
+  'xdg-open)

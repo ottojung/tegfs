@@ -21,6 +21,7 @@
     :use-module ((euphrates file-or-directory-exists-q) :select (file-or-directory-exists?))
     :use-module ((euphrates hashmap) :select (hashmap-ref))
     :use-module ((euphrates stringf) :select (stringf))
+    :use-module ((tegfs keyword-config-xdgopen-fileserver) :select (keyword-config-xdgopen-fileserver))
     :use-module ((tegfs web-callcontext-p) :select (web::callcontext/p))
     :use-module ((tegfs web-callcontext) :select (callcontext-query))
     :use-module ((tegfs web-current-fileserver-p) :select (web::current-fileserver/p))
@@ -35,16 +36,19 @@
   (define path (hashmap-ref q 'path #f))
   (define fileserver (web::current-fileserver/p))
 
-  (if (and path
-           (not fileserver)
-           (not (string-contains path ".."))) ;; TODO: be less crude with the .. check
-      (let ()
-        (define sharedir (web::current-sharedir/p))
-        (define fullpath (append-posix-path sharedir path))
-        (if (file-or-directory-exists? fullpath)
-            (begin
-              (system* "/bin/sh" "-c"
-                       (stringf "{ xdg-open ~s 1>/dev/null 2>/dev/null & } &" fullpath))
-              (web::make-html-response "<script>window.close()</script>"))
-            (web::not-found)))
-      (web::not-found)))
+  (cond
+   ((not (equal? fileserver keyword-config-xdgopen-fileserver))
+    (web::not-found))
+   ((and path
+         (not (string-contains path ".."))) ;; TODO: be less crude with the .. check
+    (let ()
+      (define sharedir (web::current-sharedir/p))
+      (define fullpath (append-posix-path sharedir path))
+      (if (file-or-directory-exists? fullpath)
+          (begin
+            (system* "/bin/sh" "-c"
+                     (stringf "{ xdg-open ~s 1>/dev/null 2>/dev/null & } &" fullpath))
+            (web::make-html-response "<script>window.close()</script>"))
+          (web::not-found))))
+   (else
+    (web::not-found))))
