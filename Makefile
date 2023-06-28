@@ -78,5 +78,6 @@ $(TEST_ROOT)/config.tegfs.lisp: test/make-example-config.sh
 	TEST_ROOT=$(TEST_ROOT) sh test/make-example-config.sh
 
 test-files: $(TEST_FILES)
+test-config: $(TEST_ROOT)/config.tegfs.lisp
 
-.PHONY: all build clean install reinstall uninstall test-files rundocker
+.PHONY: all build clean install reinstall uninstall test-files test-config rundocker
