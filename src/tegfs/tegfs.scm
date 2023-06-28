@@ -27,6 +27,7 @@
     :use-module ((tegfs cli-query) :select (CLI::query))
     :use-module ((tegfs cli-remote) :select (CLI::remote/parse))
     :use-module ((tegfs cli-save) :select (CLI::save))
+    :use-module ((tegfs cli-share) :select (CLI::share))
     :use-module ((tegfs cli-show-license) :select (CLI::show-license))
     :use-module ((tegfs cli-show-warranty) :select (CLI::show-warranty))
     :use-module ((tegfs cli-talk) :select (CLI::talk))
@@ -61,6 +62,7 @@
       /      delete DELETEARGS
       /      print PRINTARGS
       /      edit EDITARGS
+      /      share SHARETAGS
       /      query QUERYARGS
       /      config CONFIGOPT
       /      serve
@@ -103,9 +105,11 @@
       FORMAT : --format <format> / --sexp-format
       QUERYQ : <query...>
       GETARGS : FORMAT? <entry-id>
-      DELETEARGS : <entry-id> MAYBEKEEPFILES?
+      DELETEARGS : MAYBEKEEPFILES? <entry-id>
       PRINTARGS : <entry-id>
       EDITARGS : <entry-id>
+      SHARETAGS : SHAREOPT* <entry-id>
+      SHAREOPT : --for-duration <share-duration>
       MAYBEKEEPFILES : --keep-files / --no-keep-files
       TALKOPTS : --web
       THUMBOPT : <target> <output>
@@ -124,6 +128,9 @@
 
      :synonym (--version -v version)
      :synonym (license copying)
+
+     :default (<share-duration> "30m")
+     :help (<share-duration> "For how long chosen entry should be shared.")
 
      :default (--no-series #t)
      :exclusive (--no-series --series)
@@ -217,6 +224,7 @@
          (delete (CLI::delete <entry-id> --keep-files))
          (print (CLI::print <entry-id>))
          (edit (CLI::edit <entry-id>))
+         (share (CLI::share <share-duration> <entry-id>))
          (talk (CLI::talk --web))
          (make-thumbnails (tegfs-make-thumbnails/parse <target> <output>))
          (config (tegfs-config/parse --display --write get set <name> <value> get-user set-user <user-name> <user-field> --password <user-value>))
