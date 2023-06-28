@@ -63,7 +63,7 @@
       /      edit EDITARGS
       /      query QUERYARGS
       /      config CONFIGOPT
-      /      serve SERVARGS*
+      /      serve
       /      categorize
       /      remote <remote> MAIN
       /      talk TALKOPTS*
@@ -107,10 +107,6 @@
       PRINTARGS : <entry-id>
       EDITARGS : <entry-id>
       MAYBEKEEPFILES : --keep-files / --no-keep-files
-      SERVARGS : --offload-filesharing <fileserver>
-      /          --no-offload-filesharing
-      /          --authorization
-      /          --no-authorization
       TALKOPTS : --web
       THUMBOPT : <target> <output>
       CONFIGOPT  : CONFIGFORMAT? CONFIGFORK
@@ -214,7 +210,7 @@
 
                ))
          (categorize (tegfs-categorize/parse))
-         (serve (tegfs-serve/parse (and --offload-filesharing <fileserver>) --no-authorization))
+         (serve (tegfs-serve/parse))
          (prolog (tegfs-prolog/parse))
          (query (CLI::query --diropen --dirpreview --sexp-format <format> <query...>))
          ((and get <entry-id>) (tegfs-get/parse <format> <entry-id>))
