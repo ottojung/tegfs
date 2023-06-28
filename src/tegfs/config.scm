@@ -19,6 +19,7 @@
     :export (tegfs-config/parse)
     :use-module ((euphrates list-find-first) :select (list-find-first))
     :use-module ((euphrates raisu) :select (raisu))
+    :use-module ((euphrates un-tilda-s) :select (un~s))
     :use-module ((tegfs fatal) :select (fatal))
     :use-module ((tegfs get-config) :select (get-config/fatal))
     :use-module ((tegfs set-config-user) :select (set-config-user))
@@ -33,15 +34,19 @@
   (define user-field
     (if --password 'pass
         (and <user-field> (string->symbol <user-field>))))
-  (define value (and <value> (or (string->number <value>) <value>)))
-  (define user-value
-    (if --password
-        (sha256sum <user-value>)
-        (and <user-value> (or (string->number <user-value>) <user-value>))))
 
   (define (out x)
     (if --write (write x) (display x))
     (newline))
+
+  (define (in x)
+    (if --write (identity x) (un~s x)))
+
+  (define value (in (and <value> (or (string->number <value>) <value>))))
+  (define user-value
+    (if --password
+        (sha256sum (in <user-value>))
+        (and <user-value> (in <user-value>))))
 
   (unless config
     (fatal "Could not parse the config"))

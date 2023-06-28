@@ -9,5 +9,5 @@ GUILE="guile -L src/ -s"
 export TEGFS_ROOT=dist/exampleroot
 
 sh scripts/make-all-previews.sh
-$TEST_FS config --write set authorization no
+$TEST_FS config set authorization no
 $TEST_FS serve
