@@ -31,7 +31,9 @@
 (define (CLI::remote <remote> args)
   (let ((s (apply system*
                   (conss
-                   "ssh" "-q" "-o" "SendEnv LANG" "-t" <remote>
-                   "tegfs" args))))
+                   "ssh" "-q" "-t"
+                   "-o" "SendEnv LANG"
+                   "-o" "SendEnv EDITOR"
+                   <remote> "tegfs" args))))
     (unless (= 0 (status:exit-val s))
       (fatal "Something went wrong on the other side"))))
