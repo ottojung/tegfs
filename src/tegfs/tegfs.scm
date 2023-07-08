@@ -34,6 +34,7 @@
     :use-module ((tegfs config) :select (tegfs-config/parse))
     :use-module ((tegfs dump-clipboard) :select (tegfs-dump-clipboard/parse))
     :use-module ((tegfs get-root) :select (get-root/default))
+    :use-module ((tegfs get-texteditor) :select (get-texteditor/default))
     :use-module ((tegfs get) :select (tegfs-get/parse))
     :use-module ((tegfs keyword-diropen) :select (keyword-diropen))
     :use-module ((tegfs keyword-dirpreview) :select (keyword-dirpreview))
@@ -122,10 +123,12 @@
       CONFIGFORMAT : --display / --write
       USER_FIELD : --password / <user-field>
       OPT : --root <root>
+      /     --texteditor <texteditor>
       /     --seed <seed>
       )
 
      :default (<root> (get-root/default))
+     :default (<texteditor> (get-texteditor/default))
 
      :synonym (--version -v version)
      :synonym (license copying)
