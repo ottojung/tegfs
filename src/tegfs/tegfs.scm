@@ -165,6 +165,9 @@
      :default (--no-share #t)
      :exclusive (--no-share --share)
 
+     :default (--no-link #t)
+     :exclusive (--no-link --link)
+
      :default (--keep-files #t)
      :exclusive (--keep-files --no-keep-files)
      :synonym (--no-keep-files --delete-files-too)
