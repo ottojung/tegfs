@@ -188,6 +188,7 @@
          --mimetype <mimetype>
          --note <note>
          --link
+         --share <share-duration>
          --remote <remote>
          --no-remote
          --date <date>

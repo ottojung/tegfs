@@ -27,7 +27,7 @@
     :use-module ((tegfs cli-query) :select (CLI::query))
     :use-module ((tegfs cli-remote) :select (CLI::remote/parse))
     :use-module ((tegfs cli-save) :select (CLI::save))
-    :use-module ((tegfs cli-share) :select (CLI::share))
+    :use-module ((tegfs cli-share) :select (CLI::share/parse))
     :use-module ((tegfs cli-show-license) :select (CLI::show-license))
     :use-module ((tegfs cli-show-warranty) :select (CLI::show-warranty))
     :use-module ((tegfs cli-talk) :select (CLI::talk))
@@ -93,6 +93,7 @@
       /        --note <note>
       /        --link
       /        --remote <remote>
+      /        --share SHAREOPT?
       /        --no-remote
       /        --date <date>
       /        --key <key...> <value...>
@@ -161,6 +162,9 @@
      :default (--no-remote #t)
      :exclusive (--no-remote --remote)
 
+     :default (--no-share #t)
+     :exclusive (--no-share --share)
+
      :default (--keep-files #t)
      :exclusive (--keep-files --no-keep-files)
      :synonym (--no-keep-files --delete-files-too)
@@ -181,6 +185,7 @@
      :help (--dirpreview (stringf "Acknowledge <~a> property by treating elements of the ~a directory as entries having the same tags as the original entry." keyword-dirpreview keyword-target))
      :help (<savetext> "This could be a filename, a URL, or simply text. TegFS will try to figure out the type.")
      :help (<kind> (stringf "This forces ~s to be recognized as of certain type." (quote <savetext>)))
+     :help (--share (stringf "Instead of returning the id, returns the url to saved file"))
 
      (with-randomizer-seed
       (or <seed> 'random)
@@ -210,6 +215,7 @@
                --mimetype <mimetype>
                --note <note>
                --link
+               --share <share-duration>
                --remote <remote>
                --no-remote
                --date <date>
@@ -224,7 +230,7 @@
          (delete (CLI::delete <entry-id> --keep-files))
          (print (CLI::print <entry-id>))
          (edit (CLI::edit <entry-id>))
-         (share (CLI::share <share-duration> <entry-id>))
+         (share (CLI::share/parse <share-duration> <entry-id>))
          (talk (CLI::talk --web))
          (make-thumbnails (tegfs-make-thumbnails/parse <target> <output>))
          (config (tegfs-config/parse --display --write get set <name> <value> get-user set-user <user-name> <user-field> --password <user-value>))

@@ -16,7 +16,7 @@
 (cond-expand
  (guile
   (define-module (tegfs cli-share)
-    :export (CLI::share)
+    :export (CLI::share CLI::share/parse)
     :use-module ((euphrates assq-or) :select (assq-or))
     :use-module ((euphrates list-and-map) :select (list-and-map))
     :use-module ((euphrates list-singleton-q) :select (list-singleton?))
@@ -103,7 +103,11 @@
         target/0
         (stringf "http://localhost:~a/~a" port target/0)))
 
+  target)
+
+
+(define (CLI::share/parse <share-duration> <entry-id>)
+  (define target (CLI::share <share-duration> <entry-id>))
   (display target)
   (newline)
-
   (when #f #t))

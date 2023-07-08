@@ -33,6 +33,7 @@
     :use-module ((tegfs cli-remote) :select (CLI::remote))
     :use-module ((tegfs cli-save-loop) :select (CLI::save::loop))
     :use-module ((tegfs cli-save-working-file-p) :select (CLI::save-working-file/p))
+    :use-module ((tegfs cli-share) :select (CLI::share))
     :use-module ((tegfs clipboard) :select (classify-clipboard-text-content))
     :use-module ((tegfs default-db-path) :select (default-db-path))
     :use-module ((tegfs dump-clipboard) :select (tegfs-dump-clipboard tegfs-dump-clipboard/pasta))
@@ -116,6 +117,7 @@
          --mimetype <mimetype>
          --note <note>
          --link
+         --share <share-duration>
          --remote <remote>
          --no-remote
          --date <date>
@@ -148,6 +150,7 @@
              --mimetype <mimetype>
              --note <note>
              --link
+             --share <share-duration>
              --remote <remote>
              --no-remote
              --date <date>
@@ -157,7 +160,9 @@
 
           (send-state state))))
 
-    (display id)
+    (if --share
+        (display (CLI::share <share-duration> id))
+        (display id))
     (newline))
 
   (define (CLI::save/remote)
