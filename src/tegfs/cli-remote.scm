@@ -17,9 +17,8 @@
  (guile
   (define-module (tegfs cli-remote)
     :export (CLI::remote/parse CLI::remote)
+    :use-module ((euphrates conss) :select (conss))
     :use-module ((euphrates get-command-line-arguments) :select (get-command-line-arguments))
-    :use-module ((euphrates shell-quote) :select (shell-quote))
-    :use-module ((euphrates words-to-string) :select (words->string))
     :use-module ((tegfs fatal) :select (fatal))
     )))
 
@@ -30,8 +29,9 @@
   (CLI::remote <remote> my-cli-arguments))
 
 (define (CLI::remote <remote> args)
-  (let ((s (system* "ssh" "-q" "-o" "SendEnv LANG" "-t" <remote>
-                    "/bin/sh" "-l" "-c"
-                    (shell-quote (words->string (cons "tegfs" (map shell-quote args)))))))
+  (let ((s (apply system*
+                  (conss
+                   "ssh" "-q" "-o" "SendEnv LANG" "-t" <remote>
+                   "tegfs" args))))
     (unless (= 0 (status:exit-val s))
       (fatal "Something went wrong on the other side"))))
