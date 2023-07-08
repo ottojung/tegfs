@@ -17,10 +17,10 @@
  (guile
   (define-module (tegfs cli-edit)
     :export (CLI::edit)
-    :use-module ((euphrates system-environment) :select (system-environment-get))
     :use-module ((tegfs entry-target-fullpath) :select (entry-target-fullpath))
     :use-module ((tegfs fatal) :select (fatal))
     :use-module ((tegfs get) :select (tegfs-get))
+    :use-module ((tegfs texteditor-p) :select (texteditor/p))
     )
   (use-modules (ice-9 binary-ports))
   (use-modules (scheme base))
@@ -33,7 +33,7 @@
 
   (let ()
     (define fullpath (entry-target-fullpath entry))
-    (define EDITOR (or (system-environment-get "EDITOR") "vi"))
+    (define EDITOR (texteditor/p))
     (if fullpath
         (system* EDITOR fullpath)
         (fatal "Entry is not associated with any file"))))

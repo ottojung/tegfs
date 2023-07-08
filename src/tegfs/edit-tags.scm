@@ -19,11 +19,11 @@
     :export (tegfs-edit-tags tegfs-process-categorization-text)
     :use-module ((euphrates raisu) :select (raisu))
     :use-module ((euphrates read-string-file) :select (read-string-file))
-    :use-module ((euphrates system-fmt) :select (system-fmt))
     :use-module ((tegfs categorization-complete-selection-cont) :select (categorization-complete-selection/cont))
     :use-module ((tegfs categorization-parse-tags) :select (categorization-parse-tags))
     :use-module ((tegfs categorization-starred-symbol-huh) :select (categorization-starred-symbol?))
     :use-module ((tegfs parsed-categorization-tags-get-all) :select (parsed-categorization-tags-get-all))
+    :use-module ((tegfs texteditor-p) :select (texteditor/p))
     )))
 
 
@@ -32,7 +32,7 @@
   (unless working-file
     (raisu 'must-provide-working-file))
 
-  (system-fmt "$EDITOR ~a" working-file)
+  (system* (texteditor/p) working-file)
   (tegfs-process-categorization-text (read-string-file working-file)))
 
 (define (tegfs-process-categorization-text text)
