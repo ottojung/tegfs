@@ -10,7 +10,7 @@
 (system* "sh" "-c" "command -v sh")
 (flush-all-ports)
 
-(display "exec guile -L ")
+(display "exec guile --r7rs -L ")
 (write code_root)
 (display " -s ")
 (write (string-append code_root "/tegfs/tegfs.scm"))
