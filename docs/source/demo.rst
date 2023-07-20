@@ -8,7 +8,7 @@ First, navigate to the TegFS directory and run the following command:
 
 .. code-block:: bash
 
-   sh test/test-serve-noauth.sh
+   sh tests/manualtest-serve-noauth.sh
 
 This command starts a local TegFS server that you can access at ``http://localhost:33470``
 
