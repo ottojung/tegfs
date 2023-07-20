@@ -1,12 +1,6 @@
 #! /bin/sh
 
-set -e
-make test-files build
-make test-config -B
-
-TEST_FS=dist/tegfs
-GUILE="guile --r7rs -L src/ -s"
-export TEGFS_ROOT=dist/exampleroot
+. tests/common.sh
 
 touch $TEGFS_ROOT/db/hi.txt
 echo hi | $TEST_FS add \
