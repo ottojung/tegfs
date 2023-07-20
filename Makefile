@@ -55,7 +55,7 @@ dist/tegfs: $(SUBMODULES) src/*/*.scm dist
 dist:
 	mkdir -p "$@"
 
-dist/dockerfile: dist/tegfs tests/* scripts/* assets/* deps/* docs/example/*
+dist/dockerfile: dist/tegfs tests/* scripts/* assets/* deps/*
 	export DOCKER_BUILDKIT=1 ; \
 	docker build -f scripts/Dockerfile -t tegfs .
 	touch "$@"
