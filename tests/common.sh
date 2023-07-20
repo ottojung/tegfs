@@ -1,8 +1,8 @@
 #! /bin/sh
 
 set -e
-make test-files build
-make test-config -B
+make --silent test-files build
+make --silent test-config -B
 
 TEST_FS=dist/tegfs
 GUILE="guile --r7rs -L src/ -s"
