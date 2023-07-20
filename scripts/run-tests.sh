@@ -6,7 +6,8 @@ FILES=$(ls tests/test-* || true)
 
 case "$CI" in
     1)
-        FILES="$FILES $(ls tests/citest-* || true)"
+        FILES="$FILES
+$(ls tests/citest-* || true)"
         ;;
 esac
 
