@@ -2,12 +2,11 @@
 
 set -e
 
+FILES=$(ls tests/test-* || true)
+
 case "$CI" in
     1)
-        FILES="$(ls tests/test-* || true) $(ls tests/citest-* || true)"
-        ;;
-    *)
-        FILES=$(ls tests/test-* || true)
+        FILES="$FILES $(ls tests/citest-* || true)"
         ;;
 esac
 
