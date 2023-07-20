@@ -25,7 +25,7 @@ uninstall:
 	rmdir $(INSTALL_ROOT) || true
 	rmdir $(PREFIX_SHARE)/tegfs || true
 
-test:
+test: build test-files test-config
 	sh scripts/run-tests.sh
 
 $(BINARY_PATH): dist/tegfs $(PREFIX_BIN)
