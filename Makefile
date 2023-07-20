@@ -25,6 +25,9 @@ uninstall:
 	rmdir $(INSTALL_ROOT) || true
 	rmdir $(PREFIX_SHARE)/tegfs || true
 
+test:
+	sh scripts/run-tests.sh
+
 $(BINARY_PATH): dist/tegfs $(PREFIX_BIN)
 	mkdir -p "$(INSTALL_ROOT)"
 	chown "$(USER):" "$(INSTALL_ROOT)" || true
@@ -80,4 +83,4 @@ $(TEST_ROOT)/config.tegfs.lisp: test/make-example-config.sh
 test-files: $(TEST_FILES)
 test-config: $(TEST_ROOT)/config.tegfs.lisp
 
-.PHONY: all build clean install reinstall uninstall test-files test-config rundocker
+.PHONY: all build clean install reinstall uninstall test test-files test-config rundocker
