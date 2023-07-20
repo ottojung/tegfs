@@ -55,7 +55,7 @@ dist/tegfs: $(SUBMODULES) src/*/*.scm dist
 dist:
 	mkdir -p "$@"
 
-dist/dockerfile: dist/tegfs test/* scripts/* assets/* deps/* example/*
+dist/dockerfile: dist/tegfs tests/* scripts/* assets/* deps/* example/*
 	export DOCKER_BUILDKIT=1 ; \
 	docker build -f scripts/Dockerfile -t tegfs .
 	touch "$@"
@@ -74,11 +74,11 @@ $(TEST_ROOT): dist/exampleroot.tar
 	rm -f $(TEST_ROOT)/categorization.tegfs.txt
 	rm -f $(TEST_ROOT)/config.tegfs.lisp
 
-$(TEST_ROOT)/categorization.tegfs.txt: test/make-example-categorization.sh
-	TEST_ROOT=$(TEST_ROOT) sh test/make-example-categorization.sh
+$(TEST_ROOT)/categorization.tegfs.txt: tests/make-example-categorization.sh
+	TEST_ROOT=$(TEST_ROOT) sh tests/make-example-categorization.sh
 
-$(TEST_ROOT)/config.tegfs.lisp: test/make-example-config.sh
-	TEST_ROOT=$(TEST_ROOT) sh test/make-example-config.sh
+$(TEST_ROOT)/config.tegfs.lisp: tests/make-example-config.sh
+	TEST_ROOT=$(TEST_ROOT) sh tests/make-example-config.sh
 
 test-files: $(TEST_FILES)
 test-config: $(TEST_ROOT)/config.tegfs.lisp
