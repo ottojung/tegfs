@@ -39,6 +39,7 @@ $(BINARY_PATH): dist/tegfs $(PREFIX_BIN)
 
 $(PREFIX_BIN):
 	mkdir -p "$@"
+	touch "$@"
 
 reinstall: | uninstall clean install
 
@@ -54,6 +55,7 @@ dist/tegfs: $(SUBMODULES) src/*/*.scm dist
 
 dist:
 	mkdir -p "$@"
+	touch "$@"
 
 dist/dockerfile: dist/tegfs tests/* scripts/* assets/* deps/*
 	export DOCKER_BUILDKIT=1 ; \
@@ -62,10 +64,8 @@ dist/dockerfile: dist/tegfs tests/* scripts/* assets/* deps/*
 
 rundocker: dist/dockerfile
 	docker run --rm -p 33470:80 --name tegfs tegfs
-	touch "$@"
 
-dist/exampleroot.tar:
-	mkdir -p dist
+dist/exampleroot.tar: dist
 	wget "https://vau.place/static/tegfs-example-root.tar" -O "$@"
 
 $(TEST_ROOT): dist/exampleroot.tar
