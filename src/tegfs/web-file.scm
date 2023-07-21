@@ -22,6 +22,7 @@
     :use-module ((euphrates fp) :select (fp))
     :use-module ((euphrates hashmap) :select (hashmap-ref))
     :use-module ((euphrates open-file-port) :select (open-file-port))
+    :use-module ((tegfs keyword-config-xdgopen-fileserver) :select (keyword-config-xdgopen-fileserver))
     :use-module ((tegfs web-callcontext-p) :select (web::callcontext/p))
     :use-module ((tegfs web-callcontext) :select (callcontext-query))
     :use-module ((tegfs web-current-fileserver-p) :select (web::current-fileserver/p))
@@ -41,7 +42,7 @@
   (define fileserver (web::current-fileserver/p))
 
   (if (and path
-           (not (string? fileserver))
+           (equal? fileserver keyword-config-xdgopen-fileserver)
            (not (string-index path #\/)))
       (let ()
         (define sharedir (web::current-sharedir/p))
