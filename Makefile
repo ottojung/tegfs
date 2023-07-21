@@ -65,7 +65,8 @@ dist/dockerfile: dist/tegfs tests/* scripts/* assets/* deps/*
 rundocker: dist/dockerfile
 	docker run --rm -p 33470:80 --name tegfs tegfs
 
-dist/exampleroot.tar: dist
+dist/exampleroot.tar:
+	mkdir -p dist # glitch in filestamps
 	wget "https://vau.place/static/tegfs-example-root.tar" -O "$@"
 	touch "$@"
 
