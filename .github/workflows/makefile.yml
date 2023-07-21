@@ -22,4 +22,4 @@ jobs:
     - name: Run build
       run: make build
     - name: Run test
-      run: make test
+      run: CI=1 make test
