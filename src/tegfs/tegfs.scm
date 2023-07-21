@@ -156,14 +156,6 @@
      :default (--no-dirpreview #t)
      :exclusive (--no-dirpreview --dirpreview)
 
-     :default (--no-offload-filesharing #t)
-     :exclusive (--no-offload-filesharing --offload-filesharing)
-     :default (--authorization #t)
-     :exclusive (--authorization --no-authorization)
-
-     :default (--display #t)
-     :exclusive (--display --write)
-
      :default (--no-remote #t)
      :exclusive (--no-remote --remote)
 
