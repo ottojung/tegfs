@@ -67,6 +67,7 @@ rundocker: dist/dockerfile
 
 dist/exampleroot.tar: dist
 	wget "https://vau.place/static/tegfs-example-root.tar" -O "$@"
+	touch "$@"
 
 $(TEST_ROOT): dist/exampleroot.tar
 	cd dist && tar -xf ./exampleroot.tar
