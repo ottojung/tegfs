@@ -99,7 +99,7 @@
       /        --no-remote
       /        --date <date>
       /        --key <key...> <value...>
-      QUERYARGS : QUERYOPT* QUERYQ*
+      QUERYARGS : QUERYOPT* FIN? QUERYQ*
       QUERYOPT : --diropen
       /          --no-diropen
       /          --dirpreview
@@ -115,7 +115,7 @@
       SHAREOPT : --for-duration <share-duration>
       MAYBEKEEPFILES : --keep-files / --no-keep-files
       TALKOPTS : --web
-      THUMBOPT : <target> <output>
+      THUMBOPT : FIN? <target> <output>
       CONFIGOPT  : CONFIGFORMAT? CONFIGFORK
       CONFIGFORK : get <name>
       /            set <name> <value>
@@ -126,6 +126,7 @@
       OPT : --root <root>
       /     --texteditor <texteditor>
       /     --seed <seed>
+      FIN : --
       )
 
      :default (<root> (get-root/default))
