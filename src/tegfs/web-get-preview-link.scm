@@ -25,9 +25,9 @@
 (define (web::get-preview-link linkpath)
   (define fileserver (web::current-fileserver/p))
   (cond
-   ((string? fileserver)
-    (string-append fileserver linkpath))
    ((equal? fileserver keyword-config-xdgopen-fileserver)
     (string-append "file?path=" linkpath))
+   ((string? fileserver)
+    (string-append fileserver linkpath))
    (else
     (raisu 'unexpected-value-of-fileserver fileserver))))

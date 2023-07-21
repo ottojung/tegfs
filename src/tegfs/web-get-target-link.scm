@@ -32,9 +32,9 @@
     linkpath)
    (else
     (cond
-     ((string? fileserver)
-      (string-append fileserver linkpath))
      ((equal? fileserver keyword-config-xdgopen-fileserver)
       (string-append "open?path=" linkpath))
+     ((string? fileserver)
+      (string-append fileserver linkpath))
      (else
       (raisu 'unexpected-value-of-fileserver fileserver))))))
