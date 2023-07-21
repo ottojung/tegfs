@@ -70,7 +70,7 @@
   (define config (get-config/fatal))
   (define sharedir (car (assq-or keyword-config-sharedir config `(,default-sharedir))))
   (define <fileserver> (car (assq-or keyword-config-fileserver config `(#f))))
-  (define --no-authorization (equal? 'no (car (assq-or keyword-config-authorization config `(yes)))))
+  (define --no-authorization (equal? "no" (car (assq-or keyword-config-authorization config `("yes")))))
   (define port (car (assq-or keyword-config-port config `(,web::default-port))))
   (define-values (comm server-operator-key) (web::make-communicator))
   (define token-override (if --no-authorization server-operator-key #f))

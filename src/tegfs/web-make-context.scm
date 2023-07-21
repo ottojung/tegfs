@@ -21,7 +21,6 @@
     :use-module ((euphrates hashmap) :select (hashmap-set! make-hashmap))
     :use-module ((euphrates make-directories) :select (make-directories))
     :use-module ((euphrates raisu) :select (raisu))
-    :use-module ((euphrates tilda-a) :select (~a))
     :use-module ((tegfs default-sharedir) :select (default-sharedir))
     :use-module ((tegfs get-config) :select (get-config))
     :use-module ((tegfs keyword-config-port) :select (keyword-config-port))
@@ -51,13 +50,13 @@
     (cadr
      (or (assoc 'sharedir config)
          (list 'sharedir default-sharedir))))
-  (define port/string
+  (define port
     (cadr
      (or (assoc keyword-config-port config)
          (list keyword-config-port (number->string web::default-port)))))
-  (define port
-    (or (string->number (~a port/string))
-        (raisu 'port-is-not-a-number "Variable 'port must be a number" port/string)))
+
+  (unless (number? port)
+    (raisu 'port-is-not-a-number "Variable 'port must be a number" port))
 
   (unless (file-or-directory-exists? sharedir)
     (make-directories sharedir))

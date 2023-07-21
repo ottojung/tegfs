@@ -116,12 +116,11 @@
       MAYBEKEEPFILES : --keep-files / --no-keep-files
       TALKOPTS : --web
       THUMBOPT : FIN? <target> <output>
-      CONFIGOPT  : CONFIGFORMAT? CONFIGFORK
+      CONFIGOPT  : CONFIGFORK
       CONFIGFORK : get <name>
       /            set <name> <value>
       /            get-user <user-name> USER_FIELD?
       /            set-user <user-name> USER_FIELD <user-value>
-      CONFIGFORMAT : --display / --write
       USER_FIELD : --password / <user-field>
       OPT : --root <root>
       /     --texteditor <texteditor>
@@ -233,7 +232,7 @@
          (share (CLI::share/parse <share-duration> <entry-id>))
          (talk (CLI::talk --web))
          (make-thumbnails (tegfs-make-thumbnails/parse <target> <output>))
-         (config (tegfs-config/parse --display --write get set <name> <value> get-user set-user <user-name> <user-field> --password <user-value>))
+         (config (tegfs-config/parse get set <name> <value> get-user set-user <user-name> <user-field> --password <user-value>))
          (dump-clipboard (tegfs-dump-clipboard/parse))
          (license (CLI::show-license))
          (warranty (CLI::show-warranty))
