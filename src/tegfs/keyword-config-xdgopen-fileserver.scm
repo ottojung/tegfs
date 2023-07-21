@@ -20,4 +20,4 @@
     )))
 
 (define keyword-config-xdgopen-fileserver
-  'xdg-open)
+  "xdg-open://")

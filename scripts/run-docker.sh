@@ -12,7 +12,7 @@ fi
 
 tegfs config set port 80
 tegfs config set sharedir /tmp/tegfs-share
-tegfs config set fileserver xdg-open
+tegfs config set fileserver xdg-open://
 
 sh scripts/garbage-collector.sh &
 sh scripts/preview-maker-daemon.sh &
