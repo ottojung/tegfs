@@ -74,7 +74,7 @@
 
   (for-each
    (lambda (user-tuple)
-     (define name (~a (car user-tuple)))
+     (define name #f) ;; TODO: actually this: (~a (car user-tuple))), but currently not supporting many users.
      (define user (cdr user-tuple))
 
      (define pass
