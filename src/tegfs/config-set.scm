@@ -1,4 +1,4 @@
-;;;; Copyright (C) 2022  Otto Jung
+;;;; Copyright (C) 2022, 2023  Otto Jung
 ;;;;
 ;;;; This program is free software: you can redistribute it and/or modify
 ;;;; it under the terms of the GNU Affero General Public License as published
@@ -15,22 +15,25 @@
 
 (cond-expand
  (guile
-  (define-module (tegfs set-config)
-    :export (set-config)
+  (define-module (tegfs config-set)
+    :export (config-set!)
     :use-module ((euphrates append-posix-path) :select (append-posix-path))
-    :use-module ((euphrates assoc-set-value) :select (assoc-set-value))
-    :use-module ((euphrates open-file-port) :select (open-file-port))
-    :use-module ((tegfs get-config) :select (get-config))
+    :use-module ((euphrates assq-set-value-star) :select (assq-set-value*))
+    :use-module ((euphrates raisu) :select (raisu))
     :use-module ((tegfs get-root) :select (get-root))
     )))
 
-
-
-(define (set-config name value)
+(define (config-set! keylist config value)
   (define path (append-posix-path (get-root) "config.tegfs.lisp"))
-  (define existing (or (get-config) '()))
-  (define new (assoc-set-value name value existing))
-  (define p (open-file-port path "w"))
-  (for-each (lambda (x) (write x p) (newline p)) new)
-  (close-port p)
-  (values))
+  (define value* (and value (or (string->number value) value)))
+  (define new (assq-set-value* keylist value* config))
+
+  (unless (or (string? value*) (number? value*))
+    (raisu 'type-error "Config values should be strings or numbers, but got something else." value))
+
+  (call-with-output-file
+      path
+    (lambda (p)
+      (for-each (lambda (x) (write x p) (newline p)) new)))
+
+  new)

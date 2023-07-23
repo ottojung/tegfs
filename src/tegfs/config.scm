@@ -17,73 +17,34 @@
  (guile
   (define-module (tegfs config)
     :export (tegfs-config/parse)
-    :use-module ((euphrates list-find-first) :select (list-find-first))
     :use-module ((euphrates raisu) :select (raisu))
+    :use-module ((tegfs config-get) :select (config-get))
+    :use-module ((tegfs config-set) :select (config-set!))
     :use-module ((tegfs fatal) :select (fatal))
     :use-module ((tegfs get-config) :select (get-config/fatal))
-    :use-module ((tegfs set-config-user) :select (set-config-user))
-    :use-module ((tegfs set-config) :select (set-config))
     :use-module ((tegfs sha256sum) :select (sha256sum))
     )))
 
 
-(define (tegfs-config/parse get set <name> <value> get-user set-user <user-name> <user-field> --password <user-value>)
+(define (tegfs-config/parse get set <key...> --password <value>)
   (define config (get-config/fatal))
-  (define name (and <name> (string->symbol <name>)))
-  (define user-field
-    (if --password 'pass
-        (and <user-field> (string->symbol <user-field>))))
+  (define keylist (map string->symbol <key...>))
 
-  (define (out x)
-    (display x) (newline))
-
-  (define (in x)
-    (and x (or (string->number x) x)))
-
-  (define value (in <value>))
-  (define user-value
+  (define value
     (if --password
-        (sha256sum (in <user-value>))
-        (and <user-value> (in <user-value>))))
+        (sha256sum <value>)
+        <value>))
 
   (unless config
     (fatal "Could not parse the config"))
 
   (cond
    (get
-    (let ((p (assoc name config)))
-      (if p
-          (out (cadr p))
-          (fatal "Not set"))))
-
+    (display (config-get keylist config (fatal "Not set")))
+    (newline))
    (set
-    (set-config name (list value))
-    (display "Ok\n" (current-error-port)))
-
-   (get-user
-    (let ((p (assoc 'users config)))
-      (if p
-          (let ((users (cadr p)))
-            (define the-user
-              (list-find-first
-               (lambda (u)
-                 (define name (assoc 'name u))
-                 (and name (equal? <user-name>  (cadr name))))
-               #f
-               users))
-            (if the-user
-                (if user-field
-                    (let ((f (assoc user-field the-user)))
-                      (if f
-                          (out (cadr f))
-                          (fatal "Field ~s is missing for the user named ~s" user-field <user-name>)))
-                    (out the-user))
-                (fatal "No user named ~s" <user-name>)))
-          (fatal "No users"))))
-
-   (set-user
-    (set-config-user <user-name> user-field user-value)
-    (display "Ok\n" (current-error-port)))
-
+    (config-set! keylist config value)
+    (display "Ok" (current-error-port))
+    (newline (current-error-port)))
    (else
-    (raisu 'Impossible-case-7236123))))
+    (raisu 'impossible-case-72536123))))

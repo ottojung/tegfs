@@ -33,7 +33,7 @@
   (let loop ((config config) (pref '()))
     (for-each
      (lambda (p)
-       (unless (and (list? p) (= 2 (length p)))
+       (unless (pair? p)
          (error "Field ~s~a expected to be of key-value type"
                 p
                 (if (null? pref) ""
