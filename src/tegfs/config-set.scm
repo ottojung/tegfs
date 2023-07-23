@@ -19,13 +19,14 @@
     :export (config-set!)
     :use-module ((euphrates append-posix-path) :select (append-posix-path))
     :use-module ((euphrates assq-set-value-star) :select (assq-set-value*))
+    :use-module ((euphrates catch-any) :select (catch-any))
     :use-module ((euphrates raisu) :select (raisu))
     :use-module ((tegfs get-root) :select (get-root))
     )))
 
 (define (config-set! keylist config value)
   (define path (append-posix-path (get-root) "config.tegfs.lisp"))
-  (define value* (and value (or (string->number value) value)))
+  (define value* (and value (or (catch-any (lambda _ (string->number value)) (lambda _ #f)) value)))
   (define new (assq-set-value* keylist value* config))
 
   (unless (or (string? value*) (number? value*))
