@@ -27,11 +27,13 @@
     :use-module ((euphrates tilda-a) :select (~a))
     :use-module ((euphrates un-tilda-s) :select (un~s))
     :use-module ((tegfs a-weblink-q) :select (a-weblink?))
+    :use-module ((tegfs config-get) :select (config-get))
     :use-module ((tegfs fatal) :select (fatal))
     :use-module ((tegfs get-config) :select (get-config))
     :use-module ((tegfs keyword-config-fileserver) :select (keyword-config-fileserver))
     :use-module ((tegfs keyword-config-port) :select (keyword-config-port))
     :use-module ((tegfs web-current-fileserver-p) :select (web::current-fileserver/p))
+    :use-module ((tegfs web-default-port) :select (web::default-port))
     :use-module ((tegfs web-get-server-operator-key-file) :select (web::get-server-operator-key-file))
     :use-module ((tegfs web-get-target-link) :select (web::get-target-link))
     )
@@ -41,16 +43,14 @@
   (define config (get-config))
 
   (define port
-    (car
-     (assq-or
-      keyword-config-port config
-      (fatal "Expected ~s to be set in the config file" (~a keyword-config-port)))))
+    (config-get
+     (list keyword-config-port) config
+     web::default-port))
 
   (define fileserver
-    (car
-     (assq-or
-      keyword-config-fileserver config
-      (fatal "Expected ~s to be set in the config file" (~a keyword-config-fileserver)))))
+    (config-get
+     (list keyword-config-fileserver) config
+     (fatal "Expected ~s to be set in the config file" (~a keyword-config-fileserver))))
 
   (define key
     (read-string-file

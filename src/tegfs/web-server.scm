@@ -17,12 +17,12 @@
  (guile
   (define-module (tegfs web-server)
     :export (tegfs-serve/parse)
-    :use-module ((euphrates assq-or) :select (assq-or))
     :use-module ((euphrates comp) :select (comp))
     :use-module ((euphrates dprintln) :select (dprintln))
     :use-module ((euphrates make-directories) :select (make-directories))
     :use-module ((euphrates path-get-dirname) :select (path-get-dirname))
     :use-module ((euphrates write-string-file) :select (write-string-file))
+    :use-module ((tegfs config-get) :select (config-get))
     :use-module ((tegfs default-sharedir) :select (default-sharedir))
     :use-module ((tegfs get-config) :select (get-config/fatal))
     :use-module ((tegfs keyword-config-authorization) :select (keyword-config-authorization))
@@ -68,10 +68,10 @@
 
 (define (tegfs-serve/parse)
   (define config (get-config/fatal))
-  (define sharedir (car (assq-or keyword-config-sharedir config `(,default-sharedir))))
-  (define <fileserver> (car (assq-or keyword-config-fileserver config `(#f))))
-  (define --no-authorization (equal? "no" (car (assq-or keyword-config-authorization config `("yes")))))
-  (define port (car (assq-or keyword-config-port config `(,web::default-port))))
+  (define sharedir (config-get (list keyword-config-sharedir) config default-sharedir))
+  (define <fileserver> (config-get (list keyword-config-fileserver) config #f))
+  (define --no-authorization (equal? "no" (config-get (list keyword-config-authorization) config "yes")))
+  (define port (config-get (list keyword-config-port) config web::default-port))
   (define-values (comm server-operator-key) (web::make-communicator))
   (define token-override (if --no-authorization server-operator-key #f))
 

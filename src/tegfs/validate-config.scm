@@ -35,12 +35,11 @@
      (lambda (p)
        (unless (pair? p)
          (error "Field ~s~a expected to be of key-value type"
-                p
-                (if (null? pref) ""
-                    (string-append
-                     " (at "
-                     (apply string-append (list-intersperse "." (reverse pref)))
-                     ")"))))
+                p (if (null? pref) ""
+                      (string-append
+                       " (at "
+                       (apply string-append (list-intersperse "." (reverse pref)))
+                       ")"))))
 
        (unless (symbol? (car p))
          (error "Name of the field ~s~a expected be a symbol"
@@ -51,15 +50,15 @@
                      (apply string-append (list-intersperse "." (reverse pref)))
                      ")"))))
 
-       (when (equal? 'users (car p))
-         (unless (list? (cadr p))
+       (when (equal? 'user (car p))
+         (unless (list? (cdr p))
            (error "Field ~s expected to be a list" (~a 'users)))
 
          (for-each
           (lambda (u)
-            (unless (list? (cadr p))
+            (unless (list? (cdr u))
               (error "One of the users turned out to not be a list"))
-            (loop u (cons "users" pref)))
-          (cadr p))))
+            (loop (cdr u) (cons "user" pref)))
+          (cdr p))))
 
      config)))

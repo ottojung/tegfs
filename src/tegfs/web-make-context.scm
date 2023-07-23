@@ -1,4 +1,4 @@
-;;;; Copyright (C) 2022  Otto Jung
+;;;; Copyright (C) 2022, 2023  Otto Jung
 ;;;;
 ;;;; This program is free software: you can redistribute it and/or modify
 ;;;; it under the terms of the GNU Affero General Public License as published
@@ -17,13 +17,19 @@
  (guile
   (define-module (tegfs web-make-context)
     :export (web::make-context)
+    :use-module ((euphrates assq-or) :select (assq-or))
     :use-module ((euphrates file-or-directory-exists-q) :select (file-or-directory-exists?))
     :use-module ((euphrates hashmap) :select (hashmap-set! make-hashmap))
     :use-module ((euphrates make-directories) :select (make-directories))
     :use-module ((euphrates raisu) :select (raisu))
+    :use-module ((euphrates stringf) :select (stringf))
+    :use-module ((euphrates tilda-a) :select (~a))
+    :use-module ((tegfs config-get) :select (config-get))
     :use-module ((tegfs default-sharedir) :select (default-sharedir))
     :use-module ((tegfs get-config) :select (get-config))
     :use-module ((tegfs keyword-config-port) :select (keyword-config-port))
+    :use-module ((tegfs keyword-config-sharedir) :select (keyword-config-sharedir))
+    :use-module ((tegfs keyword-config-user) :select (keyword-config-user))
     :use-module ((tegfs web-default-port) :select (web::default-port))
     :use-module ((tegfs webcore-context) :select (context-ctr))
     :use-module ((tegfs webcore-credentials-to-id) :select (webcore::credentials->id))
@@ -36,53 +42,51 @@
   (define users-map (make-hashmap))
   (define tempentries (make-hashmap))
 
-  (define config
-    (get-config))
-  (define _1
-    (unless config
-      (raisu 'no-config-file
-             "Config file needs to be present when starting the server")))
+  (define config (get-config))
+
   (define users
-    (cadr
-     (or (assoc 'users config)
-         (raisu 'no-users "Variable 'users is not set by the config"))))
+    (config-get
+     (list keyword-config-user) config
+     (raisu 'no-users
+            (stringf "Variable ~s is not set in the config" (~a keyword-config-user)))))
+
   (define sharedir
-    (cadr
-     (or (assoc 'sharedir config)
-         (list 'sharedir default-sharedir))))
+    (config-get
+     (list keyword-config-sharedir) config
+     default-sharedir))
+
   (define port
-    (cadr
-     (or (assoc keyword-config-port config)
-         (list keyword-config-port (number->string web::default-port)))))
+    (config-get
+     (list keyword-config-port) config
+     web::default-port))
 
   (unless (number? port)
     (raisu 'port-is-not-a-number "Variable 'port must be a number" port))
 
+  (unless (and (integer? port) (exact? port) (> port 0))
+    (raisu 'port-must-be-a-natural-number port))
+
   (unless (file-or-directory-exists? sharedir)
     (make-directories sharedir))
 
-  (for-each
-   (lambda (user)
-     (define name
-       #f)
-     ;; TODO: actually have the name here
-       ;; (cadr
-       ;;  (or (assoc 'name user) (list #f #f))))
-     (define pass
-       (cadr
-        (or (assoc 'pass user)
-            (raisu 'no-user-pass
-                   "A user does not have a password"))))
-     (define struct (webcore::user-make name pass))
-     (define id (webcore::credentials->id name pass))
-     (unless (string? pass)
-       (raisu 'pass-is-no-string "User password is not a string" pass))
-     (hashmap-set! users-map id struct))
-   users)
-
   (unless (string? sharedir)
     (raisu 'sharedir-must-be-a-string sharedir))
-  (unless (and (integer? port) (exact? port) (> port 0))
-    (raisu 'port-must-be-a-natural-number port))
+
+  (for-each
+   (lambda (user-tuple)
+     (define name (~a (car user-tuple)))
+     (define user (cdr user-tuple))
+
+     (define pass
+       (~a
+        (assq-or
+         'pass user
+         (raisu 'no-user-pass
+                "A user does not have a password"))))
+
+     (define struct (webcore::user-make name pass))
+     (define id (webcore::credentials->id name pass))
+     (hashmap-set! users-map id struct))
+   users)
 
   (context-ctr users-map tempentries port sharedir))
