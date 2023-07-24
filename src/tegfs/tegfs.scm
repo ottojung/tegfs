@@ -89,6 +89,8 @@
       /        --no-dirpreview
       /        --download
       /        --no-download
+      /        --source <source>
+      /        --no-source
       /        --unsure-if-download
       /        --target <add-target>
       /        --mimetype <mimetype>
@@ -150,6 +152,9 @@
 
      :default (--unsure-if-download #t)
      :exclusive (--unsure-if-download --download --no-download)
+
+     :default (--no-source #t)
+     :exclusive (--no-source --source)
 
      :default (--no-dirpreview #t)
      :exclusive (--no-dirpreview --dirpreview)
