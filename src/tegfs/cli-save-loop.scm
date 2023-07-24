@@ -217,6 +217,9 @@
            (print-text-content ret)
            ret)))
 
+    (source
+     (and (a-weblink? -text-content) -temporary-file -text-content))
+
     (* (run-save-plugins root current plugins))
 
     (download?

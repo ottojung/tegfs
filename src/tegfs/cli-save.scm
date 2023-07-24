@@ -60,7 +60,7 @@
   (define -temporary-file (cdr (assoc '-temporary-file state)))
   (define -text-content (cdr (assoc '-text-content state)))
   (define registry-dir (append-posix-path (get-root) default-db-path))
-  (define source (and (a-weblink? -text-content) -temporary-file -text-content))
+  (define source (cdr (assoc 'source state)))
   (define additional-properties (cdr (assoc 'additional-properties state)))
   (define key-value-pairs
     (append
