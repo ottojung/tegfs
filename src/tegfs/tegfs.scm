@@ -119,8 +119,8 @@
       TALKOPTS : --web
       THUMBOPT : FIN? <target> <output>
       CONFIGOPT  : CONFIGFORK
-      CONFIGFORK : get CONFIGKEY+
-      /            set CONFIGKEY+ CONFIGVAL
+      CONFIGFORK : get CONFIGKEY*
+      /            set CONFIGKEY* CONFIGVAL
       CONFIGKEY : <key...>
       CONFIGVAL : --password <value> / FIN? <value>
       OPT : --root <root>
@@ -236,7 +236,7 @@
          (share (CLI::share/parse <share-duration> <entry-id>))
          (talk (CLI::talk --web))
          (make-thumbnails (tegfs-make-thumbnails/parse <target> <output>))
-         (config (tegfs-config/parse get set <key...> --password <value>))
+         (config (tegfs-config/parse get set (or <key...> '()) --password <value>))
          (dump-clipboard (tegfs-dump-clipboard/parse))
          (license (CLI::show-license))
          (warranty (CLI::show-warranty))
