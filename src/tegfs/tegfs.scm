@@ -135,7 +135,7 @@
      :synonym (--version -v version)
      :synonym (license copying)
 
-     :default (<share-duration> "30m")
+     :default (<share-duration> "30 minutes")
      :help (<share-duration> "For how long chosen entry should be shared.")
 
      :default (--no-series #t)
