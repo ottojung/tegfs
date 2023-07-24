@@ -5,9 +5,12 @@
  (guile
   (define-module (tegfs config-get)
     :use-module ((euphrates assq-or-star) :select (assq-or*))
+    :use-module ((euphrates catchu-case) :select (catchu-case))
     :export (config-get))))
 
 (define-syntax config-get
   (syntax-rules ()
     ((_ keylist config default)
-     (assq-or* keylist config default))))
+     (catchu-case
+      (assq-or* keylist config default)
+      (('type-error . args) default)))))
