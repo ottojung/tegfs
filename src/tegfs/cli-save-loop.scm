@@ -183,6 +183,8 @@
          --no-dirpreview
          --download
          --no-download
+         --source <source>
+         --no-source
          --unsure-if-download
          --target <add-target>
          --mimetype <mimetype>
@@ -211,14 +213,16 @@
     (additional-properties
      (if <key...> (map cons (map string->symbol <key...>) <value...>) '()))
 
+    (source
+     (if --source <source>
+         (or (and (a-weblink? (-text-content)) (-temporary-file) (-text-content))
+             'none)))
+
     (-text-content
      (or <savetext>
          (let ((ret (get-clipboard-text-content)))
            (print-text-content ret)
            ret)))
-
-    (source
-     (and (a-weblink? -text-content) -temporary-file -text-content))
 
     (* (run-save-plugins root current plugins))
 
@@ -303,6 +307,7 @@
     (download? (read-enumeration "Download target to the new location?" '(yes no)))
     (series (read-enumeration "Is this item related to the one previously saved?" '(yes no)))
     (mimetype (read-answer "Mimetype: "))
+    (source (read-answer "Original source for this entry: "))
     (target-basename (read-answer "Target basename: "))
     (target-extension (get-target-extension))
     (link? (read-enumeration "Link target to the new location?" '(yes no)))

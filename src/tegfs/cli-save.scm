@@ -28,7 +28,6 @@
     :use-module ((euphrates raisu) :select (raisu))
     :use-module ((euphrates run-syncproc) :select (run-syncproc))
     :use-module ((euphrates stringf) :select (stringf))
-    :use-module ((tegfs a-weblink-q) :select (a-weblink?))
     :use-module ((tegfs add) :select (tegfs-add tegfs-add-file))
     :use-module ((tegfs cli-remote) :select (CLI::remote))
     :use-module ((tegfs cli-save-loop) :select (CLI::save::loop))
@@ -60,7 +59,8 @@
   (define -temporary-file (cdr (assoc '-temporary-file state)))
   (define -text-content (cdr (assoc '-text-content state)))
   (define registry-dir (append-posix-path (get-root) default-db-path))
-  (define source (cdr (assoc 'source state)))
+  (define source/0 (cdr (assoc 'source state)))
+  (define source (if (equal? 'none source/0) #f source/0))
   (define additional-properties (cdr (assoc 'additional-properties state)))
   (define key-value-pairs
     (append
@@ -112,6 +112,8 @@
          --no-dirpreview
          --download
          --no-download
+         --source <source>
+         --no-source
          --unsure-if-download
          --target <add-target>
          --mimetype <mimetype>
@@ -145,6 +147,8 @@
              --no-dirpreview
              --download
              --no-download
+             --source <source>
+             --no-source
              --unsure-if-download
              --target <add-target>
              --mimetype <mimetype>

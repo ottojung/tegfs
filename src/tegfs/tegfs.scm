@@ -213,6 +213,8 @@
                --no-dirpreview
                --download
                --no-download
+               --source <source>
+               --no-source
                --unsure-if-download
                --target <add-target>
                --mimetype <mimetype>
