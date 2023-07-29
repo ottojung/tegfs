@@ -18,7 +18,7 @@
   (define-module (tegfs categorization-complete-selection)
     :export (categorization-complete-selection)
     :use-module ((tegfs categorization-complete-selection-cont) :select (categorization-complete-selection/cont))
-    :use-module ((tegfs categorization-parse-tags) :select (categorization-parse-tags))
+    :use-module ((tegfs categorization-parse) :select (categorization-parse))
     :use-module ((tegfs parsed-categorization-tags-get-all) :select (parsed-categorization-tags-get-all))
     )))
 
@@ -34,7 +34,7 @@
 
 (define (categorization-complete-selection categorization-text starred)
   (define ast/flatten
-    (categorization-parse-tags categorization-text))
+    (categorization-parse categorization-text))
 
   (define all-tags
     (parsed-categorization-tags-get-all ast/flatten))

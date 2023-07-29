@@ -18,7 +18,7 @@
   (define-module (tegfs categorization-get-all-tags)
     :export (categorization-get-all-tags)
     :use-module ((euphrates list-deduplicate) :select (list-deduplicate))
-    :use-module ((tegfs categorization-parse-tags) :select (categorization-parse-tags))
+    :use-module ((tegfs categorization-parse) :select (categorization-parse))
     :use-module ((tegfs parsed-categorization-tags-get-all) :select (parsed-categorization-tags-get-all))
     )))
 
@@ -27,7 +27,7 @@
 
 (define (categorization-get-all-tags categorization-text)
   (define parsed
-    (categorization-parse-tags categorization-text))
+    (categorization-parse categorization-text))
 
   (list-deduplicate
    (parsed-categorization-tags-get-all parsed)))

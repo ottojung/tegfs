@@ -1,12 +1,12 @@
 
 (assert=
- (categorization-parse-tags
+ (categorization-parse
   "audio video image text")
 
  '((EUPHRATES-CFG-CLI-MAIN audio video image text)))
 
 (assert=
- (categorization-parse-tags
+ (categorization-parse
   "
 		 audio video image text
 		 audio : song recording
@@ -24,7 +24,7 @@
    (text book pasta)))
 
 (assert=
- (categorization-parse-tags
+ (categorization-parse
   "
 		 audio video image text audio : song recording video : clip recording lecture image : photo meme drawing
 ")
@@ -35,7 +35,7 @@
    (image photo meme drawing)))
 
 (assert=
- (categorization-parse-tags
+ (categorization-parse
   "")
 
  '())

@@ -15,8 +15,8 @@
 
 (cond-expand
  (guile
-  (define-module (tegfs categorization-parse-tags)
-    :export (categorization-parse-tags)
+  (define-module (tegfs categorization-parse)
+    :export (categorization-parse)
     :use-module ((euphrates curry-if) :select (curry-if))
     :use-module ((euphrates list-deduplicate) :select (list-deduplicate))
     :use-module ((euphrates list-map-flatten) :select (list-map/flatten))
@@ -28,7 +28,7 @@
 ;; Returns a tree that represents the tags structure
 
 
-(define (categorization-parse-tags categorization-text)
+(define (categorization-parse categorization-text)
   (define-values (cfg-part rules-part)
     (categorization-split categorization-text))
 
