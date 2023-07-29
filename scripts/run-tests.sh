@@ -24,8 +24,8 @@ do
 	printf ' %s ... ' "$SHORT"
 
 	case "$FILE" in
-		*.scm|*.sld)
-			R=$(if sh "$FILE" 2>&1
+		*.sld)
+			R=$(if guile --r7rs -L "src" -L "tests" -s "$FILE" 2>&1
 			    then printf '✓'
 			    else printf 'X'
 			    fi)
