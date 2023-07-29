@@ -2,16 +2,31 @@
 
 set -e
 
-FILES=$(ls tests/test-* || true)
+ALLFILES=$(ls tests/* || true)
 
-case "$CI" in
-    1)
-        FILES="$FILES
-$(ls tests/citest-* || true)"
-        ;;
-esac
+for FILE in $ALLFILES
+do
+	case "$FILE" in
+		*.sld) ;;
+		*.sh) ;;
+		*) continue ;;
+	esac
 
-TESTCOUNT=$(echo "$FILES" | wc -l)
+	case "$FILE" in
+		tests/test-*) ;;
+		tests/citest-*)
+			case "$CI" in
+				1) ;;
+				*) continue ;;
+			esac
+			;;
+		*) continue ;;
+	esac
+
+	FILES="$FILES $FILE"
+done
+
+TESTCOUNT=$(echo "$FILES" | wc -w)
 INDEX=0
 FAILED=0
 
