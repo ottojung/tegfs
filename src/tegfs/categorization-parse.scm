@@ -8,9 +8,7 @@
     (categorization-split categorization-text))
 
   (define words
-    (call-with-input-string cfg-part
-      (lambda (p)
-        (read-list p))))
+    (call-with-input-string cfg-part read-list))
 
   (define words-flat
     (list-map/flatten (curry-if pair? identity list) words))
