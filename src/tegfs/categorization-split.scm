@@ -1,4 +1,4 @@
-;;;; Copyright (C) 2022  Otto Jung
+;;;; Copyright (C) 2022, 2023  Otto Jung
 ;;;;
 ;;;; This program is free software: you can redistribute it and/or modify
 ;;;; it under the terms of the GNU Affero General Public License as published
@@ -18,19 +18,19 @@
   (define-module (tegfs categorization-split)
     :export (categorization-split)
     :use-module ((euphrates comp) :select (comp))
-    :use-module ((euphrates fn) :select (fn))
     :use-module ((euphrates lines-to-string) :select (lines->string))
     :use-module ((euphrates list-split-on) :select (list-split-on))
-    :use-module ((euphrates string-split-simple) :select (string-split/simple))
+    :use-module ((euphrates string-split-3) :select (string-split-3))
     :use-module ((euphrates string-strip) :select (string-strip))
     :use-module ((euphrates string-to-lines) :select (string->lines))
     )))
 
-
-
 (define (categorization-split text)
   (define lines (string->lines text))
-  (define noncommented (map (comp ((fn string-split/simple % #\;)) car) lines))
+  (define (remove-comments line)
+    (define-values (pre comm post) (string-split-3 #\; line))
+    pre)
+  (define noncommented (map remove-comments lines))
   (define split1
     (map lines->string
          (list-split-on (comp string-strip (string-prefix? "----")) noncommented)))
