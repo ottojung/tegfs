@@ -19,6 +19,7 @@
     :export (categorization-split)
     :use-module ((euphrates comp) :select (comp))
     :use-module ((euphrates lines-to-string) :select (lines->string))
+    :use-module ((euphrates list-ref-or) :select (list-ref-or))
     :use-module ((euphrates list-split-on) :select (list-split-on))
     :use-module ((euphrates string-split-3) :select (string-split-3))
     :use-module ((euphrates string-strip) :select (string-strip))
@@ -34,6 +35,6 @@
   (define split1
     (map lines->string
          (list-split-on (comp string-strip (string-prefix? "----")) noncommented)))
-  (define cfg-part (car split1))
-  (define rules-part (if (< 1 (length split1)) (cadr split1) ""))
+  (define cfg-part (list-ref-or split1 0 ""))
+  (define rules-part (list-ref-or split1 1 ""))
   (values cfg-part rules-part))
