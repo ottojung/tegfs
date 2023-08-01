@@ -30,17 +30,18 @@
      (define LHS (car production))
      (define RHS (cdr production))
 
-     (define implying
-       (hashmap-ref reverse-mapping LHS "ambiguous"))
-
-     (unless (equal? implying "ambiguous")
-       (yield `((,implying X) (,LHS X))))
-
      (for-each
       (lambda (sym)
+        (define implying
+          (hashmap-ref reverse-mapping sym "ambiguous"))
+
+        (unless (equal? implying "ambiguous")
+          (yield `((,implying X) (,sym X))))
+
         (define qualified-name
           (string->symbol
            (string-append (~a LHS) "/" (~a sym))))
+
         (yield `((,LHS X) (,qualified-name X))))
       RHS))
    categorization/ast)
