@@ -18,14 +18,25 @@
   (define-module (tegfs categorization-complete-selection-cont)
     :export (categorization-complete-selection/cont)
     :use-module ((euphrates comp) :select (comp))
+    :use-module ((euphrates const) :select (const))
     :use-module ((euphrates curry-if) :select (curry-if))
     :use-module ((euphrates fn) :select (fn))
-    :use-module ((euphrates list-deduplicate) :select (list-deduplicate))
+    :use-module ((euphrates identity) :select (identity))
+    :use-module ((euphrates list-deduplicate) :select (list-deduplicate list-deduplicate/reverse))
     :use-module ((euphrates list-find-first) :select (list-find-first))
+    :use-module ((euphrates list-get-duplicates) :select (list-get-duplicates))
     :use-module ((euphrates list-singleton-q) :select (list-singleton?))
     :use-module ((euphrates multiset) :select (list->multiset multiset->list multiset-filter))
+    :use-module ((euphrates negate) :select (negate))
+    :use-module ((euphrates profun-eval-query-terms) :select (profun-eval-query/terms))
+    :use-module ((euphrates profun-standard-handler) :select (profun-standard-handler))
+    :use-module ((euphrates profun) :select (profun-create-falsy-database))
     :use-module ((euphrates raisu) :select (raisu))
+    :use-module ((euphrates stack) :select (stack->list stack-make stack-push!))
     :use-module ((tegfs categorization-starred-symbol-huh) :select (categorization-starred-symbol?))
+    :use-module ((tegfs categorization-to-prolog-full) :select (categorization->prolog/full))
+    :use-module ((tegfs tags-this-variable) :select (tags-this-variable/string))
+    :use-module ((tegfs unparse-tag) :select (unparse-tag))
     )))
 
 
@@ -95,6 +106,65 @@
   (cons tag/starred ret))
 
 (define (categorization-complete-selection/cont ast/flatten all-tags starred)
+  (define selected (map unstar-symbol starred))
+  (define-values (translated-tree ambiguous-branches)
+    (categorization->prolog/full ast/flatten))
+
+  (define rules
+    (let ((stack (stack-make)))
+      (stack-push! stack `((%any X)))
+      (for-each
+       (lambda (p)
+         (define rule (list (list p tags-this-variable/string)))
+         (stack-push! stack rule))
+       selected)
+      (for-each
+       (lambda (rule)
+         (stack-push! stack rule))
+       translated-tree)
+      (stack->list stack)))
+
+  (define db
+    (profun-create-falsy-database
+     profun-standard-handler
+     rules))
+
+  (define result
+    (let ((stack (stack-make)))
+      (define (yield x) (stack-push! stack x))
+
+      (for-each
+       (lambda (tag)
+         (define query (list (list tag 'X)))
+         (define terms (profun-eval-query/terms db query))
+         (for-each yield terms))
+       all-tags)
+      (stack->list stack)))
+
+  (define result/for-humans
+    (map unparse-tag result))
+
+  (define result/final
+    (list-deduplicate/reverse
+     (append selected result/for-humans)))
+
+  (define ambiguous
+    (filter
+     (lambda (x) (member (car x) selected))
+     ambiguous-branches))
+
+  (define duplicates
+    (map car (list-get-duplicates selected)))
+
+  (append
+   (list (cons 'ok result/final))
+   (if (null? ambiguous) '()
+       (list (cons 'ambiguous ambiguous)))
+   (if (null? duplicates) '()
+       (list (cons 'duplicates duplicates)))
+   ))
+
+(define (categorization-complete-selection/cont/old ast/flatten all-tags starred)
   (define starred/unstarred
     (map unstar-symbol starred))
 

@@ -2,6 +2,8 @@
 (define-library
   (test-categorization-complete-selection)
   (import (only (euphrates assert-equal) assert=))
+  (import (only (euphrates assq-or) assq-or))
+  (import (only (euphrates raisu) raisu))
   (import
     (only (tegfs categorization-complete-selection)
           categorization-complete-selection))
