@@ -22,36 +22,28 @@
     :use-module ((euphrates curry-if) :select (curry-if))
     :use-module ((euphrates fn) :select (fn))
     :use-module ((euphrates identity) :select (identity))
+    :use-module ((euphrates list-and-map) :select (list-and-map))
     :use-module ((euphrates list-deduplicate) :select (list-deduplicate list-deduplicate/reverse))
     :use-module ((euphrates list-find-first) :select (list-find-first))
     :use-module ((euphrates list-get-duplicates) :select (list-get-duplicates))
     :use-module ((euphrates list-singleton-q) :select (list-singleton?))
     :use-module ((euphrates multiset) :select (list->multiset multiset->list multiset-filter))
     :use-module ((euphrates negate) :select (negate))
-    :use-module ((euphrates profun-eval-query-terms) :select (profun-eval-query/terms))
-    :use-module ((euphrates profun-standard-handler) :select (profun-standard-handler))
-    :use-module ((euphrates profun) :select (profun-create-falsy-database))
     :use-module ((euphrates raisu) :select (raisu))
-    :use-module ((euphrates stack) :select (stack->list stack-make stack-push!))
+    :use-module ((euphrates tilda-a) :select (~a))
     :use-module ((tegfs categorization-starred-symbol-huh) :select (categorization-starred-symbol?))
     :use-module ((tegfs categorization-to-prolog-full) :select (categorization->prolog/full))
-    :use-module ((tegfs tags-this-variable) :select (tags-this-variable/string))
+    :use-module ((tegfs categorization-translate-choices) :select (categorization-translate-choices))
+    :use-module ((tegfs parse-tag) :select (parse-tag))
+    :use-module ((tegfs profun-compute-ground) :select (profun-compute-ground))
     :use-module ((tegfs unparse-tag) :select (unparse-tag))
+    :use-module ((tegfs unstar-symbol) :select (unstar-symbol))
     )))
 
-
-
-(define unstar-symbol
-  (comp symbol->string
-        string->list
-        (filter (negate (comp (equal? #\*))))
-        list->string
-        string->symbol))
-
-(define type-symbol?
-  (comp unstar-symbol
-        symbol->string
-        (string-suffix? ">")))
+(define (type-symbol? x)
+  (define s (~a x))
+  (or (string-prefix? "<" s)
+      (string-suffix? ">" s)))
 
 ;; transitive over type-symbols, but not a general transitive closure
 (define (get-parents ast/flatten tag/starred)
@@ -71,10 +63,6 @@
                     (loop immediate (cons tag/starred buf))
                     (list immediate)))))
        ast/flatten)))))
-
-(define (list-singleton? lst)
-  (and (not (null? lst))
-       (null? (cdr lst))))
 
 ;; transitive over symbols that have single parent
 (define (get-parents/transitive/reflexive ast/flatten ast/flatten/unstarred closed tag/starred)
@@ -106,51 +94,40 @@
   (cons tag/starred ret))
 
 (define (categorization-complete-selection/cont ast/flatten all-tags starred)
-  (define selected (map unstar-symbol starred))
   (define-values (translated-tree ambiguous-branches)
     (categorization->prolog/full ast/flatten))
 
-  (define rules
-    (let ((stack (stack-make)))
-      (stack-push! stack `((%any X)))
-      (for-each
-       (lambda (p)
-         (define rule (list (list p tags-this-variable/string)))
-         (stack-push! stack rule))
-       selected)
-      (for-each
-       (lambda (rule)
-         (stack-push! stack rule))
-       translated-tree)
-      (stack->list stack)))
+  (define parser (parse-tag 0))
+  (define translated-choices
+    (categorization-translate-choices parser ast/flatten starred))
 
-  (define db
-    (profun-create-falsy-database
-     profun-standard-handler
-     rules))
+  (define rules
+    (append translated-choices
+            translated-tree
+            `(((%any X)))))
 
   (define result
-    (let ((stack (stack-make)))
-      (define (yield x) (stack-push! stack x))
-
-      (for-each
-       (lambda (tag)
-         (define query (list (list tag 'X)))
-         (define terms (profun-eval-query/terms db query))
-         (for-each yield terms))
-       all-tags)
-      (stack->list stack)))
+    (profun-compute-ground rules all-tags))
 
   (define result/for-humans
     (map unparse-tag result))
 
+  (define selected (map unstar-symbol starred))
+
   (define result/final
     (list-deduplicate/reverse
-     (append selected result/for-humans)))
+     (filter (negate type-symbol?)
+             (append selected result/for-humans))))
 
   (define ambiguous
     (filter
-     (lambda (x) (member (car x) selected))
+     (lambda (x)
+       (and (member (car x) selected)
+            (not (type-symbol? x))
+            (list-and-map
+             (lambda (specializer)
+               (not (member specializer result/final)))
+             (cdr x))))
      ambiguous-branches))
 
   (define duplicates

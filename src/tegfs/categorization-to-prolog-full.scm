@@ -3,29 +3,31 @@
 
 (define (categorization->prolog/full categorization/ast)
   (define ret (stack-make))
-
-  (define reverse-mapping (make-hashmap))
-
   (define (yield rule)
     (stack-push! ret rule))
 
+  (define reverse-mapping (make-hashmap))
+
+  (define ast/unstarred
+    (map (comp (map unstar-symbol)) categorization/ast))
+
   (for-each
    (lambda (production)
-     (define LHS (car production))
-     (define RHS (cdr production))
+     (define consequent (car production))
+     (define antecedents (cdr production))
      (for-each
       (lambda (sym)
         (define current
           (hashmap-ref reverse-mapping sym '()))
         (hashmap-set! reverse-mapping sym
-                      (cons LHS current)))
-      RHS))
-   categorization/ast)
+                      (cons consequent current)))
+      antecedents))
+   ast/unstarred)
 
   (for-each
    (lambda (production)
-     (define LHS (car production))
-     (define RHS (cdr production))
+     (define consequent (car production))
+     (define antecedents (cdr production))
 
      (for-each
       (lambda (sym)
@@ -38,11 +40,11 @@
 
         (define qualified-name
           (string->symbol
-           (string-append (~a LHS) "/" (~a sym))))
+           (mangle-tag-choice consequent sym)))
 
-        (yield `((,LHS X) (,qualified-name X))))
-      RHS))
-   categorization/ast)
+        (yield `((,consequent X) (,qualified-name X))))
+      antecedents))
+   ast/unstarred)
 
   (define db (stack->list ret))
   (define ambiguous

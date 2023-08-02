@@ -96,3 +96,48 @@
 "
 
   '(meme meme recording)))
+
+(assert=
+ '((ok image video recording meme))
+
+ (categorization-complete-selection
+  "
+		 audio video image text
+		 audio : song recording
+		 video : clip recording lecture
+		 image : photo meme drawing
+		 photo : selfie
+		 text : book pasta
+"
+
+  '(meme recording video)))
+
+(assert=
+ '((ok video image clip meme))
+
+ (categorization-complete-selection
+  "
+		 audio video image text
+		 audio : song recording
+		 video : cl*ip recording lecture
+		 image : photo meme* drawing
+		 photo : selfie
+		 text : book pasta
+"
+
+  '(meme clip)))
+
+(assert=
+ '((ok video image clip meme))
+
+ (categorization-complete-selection
+  "
+		 audio video i*mage text
+		 audio : song* recording*
+		 video : cl*ip recording* lecture*
+		 image : photo meme* drawing
+		 photo : selfie*
+		 text : book* pas*ta
+"
+
+  '(meme clip)))

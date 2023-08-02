@@ -2,6 +2,7 @@
 (define-library
   (tegfs categorization-to-prolog-full)
   (export categorization->prolog/full)
+  (import (only (euphrates comp) comp))
   (import
     (only (euphrates hashmap)
           hashmap->alist
@@ -17,7 +18,11 @@
           stack->list
           stack-make
           stack-push!))
-  (import (only (euphrates tilda-a) ~a))
+  (import
+    (only (tegfs mangle-tag-choice)
+          mangle-tag-choice))
+  (import
+    (only (tegfs unstar-symbol) unstar-symbol))
   (import
     (only (scheme base)
           begin
@@ -28,12 +33,12 @@
           for-each
           lambda
           let
+          map
           null?
           or
           quasiquote
           quote
           string->symbol
-          string-append
           unquote
           values
           when))
