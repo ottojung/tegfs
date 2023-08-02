@@ -21,19 +21,14 @@
     :use-module ((euphrates list-deduplicate) :select (list-deduplicate/reverse))
     :use-module ((euphrates list-get-duplicates) :select (list-get-duplicates))
     :use-module ((euphrates negate) :select (negate))
-    :use-module ((euphrates tilda-a) :select (~a))
     :use-module ((tegfs categorization-to-prolog-full) :select (categorization->prolog/full))
     :use-module ((tegfs categorization-translate-choices) :select (categorization-translate-choices))
     :use-module ((tegfs parse-tag) :select (parse-tag))
     :use-module ((tegfs profun-compute-ground) :select (profun-compute-ground))
+    :use-module ((tegfs type-tag-huh) :select (type-tag?))
     :use-module ((tegfs unparse-tag) :select (unparse-tag))
     :use-module ((tegfs unstar-symbol) :select (unstar-symbol))
     )))
-
-(define (type-symbol? x)
-  (define s (~a x))
-  (or (string-prefix? "<" s)
-      (string-suffix? ">" s)))
 
 (define (categorization-complete-selection/cont ast/flatten all-tags starred)
   (define-values (translated-tree ambiguous-branches)
@@ -58,14 +53,14 @@
 
   (define result/final
     (list-deduplicate/reverse
-     (filter (negate type-symbol?)
+     (filter (negate type-tag?)
              (append selected result/for-humans))))
 
   (define ambiguous
     (filter
      (lambda (x)
        (and (member (car x) selected)
-            (not (type-symbol? x))
+            (not (type-tag? x))
             (list-and-map
              (lambda (specializer)
                (not (member specializer result/final)))
