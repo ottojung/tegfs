@@ -112,10 +112,9 @@
 
   (append-string-file
    registry-file
-   (with-output-to-string
-     (lambda _
-       (newline)
-       (entry-print entry)
-       (newline))))
+   (with-output-stringified
+    (newline)
+    (entry-print entry)
+    (newline)))
 
   entry)

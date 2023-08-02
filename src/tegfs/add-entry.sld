@@ -43,6 +43,9 @@
     (only (euphrates string-strip) string-strip))
   (import (only (euphrates tilda-a) ~a))
   (import
+    (only (euphrates with-output-stringified)
+          with-output-stringified))
+  (import
     (only (euphrates write-string-file)
           write-string-file))
   (import (only (tegfs a-weblink-q) a-weblink?))
@@ -70,18 +73,15 @@
     (only (tegfs last-id-filename) last-id-filename))
   (import
     (only (scheme base)
-          _
           and
           assq
           begin
           car
           cond
-          cond-expand
           define
           else
           equal?
           if
-          lambda
           let
           list->string
           map
