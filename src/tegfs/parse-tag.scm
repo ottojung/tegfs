@@ -1,4 +1,4 @@
-;;;; Copyright (C) 2022  Otto Jung
+;;;; Copyright (C) 2022, 2023  Otto Jung
 ;;;;
 ;;;; This program is free software: you can redistribute it and/or modify
 ;;;; it under the terms of the GNU Affero General Public License as published
@@ -19,7 +19,10 @@
     :export (parse-tag parse-tag-structure)
     :use-module ((euphrates comp) :select (comp))
     :use-module ((euphrates list-intersperse) :select (list-intersperse))
+    :use-module ((euphrates list-or-map) :select (list-or-map))
     :use-module ((euphrates list-split-on) :select (list-split-on))
+    :use-module ((euphrates raisu) :select (raisu))
+    :use-module ((euphrates stringf) :select (stringf))
     :use-module ((euphrates tilda-a) :select (~a))
     :use-module ((tegfs tag-structure-sep1) :select (tag-structure-sep1))
     :use-module ((tegfs tag-structure-sep2) :select (tag-structure-sep2))
@@ -31,12 +34,22 @@
 (define (parse-tag-structure/chars counter)
   (lambda (tag)
     (define str (~a tag))
+    (when (string-null? str)
+      (raisu 'type-error "Empty tag is not a tag"))
+
     (define chars (string->list str))
 
     (define equal-split
       (list-split-on (comp (equal? tag-structure-sep1)) chars))
+
+    (when (null? (car equal-split))
+      (raisu 'type-error (stringf "Tag cannot begin with ~s" (~a tag-structure-sep1))))
+
     (define equal-split?
       (not (null? (cdr equal-split))))
+
+    (when (list-or-map null? (cdr equal-split))
+      (raisu 'type-error "Tag arguments cannot be empty"))
 
     (cond
      (equal-split?
@@ -52,15 +65,17 @@
 ;;   with=X,Y,Z=A,B
 ;;
 ;; output:
-;;   ((equality with X Y Z) (equality with A B))
+;;   ((equality with "X" "Y" "Z") (equality with "A" "B"))
 ;;
 (define (parse-tag-structure counter)
   (define parser (parse-tag-structure/chars counter))
   (lambda (tag)
     (define structure/chars (parser tag))
     (map (lambda (x)
-           (cons (car x)
-                 (map (compose string->symbol list->string) (cdr x))))
+           (define op (car x))
+           (define args (cdr x))
+           (cons op (cons (string->symbol (list->string (car args)))
+                          (map list->string (cdr args)))))
          structure/chars)))
 
 (define (desugar-tag/chars counter)
@@ -94,4 +109,3 @@
 
        (cons pred-name variables))
      desugared)))
-

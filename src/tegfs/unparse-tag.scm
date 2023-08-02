@@ -18,6 +18,7 @@
   (define-module (tegfs unparse-tag)
     :export (unparse-tag)
     :use-module ((euphrates list-intersperse) :select (list-intersperse))
+    :use-module ((euphrates tilda-a) :select (~a))
     )))
 
 
@@ -29,4 +30,4 @@
        (apply
         string-append
         `(,(symbol->string (car parsed-tag)) "="
-          ,@(list-intersperse "," (map symbol->string (cdr parsed-tag))))))))
+          ,@(list-intersperse "," (map ~a (cdr parsed-tag))))))))
