@@ -26,7 +26,7 @@
     :use-module ((euphrates tilda-a) :select (~a))
     :use-module ((tegfs tag-structure-sep1) :select (tag-structure-sep1))
     :use-module ((tegfs tag-structure-sep2) :select (tag-structure-sep2))
-    :use-module ((tegfs tags-this-variable) :select (tags-this-variable/char))
+    :use-module ((tegfs tags-this-variable) :select (tags-this-variable/string))
     )))
 
 
@@ -78,6 +78,9 @@
                           (map list->string (cdr args)))))
          structure/chars)))
 
+(define tags-this-variable/chars
+  (string->list tags-this-variable/string))
+
 (define (desugar-tag/chars counter)
   (define parser (parse-tag-structure/chars counter))
   (lambda (tag)
@@ -89,7 +92,7 @@
           (let* ((equal-split (cdr s)))
             (apply append `(,(car equal-split) (,tag-structure-sep1)
                             ,@(list-intersperse `(,tag-structure-sep2) (cdr equal-split))))))
-         ((single) (append (cadr s) `(,tag-structure-sep1) `(,tags-this-variable/char)))))
+         ((single) (append (cadr s) `(,tag-structure-sep1) tags-this-variable/chars))))
      structure/chars)))
 
 (define (parse-tag counter)
