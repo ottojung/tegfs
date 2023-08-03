@@ -49,6 +49,7 @@
          (modify-phases
              %standard-phases
            (delete 'check)
+           (delete 'build)
            (delete 'configure)))))))
 
 tegfs
