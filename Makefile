@@ -16,6 +16,7 @@ TEST_FILES=$(TEST_ROOT) $(TEST_ROOT)/categorization.tegfs.txt $(TEST_ROOT)/confi
 all: dist/tegfs
 
 build: dist/tegfs
+	dist/tegfs --version 1>/dev/null
 
 install: $(BINARY_PATH)
 
@@ -52,7 +53,6 @@ deps/euphrates/.git:
 dist/tegfs: $(SUBMODULES) src/*/*.scm dist
 	guile -s scripts/make-binary.scm "$(TEST_ROOT)" "$(CODE_ROOT)" > "$@"
 	chmod +x "$@"
-	"$@" --version 1>/dev/null
 
 dist:
 	mkdir -p "$@"
