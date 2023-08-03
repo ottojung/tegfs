@@ -97,8 +97,10 @@
     (assq-or 'selected result))
   (define all-tags
     (assq-or 'ok result))
-  (define inferred-tags
+  (define inferred-tags/0
     (filter (lambda (tag) (not (member tag tags))) all-tags))
+  (define inferred-tags
+    (if (null? inferred-tags/0) 'none inferred-tags/0))
 
   (alist-initialize!:return-multiple
    `((tags . ,tags)
