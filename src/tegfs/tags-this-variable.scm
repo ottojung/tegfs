@@ -16,11 +16,9 @@
 (cond-expand
  (guile
   (define-module (tegfs tags-this-variable)
-    :export (tags-this-variable tags-this-variable/char tags-this-variable/string))))
+    :export (tags-this-variable tags-this-variable/string))))
 
+(define tags-this-variable '$)
 
-(define tags-this-variable/char #\$)
 (define tags-this-variable/string
-  (list->string `(,tags-this-variable/char)))
-(define tags-this-variable
-  (string->symbol tags-this-variable/string))
+  (symbol->string tags-this-variable))
