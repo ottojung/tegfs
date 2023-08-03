@@ -157,4 +157,8 @@ If you're using the Guix package manager, there is a TegFS package definition av
    cd tegfs
    guix package -f scripts/guix.scm
 
-Once TegFS is installed, you can start using it by running ``tegfs`` in your terminal.
+Alternatively it can be loaded in a temporary environment:
+
+.. code-block:: bash
+
+   guix environment --ad-hoc --load=scripts/guix.scm
