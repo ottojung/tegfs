@@ -28,7 +28,7 @@
   (let* ((source-dir (dirname (dirname (current-filename)))))
     (package
       (name "tegfs")
-      (version "0.1")
+      (version "0.8")
       (source (local-file source-dir #:recursive? #t #:select? (const #t)))
       (propagated-inputs
        (list git guile-3.0 wget
