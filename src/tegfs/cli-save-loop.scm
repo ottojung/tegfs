@@ -17,7 +17,7 @@
  (guile
   (define-module (tegfs cli-save-loop)
     :export (CLI::save::loop)
-    :use-module ((euphrates alist-initialize-bang) :select (alist-initialize!:current-setters))
+    :use-module ((euphrates alist-initialize-bang) :select (alist-initialize!:current-setters alist-initialize!:return-multiple))
     :use-module ((euphrates alist-initialize-loop) :select (alist-initialize-loop))
     :use-module ((euphrates assq-or) :select (assq-or))
     :use-module ((euphrates dprintln) :select (dprintln))
@@ -29,6 +29,7 @@
     :use-module ((euphrates print-in-frame) :select (print-in-frame))
     :use-module ((euphrates range) :select (range))
     :use-module ((euphrates read-string-line) :select (read-string-line))
+    :use-module ((euphrates string-to-words) :select (string->words))
     :use-module ((euphrates stringf) :select (stringf))
     :use-module ((euphrates tilda-a) :select (~a))
     :use-module ((euphrates tilda-s) :select (~s))
@@ -88,7 +89,25 @@
           (loop)))))
 
 (define (get-tags)
-  (assq-or 'ok (tegfs-categorize (CLI::save-working-file/p))))
+  (define result
+    (tegfs-categorize (CLI::save-working-file/p)))
+
+  (define tags
+    (assq-or 'selected result))
+  (define all-tags
+    (assq-or 'ok result))
+  (define inferred-tags
+    (filter (lambda (tag) (not (member tag tags))) all-tags))
+
+  (alist-initialize!:return-multiple
+   `((tags . ,tags)
+     (inferred-tags . ,inferred-tags))))
+
+(define (read-inferred-tags)
+  (dprintln "(Should not be setting this by hand as it is normally set automatically)")
+  (map string->symbol
+       (string->words
+        (read-answer "Inferred tags: "))))
 
 (define (print-text-content ret)
   (newline)
@@ -210,7 +229,8 @@
     (series (if --series 'yes 'no))
     (link? (if --link 'yes 'no))
     (title (or <title> (if --interactive #f 'none)))
-    (tags (or <tag...> (if --interactive #f 'none)))
+    (tags (or <tag...> (if --interactive #f '())))
+    (inferred-tags (or <tag...> (if --interactive #f '())))
     (additional-properties
      (if <key...> (map cons (map string->symbol <key...>) <value...>) '()))
 
@@ -304,6 +324,7 @@
    :user
    ((title (read-answer "Title: "))
     (tags (get-tags))
+    (inferred-tags (read-inferred-tags))
     (kind (read-enumeration "Kind: " '(data link localfile pasta)))
     (download? (read-enumeration "Download target to the new location?" '(yes no)))
     (series (read-enumeration "Is this item related to the one previously saved?" '(yes no)))
