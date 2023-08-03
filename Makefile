@@ -52,6 +52,7 @@ deps/euphrates/.git:
 dist/tegfs: $(SUBMODULES) src/*/*.scm dist
 	guile -s scripts/make-binary.scm "$(TEST_ROOT)" "$(CODE_ROOT)" > "$@"
 	chmod +x "$@"
+	"$@" --version 1>/dev/null
 
 dist:
 	mkdir -p "$@"
