@@ -24,6 +24,7 @@
     :use-module ((tegfs categorization-starred-symbol-huh) :select (categorization-starred-symbol?))
     :use-module ((tegfs parsed-categorization-tags-get-all) :select (parsed-categorization-tags-get-all))
     :use-module ((tegfs texteditor-p) :select (texteditor/p))
+    :use-module ((tegfs unstar-symbol) :select (unstar-symbol))
     )))
 
 
@@ -45,4 +46,12 @@
   (define starred
     (filter categorization-starred-symbol? all-tags))
 
-  (categorization-complete-selection/cont ast/flatten all-tags starred))
+  (define continued
+    (categorization-complete-selection/cont ast/flatten all-tags starred))
+
+  (define unstarred
+    (map unstar-symbol starred))
+
+  (append continued
+          (list (cons 'selected unstarred))))
+
