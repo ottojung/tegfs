@@ -25,7 +25,7 @@
  (ice-9 rdelim))
 
 (define-public tegfs
-  (let* ((source-dir (dirname (current-filename))))
+  (let* ((source-dir (dirname (dirname (current-filename)))))
     (package
       (name "tegfs")
       (version "0.1")
