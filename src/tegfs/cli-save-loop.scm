@@ -19,6 +19,7 @@
     :export (CLI::save::loop)
     :use-module ((euphrates alist-initialize-bang) :select (alist-initialize!:current-setters))
     :use-module ((euphrates alist-initialize-loop) :select (alist-initialize-loop))
+    :use-module ((euphrates assq-or) :select (assq-or))
     :use-module ((euphrates dprintln) :select (dprintln))
     :use-module ((euphrates list-intersperse) :select (list-intersperse))
     :use-module ((euphrates list-take-n) :select (list-take-n))
@@ -87,7 +88,7 @@
           (loop)))))
 
 (define (get-tags)
-  (cdr (tegfs-categorize (CLI::save-working-file/p))))
+  (assq-or 'ok (tegfs-categorize (CLI::save-working-file/p))))
 
 (define (print-text-content ret)
   (newline)

@@ -1,4 +1,4 @@
-;;;; Copyright (C) 2022  Otto Jung
+;;;; Copyright (C) 2022, 2023  Otto Jung
 ;;;;
 ;;;; This program is free software: you can redistribute it and/or modify
 ;;;; it under the terms of the GNU Affero General Public License as published
@@ -17,11 +17,14 @@
  (guile
   (define-module (tegfs categorize)
     :export (tegfs-categorize/parse tegfs-categorize)
+    :use-module ((euphrates alist-initialize) :select (alist-initialize))
     :use-module ((euphrates append-posix-path) :select (append-posix-path))
+    :use-module ((euphrates assq-or) :select (assq-or))
     :use-module ((euphrates dprintln) :select (dprintln))
     :use-module ((euphrates file-or-directory-exists-q) :select (file-or-directory-exists?))
     :use-module ((euphrates hashmap) :select (hashmap-ref hashmap-set! make-hashmap))
     :use-module ((euphrates hashset) :select (hashset->list hashset-add! hashset-difference make-hashset))
+    :use-module ((euphrates raisu) :select (raisu))
     :use-module ((euphrates read-string-file) :select (read-string-file))
     :use-module ((euphrates read-string-line) :select (read-string-line))
     :use-module ((euphrates system-fmt) :select (system-fmt))
@@ -54,6 +57,8 @@
   (define state (make-hashmap))
   (define currently-handling-var tags-this-variable)
 
+  (define (add-selected-tag tag)
+    (hashset-add! (hashmap-ref state 'selected #f) tag))
   (define (add-handled-var var)
     (hashset-add! (hashmap-ref state 'handled-vars #f) var))
   (define (add-all-var var)
@@ -93,14 +98,17 @@
         (set! cfg-part cfg))))
 
   (define (finish)
-    (define return (hashset->list (hashmap-ref state 'tags #f)))
+    (define return-tags (hashset->list (hashmap-ref state 'tags #f)))
+    (define return-selected (hashset->list (hashmap-ref state 'selected #f)))
 
     (copy-file working-file0 categorization-file)
 
     (unless working-file-maybe
       (delete-file working-file0))
 
-    (cons 'ok return))
+    (alist-initialize
+     (ok return-tags)
+     (selected return-selected)))
 
   (unless (file-or-directory-exists? categorization-file)
     (write-string-file
@@ -110,6 +118,7 @@
   (unless (file-or-directory-exists? working-file)
     (copy-file categorization-file working-file))
 
+  (hashmap-set! state 'selected (make-hashset))
   (hashmap-set! state 'handled-vars (make-hashset))
   (hashmap-set! state 'all-vars (make-hashset))
   (hashmap-set! state 'tags (make-hashset))
@@ -125,6 +134,12 @@
         (update-working-file))
 
       (add-handled-var currently-handling-var)
+
+      (let ((selected
+             (assq-or 'selected result
+                      (raisu 'type-error "Expected ~s return" (~a 'selected)))))
+        (for-each add-selected-tag selected))
+
       (let* ((tags (add-current-to-tags (cdr (assoc 'ok result))))
              (do (for-each handle-new-tag tags))
              (all-vars (hashmap-ref state 'all-vars #f))
