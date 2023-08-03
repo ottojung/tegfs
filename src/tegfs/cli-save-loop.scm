@@ -34,6 +34,7 @@
     :use-module ((euphrates tilda-a) :select (~a))
     :use-module ((euphrates tilda-s) :select (~s))
     :use-module ((euphrates url-get-path) :select (url-get-path))
+    :use-module ((euphrates words-to-string) :select (words->string))
     :use-module ((euphrates write-string-file) :select (write-string-file))
     :use-module ((tegfs a-weblink-q) :select (a-weblink?))
     :use-module ((tegfs categorize) :select (tegfs-categorize))
@@ -124,15 +125,21 @@
      (unless (equal? '* (car setter))
        (let ()
          (define value0 ((cdr setter) 'current))
-         (define value
+         (define value1
            (if (and (string? value0) (< 50 (string-length value0)))
                (string-append (list->string (list-take-n 50 (string->list value0))) "...")
                value0))
+         (define value
+           (cond
+            ((list? value1) (words->string (map ~s value1)))
+            (value1 (~s value1))
+            (else "")))
+
          (dprintln "   ~a~a) ~a: ~a"
                    (if (equal? current-setter (car setter)) ">" " ")
                    (+ 1 i)
                    (car setter)
-                   (if value (~s value) "")))))
+                   value))))
    setters
    (range (length setters))))
 
