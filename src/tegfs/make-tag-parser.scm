@@ -15,8 +15,8 @@
 
 (cond-expand
  (guile
-  (define-module (tegfs parse-tag)
-    :export (parse-tag parse-tag-structure)
+  (define-module (tegfs make-tag-parser)
+    :export (make-tag-parser make-tag-structure-parser)
     :use-module ((euphrates comp) :select (comp))
     :use-module ((euphrates list-intersperse) :select (list-intersperse))
     :use-module ((euphrates list-or-map) :select (list-or-map))
@@ -31,7 +31,7 @@
 
 
 
-(define (parse-tag-structure/chars counter)
+(define (make-tag-structure-parser/chars counter)
   (lambda (tag)
     (define str (~a tag))
     (when (string-null? str)
@@ -67,8 +67,8 @@
 ;; output:
 ;;   ((equality with "X" "Y" "Z") (equality with "A" "B"))
 ;;
-(define (parse-tag-structure counter)
-  (define parser (parse-tag-structure/chars counter))
+(define (make-tag-structure-parser counter)
+  (define parser (make-tag-structure-parser/chars counter))
   (lambda (tag)
     (define structure/chars (parser tag))
     (map (lambda (x)
@@ -82,7 +82,7 @@
   (string->list tags-this-variable/string))
 
 (define (desugar-tag/chars counter)
-  (define parser (parse-tag-structure/chars counter))
+  (define parser (make-tag-structure-parser/chars counter))
   (lambda (tag)
     (define structure/chars (parser tag))
     (map
@@ -95,7 +95,7 @@
          ((single) (append (cadr s) `(,tag-structure-sep1) tags-this-variable/chars))))
      structure/chars)))
 
-(define (parse-tag counter)
+(define (make-tag-parser counter)
   (lambda (tag)
     (define desugared ((desugar-tag/chars counter) tag))
     (map

@@ -3,7 +3,7 @@
   (tegfs parse-term)
   (export parse-term)
   (import (only (euphrates tilda-a) ~a))
-  (import (only (tegfs parse-tag) parse-tag))
+  (import (only (tegfs make-tag-parser) make-tag-parser))
   (import
     (only (tegfs tags-this-variable)
           tags-this-variable/string))

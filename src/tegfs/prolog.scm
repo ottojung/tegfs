@@ -34,7 +34,7 @@
     :use-module ((tegfs keyword-id) :select (keyword-id))
     :use-module ((tegfs keyword-tags) :select (keyword-tags))
     :use-module ((tegfs make-temporary-filename-local) :select (make-temporary-filename/local))
-    :use-module ((tegfs parse-tag) :select (parse-tag))
+    :use-module ((tegfs make-tag-parser) :select (make-tag-parser))
     :use-module ((tegfs print-prolog-inference) :select (print-prolog-inference))
     :use-module ((tegfs tag-to-prolog-term) :select (print-tag-as-prolog-term))
     :use-module ((tegfs tags-this-variable) :select (tags-this-variable/string))
@@ -194,7 +194,7 @@
                add-special-sorted-status-tag
                (add-special-locality-tag target)))
 
-    (define parser (parse-tag counter))
+    (define parser (make-tag-parser counter))
     (define parsed-tags (apply append (map parser tags)))
 
     (for-each (translate-parsed-tag yield cnt) parsed-tags)

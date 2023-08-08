@@ -37,7 +37,7 @@
     :use-module ((tegfs edit-tags) :select (tegfs-edit-tags))
     :use-module ((tegfs get-root) :select (get-root))
     :use-module ((tegfs make-temporary-filename-local) :select (make-temporary-filename/local))
-    :use-module ((tegfs parse-tag) :select (parse-tag-structure))
+    :use-module ((tegfs make-tag-parser) :select (make-tag-structure-parser))
     :use-module ((tegfs tags-this-variable) :select (tags-this-variable))
     :use-module ((tegfs unparse-tag) :select (unparse-tag))
     )))
@@ -76,7 +76,7 @@
   (define counter
     (let ((cnt 0))
       (lambda _ (set! cnt (+ 1 cnt)) cnt)))
-  (define parser (parse-tag-structure counter))
+  (define parser (make-tag-structure-parser counter))
 
   (define (add-current-to-tags tags)
     (define parsed (apply append (map parser tags)))

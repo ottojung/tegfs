@@ -17,7 +17,7 @@
   (import
     (only (tegfs categorization-translate-choices)
           categorization-translate-choices))
-  (import (only (tegfs parse-tag) parse-tag))
+  (import (only (tegfs make-tag-parser) make-tag-parser))
   (import
     (only (tegfs profun-compute-ground)
           profun-compute-ground))

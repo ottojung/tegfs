@@ -7,7 +7,7 @@
       (string->symbol s)))
 
 (define (parse-term counter)
-  (define tag-parser (parse-tag counter))
+  (define tag-parser (make-tag-parser counter))
   (lambda (term)
     (define whole (tag-parser term))
     (cons (car whole)

@@ -5,7 +5,7 @@
   (define-values (translated-tree ambiguous-branches)
     (categorization->prolog/full ast/flatten))
 
-  (define parser (parse-tag 0))
+  (define parser (make-tag-parser 0))
   (define translated-choices
     (categorization-translate-choices parser ast/flatten starred))
 

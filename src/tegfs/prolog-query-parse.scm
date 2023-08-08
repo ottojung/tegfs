@@ -22,7 +22,7 @@
     :use-module ((euphrates fn-cons) :select (fn-cons))
     :use-module ((euphrates list-deduplicate) :select (list-deduplicate/reverse))
     :use-module ((euphrates tilda-a) :select (~a))
-    :use-module ((tegfs parse-tag) :select (parse-tag))
+    :use-module ((tegfs make-tag-parser) :select (make-tag-parser))
     :use-module ((tegfs prolog-var) :select (make-prolog-var))
     :use-module ((tegfs tags-this-variable) :select (tags-this-variable/string))
     )))
@@ -34,7 +34,7 @@
     (make-prolog-var
      ((curry-if (comp (equal? tags-this-variable/string)) (const 'This)) x)))
 
-  (define parser (parse-tag tags-this-variable/string))
+  (define parser (make-tag-parser tags-this-variable/string))
   (define (maybe-parse tag)
     (if (or (string? tag) (symbol? tag) (number? tag))
         (parser tag)
