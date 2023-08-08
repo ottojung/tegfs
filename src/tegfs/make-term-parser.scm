@@ -6,7 +6,7 @@
   (if (equal? tags-this-variable/string s) x
       (string->symbol s)))
 
-(define (parse-term counter)
+(define (make-term-parser counter)
   (define tag-parser (make-tag-parser counter))
   (lambda (term)
     (define whole (tag-parser term))

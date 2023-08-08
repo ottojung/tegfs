@@ -30,7 +30,7 @@
     :use-module ((euphrates write-string-file) :select (write-string-file))
     :use-module ((tegfs fatal) :select (fatal))
     :use-module ((tegfs get-root) :select (get-root))
-    :use-module ((tegfs parse-term) :select (parse-term))
+    :use-module ((tegfs make-term-parser) :select (make-term-parser))
     :use-module ((tegfs prolog-cut-symbol) :select (make-prolog-cut-symbol))
     :use-module ((tegfs prolog-query-parse) :select (prolog-query-parse))
     :use-module ((tegfs rules-filename) :select (rules-filename))
@@ -73,7 +73,7 @@
     (fatal "Symmetric rule ~s should have had exactly one argument, but it has ~s" args len))
 
   (define name (car args))
-  (define parsed ((parse-term tags-this-variable/string) name))
+  (define parsed ((make-term-parser tags-this-variable/string) name))
   (define parsed-length (length parsed))
   (unless (equal? 1 parsed-length)
     (fatal "Parsed symmetric relation ~s should be simple (without args), but it has ~s arguments"

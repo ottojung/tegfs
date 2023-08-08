@@ -1,7 +1,7 @@
 
 (define-library
-  (tegfs parse-term)
-  (export parse-term)
+  (tegfs make-term-parser)
+  (export make-term-parser)
   (import (only (euphrates tilda-a) ~a))
   (import (only (tegfs make-tag-parser) make-tag-parser))
   (import
@@ -22,5 +22,5 @@
   (cond-expand
     (guile (import (only (guile) include-from-path))
            (begin
-             (include-from-path "tegfs/parse-term.scm")))
-    (else (include "parse-term.scm"))))
+             (include-from-path "tegfs/make-term-parser.scm")))
+    (else (include "make-term-parser.scm"))))
