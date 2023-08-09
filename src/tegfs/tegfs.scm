@@ -19,6 +19,7 @@
     :use-module ((euphrates current-program-path-p) :select (current-program-path/p))
     :use-module ((euphrates define-cli) :select (define-cli:show-help with-cli))
     :use-module ((euphrates stringf) :select (stringf))
+    :use-module ((euphrates tilda-a) :select (~a))
     :use-module ((euphrates with-randomizer-seed) :select (with-randomizer-seed))
     :use-module ((tegfs categorize) :select (tegfs-categorize/parse))
     :use-module ((tegfs cli-delete) :select (CLI::delete))
@@ -44,6 +45,7 @@
     :use-module ((tegfs root-p) :select (root/p))
     :use-module ((tegfs tegfs-version) :select (tegfs-version))
     :use-module ((tegfs texteditor-p) :select (texteditor/p))
+    :use-module ((tegfs verbosity-level-p) :select (verbosity-level/p))
     :use-module ((tegfs web-server) :select (tegfs-serve/parse))
     )))
 
@@ -126,11 +128,20 @@
       OPT : --root <root>
       /     --texteditor <texteditor>
       /     --seed <seed>
+      /     --verbosity <verbosity>
+      /     --verbose
+      /     --no-verbose
       FIN : --
       )
 
      :default (<root> (get-root/default))
      :default (<texteditor> (get-texteditor/default))
+     :default (<verbosity> 50)
+
+     :type (<verbosity> 'number)
+     :help (<verbosity>
+            (stringf "A number between 0 and 100. Interacts with ~s and ~s."
+                     (~a (quote --verbose)) (~a (quote --no-verbose))))
 
      :synonym (--version -v version)
      :synonym (license copying)
@@ -152,6 +163,9 @@
 
      :default (--unsure-if-download #t)
      :exclusive (--unsure-if-download --download --no-download)
+
+     :default (--no-verbose #t)
+     :exclusive (--no-verbose --verbose)
 
      :default (--no-source #t)
      :exclusive (--no-source --source)
@@ -192,7 +206,11 @@
 
      (with-randomizer-seed
       (or <seed> 'random)
-      (parameterize ((root/p <root>) (texteditor/p <texteditor>))
+      (parameterize ((root/p <root>) (texteditor/p <texteditor>)
+                     (verbosity-level/p
+                      (cond
+                       (--verbose 70)
+                       (else <verbosity>))))
         (cond
          (remote (CLI::remote/parse <remote>))
          (--version (display tegfs-version) (newline))
