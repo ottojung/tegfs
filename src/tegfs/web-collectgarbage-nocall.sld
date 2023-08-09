@@ -36,10 +36,11 @@
           permission-filemap
           permission?))
   (import
+    (only (tegfs sharedinfo-time-left)
+          sharedinfo-time-left))
+  (import
     (only (tegfs sharedinfo)
-          sharedinfo-date
           sharedinfo-recepientid
-          sharedinfo-stime
           sharedinfo?))
   (import
     (only (tegfs sharereceipt) sharereceipt?))
@@ -50,8 +51,6 @@
           context-tempentries))
   (import
     (only (scheme base)
-          +
-          -
           <
           _
           begin
@@ -67,7 +66,6 @@
           lambda
           let
           let*
-          max
           or
           quote
           set!
