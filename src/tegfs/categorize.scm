@@ -58,8 +58,6 @@
   (define state (make-hashmap))
   (define currently-handling-var tags-this-variable)
 
-  (define (add-selected-tag tag)
-    (hashset-add! (hashmap-ref state 'selected #f) tag))
   (define (add-choice tag-term)
     (hashset-add! (hashmap-ref state 'choices #f) tag-term))
   (define (add-handled-var var)
@@ -102,7 +100,7 @@
 
   (define (finish)
     (define return-tags (hashset->list (hashmap-ref state 'tags #f)))
-    (define return-selected (hashset->list (hashmap-ref state 'selected #f)))
+    (define return-choices (hashset->list (hashmap-ref state 'choices #f)))
 
     (copy-file working-file0 categorization-file)
 
@@ -111,7 +109,7 @@
 
     (alist-initialize
      (ok return-tags)
-     (selected return-selected)))
+     (choices return-choices)))
 
   (unless (file-or-directory-exists? categorization-file)
     (write-string-file
@@ -121,7 +119,7 @@
   (unless (file-or-directory-exists? working-file)
     (copy-file categorization-file working-file))
 
-  (hashmap-set! state 'selected (make-hashset))
+  (hashmap-set! state 'choices (make-hashset))
   (hashmap-set! state 'handled-vars (make-hashset))
   (hashmap-set! state 'all-vars (make-hashset))
   (hashmap-set! state 'tags (make-hashset))
@@ -143,8 +141,7 @@
       (dprintln "Press enter to continue...")
       (read-string-line)
       (loop))
-     ((and (assoc 'ok result)
-           (assoc 'selected result))
+     ((assoc 'choices result)
       (unless (equal? working-file working-file0)
         (delete-file working-file))
       (when (equal? working-file working-file0)
@@ -152,10 +149,10 @@
 
       (add-handled-var currently-handling-var)
 
-      (let ((selected
-             (assq-or 'selected result
-                      (raisu 'type-error "Expected ~s return" (~a 'selected)))))
-        (for-each add-selected-tag selected))
+      (let ((chosen
+             (assq-or 'choices result
+                      (raisu 'type-error "Expected ~s return" (~a 'choices)))))
+        (for-each add-choice chosen))
 
       (let* ((tags (add-current-to-tags (cdr (assoc 'ok result))))
              (do (for-each handle-new-tag tags))

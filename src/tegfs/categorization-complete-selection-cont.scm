@@ -37,8 +37,7 @@
              result/for-humans)))
 
   (define selected
-    (map (comp caddr ~a string->symbol)
-         translated-choices))
+    (map tag-choice->immediate-tag translated-choices))
 
   (define ambiguous
     (filter

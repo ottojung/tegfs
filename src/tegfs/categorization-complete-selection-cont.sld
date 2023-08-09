@@ -12,13 +12,15 @@
     (only (euphrates list-get-duplicates)
           list-get-duplicates))
   (import (only (euphrates negate) negate))
-  (import (only (euphrates tilda-a) ~a))
   (import
     (only (tegfs categorization-to-prolog-full)
           categorization->prolog/full))
   (import
     (only (tegfs profun-compute-ground)
           profun-compute-ground))
+  (import
+    (only (tegfs tag-choice-to-immediate-tag)
+          tag-choice->immediate-tag))
   (import (only (tegfs type-tag-huh) type-tag?))
   (import (only (tegfs unparse-tag) unparse-tag))
   (import

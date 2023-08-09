@@ -17,8 +17,9 @@
  (guile
   (define-module (tegfs cli-save-loop)
     :export (CLI::save::loop)
-    :use-module ((euphrates alist-initialize-bang) :select (alist-initialize!:current-setters alist-initialize!:return-multiple))
+    :use-module ((euphrates alist-initialize-bang) :select (alist-initialize!:current-setters alist-initialize!:return-multiple alist-initialize!:unset))
     :use-module ((euphrates alist-initialize-loop) :select (alist-initialize-loop))
+    :use-module ((euphrates append-posix-path) :select (append-posix-path))
     :use-module ((euphrates assq-or) :select (assq-or))
     :use-module ((euphrates dprintln) :select (dprintln))
     :use-module ((euphrates list-intersperse) :select (list-intersperse))
@@ -28,6 +29,7 @@
     :use-module ((euphrates path-without-extension) :select (path-without-extension))
     :use-module ((euphrates print-in-frame) :select (print-in-frame))
     :use-module ((euphrates range) :select (range))
+    :use-module ((euphrates read-string-file) :select (read-string-file))
     :use-module ((euphrates read-string-line) :select (read-string-line))
     :use-module ((euphrates string-to-words) :select (string->words))
     :use-module ((euphrates stringf) :select (stringf))
@@ -37,6 +39,8 @@
     :use-module ((euphrates words-to-string) :select (words->string))
     :use-module ((euphrates write-string-file) :select (write-string-file))
     :use-module ((tegfs a-weblink-q) :select (a-weblink?))
+    :use-module ((tegfs categorization-complete-selection) :select (categorization-complete-selection))
+    :use-module ((tegfs categorization-filename) :select (categorization-filename))
     :use-module ((tegfs categorize) :select (tegfs-categorize))
     :use-module ((tegfs cli-save-working-file-p) :select (CLI::save-working-file/p))
     :use-module ((tegfs clipboard) :select (classify-clipboard-text-content dump-clipboard-to-temporary get-clipboard-text-content get-clipboard-type-extension))
@@ -49,7 +53,9 @@
     :use-module ((tegfs get-random-basename) :select (get-random-basename))
     :use-module ((tegfs get-root) :select (get-root))
     :use-module ((tegfs get-save-plugins) :select (get-save-plugins))
+    :use-module ((tegfs root-p) :select (root/p))
     :use-module ((tegfs run-save-plugins) :select (run-save-plugins))
+    :use-module ((tegfs tag-choice-to-immediate-tag) :select (tag-choice->immediate-tag))
     )))
 
 
@@ -93,11 +99,14 @@
   (define result
     (tegfs-categorize (CLI::save-working-file/p)))
 
+  (define choices
+    (assq-or 'choices result))
+
   (alist-initialize!:return-multiple
-   `((tags-data . result)
-     (tags . #f)
-     (all-tags . #f)
-     (inferred-tags . #f))))
+   `((tags-choices . ,choices)
+     ,(alist-initialize!:unset 'all-tags)
+     ,(alist-initialize!:unset 'tags)
+     ,(alist-initialize!:unset 'inferred-tags))))
 
 (define (read-inferred-tags)
   (dprintln "(Should not be setting this by hand as it is normally set automatically)")
@@ -232,22 +241,28 @@
     (link? (if --link 'yes 'no))
     (title (or <title> (if --interactive #f 'none)))
 
-    (tags-data '())
+    (tags-choices #f)
 
-    (tags (or
-           <tag...>
-           (assq-or 'selected (tags-data))
-           (if --interactive #f '())))
+    (tags
+     (or
+      <tag...>
+      (and (tags-choices)
+           (map tag-choice->immediate-tag
+                (tags-choices)))
+      (if --interactive #f '())))
 
-    (all-tags (assq-or 'ok (tags-data)))
+    (all-tags
+     (and (tags-choices)
+          (assq-or
+           'ok (categorization-complete-selection
+                (read-string-file
+                 (append-posix-path (root/p) categorization-filename))
+                (tags-choices)))))
 
     (inferred-tags
      (or
       (and (all-tags)
-           (let ((all (all-tags)))
-             (define inferred-tags/0
-               (filter (lambda (tag) (not (member tag (tags)))) all))
-             (if (null? inferred-tags/0) 'none inferred-tags/0)))
+           (filter (lambda (tag) (not (member tag (tags)))) (all-tags)))
       (if --interactive #f '())))
 
     (additional-properties
