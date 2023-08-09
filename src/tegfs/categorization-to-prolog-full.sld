@@ -10,6 +10,9 @@
           hashmap-set!
           make-hashmap))
   (import
+    (only (euphrates list-deduplicate)
+          list-deduplicate/reverse))
+  (import
     (only (euphrates list-singleton-q)
           list-singleton?))
   (import (only (euphrates negate) negate))
@@ -19,9 +22,6 @@
           stack-make
           stack-push!))
   (import
-    (only (tegfs mangle-tag-choice)
-          mangle-tag-choice))
-  (import
     (only (tegfs unstar-symbol) unstar-symbol))
   (import
     (only (scheme base)
@@ -30,6 +30,7 @@
           cdr
           cons
           define
+          equal?
           for-each
           lambda
           let
@@ -38,7 +39,8 @@
           or
           quasiquote
           quote
-          string->symbol
+          symbol->string
+          unless
           unquote
           values
           when))

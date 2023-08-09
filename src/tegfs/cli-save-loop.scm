@@ -93,18 +93,11 @@
   (define result
     (tegfs-categorize (CLI::save-working-file/p)))
 
-  (define tags
-    (assq-or 'selected result))
-  (define all-tags
-    (assq-or 'ok result))
-  (define inferred-tags/0
-    (filter (lambda (tag) (not (member tag tags))) all-tags))
-  (define inferred-tags
-    (if (null? inferred-tags/0) 'none inferred-tags/0))
-
   (alist-initialize!:return-multiple
-   `((tags . ,tags)
-     (inferred-tags . ,inferred-tags))))
+   `((tags-data . result)
+     (tags . #f)
+     (all-tags . #f)
+     (inferred-tags . #f))))
 
 (define (read-inferred-tags)
   (dprintln "(Should not be setting this by hand as it is normally set automatically)")
@@ -238,8 +231,25 @@
     (series (if --series 'yes 'no))
     (link? (if --link 'yes 'no))
     (title (or <title> (if --interactive #f 'none)))
-    (tags (or <tag...> (if --interactive #f '())))
-    (inferred-tags (or <tag...> (if --interactive #f '())))
+
+    (tags-data '())
+
+    (tags (or
+           <tag...>
+           (assq-or 'selected (tags-data))
+           (if --interactive #f '())))
+
+    (all-tags (assq-or 'ok (tags-data)))
+
+    (inferred-tags
+     (or
+      (and (all-tags)
+           (let ((all (all-tags)))
+             (define inferred-tags/0
+               (filter (lambda (tag) (not (member tag (tags)))) all))
+             (if (null? inferred-tags/0) 'none inferred-tags/0)))
+      (if --interactive #f '())))
+
     (additional-properties
      (if <key...> (map cons (map string->symbol <key...>) <value...>) '()))
 

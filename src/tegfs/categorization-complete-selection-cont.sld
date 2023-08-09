@@ -2,6 +2,7 @@
 (define-library
   (tegfs categorization-complete-selection-cont)
   (export categorization-complete-selection/cont)
+  (import (only (euphrates comp) comp))
   (import
     (only (euphrates list-and-map) list-and-map))
   (import
@@ -11,20 +12,15 @@
     (only (euphrates list-get-duplicates)
           list-get-duplicates))
   (import (only (euphrates negate) negate))
+  (import (only (euphrates tilda-a) ~a))
   (import
     (only (tegfs categorization-to-prolog-full)
           categorization->prolog/full))
-  (import
-    (only (tegfs categorization-translate-choices)
-          categorization-translate-choices))
-  (import (only (tegfs make-tag-parser) make-tag-parser))
   (import
     (only (tegfs profun-compute-ground)
           profun-compute-ground))
   (import (only (tegfs type-tag-huh) type-tag?))
   (import (only (tegfs unparse-tag) unparse-tag))
-  (import
-    (only (tegfs unstar-symbol) unstar-symbol))
   (import
     (only (scheme base)
           and
@@ -35,6 +31,7 @@
           cons
           define
           define-values
+          equal?
           if
           lambda
           list
@@ -43,7 +40,9 @@
           not
           null?
           quasiquote
-          quote))
+          quote
+          string->symbol))
+  (import (only (scheme cxr) caddr cdddr))
   (cond-expand
     (guile (import (only (srfi srfi-1) filter)))
     (else (import (only (srfi 1) filter))))

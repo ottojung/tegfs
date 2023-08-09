@@ -12,7 +12,7 @@
 
   (for-each
    (lambda (tag)
-     (define query (list (list tag 'X)))
+     (define query (list tag))
      (define terms (profun-eval-query/terms db query))
      (for-each yield terms))
    all-tags)

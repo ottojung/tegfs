@@ -36,8 +36,8 @@
     :use-module ((tegfs categorization-split) :select (categorization-split))
     :use-module ((tegfs edit-tags) :select (tegfs-edit-tags))
     :use-module ((tegfs get-root) :select (get-root))
-    :use-module ((tegfs make-temporary-filename-local) :select (make-temporary-filename/local))
     :use-module ((tegfs make-tag-parser) :select (make-tag-structure-parser))
+    :use-module ((tegfs make-temporary-filename-local) :select (make-temporary-filename/local))
     :use-module ((tegfs tags-this-variable) :select (tags-this-variable))
     :use-module ((tegfs unparse-tag) :select (unparse-tag))
     )))
@@ -60,6 +60,8 @@
 
   (define (add-selected-tag tag)
     (hashset-add! (hashmap-ref state 'selected #f) tag))
+  (define (add-choice tag-term)
+    (hashset-add! (hashmap-ref state 'choices #f) tag-term))
   (define (add-handled-var var)
     (hashset-add! (hashmap-ref state 'handled-vars #f) var))
   (define (add-all-var var)

@@ -7,13 +7,12 @@
           stack->list
           stack-make
           stack-push!))
-  (import
-    (only (tegfs mangle-tag-choice)
-          mangle-tag-choice))
+  (import (only (euphrates tilda-a) ~a))
   (import
     (only (tegfs unstar-symbol) unstar-symbol))
   (import
     (only (scheme base)
+          append
           begin
           car
           cdr
@@ -21,9 +20,12 @@
           define
           equal?
           for-each
-          if
           lambda
-          member))
+          list
+          map
+          member
+          quote
+          reverse))
   (cond-expand
     (guile (import (only (guile) include-from-path))
            (begin

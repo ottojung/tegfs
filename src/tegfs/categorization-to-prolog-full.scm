@@ -6,10 +6,17 @@
   (define (yield rule)
     (stack-push! ret rule))
 
+  (define (yield-choice for)
+    ;; Any '%choice with this `for' works.
+    (yield `((,for X)
+             (,'%choice ,(symbol->string for) ANYSYM X))))
+
   (define reverse-mapping (make-hashmap))
 
   (define ast/unstarred
     (map (comp (map unstar-symbol)) categorization/ast))
+
+  (define root-predicate-name (car (car ast/unstarred)))
 
   (for-each
    (lambda (production)
@@ -29,6 +36,9 @@
      (define consequent (car production))
      (define antecedents (cdr production))
 
+     (unless (equal? consequent root-predicate-name)
+       (yield-choice consequent))
+
      (for-each
       (lambda (sym)
         (define implying-lst
@@ -36,17 +46,17 @@
 
         (when (list-singleton? implying-lst)
           (let ((implying (car implying-lst)))
-            (yield `((,implying X) (,sym X)))))
+            (unless (equal? implying root-predicate-name)
+              (yield `((,implying X) (,sym X))))))
 
-        (define qualified-name
-          (string->symbol
-           (mangle-tag-choice consequent sym)))
-
-        (yield `((,consequent X) (,qualified-name X))))
+        (yield-choice sym))
       antecedents))
    ast/unstarred)
 
-  (define db (stack->list ret))
+  (define db
+    (list-deduplicate/reverse
+     (stack->list ret)))
+
   (define ambiguous
     (filter
      (negate

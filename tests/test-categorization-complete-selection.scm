@@ -1,20 +1,27 @@
 
 (assert=
- '((ok video audio))
+ '((ok audio video))
 
  (categorization-complete-selection
   "audio video image text"
-  '(audio video)))
+  '((%choice "audio" "audio" "$")
+    (%choice "video" "video" "$"))))
+
+
 
 (assert=
- '((ok clip meme))
+ '((ok meme clip))
 
  (categorization-complete-selection
   "audio video image text"
-  '(meme clip)))
+  '((%choice "meme" "meme" "$")
+    (%choice "clip" "clip" "$"))))
+
+
+
 
 (assert=
- '((ok video image clip meme))
+ '((ok video image meme clip))
 
  (categorization-complete-selection
   "
@@ -26,10 +33,15 @@
 		 text : book pasta
 "
 
-  '(meme clip)))
+  '((%choice "meme" "meme" "$")
+    (%choice "clip" "clip" "$"))))
+
+
+
+
 
 (assert=
- '(image recording meme)
+ '(image meme recording)
 
  (assq-or
   'ok
@@ -43,11 +55,16 @@
 		 text : book pasta
 "
 
-   '(meme recording))
+   '((%choice "meme" "meme" "$")
+     (%choice "recording" "recording" "$")))
   (raisu 'type-error "Expected alist with 'ok")))
 
+
+
+
+
 (assert=
- '((ok image recording meme)
+ '((ok image meme recording)
    (ambiguous (recording video audio)))
 
  (categorization-complete-selection
@@ -60,10 +77,15 @@
 		 text : book pasta
 "
 
-  '(meme recording)))
+  '((%choice "meme" "meme" "$")
+    (%choice "recording" "recording" "$"))))
+
+
+
+
 
 (assert=
- '(image recording meme)
+ '(image meme recording)
 
  (assq-or
   'ok
@@ -77,11 +99,18 @@
 		 text : book pasta
 "
 
-   '(meme meme recording))
+
+  '((%choice "meme" "meme" "$")
+    (%choice "meme" "meme" "$")
+    (%choice "recording" "recording" "$")))
   (raisu 'type-error "Expected alist with 'ok")))
 
+
+
+
+
 (assert=
- '((ok image recording meme)
+ '((ok image meme recording)
    (ambiguous (recording video audio))
    (duplicates meme))
 
@@ -95,10 +124,17 @@
 		 text : book pasta
 "
 
-  '(meme meme recording)))
+  '((%choice "meme" "meme" "$")
+    (%choice "meme" "meme" "$")
+    (%choice "recording" "recording" "$"))))
+
+
+
+
+
 
 (assert=
- '((ok image video recording meme))
+ '((ok image meme recording video))
 
  (categorization-complete-selection
   "
@@ -110,10 +146,18 @@
 		 text : book pasta
 "
 
-  '(meme recording video)))
+
+  '((%choice "meme" "meme" "$")
+    (%choice "recording" "recording" "$")
+    (%choice "video" "video" "$"))))
+
+
+
+
+
 
 (assert=
- '((ok video image clip meme))
+ '((ok video image meme clip))
 
  (categorization-complete-selection
   "
@@ -125,10 +169,17 @@
 		 text : book pasta
 "
 
-  '(meme clip)))
+  '((%choice "meme" "meme" "$")
+    (%choice "clip" "clip" "$"))))
+
+
+
+
+
+
 
 (assert=
- '((ok video image clip meme))
+ '((ok video image meme clip))
 
  (categorization-complete-selection
   "
@@ -140,4 +191,5 @@
 		 text : book* pas*ta
 "
 
-  '(meme clip)))
+  '((%choice "meme" "meme" "$")
+    (%choice "clip" "clip" "$"))))

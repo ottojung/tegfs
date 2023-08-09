@@ -9,6 +9,7 @@
     (only (tegfs categorization-to-prolog)
           categorization->prolog))
   (import (only (scheme base) begin quote))
+  (import (only (scheme process-context) exit))
   (cond-expand
     (guile (import (only (guile) include-from-path))
            (begin

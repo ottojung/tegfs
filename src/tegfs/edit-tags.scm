@@ -22,9 +22,10 @@
     :use-module ((tegfs categorization-complete-selection-cont) :select (categorization-complete-selection/cont))
     :use-module ((tegfs categorization-parse) :select (categorization-parse))
     :use-module ((tegfs categorization-starred-symbol-huh) :select (categorization-starred-symbol?))
+    :use-module ((tegfs categorization-translate-choices) :select (categorization-translate-choices))
+    :use-module ((tegfs make-tag-parser) :select (make-tag-parser))
     :use-module ((tegfs parsed-categorization-tags-get-all) :select (parsed-categorization-tags-get-all))
     :use-module ((tegfs texteditor-p) :select (texteditor/p))
-    :use-module ((tegfs unstar-symbol) :select (unstar-symbol))
     )))
 
 
@@ -34,7 +35,8 @@
     (raisu 'must-provide-working-file))
 
   (system* (texteditor/p) working-file)
-  (tegfs-process-categorization-text (read-string-file working-file)))
+  (tegfs-process-categorization-text
+   (read-string-file working-file)))
 
 (define (tegfs-process-categorization-text text)
   (define ast/flatten
@@ -46,12 +48,12 @@
   (define starred
     (filter categorization-starred-symbol? all-tags))
 
-  (define continued
-    (categorization-complete-selection/cont ast/flatten all-tags starred))
+  (define parser (make-tag-parser 0))
+  (define translated-choices
+    (categorization-translate-choices parser ast/flatten starred))
 
-  (define unstarred
-    (map unstar-symbol starred))
+  (define continued
+    (categorization-complete-selection/cont ast/flatten all-tags translated-choices))
 
   (append continued
-          (list (cons 'selected unstarred))))
-
+          (list (cons 'choices translated-choices))))

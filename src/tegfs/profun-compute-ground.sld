@@ -22,8 +22,7 @@
           define
           for-each
           lambda
-          list
-          quote))
+          list))
   (cond-expand
     (guile (import (only (guile) include-from-path))
            (begin
