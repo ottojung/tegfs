@@ -24,7 +24,7 @@
     :use-module ((euphrates write-string-file) :select (write-string-file))
     :use-module ((tegfs get-registry-files) :select (get-registry-files))
     :use-module ((tegfs get-root) :select (get-root))
-    :use-module ((tegfs message-info) :select (message-info))
+    :use-module ((tegfs log-info) :select (log-info))
     )))
 
 
@@ -47,7 +47,7 @@
        (lambda _
          (open-file-port registry-fullpath "r"))
        (lambda _
-         (message-info "Registry created")
+         (log-info "Registry created.")
          (write-string-file registry-fullpath "\n;; Registry created with a query request\n\n")
          #f)))
 
