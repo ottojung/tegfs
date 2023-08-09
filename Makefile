@@ -10,8 +10,9 @@ CODE_ROOT=$(PWD)/src
 
 SUBMODULES = deps/euphrates/.git
 
+TEST_ROOT_WD=$(PWD)/dist/exampleroot-wd
 TEST_ROOT=$(PWD)/dist/exampleroot
-TEST_FILES=$(TEST_ROOT) $(TEST_ROOT)/categorization.tegfs.txt $(TEST_ROOT)/config.tegfs.lisp
+TEST_FILES=$(TEST_ROOT) $(TEST_ROOT_WD) $(TEST_ROOT_WD)/categorization.tegfs.txt $(TEST_ROOT_WD)/config.tegfs.lisp
 
 all: dist/tegfs
 
@@ -51,7 +52,7 @@ deps/euphrates/.git:
 	git submodule update --init
 
 dist/tegfs: $(SUBMODULES) src/*/*.scm dist
-	guile -s scripts/make-binary.scm "$(TEST_ROOT)" "$(CODE_ROOT)" > "$@"
+	guile -s scripts/make-binary.scm "$(TEST_ROOT_WD)" "$(CODE_ROOT)" > "$@"
 	chmod +x "$@"
 
 dist:
@@ -71,19 +72,24 @@ dist/exampleroot.tar:
 	wget "https://vau.place/static/tegfs-example-root.tar" -O "$@"
 	touch "$@"
 
+test-root-wd: $(TEST_ROOT_WD)
+
+$(TEST_ROOT_WD):
+	rsync --chmod=u+w --archive --recursive --delete "$(TEST_ROOT)/" "$(TEST_ROOT_WD)/"
+
 $(TEST_ROOT): dist/exampleroot.tar
 	cd dist && tar -xf ./exampleroot.tar
+	chmod -R a-w "$@"
 	touch "$@" # update the glitching timestamp
-	rm -f $(TEST_ROOT)/categorization.tegfs.txt
-	rm -f $(TEST_ROOT)/config.tegfs.lisp
 
-$(TEST_ROOT)/categorization.tegfs.txt: tests/make-example-categorization.sh
-	TEST_ROOT=$(TEST_ROOT) sh tests/make-example-categorization.sh
+$(TEST_ROOT_WD)/categorization.tegfs.txt: tests/make-example-categorization.sh
+	TEST_ROOT=$(TEST_ROOT_WD) sh tests/make-example-categorization.sh
 
-$(TEST_ROOT)/config.tegfs.lisp: tests/make-example-config.sh
-	TEST_ROOT=$(TEST_ROOT) sh tests/make-example-config.sh
+test-config: $(TEST_ROOT_WD)/config.tegfs.lisp
+
+$(TEST_ROOT_WD)/config.tegfs.lisp: tests/make-example-config.sh
+	TEST_ROOT=$(TEST_ROOT_WD) sh tests/make-example-config.sh
 
 test-files: $(TEST_FILES)
-test-config: $(TEST_ROOT)/config.tegfs.lisp
 
-.PHONY: all build clean install reinstall uninstall test test-files test-config rundocker
+.PHONY: all build clean install reinstall uninstall test test-files test-config test-root-wd rundocker
