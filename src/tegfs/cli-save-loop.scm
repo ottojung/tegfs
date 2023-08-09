@@ -28,7 +28,7 @@
 
   (alist-initialize!:return-multiple
    `((tags-choices . ,choices)
-     ,(alist-initialize!:unset 'all-tags)
+     ,(alist-initialize!:unset 'inferred-tags)
      ,(alist-initialize!:unset 'tags)
      ,(alist-initialize!:unset 'inferred-tags))))
 
@@ -39,16 +39,16 @@
   (print-in-frame #t #t 3 60 0 #\space ret)
   (newline))
 
-(define (print-all-tags all-tags)
-  (when all-tags
+(define (print-inferred-tags inferred-tags)
+  (when inferred-tags
     (display " Inferred tags: ")
-    (display (words->string (map ~a all-tags)))
+    (display (words->string (map ~a inferred-tags)))
     (newline)
     (newline)))
 
 (define (print-setter-fields get-alist current-setter)
   (define setters (alist-initialize!:current-setters))
-  (print-all-tags (assq-or 'all-tags (get-alist)))
+  (print-inferred-tags (assq-or 'inferred-tags (get-alist)))
 
   (dprintln " Enter *number* to edit one of below.")
   (for-each
@@ -154,7 +154,7 @@
                  (tags-choices))))
       (if --interactive #f '())))
 
-    (all-tags
+    (inferred-tags
      (and (tags-choices)
           (assq-or
            'ok (categorization-complete-selection
