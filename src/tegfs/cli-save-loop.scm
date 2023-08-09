@@ -32,12 +32,6 @@
      ,(alist-initialize!:unset 'tags)
      ,(alist-initialize!:unset 'inferred-tags))))
 
-(define (read-inferred-tags)
-  (dprintln "(Should not be setting this by hand as it is normally set automatically)")
-  (map string->symbol
-       (string->words
-        (CLI::read-answer-string "Inferred tags: "))))
-
 (define (print-text-content ret)
   (newline)
   (print-in-frame #t #f 3 35 0 #\space "    Clipboard text content")
@@ -45,8 +39,17 @@
   (print-in-frame #t #t 3 60 0 #\space ret)
   (newline))
 
-(define (print-setter-fields current-setter)
+(define (print-all-tags all-tags)
+  (when all-tags
+    (display " Inferred tags: ")
+    (display (words->string (map ~a all-tags)))
+    (newline)
+    (newline)))
+
+(define (print-setter-fields get-alist current-setter)
   (define setters (alist-initialize!:current-setters))
+  (print-all-tags (assq-or 'all-tags (get-alist)))
+
   (dprintln " Enter *number* to edit one of below.")
   (for-each
    (lambda (setter i)
@@ -71,7 +74,7 @@
    setters
    (range (length setters))))
 
-(define (useradvice --interactive)
+(define (useradvice get-alist --interactive)
   (lambda (name alist recalculate? thunk)
     (unless --interactive
       (fatal "Cannot infer the value of ~s" name))
@@ -85,7 +88,7 @@
           (newline) (newline) (newline) (newline) (newline) (newline) (newline) (newline) (newline) (newline)
           (newline) (newline) (newline) (newline) (newline) (newline) (newline) (newline) (newline) (newline)
           (newline) (newline) (newline) (newline) (newline) (newline) (newline) (newline) (newline) (newline)
-          (print-setter-fields name)))
+          (print-setter-fields get-alist name)))
     (newline)
     (thunk)))
 
@@ -149,12 +152,6 @@
                 (read-string-file
                  (append-posix-path (root/p) categorization-filename))
                 (tags-choices)))))
-
-    (inferred-tags
-     (or
-      (and (all-tags)
-           (filter (lambda (tag) (not (member tag (tags)))) (all-tags)))
-      (if --interactive #f '())))
 
     (additional-properties
      (if <key...> (map cons (map string->symbol <key...>) <value...>) '()))
@@ -245,11 +242,10 @@
 
     )
 
-   :useradvice (useradvice --interactive)
+   :useradvice (useradvice (lambda _ current) --interactive)
    :user
    ((title (CLI::read-answer-string "Title: "))
     (tags (get-tags))
-    (inferred-tags (read-inferred-tags))
     (kind (CLI::read-enumeration "Kind: " '(data link localfile pasta)))
     (download? (CLI::read-enumeration "Download target to the new location?" '(yes no)))
     (series (CLI::read-enumeration "Is this item related to the one previously saved?" '(yes no)))

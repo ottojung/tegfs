@@ -32,8 +32,7 @@
   (import
     (only (euphrates read-string-file)
           read-string-file))
-  (import
-    (only (euphrates string-to-words) string->words))
+  (import (only (euphrates tilda-a) ~a))
   (import (only (euphrates tilda-s) ~s))
   (import
     (only (euphrates url-get-path) url-get-path))
@@ -99,6 +98,7 @@
           *
           +
           <
+          _
           and
           begin
           car
@@ -117,9 +117,7 @@
           list->string
           list?
           map
-          member
           newline
-          not
           or
           quasiquote
           quote
@@ -129,10 +127,9 @@
           string-length
           string?
           unless
-          unquote))
-  (cond-expand
-    (guile (import (only (srfi srfi-1) filter)))
-    (else (import (only (srfi 1) filter))))
+          unquote
+          when))
+  (import (only (scheme write) display))
   (cond-expand
     (guile (import (only (srfi srfi-13) string-prefix?)))
     (else (import (only (srfi 13) string-prefix?))))
