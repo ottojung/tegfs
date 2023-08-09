@@ -36,8 +36,8 @@
           permission-filemap
           permission?))
   (import
-    (only (tegfs sharedinfo-time-left)
-          sharedinfo-time-left))
+    (only (tegfs sharedinfo-still-valid-huh)
+          sharedinfo-still-valid?))
   (import
     (only (tegfs sharedinfo)
           sharedinfo-recepientid
@@ -51,7 +51,6 @@
           context-tempentries))
   (import
     (only (scheme base)
-          <
           _
           begin
           cadr
@@ -71,10 +70,6 @@
           set!
           syntax-rules
           unless))
-  (import (only (scheme case-lambda) case-lambda))
-  (cond-expand
-    (guile (import (only (srfi srfi-18) current-time)))
-    (else (import (only (srfi 18) current-time))))
   (cond-expand
     (guile (import (only (guile) include-from-path))
            (begin
