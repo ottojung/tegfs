@@ -10,6 +10,9 @@
     (only (tegfs CLI-string-index-to-key)
           CLI::string-index->key))
   (import
+    (only (tegfs CLI-swiched-field-huh-p)
+          CLI::swiched-field?/p))
+  (import
     (only (scheme base)
           begin
           cdr

@@ -14,7 +14,7 @@
       (string-append "." input)))
 
 (define (get-confirm)
-  (if (swiched-field?) #f
+  (if (CLI::swiched-field?/p) #f
       (begin
         (CLI::read-answer-string "Press enter if parameters are OK")
         'done)))
@@ -88,9 +88,6 @@
           (print-setter-fields name)))
     (newline)
     (thunk)))
-
-(define swiched-field?
-  (make-parameter #f))
 
 (define (CLI::save::loop
 

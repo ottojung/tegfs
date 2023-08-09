@@ -48,6 +48,9 @@
   (import
     (only (tegfs CLI-read-enumeration)
           CLI::read-enumeration))
+  (import
+    (only (tegfs CLI-swiched-field-huh-p)
+          CLI::swiched-field?/p))
   (import (only (tegfs a-weblink-q) a-weblink?))
   (import
     (only (tegfs categorization-complete-selection)
@@ -95,9 +98,7 @@
     (only (scheme base)
           *
           +
-          -
           <
-          =
           and
           begin
           car
@@ -115,12 +116,10 @@
           let*
           list->string
           list?
-          make-parameter
           map
           member
           newline
           not
-          null?
           or
           quasiquote
           quote
