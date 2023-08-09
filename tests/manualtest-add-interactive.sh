@@ -2,4 +2,4 @@
 
 . tests/common.sh
 
-$TEST_FS add --interactive
+$TEST_FS add --interactive --tag meme

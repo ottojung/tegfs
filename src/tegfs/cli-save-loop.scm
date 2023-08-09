@@ -135,14 +135,23 @@
     (link? (if --link 'yes 'no))
     (title (or <title> (if --interactive #f 'none)))
 
-    (tags-choices #f)
+    (tags-choices
+     (or (and <tag...>
+              (let ((parser (make-tag-parser 0))
+                    (ast/flatten
+                     (categorization-parse
+                      (read-string-file
+                       (append-posix-path (root/p) categorization-filename)))))
+                (categorization-translate-choices
+                 parser ast/flatten
+                 (map (comp ~a string->symbol) <tag...>))))))
 
     (tags
      (or
-      <tag...>
       (and (tags-choices)
-           (map tag-choice->immediate-tag
-                (tags-choices)))
+           (list-deduplicate/reverse
+            (map tag-choice->immediate-tag
+                 (tags-choices))))
       (if --interactive #f '())))
 
     (all-tags

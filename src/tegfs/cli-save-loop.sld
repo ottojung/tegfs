@@ -14,7 +14,11 @@
     (only (euphrates append-posix-path)
           append-posix-path))
   (import (only (euphrates assq-or) assq-or))
+  (import (only (euphrates comp) comp))
   (import (only (euphrates dprintln) dprintln))
+  (import
+    (only (euphrates list-deduplicate)
+          list-deduplicate/reverse))
   (import
     (only (euphrates list-take-n) list-take-n))
   (import
@@ -58,6 +62,12 @@
     (only (tegfs categorization-filename)
           categorization-filename))
   (import
+    (only (tegfs categorization-parse)
+          categorization-parse))
+  (import
+    (only (tegfs categorization-translate-choices)
+          categorization-translate-choices))
+  (import
     (only (tegfs categorize) tegfs-categorize))
   (import
     (only (tegfs cli-save-working-file-p)
@@ -87,6 +97,8 @@
   (import (only (tegfs get-root) get-root))
   (import
     (only (tegfs get-save-plugins) get-save-plugins))
+  (import
+    (only (tegfs make-tag-parser) make-tag-parser))
   (import (only (tegfs root-p) root/p))
   (import
     (only (tegfs run-save-plugins) run-save-plugins))
