@@ -19,23 +19,6 @@
         (read-answer "Press enter if parameters are OK")
         'done)))
 
-(define (read-enumeration name option-list/0)
-  (define option-list (map ~a option-list/0))
-  (define hint/inner
-    (apply string-append (list-intersperse "/" option-list)))
-  (define hint
-    (stringf "~a (~a)\n " name hint/inner))
-  (define option-list/down
-    (map string-downcase option-list))
-
-  (let loop ()
-    (define answer (string-downcase (read-answer hint)))
-    (if (member answer option-list/down)
-        (string->symbol answer)
-        (begin
-          (dprintln "\nPlease choose on of the following: ~a" hint/inner)
-          (loop)))))
-
 (define (get-tags)
   (define result
     (tegfs-categorize (CLI::save-working-file/p)))
@@ -300,16 +283,16 @@
    ((title (read-answer "Title: "))
     (tags (get-tags))
     (inferred-tags (read-inferred-tags))
-    (kind (read-enumeration "Kind: " '(data link localfile pasta)))
-    (download? (read-enumeration "Download target to the new location?" '(yes no)))
-    (series (read-enumeration "Is this item related to the one previously saved?" '(yes no)))
+    (kind (CLI::read-enumeration "Kind: " '(data link localfile pasta)))
+    (download? (CLI::read-enumeration "Download target to the new location?" '(yes no)))
+    (series (CLI::read-enumeration "Is this item related to the one previously saved?" '(yes no)))
     (mimetype (read-answer "Mimetype: "))
     (source (read-answer "Original source for this entry: "))
     (target-basename (read-answer "Target basename: "))
     (target-extension (get-target-extension))
-    (link? (read-enumeration "Link target to the new location?" '(yes no)))
-    (diropen? (read-enumeration "Diropen?" '(yes no)))
-    (dirpreview? (read-enumeration "Dirpreview?" '(yes no)))
+    (link? (CLI::read-enumeration "Link target to the new location?" '(yes no)))
+    (diropen? (CLI::read-enumeration "Diropen?" '(yes no)))
+    (dirpreview? (CLI::read-enumeration "Dirpreview?" '(yes no)))
     (note (read-answer "Note: "))
     ;; (confirm (get-confirm)) ;; TODO: fix this and enable again
     )
