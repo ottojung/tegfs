@@ -62,13 +62,13 @@
       /          FORMAT
       FORMAT : --format <format> / --sexp-format
       QUERYQ : <query...>
-      GETARGS : FORMAT? <entry-id>
-      DELETEARGS : MAYBEKEEPFILES? <entry-id>
-      PRINTARGS : <entry-id>
-      EDITARGS : <entry-id>
-      SHARETAGS : SHAREOPT* <entry-id>
+      GETARGS : FORMAT? FIN? <entry-id>
+      DELETEARGS : DELETEOPT* FIN? <entry-id>
+      PRINTARGS : FIN? <entry-id>
+      EDITARGS : FIN? <entry-id>
+      SHARETAGS : SHAREOPT* FIN? <entry-id>
       SHAREOPT : --for-duration <share-duration>
-      MAYBEKEEPFILES : --keep-files / --no-keep-files
+      DELETEOPT? : --keep-files / --no-keep-files
       TALKOPTS : --web
       THUMBOPT : FIN? <target> <output>
       CONFIGOPT  : CONFIGFORK
