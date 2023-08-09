@@ -7,6 +7,9 @@
     (only (euphrates read-string-line)
           read-string-line))
   (import
+    (only (tegfs CLI-string-index-to-key)
+          CLI::string-index->key))
+  (import
     (only (scheme base)
           begin
           cdr

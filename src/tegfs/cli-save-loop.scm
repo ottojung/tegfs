@@ -92,16 +92,6 @@
 (define swiched-field?
   (make-parameter #f))
 
-(define (index-to-key i0)
-  (define setters (alist-initialize!:current-setters))
-  (define i (- i0 1))
-  (if (< i 0) #f
-      (let loop ((setters setters) (i i))
-        (if (null? setters) #f
-            (let ((x (car setters)))
-              (if (= 0 i) x
-                  (loop (cdr setters) (- i 1))))))))
-
 (define (CLI::save::loop
 
          --content <savetext>
