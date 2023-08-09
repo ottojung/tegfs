@@ -81,18 +81,21 @@
       /     --seed <seed>
       /     --verbosity <verbosity>
       /     --verbose
+      /     --quiet
       /     --no-verbose
       FIN : --
       )
 
      :default (<root> (get-root/default))
      :default (<texteditor> (get-texteditor/default))
-     :default (<verbosity> 50)
 
      :type (<verbosity> 'number)
+     :default (<verbosity> 50)
      :help (<verbosity>
-            (stringf "A number between 0 and 100. Interacts with ~s and ~s."
-                     (~a (quote --verbose)) (~a (quote --no-verbose))))
+            (stringf "A number between 0 and 100. Interacts with ~s,~s and ~s."
+                     (~a (quote --verbose))
+                     (~a (quote --no-verbose))
+                     (~a (quote --quiet))))
 
      :synonym (--version -v version)
      :synonym (license copying)
@@ -116,7 +119,7 @@
      :exclusive (--unsure-if-download --download --no-download)
 
      :default (--no-verbose #t)
-     :exclusive (--no-verbose --verbose)
+     :exclusive (--no-verbose --verbose --quiet --verbosity)
 
      :default (--no-source #t)
      :exclusive (--no-source --source)
@@ -161,7 +164,9 @@
                      (verbosity-level/p
                       (cond
                        (--verbose 70)
-                       (else <verbosity>))))
+                       (--quiet 20)
+                       (--verbosity <verbosity>)
+                       (else 50))))
         (cond
          (remote (CLI::remote/parse <remote>))
          (--version (display tegfs-version) (newline))
