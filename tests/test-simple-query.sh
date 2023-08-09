@@ -2,7 +2,7 @@
 
 . tests/common.sh
 
-case $($TEST_FS --verbosity 10 query --format mimetype -- image | sort | uniq) in
+case $($TEST_FS --quiet query --format mimetype -- image | sort | uniq) in
     "image/jpeg
 inode/directory") ;;
     *)
