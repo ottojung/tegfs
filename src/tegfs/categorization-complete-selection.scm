@@ -19,7 +19,6 @@
     :export (categorization-complete-selection)
     :use-module ((tegfs categorization-complete-selection-cont) :select (categorization-complete-selection/cont))
     :use-module ((tegfs categorization-parse) :select (categorization-parse))
-    :use-module ((tegfs parsed-categorization-tags-get-all) :select (parsed-categorization-tags-get-all))
     )))
 
 ;;
@@ -31,12 +30,8 @@
 ;; but "ambiguous" or "duplicates" may be absent.
 ;;
 
-
 (define (categorization-complete-selection categorization-text starred)
   (define ast/flatten
     (categorization-parse categorization-text))
 
-  (define all-tags
-    (parsed-categorization-tags-get-all ast/flatten))
-
-  (categorization-complete-selection/cont ast/flatten all-tags starred))
+  (categorization-complete-selection/cont ast/flatten starred))

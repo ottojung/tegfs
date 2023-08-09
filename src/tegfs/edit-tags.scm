@@ -53,7 +53,7 @@
     (categorization-translate-choices parser ast/flatten starred))
 
   (define continued
-    (categorization-complete-selection/cont ast/flatten all-tags translated-choices))
+    (categorization-complete-selection/cont ast/flatten translated-choices))
 
   (append continued
           (list (cons 'choices translated-choices))))
