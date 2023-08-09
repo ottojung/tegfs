@@ -172,10 +172,9 @@
 
     (-text-content
      (or <content>
-         (and --interactive
-              (let ((ret (get-clipboard-text-content)))
-                (print-text-content ret)
-                ret))))
+         (let ((ret (get-clipboard-text-content)))
+           (and ret (print-text-content ret))
+           ret)))
 
     (* (run-save-plugins root current plugins))
 

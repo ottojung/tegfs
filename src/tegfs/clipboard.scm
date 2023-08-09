@@ -1,4 +1,4 @@
-;;;; Copyright (C) 2022  Otto Jung
+;;;; Copyright (C) 2022, 2023  Otto Jung
 ;;;;
 ;;;; This program is free software: you can redistribute it and/or modify
 ;;;; it under the terms of the GNU Affero General Public License as published
@@ -71,7 +71,7 @@
   (define-values (text status)
     (run-syncproc/re* "xclip" "-selection" "clipboard" "-out"))
 
-  (if (= status 0) text ""))
+  (and (= status 0) text))
 
 (define (string-data-type? s)
   (member s '("STRING" "UTF8_STRING" "TEXT" "COMPOUND_TEXT")))
