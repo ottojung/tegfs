@@ -1,7 +1,7 @@
 
 (define-library
   (tegfs log-warning)
-  (export warning)
+  (export log-warning)
   (import (only (euphrates dprintln) dprintln))
   (import
     (only (tegfs verbosity-level-p)

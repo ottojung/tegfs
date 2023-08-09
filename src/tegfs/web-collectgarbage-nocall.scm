@@ -27,6 +27,7 @@
     :use-module ((tegfs custom-tempentry) :select (custom-tempentry?))
     :use-module ((tegfs filemap) :select (filemap-delete-by-recepientid! filemap-ref-by-recepientid))
     :use-module ((tegfs log-info) :select (log-info))
+    :use-module ((tegfs log-warning) :select (log-warning))
     :use-module ((tegfs permission-still-valid-huh) :select (permission-still-valid?))
     :use-module ((tegfs permission) :select (permission-filemap permission?))
     :use-module ((tegfs sharedinfo) :select (sharedinfo-date sharedinfo-recepientid sharedinfo-stime sharedinfo?))

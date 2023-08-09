@@ -22,6 +22,7 @@
     :use-module ((euphrates catch-any) :select (catch-any))
     :use-module ((euphrates file-or-directory-exists-q) :select (file-or-directory-exists?))
     :use-module ((euphrates get-current-directory) :select (get-current-directory))
+    :use-module ((tegfs log-warning) :select (log-warning))
     :use-module ((tegfs web-get-shared-fullpath) :select (web::get-shared-fullpath))
     :use-module ((tegfs webcore-context) :select (context-sharedir))
     )))
