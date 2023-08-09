@@ -18,13 +18,17 @@
   (define-module (tegfs fatal)
     :export (fatal)
     :use-module ((euphrates dprintln) :select (dprintln))
+    :use-module ((tegfs verbosity-level-p) :select (verbosity-level/p))
     )))
 
 
 
 (define (fatal fmt . args)
-  (parameterize ((current-output-port (current-error-port)))
-    (display "ERROR: ")
-    (apply dprintln (cons fmt args)))
+  (unless (> 5 (verbosity-level/p))
+    (parameterize ((current-output-port (current-error-port)))
+      (apply dprintln
+             (cons
+              (string-append "ERROR: " fmt)
+              args))))
   (exit 1))
 
