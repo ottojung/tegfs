@@ -172,9 +172,10 @@
 
     (-text-content
      (or <content>
-         (let ((ret (get-clipboard-text-content)))
-           (print-text-content ret)
-           ret)))
+         (and --interactive
+              (let ((ret (get-clipboard-text-content)))
+                (print-text-content ret)
+                ret))))
 
     (* (run-save-plugins root current plugins))
 
@@ -206,9 +207,10 @@
            (download-to-temporary-file (-text-content)))
       (and (equal? 'data (kind))
            (mimetype 'or #f)
-           (dump-clipboard-temp (mimetype)))
+           (and --interactive
+                (dump-clipboard-temp (mimetype))))
       (and (equal? 'pasta (kind))
-           (let* ((temp-name (dump-clipboard-temp (mimetype))))
+           (let* ((temp-name (make-temporary-filename)))
              (write-string-file temp-name (-text-content))
              temp-name))))
 

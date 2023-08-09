@@ -22,6 +22,9 @@
   (import
     (only (euphrates list-take-n) list-take-n))
   (import
+    (only (euphrates make-temporary-filename)
+          make-temporary-filename))
+  (import
     (only (euphrates path-extensions)
           path-extensions))
   (import
