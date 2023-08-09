@@ -25,6 +25,7 @@
     :use-module ((tegfs entry-print-formatted) :select (entry-print/formatted))
     :use-module ((tegfs entry-print) :select (entry-print))
     :use-module ((tegfs keyword-id) :select (keyword-id))
+    :use-module ((tegfs log-info) :select (log-info))
     :use-module ((tegfs standalone-file-to-entry) :select (standalone-file->entry))
     )))
 
@@ -37,7 +38,7 @@
           (entry-print/formatted <get-format> entry)
           (entry-print entry))
       (begin
-        (display "Not found." (current-error-port))
+        (log-info "Not found.")
         (exit 1)))
   (newline))
 

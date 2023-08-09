@@ -22,6 +22,7 @@
     :use-module ((tegfs config-set) :select (config-set!))
     :use-module ((tegfs fatal) :select (fatal))
     :use-module ((tegfs get-config) :select (get-config/fatal))
+    :use-module ((tegfs log-info) :select (log-info))
     :use-module ((tegfs sha256sum) :select (sha256sum))
     )))
 
@@ -36,15 +37,14 @@
         <value>))
 
   (unless config
-    (fatal "Could not parse the config"))
+    (fatal "Could not parse the config."))
 
   (cond
    (get
-    (display (config-get keylist config (fatal "Not set")))
+    (display (config-get keylist config (fatal "Not set.")))
     (newline))
    (set
     (config-set! keylist config value)
-    (display "Ok" (current-error-port))
-    (newline (current-error-port)))
+    (log-info "Ok."))
    (else
     (raisu 'impossible-case-72536123))))

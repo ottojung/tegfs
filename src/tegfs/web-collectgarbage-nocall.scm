@@ -18,7 +18,6 @@
   (define-module (tegfs web-collectgarbage-nocall)
     :export (web::collectgarbage/nocall)
     :use-module ((euphrates directory-files) :select (directory-files))
-    :use-module ((euphrates dprintln) :select (dprintln))
     :use-module ((euphrates file-delete) :select (file-delete))
     :use-module ((euphrates hashmap) :select (hashmap-delete! hashmap-foreach))
     :use-module ((euphrates path-without-extension) :select (path-without-extension))
@@ -27,6 +26,7 @@
     :use-module ((tegfs custom-tempentry-still-valid-huh) :select (custom-tempentry-still-valid?))
     :use-module ((tegfs custom-tempentry) :select (custom-tempentry?))
     :use-module ((tegfs filemap) :select (filemap-delete-by-recepientid! filemap-ref-by-recepientid))
+    :use-module ((tegfs log-info) :select (log-info))
     :use-module ((tegfs permission-still-valid-huh) :select (permission-still-valid?))
     :use-module ((tegfs permission) :select (permission-filemap permission?))
     :use-module ((tegfs sharedinfo) :select (sharedinfo-date sharedinfo-recepientid sharedinfo-stime sharedinfo?))
@@ -73,7 +73,7 @@
               (recepientid (sharedinfo-recepientid info)))
          (unless (sharedinfo-still-valid? info)
            (delayop
-            (display "UNSHARE ") (write recepientid) (newline)
+            (log-info "UNSHARE ~s." recepientid)
             (filemap-delete-by-recepientid! filemap/2 recepientid)))))
       ((sharereceipt? tempentry) 0) ;; should be deleted by the above line
       ((permission? tempentry)
@@ -83,8 +83,7 @@
               (lambda (target-fullpath info)
                 (unless (sharedinfo-still-valid? info)
                   (delayop
-                   (display "UNPERM ")
-                   (write target-fullpath) (newline)
+                   (log-info "UNPERM ~s." target-fullpath)
                    (hashmap-delete!
                     (permission-filemap perm) target-fullpath))))
               (permission-filemap perm))
@@ -93,7 +92,7 @@
       ((custom-tempentry? tempentry)
        (unless (custom-tempentry-still-valid? tempentry now)
          (delayop (hashmap-delete! tempentries token))))
-      (else (dprintln "Unknown object in gc ~s" tempentry))))
+      (else (log-warning "Unknown object in gc ~s." tempentry))))
    tempentries)
 
   (for-each (lambda (delayed) (delayed)) delayed-list)
@@ -105,8 +104,6 @@
      (define recepientid (path-without-extension sharedname))
      (define info (filemap-ref-by-recepientid filemap/2 recepientid #f))
      (unless info
-       (display "File not shared: ")
-       (write sharedname)
-       (display " deleting...\n")
+       (log-warning "File not shared: ~s, deleting it." sharedname)
        (file-delete full-name)))
    (directory-files #t sharedir)))
