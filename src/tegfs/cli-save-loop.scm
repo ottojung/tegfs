@@ -9,14 +9,14 @@
     result))
 
 (define (get-target-extension)
-  (define input (read-answer "Target extension: "))
+  (define input (CLI::read-answer-string "Target extension: "))
   (if (string-prefix? "." input) input
       (string-append "." input)))
 
 (define (get-confirm)
   (if (swiched-field?) #f
       (begin
-        (read-answer "Press enter if parameters are OK")
+        (CLI::read-answer-string "Press enter if parameters are OK")
         'done)))
 
 (define (get-tags)
@@ -36,7 +36,7 @@
   (dprintln "(Should not be setting this by hand as it is normally set automatically)")
   (map string->symbol
        (string->words
-        (read-answer "Inferred tags: "))))
+        (CLI::read-answer-string "Inferred tags: "))))
 
 (define (print-text-content ret)
   (newline)
@@ -101,26 +101,6 @@
             (let ((x (car setters)))
               (if (= 0 i) x
                   (loop (cdr setters) (- i 1))))))))
-
-(define (read-answer question)
-  (let loop ()
-    (define _2
-      (begin
-        (display " ")
-        (display question)))
-    ;; (define state (state/p))
-    (define answer (read-string-line))
-    (define num (string->number answer))
-    (if num
-        (let ((name+setter (index-to-key num)))
-          (if name+setter
-              (parameterize ((swiched-field? #t))
-                ((cdr name+setter) 'recalculate))
-              (begin
-                (dprintln "Bad index ~s, must be one of the listed items" num)
-                (loop))))
-        answer)))
-
 
 (define (CLI::save::loop
 
@@ -280,20 +260,20 @@
 
    :useradvice (useradvice --interactive)
    :user
-   ((title (read-answer "Title: "))
+   ((title (CLI::read-answer-string "Title: "))
     (tags (get-tags))
     (inferred-tags (read-inferred-tags))
     (kind (CLI::read-enumeration "Kind: " '(data link localfile pasta)))
     (download? (CLI::read-enumeration "Download target to the new location?" '(yes no)))
     (series (CLI::read-enumeration "Is this item related to the one previously saved?" '(yes no)))
-    (mimetype (read-answer "Mimetype: "))
-    (source (read-answer "Original source for this entry: "))
-    (target-basename (read-answer "Target basename: "))
+    (mimetype (CLI::read-answer-string "Mimetype: "))
+    (source (CLI::read-answer-string "Original source for this entry: "))
+    (target-basename (CLI::read-answer-string "Target basename: "))
     (target-extension (get-target-extension))
     (link? (CLI::read-enumeration "Link target to the new location?" '(yes no)))
     (diropen? (CLI::read-enumeration "Diropen?" '(yes no)))
     (dirpreview? (CLI::read-enumeration "Dirpreview?" '(yes no)))
-    (note (read-answer "Note: "))
+    (note (CLI::read-answer-string "Note: "))
     ;; (confirm (get-confirm)) ;; TODO: fix this and enable again
     )
 

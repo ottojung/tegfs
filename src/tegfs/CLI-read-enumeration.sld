@@ -9,6 +9,9 @@
   (import (only (euphrates stringf) stringf))
   (import (only (euphrates tilda-a) ~a))
   (import
+    (only (tegfs CLI-read-answer-string)
+          CLI::read-answer-string))
+  (import
     (only (scheme base)
           apply
           begin

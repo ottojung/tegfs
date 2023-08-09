@@ -16,9 +16,6 @@
   (import (only (euphrates assq-or) assq-or))
   (import (only (euphrates dprintln) dprintln))
   (import
-    (only (euphrates list-intersperse)
-          list-intersperse))
-  (import
     (only (euphrates list-take-n) list-take-n))
   (import
     (only (euphrates path-extensions)
@@ -36,12 +33,7 @@
     (only (euphrates read-string-file)
           read-string-file))
   (import
-    (only (euphrates read-string-line)
-          read-string-line))
-  (import
     (only (euphrates string-to-words) string->words))
-  (import (only (euphrates stringf) stringf))
-  (import (only (euphrates tilda-a) ~a))
   (import (only (euphrates tilda-s) ~s))
   (import
     (only (euphrates url-get-path) url-get-path))
@@ -50,6 +42,12 @@
   (import
     (only (euphrates write-string-file)
           write-string-file))
+  (import
+    (only (tegfs CLI-read-answer-string)
+          CLI::read-answer-string))
+  (import
+    (only (tegfs CLI-read-enumeration)
+          CLI::read-enumeration))
   (import (only (tegfs a-weblink-q) a-weblink?))
   (import
     (only (tegfs categorization-complete-selection)
@@ -101,7 +99,6 @@
           <
           =
           and
-          apply
           begin
           car
           cdr
@@ -125,19 +122,15 @@
           not
           null?
           or
-          parameterize
           quasiquote
           quote
           string->list
-          string->number
           string->symbol
           string-append
           string-length
           string?
           unless
           unquote))
-  (import (only (scheme char) string-downcase))
-  (import (only (scheme write) display))
   (cond-expand
     (guile (import (only (srfi srfi-1) filter)))
     (else (import (only (srfi 1) filter))))
