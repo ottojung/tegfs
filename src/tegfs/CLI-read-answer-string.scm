@@ -7,8 +7,12 @@
       (begin
         (display " ")
         (display question)))
+
     ;; (define state (state/p))
     (define answer (read-string-line))
+    (when (eof-object? answer)
+      (fatal "Cancelled by user"))
+
     (define num (string->number answer))
     (if num
         (let ((name+setter (CLI::string-index->key num)))

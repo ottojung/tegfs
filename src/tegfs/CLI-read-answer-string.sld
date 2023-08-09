@@ -12,16 +12,19 @@
   (import
     (only (tegfs CLI-swiched-field-huh-p)
           CLI::swiched-field?/p))
+  (import (only (tegfs fatal) fatal))
   (import
     (only (scheme base)
           begin
           cdr
           define
+          eof-object?
           if
           let
           parameterize
           quote
-          string->number))
+          string->number
+          when))
   (import (only (scheme write) display))
   (cond-expand
     (guile (import (only (guile) include-from-path))
