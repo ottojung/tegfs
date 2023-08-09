@@ -100,7 +100,7 @@
 
 (define (CLI::save
 
-         --content <savetext>
+         --content <content>
          --kind <kind>
          --interactive
          --no-interactive
@@ -135,7 +135,7 @@
           (define state
             (CLI::save::loop
 
-             --content <savetext>
+             --content <content>
              --kind <kind>
              --interactive
              --no-interactive
@@ -173,12 +173,12 @@
 
   (define (CLI::save/remote)
     (define savetext
-      (and <savetext>
-           (case (classify-clipboard-text-content <savetext>)
-             ((data) (raisu 'savetext-cannot-be-data <savetext>))
-             ((link localfile) <savetext>)
-             ((pasta) (tegfs-dump-clipboard/pasta <savetext>))
-             (else (raisu 'unexpected-kind <savetext>)))))
+      (and <content>
+           (case (classify-clipboard-text-content <content>)
+             ((data) (raisu 'savetext-cannot-be-data <content>))
+             ((link localfile) <content>)
+             ((pasta) (tegfs-dump-clipboard/pasta <content>))
+             (else (raisu 'unexpected-kind <content>)))))
     (define working-text
       (or savetext
           (tegfs-dump-clipboard)))

@@ -94,7 +94,7 @@
 
 (define (CLI::save::loop
 
-         --content <savetext>
+         --content <content>
          --kind <kind>
          --interactive
          --no-interactive
@@ -171,7 +171,7 @@
              'none)))
 
     (-text-content
-     (or <savetext>
+     (or <content>
          (let ((ret (get-clipboard-text-content)))
            (print-text-content ret)
            ret)))

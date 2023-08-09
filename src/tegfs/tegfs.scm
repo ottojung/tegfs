@@ -75,7 +75,7 @@
       /      make-thumbnails THUMBOPT
       /      dump-clipboard
 
-      ADDOPT : --content <savetext>
+      ADDOPT : --content <content>
       /        --title <title>
       /        --tag <tag...>
       /        --series
@@ -186,8 +186,8 @@
      :help (<remote> "A remote address like 'user1@example.com'.")
      :help (--diropen (stringf "Acknowledge <~a> property by treating elements of the ~a directory as entries having the same tags as the original entry." keyword-diropen keyword-target))
      :help (--dirpreview (stringf "Acknowledge <~a> property by treating elements of the ~a directory as entries having the same tags as the original entry." keyword-dirpreview keyword-target))
-     :help (<savetext> "This could be a filename, a URL, or simply text. TegFS will try to figure out the type.")
-     :help (<kind> (stringf "This forces ~s to be recognized as of certain type." (quote <savetext>)))
+     :help (<content> "This could be a filename, a URL, or simply text. TegFS will try to figure out the type.")
+     :help (<kind> (stringf "This forces ~s to be recognized as of certain type." (quote <content>)))
      :help (--share (stringf "Instead of returning the id, returns the url to saved file"))
 
      (with-randomizer-seed
@@ -199,7 +199,7 @@
          (--help (define-cli:show-help))
          (add (CLI::save
 
-               --content <savetext>
+               --content <content>
                --kind <kind>
                --interactive
                --no-interactive
