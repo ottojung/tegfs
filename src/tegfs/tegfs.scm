@@ -34,6 +34,7 @@
     :use-module ((tegfs cli-talk) :select (CLI::talk))
     :use-module ((tegfs config) :select (tegfs-config/parse))
     :use-module ((tegfs dump-clipboard) :select (tegfs-dump-clipboard/parse))
+    :use-module ((tegfs fatal) :select (fatal))
     :use-module ((tegfs get-root) :select (get-root/default))
     :use-module ((tegfs get-texteditor) :select (get-texteditor/default))
     :use-module ((tegfs get) :select (tegfs-get/parse))
@@ -260,8 +261,6 @@
          (dump-clipboard (tegfs-dump-clipboard/parse))
          (license (CLI::show-license))
          (warranty (CLI::show-warranty))
-         (else
-          (display "Impossible") (newline)
-          (exit 1))))))))
+         (else (fatal "Impossible case"))))))))
 
 (main)
