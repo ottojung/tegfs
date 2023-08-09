@@ -20,7 +20,7 @@
       ((sharedinfo? tempentry)
        (let* ((info tempentry)
               (recepientid (sharedinfo-recepientid info)))
-         (unless (sharedinfo-still-valid? info)
+         (unless (sharedinfo-still-valid? info now)
            (delayop
             (log-info "UNSHARE ~s." recepientid)
             (filemap-delete-by-recepientid! filemap/2 recepientid)))))
