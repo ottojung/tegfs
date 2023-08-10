@@ -17,7 +17,7 @@
  (guile
   (define-module (tegfs categorization-complete-selection)
     :export (categorization-complete-selection)
-    :use-module ((tegfs categorization-complete-selection-cont) :select (categorization-complete-selection/cont))
+    :use-module ((tegfs categorization-complete-selection-parsed) :select (categorization-complete-selection/parsed))
     :use-module ((tegfs categorization-parse) :select (categorization-parse))
     )))
 
@@ -34,4 +34,4 @@
   (define ast/flatten
     (categorization-parse categorization-text))
 
-  (categorization-complete-selection/cont ast/flatten starred))
+  (categorization-complete-selection/parsed ast/flatten starred))

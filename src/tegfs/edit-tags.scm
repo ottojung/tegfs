@@ -19,7 +19,7 @@
     :export (tegfs-edit-tags tegfs-process-categorization-text)
     :use-module ((euphrates raisu) :select (raisu))
     :use-module ((euphrates read-string-file) :select (read-string-file))
-    :use-module ((tegfs categorization-complete-selection-cont) :select (categorization-complete-selection/cont))
+    :use-module ((tegfs categorization-complete-selection-parsed) :select (categorization-complete-selection/parsed))
     :use-module ((tegfs categorization-parse) :select (categorization-parse))
     :use-module ((tegfs categorization-starred-symbol-huh) :select (categorization-starred-symbol?))
     :use-module ((tegfs categorization-translate-choices) :select (categorization-translate-choices))
@@ -53,7 +53,7 @@
     (categorization-translate-choices parser ast/flatten starred))
 
   (define continued
-    (categorization-complete-selection/cont ast/flatten translated-choices))
+    (categorization-complete-selection/parsed ast/flatten translated-choices))
 
   (append continued
           (list (cons 'choices translated-choices))))

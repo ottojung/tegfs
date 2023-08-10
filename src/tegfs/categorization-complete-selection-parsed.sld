@@ -1,7 +1,7 @@
 
 (define-library
-  (tegfs categorization-complete-selection-cont)
-  (export categorization-complete-selection/cont)
+  (tegfs categorization-complete-selection-parsed)
+  (export categorization-complete-selection/parsed)
   (import (only (euphrates comp) comp))
   (import
     (only (euphrates list-and-map) list-and-map))
@@ -52,6 +52,6 @@
     (guile (import (only (guile) include-from-path))
            (begin
              (include-from-path
-               "tegfs/categorization-complete-selection-cont.scm")))
+               "tegfs/categorization-complete-selection-parsed.scm")))
     (else (include
-            "categorization-complete-selection-cont.scm"))))
+            "categorization-complete-selection-parsed.scm"))))
