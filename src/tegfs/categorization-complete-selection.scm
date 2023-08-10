@@ -33,5 +33,7 @@
 (define (categorization-complete-selection categorization-text starred)
   (define ast/flatten
     (categorization-parse categorization-text))
+  (define additional-rules '()) ;; TODO: parse it from `text`
 
-  (categorization-complete-selection/parsed ast/flatten starred))
+  (categorization-complete-selection/parsed
+   ast/flatten additional-rules starred))

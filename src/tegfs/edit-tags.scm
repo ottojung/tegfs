@@ -41,6 +41,7 @@
 (define (tegfs-process-categorization-text text)
   (define ast/flatten
     (categorization-parse text))
+  (define additional-rules '()) ;; TODO: parse it from `text`
 
   (define all-tags
     (parsed-categorization-tags-get-all ast/flatten))
@@ -53,7 +54,8 @@
     (categorization-translate-choices parser ast/flatten starred))
 
   (define continued
-    (categorization-complete-selection/parsed ast/flatten translated-choices))
+    (categorization-complete-selection/parsed
+     ast/flatten additional-rules translated-choices))
 
   (append continued
           (list (cons 'choices translated-choices))))

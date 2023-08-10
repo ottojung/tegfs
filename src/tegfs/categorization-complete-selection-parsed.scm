@@ -1,7 +1,7 @@
 ;;;; Copyright (C) 2022, 2023  Otto Jung
 ;;;; This program is free software: you can redistribute it and/or modify it under the terms of the GNU Affero General Public License as published by the Free Software Foundation, either version 3 of the License, or (at your option) any later version. This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU Affero General Public License for more details. You should have received a copy of the GNU Affero General Public License along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
-(define (categorization-complete-selection/parsed ast/flatten translated-choices)
+(define (categorization-complete-selection/parsed ast/flatten additional-rules translated-choices)
   (define-values (translated-tree ambiguous-branches)
     (categorization->prolog/full ast/flatten))
 
@@ -13,14 +13,16 @@
 
   (define rules/0
     (append translated-tree
-            (map list translated-choices)
+            additional-rules
             (map list choices-as-tags)))
-
-  (define rules
-    (append rules/0 `(((%any X)))))
 
   (define all-tags
     (map car rules/0))
+
+  (define rules
+    (append rules/0
+            (map list translated-choices)
+            `(((%any X)))))
 
   (define result/0
     (profun-compute-ground rules all-tags))
