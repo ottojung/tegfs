@@ -20,6 +20,9 @@
     (only (euphrates list-deduplicate)
           list-deduplicate/reverse))
   (import
+    (only (euphrates list-map-flatten)
+          list-map/flatten))
+  (import
     (only (euphrates list-take-n) list-take-n))
   (import
     (only (euphrates make-temporary-filename)
@@ -65,11 +68,8 @@
     (only (tegfs categorization-filename)
           categorization-filename))
   (import
-    (only (tegfs categorization-parse)
-          categorization-parse))
-  (import
-    (only (tegfs categorization-translate-choices)
-          categorization-translate-choices))
+    (only (tegfs categorization-translate-direct-choice)
+          categorization-translate-direct-choice))
   (import
     (only (tegfs categorize) tegfs-categorize))
   (import

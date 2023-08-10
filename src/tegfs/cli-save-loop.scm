@@ -137,14 +137,10 @@
 
     (tags-choices
      (or (and <tag...>
-              (let ((parser (make-tag-parser 0))
-                    (ast/flatten
-                     (categorization-parse
-                      (read-string-file
-                       (append-posix-path (root/p) categorization-filename)))))
-                (categorization-translate-choices
-                 parser ast/flatten
-                 (map (comp ~a string->symbol) <tag...>))))))
+              (let ((parser (make-tag-parser 0)))
+                (list-map/flatten
+                 (comp (categorization-translate-direct-choice parser))
+                 <tag...>)))))
 
     (tags
      (or

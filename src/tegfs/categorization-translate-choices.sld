@@ -9,6 +9,9 @@
           stack-push!))
   (import (only (euphrates tilda-a) ~a))
   (import
+    (only (tegfs categorization-translate-direct-parsed-choice)
+          categorization-translate-direct-parsed-choice))
+  (import
     (only (tegfs unstar-symbol) unstar-symbol))
   (import
     (only (scheme base)

@@ -25,9 +25,7 @@
            (cond
             ((equal? consequent tag)
              (yield
-              (append
-               (list '%choice (~a (car tag/parsed)))
-               (map ~a tag/parsed))))
+              (categorization-translate-direct-parsed-choice tag/parsed)))
             ((member tag antecedents)
              (let ((impl (if (equal? consequent main-name) (car tag/parsed) consequent/no*)))
                (yield
