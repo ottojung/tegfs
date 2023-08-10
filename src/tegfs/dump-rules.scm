@@ -1,43 +1,5 @@
 ;;;; Copyright (C) 2022, 2023  Otto Jung
-;;;;
-;;;; This program is free software: you can redistribute it and/or modify
-;;;; it under the terms of the GNU Affero General Public License as published
-;;;; by the Free Software Foundation, either version 3 of the License, or
-;;;; (at your option) any later version.
-;;;;
-;;;; This program is distributed in the hope that it will be useful,
-;;;; but WITHOUT ANY WARRANTY; without even the implied warranty of
-;;;; MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-;;;; GNU Affero General Public License for more details.
-;;;;
-;;;; You should have received a copy of the GNU Affero General Public License
-;;;; along with this program.  If not, see <https://www.gnu.org/licenses/>.
-
-(cond-expand
- (guile
-  (define-module (tegfs dump-rules)
-    :export (dump-rules)
-    :use-module ((euphrates append-posix-path) :select (append-posix-path))
-    :use-module ((euphrates comp) :select (comp))
-    :use-module ((euphrates define-tuple) :select (define-tuple))
-    :use-module ((euphrates file-or-directory-exists-q) :select (file-or-directory-exists?))
-    :use-module ((euphrates list-split-on) :select (list-split-on))
-    :use-module ((euphrates open-file-port) :select (open-file-port))
-    :use-module ((euphrates raisu) :select (raisu))
-    :use-module ((euphrates read-string-line) :select (read-string-line))
-    :use-module ((euphrates string-split-3) :select (string-split-3))
-    :use-module ((euphrates string-to-words) :select (string->words))
-    :use-module ((euphrates write-string-file) :select (write-string-file))
-    :use-module ((tegfs fatal) :select (fatal))
-    :use-module ((tegfs get-root) :select (get-root))
-    :use-module ((tegfs make-term-parser) :select (make-term-parser))
-    :use-module ((tegfs prolog-cut-symbol) :select (make-prolog-cut-symbol))
-    :use-module ((tegfs prolog-query-parse) :select (prolog-query-parse))
-    :use-module ((tegfs rules-filename) :select (rules-filename))
-    :use-module ((tegfs tags-this-variable) :select (tags-this-variable/string))
-    )))
-
-
+;;;; This program is free software: you can redistribute it and/or modify it under the terms of the GNU Affero General Public License as published by the Free Software Foundation, either version 3 of the License, or (at your option) any later version. This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU Affero General Public License for more details. You should have received a copy of the GNU Affero General Public License along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
 (define (parse-inference yield args)
   (define split (list-split-on (comp (equal? "=>")) args))
