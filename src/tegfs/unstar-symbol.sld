@@ -4,6 +4,7 @@
   (export unstar-symbol)
   (import (only (euphrates comp) comp))
   (import (only (euphrates negate) negate))
+  (import (only (euphrates tilda-a) ~a))
   (import
     (only (scheme base)
           begin
@@ -11,8 +12,7 @@
           equal?
           list->string
           string->list
-          string->symbol
-          symbol->string))
+          string->symbol))
   (cond-expand
     (guile (import (only (srfi srfi-1) filter)))
     (else (import (only (srfi 1) filter))))
