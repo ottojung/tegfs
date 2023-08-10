@@ -46,10 +46,10 @@
 (define (send-state state)
   (define title/0 (cdr (assoc 'title state)))
   (define title (if (equal? title/0 'none) #f title/0))
-  (define selected-tags (assq-or 'tags state '()))
+  (define selected (assq-or 'tags state '()))
   (define inferred-tags/0 (assq-or 'inferred-tags state '()))
   (define inferred-tags (if (equal? 'none inferred-tags/0) '() inferred-tags/0))
-  (define tags (append selected-tags inferred-tags))
+  (define tags (append selected inferred-tags))
   (define note (cdr (assoc 'note state)))
   (define target-extension (cdr (assoc 'target-extension state)))
   (define target-basename (cdr (assoc 'target-basename state)))
@@ -66,6 +66,7 @@
   (define additional-properties (cdr (assoc 'additional-properties state)))
   (define key-value-pairs
     (append
+     (list (cons "selected" selected))
      (if source (list (cons "source" source)) (list))
      (if (string? note) (list (cons "note" note)) (list))
      (if mimetype (list (cons "mimetype" mimetype)) (list))
