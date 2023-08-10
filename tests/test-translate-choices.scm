@@ -1,15 +1,13 @@
 
 (assert=
- '((%choice "EUPHRATES-CFG-CLI-MAIN" "audio" "$")
-   (%choice "EUPHRATES-CFG-CLI-MAIN" "image" "$"))
+ '((%choice "audio" "audio" "$")
+   (%choice "image" "image" "$"))
 
  (categorization-translate-choices
   (make-tag-parser 0)
   (categorization-parse
    "audio* video image*")
   '(audio* image*)))
-
-
 
 
 (assert=
@@ -115,8 +113,8 @@
   '(song* track* clip* movie*)))
 
 (assert=
- '((%choice "EUPHRATES-CFG-CLI-MAIN" "audio" "$")
-   (%choice "EUPHRATES-CFG-CLI-MAIN" "image" "$"))
+ '((%choice "audio" "audio" "$")
+   (%choice "image" "image" "$"))
 
  (categorization-translate-choices
   (make-tag-parser 0)
@@ -125,7 +123,7 @@
   '(audio image*)))
 
 (assert=
- '((%choice "EUPHRATES-CFG-CLI-MAIN" "image" "$"))
+ '((%choice "image" "image" "$"))
 
  (categorization-translate-choices
   (make-tag-parser 0)

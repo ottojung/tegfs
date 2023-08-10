@@ -6,6 +6,9 @@
   (define ret (stack-make))
   (define (yield x) (stack-push! ret x))
 
+  (define main-name
+    (car (car ast/flatten)))
+
   (for-each
    (lambda (tag)
      (define tag/unstarred (unstar-symbol tag))
@@ -17,6 +20,7 @@
          (lambda (production)
            (define consequent (car production))
            (define antecedents (cdr production))
+           (define consequent/no* (unstar-symbol consequent))
 
            (cond
             ((equal? consequent tag)
@@ -25,10 +29,11 @@
                (list '%choice (~a (car tag/parsed)))
                (map ~a tag/parsed))))
             ((member tag antecedents)
-             (yield
-              (append
-               (list '%choice (~a (unstar-symbol consequent)))
-               (map ~a tag/parsed))))))
+             (let ((impl (if (equal? consequent main-name) (car tag/parsed) consequent/no*)))
+               (yield
+                (append
+                 (list '%choice (~a impl))
+                 (map ~a tag/parsed)))))))
          ast/flatten))
       tag/parsed/all))
    starred)

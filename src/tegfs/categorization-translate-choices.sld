@@ -20,7 +20,9 @@
           define
           equal?
           for-each
+          if
           lambda
+          let
           list
           map
           member
