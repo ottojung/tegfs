@@ -3,8 +3,8 @@
   (test-categorization-to-prolog)
   (import (only (euphrates assert-equal) assert=))
   (import
-    (only (tegfs categorization-parse)
-          categorization-parse))
+    (only (tegfs categorization-parse-tree)
+          categorization-parse-tree))
   (import
     (only (tegfs categorization-to-prolog)
           categorization->prolog))

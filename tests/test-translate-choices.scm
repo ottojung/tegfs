@@ -5,9 +5,11 @@
 
  (categorization-translate-choices
   (make-tag-parser 0)
-  (categorization-parse
+  (categorization-parse-tree
    "audio* video image*")
   '(audio* image*)))
+
+
 
 
 (assert=
@@ -17,7 +19,7 @@
 
  (categorization-translate-choices
   (make-tag-parser 0)
-  (categorization-parse
+  (categorization-parse-tree
    "
      audio video
      audio : song recording*
@@ -35,7 +37,7 @@
 
  (categorization-translate-choices
   (make-tag-parser 0)
-  (categorization-parse
+  (categorization-parse-tree
    "
      audio video
      audio : song recording*
@@ -53,7 +55,7 @@
 
  (categorization-translate-choices
   (make-tag-parser 0)
-  (categorization-parse
+  (categorization-parse-tree
    "
      audio video
      audio : song* recording*
@@ -69,7 +71,7 @@
 
  (categorization-translate-choices
   (make-tag-parser 0)
-  (categorization-parse
+  (categorization-parse-tree
    "
      audio video
      audio : song track*
@@ -86,13 +88,15 @@
 
  (categorization-translate-choices
   (make-tag-parser 0)
-  (categorization-parse
+  (categorization-parse-tree
    "
      audio video
      audio : song* track*
      video : clip* movie
     ")
   '(song* track* clip*)))
+
+
 
 
 
@@ -104,7 +108,7 @@
 
  (categorization-translate-choices
   (make-tag-parser 0)
-  (categorization-parse
+  (categorization-parse-tree
    "
      audio video
      audio : song* track*
@@ -112,21 +116,28 @@
     ")
   '(song* track* clip* movie*)))
 
+
+
+
+
 (assert=
  '((%choice "audio" "audio" "$")
    (%choice "image" "image" "$"))
 
  (categorization-translate-choices
   (make-tag-parser 0)
-  (categorization-parse
+  (categorization-parse-tree
    "audio video image*")
   '(audio image*)))
+
+
+
 
 (assert=
  '((%choice "image" "image" "$"))
 
  (categorization-translate-choices
   (make-tag-parser 0)
-  (categorization-parse
+  (categorization-parse-tree
    "audio video image*")
   '(audio* image*)))

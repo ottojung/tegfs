@@ -6,7 +6,7 @@
    ((text X) (%choice "text" ANYSYM X)))
 
  (categorization->prolog
-  (categorization-parse
+  (categorization-parse-tree
    "audio video image text")))
 
 (exit 0)
@@ -23,7 +23,7 @@
    ((lecture X) (%choice "lecture" ANYSYM X)))
 
  (categorization->prolog
-  (categorization-parse
+  (categorization-parse-tree
    "
 		 audio video
 		 audio : song recording
@@ -56,7 +56,7 @@
    ((pasta X) (%choice "pasta" ANYSYM X)))
 
  (categorization->prolog
-  (categorization-parse
+  (categorization-parse-tree
    "
 		 audio video image text
 		 audio : song recording
