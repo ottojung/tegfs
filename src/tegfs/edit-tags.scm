@@ -39,9 +39,8 @@
    (read-string-file working-file)))
 
 (define (tegfs-process-categorization-text text)
-  (define ast/flatten
+  (define-values (ast/flatten additional-rules)
     (categorization-parse text))
-  (define additional-rules '()) ;; TODO: parse it from `text`
 
   (define all-tags
     (parsed-categorization-tags-get-all ast/flatten))

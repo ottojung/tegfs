@@ -5,7 +5,12 @@
   (import
     (only (tegfs categorization-parse)
           categorization-parse))
-  (import (only (scheme base) begin quote))
+  (import
+    (only (scheme base)
+          begin
+          define-values
+          let
+          quote))
   (cond-expand
     (guile (import (only (guile) include-from-path))
            (begin

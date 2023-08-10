@@ -10,4 +10,10 @@
   (define ast/flatten
     (categorization-parse-tree cfg-part))
 
-  ast/flatten)
+  (define additional-rules
+    (let ((S (stack-make)))
+      (define (yield x) (stack-push! S x))
+      (dump-rules-from-text yield rules-part)
+      (stack->list S)))
+
+  (values ast/flatten additional-rules))

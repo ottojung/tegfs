@@ -26,7 +26,7 @@
 
 
 (define (categorization-get-all-tags categorization-text)
-  (define parsed
+  (define-values (parsed additional-rules)
     (categorization-parse categorization-text))
 
   (list-deduplicate
