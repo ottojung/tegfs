@@ -17,6 +17,9 @@
     (only (tegfs dump-rules-from-text)
           dump-rules-from-text))
   (import
+    (only (tegfs inference-to-profun-rule)
+          inference->profun-rule))
+  (import
     (only (scheme base)
           begin
           define

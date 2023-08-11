@@ -12,7 +12,8 @@
 
   (define additional-rules
     (let ((S (stack-make)))
-      (define (yield x) (stack-push! S x))
+      (define (yield x)
+        (stack-push! S (inference->profun-rule x)))
       (dump-rules-from-text yield rules-part)
       (stack->list S)))
 
