@@ -1,0 +1,15 @@
+
+steps:
+  build:
+    image: ubuntu
+    commands:
+      - apt-get update
+      - apt-get install -y ${SCHEME} git make wget rsync
+      - make build
+      - CI=1 make test
+    when:
+      branch: [master, development]
+
+matrix:
+  SCHEME:
+    - guile-3.0
