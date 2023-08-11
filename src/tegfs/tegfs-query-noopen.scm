@@ -7,31 +7,3 @@
       ;; (tegfs-query/noopen/notall/prolog iter0 <query...>)
       (tegfs-query/noopen/notall/profun iter0 <query...>)
       iter0))
-
-(define (tegfs-query/noopen/notall/profun iter0 <query...>)
-  (define-values (parsed-query/1 variables) (prolog-query-parse <query...>))
-  (define parsed-query
-    (generify-dumped-term parsed-query/1))
-  (define rules
-    (cons `((%any X))
-          (map inference->profun-rule
-               (dump-rules/list))))
-  (define db0
-    (profun-create-falsy-database
-     profun-standard-handler
-     rules))
-
-  (define (profun-filter entry)
-    (define translated (translate-entry-tags entry))
-    (define db (profun-database-extend db0 (map list translated)))
-    (profun-eval-query/boolean db parsed-query))
-
-  (define (iter)
-    (let loop ()
-      (define entry (iter0))
-      (and entry
-           (if (profun-filter entry)
-               entry
-               (loop)))))
-
-  iter)
