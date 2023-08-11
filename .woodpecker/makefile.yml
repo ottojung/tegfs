@@ -1,10 +1,9 @@
 
 steps:
   build:
-    image: ubuntu
+    image: alpine
     commands:
-      - apt-get update
-      - apt-get install -y ${SCHEME} git make wget rsync
+      - apk add --no-cache $SCHEME make rsync git wget
       - make build
       - CI=1 make test
     when:
@@ -12,4 +11,4 @@ steps:
 
 matrix:
   SCHEME:
-    - guile-3.0
+    - guile
