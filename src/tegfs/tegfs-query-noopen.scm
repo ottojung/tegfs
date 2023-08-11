@@ -8,11 +8,6 @@
       (tegfs-query/noopen/notall/profun iter0 <query...>)
       iter0))
 
-(define (inference->profun-rule inference)
-  (define RHS (generify-dumped-term (cddr inference)))
-  (define consequent (generify-dumped-term (list (cadr inference))))
-  (append consequent RHS))
-
 (define (tegfs-query/noopen/notall/profun iter0 <query...>)
   (define-values (parsed-query/1 variables) (prolog-query-parse <query...>))
   (define parsed-query

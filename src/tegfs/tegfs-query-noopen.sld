@@ -46,6 +46,9 @@
   (import
     (only (tegfs generify-dumped-term)
           generify-dumped-term))
+  (import
+    (only (tegfs inference-to-profun-rule)
+          inference->profun-rule))
   (import (only (tegfs keyword-id) keyword-id))
   (import
     (only (tegfs make-temporary-filename-local)
@@ -68,8 +71,6 @@
           append
           apply
           begin
-          cadr
-          cddr
           close-port
           current-output-port
           define
