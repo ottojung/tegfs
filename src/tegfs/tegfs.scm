@@ -21,7 +21,7 @@
       /      query QUERYARGS
       /      config CONFIGOPT
       /      serve
-      /      categorize
+      /      categorization CATOPT
       /      remote <remote> MAIN
       /      talk TALKOPTS*
       /      prolog
@@ -76,6 +76,7 @@
       /            set CONFIGKEY* CONFIGVAL
       CONFIGKEY : <key...>
       CONFIGVAL : --password <value> / FIN? <value>
+      CATOPT : change
       OPT : --root <root>
       /     --texteditor <texteditor>
       /     --seed <seed>
@@ -201,7 +202,7 @@
                --key <key...> <value...>
 
                ))
-         (categorize (tegfs-categorize/parse))
+         ((and categorization change) (tegfs-categorize/parse))
          (serve (tegfs-serve/parse))
          (prolog (tegfs-prolog/parse))
          (query (CLI::query --diropen --dirpreview --sexp-format <format> <query...>))

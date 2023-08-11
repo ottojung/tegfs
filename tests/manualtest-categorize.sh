@@ -2,4 +2,4 @@
 
 . tests/common.sh
 
-$TEST_FS categorize
+$TEST_FS categorization change
