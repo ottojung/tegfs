@@ -8,20 +8,6 @@
       (tegfs-query/noopen/notall/profun iter0 <query...>)
       iter0))
 
-(define (generify-dumped-term term)
-  (define (place-variables clause)
-    (map
-     (lambda (obj)
-       (if (prolog-var? obj)
-           (let ((name (prolog-var-name obj)))
-             (cond
-              ((symbol? name) name)
-              (else (string->symbol (~a name)))))
-           obj))
-     clause))
-
-  (map place-variables (map cdr term)))
-
 (define (inference->profun-rule inference)
   (define RHS (generify-dumped-term (cddr inference)))
   (define consequent (generify-dumped-term (list (cadr inference))))

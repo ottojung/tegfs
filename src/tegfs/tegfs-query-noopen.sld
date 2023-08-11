@@ -40,10 +40,12 @@
     (only (euphrates string-strip) string-strip))
   (import
     (only (euphrates string-to-lines) string->lines))
-  (import (only (euphrates tilda-a) ~a))
   (import (only (tegfs dump-rules) dump-rules))
   (import
     (only (tegfs entries-iterate) entries-iterate))
+  (import
+    (only (tegfs generify-dumped-term)
+          generify-dumped-term))
   (import (only (tegfs keyword-id) keyword-id))
   (import
     (only (tegfs make-temporary-filename-local)
@@ -52,10 +54,7 @@
     (only (tegfs prolog-query-parse)
           prolog-query-parse))
   (import
-    (only (tegfs prolog-var)
-          make-prolog-var
-          prolog-var-name
-          prolog-var?))
+    (only (tegfs prolog-var) make-prolog-var))
   (import
     (only (tegfs prolog)
           tegfs-dump-prolog
@@ -71,13 +70,10 @@
           begin
           cadr
           cddr
-          cdr
           close-port
-          cond
           current-output-port
           define
           define-values
-          else
           equal?
           if
           lambda
@@ -90,9 +86,7 @@
           parameterize
           quasiquote
           quote
-          string->symbol
           string-append
-          symbol?
           unless
           unquote))
   (import (only (scheme write) display))
