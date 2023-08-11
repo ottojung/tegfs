@@ -38,15 +38,15 @@ First, let's make sure we are working on the test database by issuing the follow
 
    cd tegfs
    make test-files
-   export TEGFS_ROOT="$PWD/dist/exampleroot"
+   export TEGFS_ROOT="$PWD/dist/exampleroot-wd"
 
-This sets the root of the TegFS database to the dist/exampleroot directory relative to the current working directory.
+This sets the root of the TegFS database to the ``dist/exampleroot-wd`` directory relative to the current working directory.
 
 Now, let's generate some data for testing. In the terminal, type the following commands:
 
 .. code-block:: bash
 
-   echo file content > file1.txt
+   echo file content 123 > file1.txt
    man man > file2.txt
 
 Next, we will add these files into the TegFS database. In the terminal, type the following commands:
@@ -90,7 +90,7 @@ We can also print the contents of a database file by addressing it by its entrie
 .. raw:: html
 
    <pre class="command-line language-bash" data-user="chris" data-host="localhost" data-filter-output=">" tabindex="0"><code class="language-bash"><span class="command-line-prompt"><span data-user="chris" data-host="localhost"></span><span></span></span><span class="token command">tegfs print <span class="token string">"neidahutmnqjwhd83p2xcfn8rv7qkf"</span></span>
-   <span class="token output">file content</span></code></pre>
+   <span class="token output">file content 123</span></code></pre>
 
 The newly added files are also visible in the web interface:
 
