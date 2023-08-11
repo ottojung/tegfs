@@ -72,10 +72,12 @@ dist/exampleroot.tar:
 	wget --quiet "https://vau.place/static/tegfs-example-root.tar" -O "$@"
 	touch "$@"
 
-test-root-wd: $(TEST_ROOT_WD)
+test-setup: test-files build test-root-wd
 
-$(TEST_ROOT_WD):
+test-root-wd:
 	rsync --chmod=u+w --archive --recursive --delete "$(TEST_ROOT)/" "$(TEST_ROOT_WD)/"
+
+$(TEST_ROOT_WD): test-root-wd
 
 $(TEST_ROOT): dist/exampleroot.tar
 	cd dist && tar -xf ./exampleroot.tar

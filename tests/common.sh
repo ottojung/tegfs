@@ -1,8 +1,7 @@
 #! /bin/sh
 
 set -e
-make --silent test-files build
-make --silent test-root-wd -B
+make --silent test-setup
 
 TEST_FS=dist/tegfs
 GUILE="guile --r7rs -L src/ -s"
