@@ -32,15 +32,11 @@
     (only (euphrates run-syncproc-re-star)
           run-syncproc/re*))
   (import
-    (only (euphrates stack)
-          stack->list
-          stack-make
-          stack-push!))
-  (import
     (only (euphrates string-strip) string-strip))
   (import
     (only (euphrates string-to-lines) string->lines))
-  (import (only (tegfs dump-rules) dump-rules))
+  (import
+    (only (tegfs dump-rules-list) dump-rules/list))
   (import
     (only (tegfs entries-iterate) entries-iterate))
   (import
@@ -72,6 +68,7 @@
           apply
           begin
           close-port
+          cons
           current-output-port
           define
           define-values

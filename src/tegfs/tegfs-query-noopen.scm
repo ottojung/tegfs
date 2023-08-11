@@ -13,12 +13,9 @@
   (define parsed-query
     (generify-dumped-term parsed-query/1))
   (define rules
-    (let ((stack (stack-make)))
-      (stack-push! stack `((%any X)))
-      (dump-rules
-       (lambda (thing)
-         (stack-push! stack (inference->profun-rule thing))))
-      (stack->list stack)))
+    (cons `((%any X))
+          (map inference->profun-rule
+               (dump-rules/list))))
   (define db0
     (profun-create-falsy-database
      profun-standard-handler
