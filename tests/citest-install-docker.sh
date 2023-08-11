@@ -4,7 +4,7 @@
 
 echo > log
 
-if ! make dist/dockerfile
+if ! make dist/dockerfile 1>>log 2>>log
 then
     cat log 1>&2
     exit 1
