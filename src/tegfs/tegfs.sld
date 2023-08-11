@@ -14,6 +14,9 @@
     (only (euphrates with-randomizer-seed)
           with-randomizer-seed))
   (import
+    (only (tegfs CLI-categorization-show)
+          CLI::categorization-show))
+  (import
     (only (tegfs categorize) tegfs-categorize/parse))
   (import (only (tegfs cli-delete) CLI::delete))
   (import (only (tegfs cli-edit) CLI::edit))

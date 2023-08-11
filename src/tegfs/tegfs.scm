@@ -77,6 +77,7 @@
       CONFIGKEY : <key...>
       CONFIGVAL : --password <value> / FIN? <value>
       CATOPT : change
+      /        show
       OPT : --root <root>
       /     --texteditor <texteditor>
       /     --seed <seed>
@@ -203,6 +204,7 @@
 
                ))
          ((and categorization change) (tegfs-categorize/parse))
+         ((and categorization show) (CLI::categorization-show))
          (serve (tegfs-serve/parse))
          (prolog (tegfs-prolog/parse))
          (query (CLI::query --diropen --dirpreview --sexp-format <format> <query...>))
