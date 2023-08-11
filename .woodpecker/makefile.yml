@@ -5,7 +5,7 @@ steps:
     commands:
       - apk add --no-cache $SCHEME make rsync git wget
       - make build
-      - CI=1 make test
+      - CI=0 make test
     when:
       branch: [master, development]
 
