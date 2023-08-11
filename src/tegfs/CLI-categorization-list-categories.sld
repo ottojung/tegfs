@@ -2,9 +2,9 @@
 (define-library
   (tegfs CLI-categorization-list-categories)
   (export CLI::categorization-list-categories)
-  (import (only (euphrates tilda-a) ~a))
   (import
-    (only (euphrates words-to-string) words->string))
+    (only (euphrates lines-to-string) lines->string))
+  (import (only (euphrates tilda-a) ~a))
   (import
     (only (tegfs categorization-get-all-tags)
           categorization-get-all-tags))

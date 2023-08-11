@@ -4,5 +4,5 @@
 (define (CLI::categorization-list-categories)
   (define text (categorization-read))
   (define all-tags (categorization-get-all-tags text))
-  (display (words->string (map ~a all-tags)))
+  (display (lines->string (map ~a all-tags)))
   (newline))
