@@ -69,7 +69,7 @@ rundocker: dist/dockerfile
 
 dist/exampleroot.tar:
 	mkdir -p dist # glitch in filestamps
-	wget "https://vau.place/static/tegfs-example-root.tar" -O "$@"
+	wget --quiet "https://vau.place/static/tegfs-example-root.tar" -O "$@"
 	touch "$@"
 
 test-root-wd: $(TEST_ROOT_WD)
