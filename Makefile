@@ -12,7 +12,7 @@ SUBMODULES = deps/euphrates/.git
 
 TEST_ROOT_WD=$(PWD)/dist/exampleroot-wd
 TEST_ROOT=$(PWD)/dist/exampleroot
-TEST_FILES=$(TEST_ROOT) $(TEST_ROOT_WD) $(TEST_ROOT_WD)/categorization.tegfs.txt $(TEST_ROOT_WD)/config.tegfs.lisp
+TEST_FILES=$(TEST_ROOT) $(TEST_ROOT_WD)
 
 all: dist/tegfs
 
@@ -27,7 +27,7 @@ uninstall:
 	rmdir $(INSTALL_ROOT) || true
 	rmdir $(PREFIX_SHARE)/tegfs || true
 
-test: build test-files test-config
+test: build test-files
 	sh scripts/run-tests.sh
 
 $(BINARY_PATH): dist/tegfs $(PREFIX_BIN)
@@ -84,14 +84,6 @@ $(TEST_ROOT): dist/exampleroot.tar
 	chmod -R a-w "$@"
 	touch "$@" # update the glitching timestamp
 
-$(TEST_ROOT_WD)/categorization.tegfs.txt: tests/make-example-categorization.sh
-	TEST_ROOT=$(TEST_ROOT_WD) sh tests/make-example-categorization.sh
-
-test-config: $(TEST_ROOT_WD)/config.tegfs.lisp
-
-$(TEST_ROOT_WD)/config.tegfs.lisp: tests/make-example-config.sh
-	TEST_ROOT=$(TEST_ROOT_WD) sh tests/make-example-config.sh
-
 test-files: $(TEST_FILES)
 
-.PHONY: all build clean install reinstall uninstall test test-files test-config test-root-wd rundocker
+.PHONY: all build clean install reinstall uninstall test test-files test-root-wd rundocker
