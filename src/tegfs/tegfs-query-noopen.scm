@@ -8,7 +8,7 @@
       (tegfs-query/noopen/notall/profun iter0 <query...>)
       iter0))
 
-(define (inference->profun-rule query)
+(define (generify-dumped-term term)
   (define (place-variables clause)
     (map
      (lambda (obj)
@@ -19,20 +19,24 @@
               (else (string->symbol (~a name)))))
            obj))
      clause))
-  (map place-variables (map cdr query)))
+
+  (map place-variables (map cdr term)))
+
+(define (inference->profun-rule inference)
+  (define RHS (generify-dumped-term (cddr inference)))
+  (define consequent (generify-dumped-term (list (cadr inference))))
+  (append consequent RHS))
 
 (define (tegfs-query/noopen/notall/profun iter0 <query...>)
   (define-values (parsed-query/1 variables) (prolog-query-parse <query...>))
   (define parsed-query
-    (inference->profun-rule parsed-query/1))
+    (generify-dumped-term parsed-query/1))
   (define rules
     (let ((stack (stack-make)))
       (stack-push! stack `((%any X)))
       (dump-rules
        (lambda (thing)
-         (define RHS (inference->profun-rule (cddr thing)))
-         (define consequent (inference->profun-rule (list (cadr thing))))
-         (stack-push! stack (append consequent RHS))))
+         (stack-push! stack (inference->profun-rule thing))))
       (stack->list stack)))
   (define db0
     (profun-create-falsy-database
