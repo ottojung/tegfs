@@ -86,4 +86,4 @@ $(TEST_ROOT): dist/exampleroot.tar
 
 test-files: $(TEST_FILES)
 
-.PHONY: all build clean install reinstall uninstall test test-files test-root-wd rundocker
+.PHONY: all build clean install reinstall uninstall test test-files test-setup test-root-wd rundocker
