@@ -15,6 +15,6 @@
       (define (yield x)
         (stack-push! S (inference->profun-rule x)))
       (dump-rules-from-text yield rules-part)
-      (stack->list S)))
+      (reverse (stack->list S))))
 
   (values ast/flatten additional-rules))

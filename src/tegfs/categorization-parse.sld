@@ -25,6 +25,7 @@
           define
           define-values
           let
+          reverse
           values))
   (cond-expand
     (guile (import (only (guile) include-from-path))
