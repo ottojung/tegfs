@@ -11,10 +11,8 @@
     (categorization-parse-tree cfg-part))
 
   (define additional-rules
-    (let ((S (stack-make)))
-      (define (yield x)
-        (stack-push! S (inference->profun-rule x)))
-      (dump-rules-from-text yield rules-part)
-      (reverse (stack->list S))))
+    (map inference->profun-rule
+         (reverse
+          (dump-rules-from-text/list rules-part))))
 
   (values ast/flatten additional-rules))
