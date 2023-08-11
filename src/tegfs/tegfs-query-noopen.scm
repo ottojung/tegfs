@@ -1,49 +1,5 @@
 ;;;; Copyright (C) 2022, 2023  Otto Jung
-;;;;
-;;;; This program is free software: you can redistribute it and/or modify
-;;;; it under the terms of the GNU Affero General Public License as published
-;;;; by the Free Software Foundation, either version 3 of the License, or
-;;;; (at your option) any later version.
-;;;;
-;;;; This program is distributed in the hope that it will be useful,
-;;;; but WITHOUT ANY WARRANTY; without even the implied warranty of
-;;;; MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-;;;; GNU Affero General Public License for more details.
-;;;;
-;;;; You should have received a copy of the GNU Affero General Public License
-;;;; along with this program.  If not, see <https://www.gnu.org/licenses/>.
-
-(cond-expand
- (guile
-  (define-module (tegfs tegfs-query-noopen)
-    :export (tegfs-query/noopen)
-    :use-module ((euphrates assq-or) :select (assq-or))
-    :use-module ((euphrates comp) :select (appcomp))
-    :use-module ((euphrates file-delete) :select (file-delete))
-    :use-module ((euphrates hashset) :select (hashset-has? make-hashset))
-    :use-module ((euphrates list-intersperse) :select (list-intersperse))
-    :use-module ((euphrates open-file-port) :select (open-file-port))
-    :use-module ((euphrates printf) :select (printf))
-    :use-module ((euphrates profun-database) :select (profun-database-extend))
-    :use-module ((euphrates profun-standard-handler) :select (profun-standard-handler))
-    :use-module ((euphrates profun) :select (profun-create-falsy-database profun-eval-query/boolean))
-    :use-module ((euphrates raisu) :select (raisu))
-    :use-module ((euphrates run-syncproc-re-star) :select (run-syncproc/re*))
-    :use-module ((euphrates stack) :select (stack->list stack-make stack-push!))
-    :use-module ((euphrates string-strip) :select (string-strip))
-    :use-module ((euphrates string-to-lines) :select (string->lines))
-    :use-module ((euphrates tilda-a) :select (~a))
-    :use-module ((tegfs dump-rules) :select (dump-rules))
-    :use-module ((tegfs entries-iterate) :select (entries-iterate))
-    :use-module ((tegfs keyword-id) :select (keyword-id))
-    :use-module ((tegfs make-temporary-filename-local) :select (make-temporary-filename/local))
-    :use-module ((tegfs prolog-query-parse) :select (prolog-query-parse))
-    :use-module ((tegfs prolog-var) :select (make-prolog-var prolog-var-name prolog-var?))
-    :use-module ((tegfs prolog) :select (tegfs-dump-prolog translate-entry-tags))
-    :use-module ((tegfs tag-to-prolog-term) :select (tag->prolog-term))
-    )))
-
-
+;;;; This program is free software: you can redistribute it and/or modify it under the terms of the GNU Affero General Public License as published by the Free Software Foundation, either version 3 of the License, or (at your option) any later version. This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU Affero General Public License for more details. You should have received a copy of the GNU Affero General Public License along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
 (define (tegfs-query/noopen <query...>)
   (define iter0 (entries-iterate))
