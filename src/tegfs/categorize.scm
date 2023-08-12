@@ -1,48 +1,5 @@
 ;;;; Copyright (C) 2022, 2023  Otto Jung
-;;;;
-;;;; This program is free software: you can redistribute it and/or modify
-;;;; it under the terms of the GNU Affero General Public License as published
-;;;; by the Free Software Foundation, either version 3 of the License, or
-;;;; (at your option) any later version.
-;;;;
-;;;; This program is distributed in the hope that it will be useful,
-;;;; but WITHOUT ANY WARRANTY; without even the implied warranty of
-;;;; MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-;;;; GNU Affero General Public License for more details.
-;;;;
-;;;; You should have received a copy of the GNU Affero General Public License
-;;;; along with this program.  If not, see <https://www.gnu.org/licenses/>.
-
-(cond-expand
- (guile
-  (define-module (tegfs categorize)
-    :export (tegfs-categorize/parse tegfs-categorize)
-    :use-module ((euphrates alist-initialize) :select (alist-initialize))
-    :use-module ((euphrates append-posix-path) :select (append-posix-path))
-    :use-module ((euphrates assq-or) :select (assq-or))
-    :use-module ((euphrates dprintln) :select (dprintln))
-    :use-module ((euphrates file-or-directory-exists-q) :select (file-or-directory-exists?))
-    :use-module ((euphrates hashmap) :select (hashmap-ref hashmap-set! make-hashmap))
-    :use-module ((euphrates hashset) :select (hashset->list hashset-add! hashset-difference make-hashset))
-    :use-module ((euphrates raisu) :select (raisu))
-    :use-module ((euphrates read-string-file) :select (read-string-file))
-    :use-module ((euphrates read-string-line) :select (read-string-line))
-    :use-module ((euphrates stringf) :select (stringf))
-    :use-module ((euphrates system-fmt) :select (system-fmt))
-    :use-module ((euphrates tilda-a) :select (~a))
-    :use-module ((euphrates words-to-string) :select (words->string))
-    :use-module ((euphrates write-string-file) :select (write-string-file))
-    :use-module ((tegfs categorization-filename) :select (categorization-filename))
-    :use-module ((tegfs categorization-split) :select (categorization-split))
-    :use-module ((tegfs edit-tags) :select (tegfs-edit-tags))
-    :use-module ((tegfs get-root) :select (get-root))
-    :use-module ((tegfs make-tag-parser) :select (make-tag-structure-parser))
-    :use-module ((tegfs make-temporary-filename-local) :select (make-temporary-filename/local))
-    :use-module ((tegfs tags-this-variable) :select (tags-this-variable))
-    :use-module ((tegfs unparse-tag) :select (unparse-tag))
-    )))
-
-
+;;;; This program is free software: you can redistribute it and/or modify it under the terms of the GNU Affero General Public License as published by the Free Software Foundation, either version 3 of the License, or (at your option) any later version. This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU Affero General Public License for more details. You should have received a copy of the GNU Affero General Public License along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
 (define (tegfs-categorize/parse)
   (define result (tegfs-categorize #f))
@@ -98,11 +55,15 @@
       (lambda (cfg rules)
         (set! cfg-part cfg))))
 
+  (define (copy-contents from to)
+    (write-string-file
+     to (read-string-file working-file0)))
+
   (define (finish)
     (define return-tags (hashset->list (hashmap-ref state 'tags #f)))
     (define return-choices (hashset->list (hashmap-ref state 'choices #f)))
 
-    (copy-file working-file0 categorization-file)
+    (copy-contents working-file0 categorization-file)
 
     (unless working-file-maybe
       (delete-file working-file0))
@@ -117,7 +78,7 @@
      ";; This file is for categorization of the tags\n\n-----------\n\n"))
 
   (unless (file-or-directory-exists? working-file)
-    (copy-file categorization-file working-file))
+    (copy-contents categorization-file working-file))
 
   (hashmap-set! state 'choices (make-hashset))
   (hashmap-set! state 'handled-vars (make-hashset))
