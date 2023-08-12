@@ -4,20 +4,18 @@ test-setup: test-files
 
 test-files: test-root
 
-test-root: dist
+test-root:
+	mkdir -p dist
 	rsync --chmod=u+w --recursive --delete "tests/data-testroot/" "dist/testroot/"
-
-dist:
-	mkdir -p "$@"
-	touch "$@"
 
 test-files-all: test-copy-files-all
 
 test-copy-files-all: test-root dist/rootcomplement
+	mkdir -p dist
 	rsync --chmod=u+w --recursive "dist/rootcomplement/" "dist/testroot/"
 
 dist/dbfiles: dist/rootcomplement
-	mkdir "$@"
+	mkdir -p "$@"
 	cp -r dist/rootcomplement/db/*/* dist/dbfiles/
 	chmod -R u+w "$@"
 	touch "$@" # update the glitching timestamp
@@ -27,7 +25,8 @@ dist/rootcomplement: dist/tegfs-testfiles.tar
 	chmod -R a-w "$@"
 	touch "$@" # update the glitching timestamp
 
-dist/tegfs-testfiles.tar: dist
+dist/tegfs-testfiles.tar:
+	mkdir -p dist
 	wget --quiet "https://vau.place/static/tegfs-testfiles.tar" -O "$@"
 	touch "$@"
 
