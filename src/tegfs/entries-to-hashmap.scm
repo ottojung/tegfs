@@ -10,5 +10,4 @@
        (define id-pair (assoc keyword-id entry))
        (if id-pair
            (hashmap-set! H (cdr id-pair) entry)
-           (parameterize ((current-output-port (current-error-port)))
-             (dprintln "Entry does not have an id: ~s" entry))))))))
+           (log-warning "Entry does not have an id: ~s" entry)))))))

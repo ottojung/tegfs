@@ -2,7 +2,6 @@
 (define-library
   (tegfs entries-to-hashmap)
   (export entries->hashmap)
-  (import (only (euphrates dprintln) dprintln))
   (import
     (only (euphrates hashmap)
           hashmap-set!
@@ -10,18 +9,16 @@
   (import
     (only (tegfs entries-for-each) entries-for-each))
   (import (only (tegfs keyword-id) keyword-id))
+  (import (only (tegfs log-warning) log-warning))
   (import
     (only (scheme base)
           assoc
           begin
           cdr
-          current-error-port
-          current-output-port
           define
           if
           lambda
-          let
-          parameterize))
+          let))
   (import (only (scheme case-lambda) case-lambda))
   (cond-expand
     (guile (import (only (guile) include-from-path))
