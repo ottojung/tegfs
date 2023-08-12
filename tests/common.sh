@@ -5,7 +5,7 @@ make --silent test-setup
 
 case "$0" in
     *manualtest-*)
-        make --silent dist/dbfiles
+        make --silent test-files-all
         ;;
 esac
 

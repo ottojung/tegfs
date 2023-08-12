@@ -63,11 +63,6 @@ dist/dockerfile: dist/tegfs tests/* scripts/* assets/* deps/*
 rundocker: dist/dockerfile
 	docker run --rm -p "33470:80" --name tegfs tegfs
 
-dist/exampleroot.tar:
-	mkdir -p dist # glitch in filestamps
-	wget --quiet "https://vau.place/static/tegfs-example-root.tar" -O "$@"
-	touch "$@"
-
 test-setup: build test-files
 
 test-files: test-root
@@ -75,7 +70,18 @@ test-files: test-root
 test-root:
 	rsync --chmod=u+w --recursive --delete "tests/data-testroot/" "dist/testroot/"
 
-dist/dbfiles: dist/tegfs-testfiles.tar
+test-files-all: test-copy-files-all
+
+test-copy-files-all:
+	rsync --chmod=u+w --recursive --delete "dist/rootdb/" "dist/testroot/db/"
+
+dist/dbfiles: dist/rootdb
+	mkdir "$@"
+	cp -r dist/rootdb/*/* dist/dbfiles/
+	chmod -R u+w "$@"
+	touch "$@" # update the glitching timestamp
+
+dist/rootdb: dist/tegfs-testfiles.tar
 	cd dist && tar -xf tegfs-testfiles.tar
 	chmod -R a-w "$@"
 	touch "$@" # update the glitching timestamp
