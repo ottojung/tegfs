@@ -18,9 +18,9 @@ wget --quiet \
      --retry-on-http-error=200 \
      --retry-connrefused \
      localhost:33470 \
-     -O home.html
+     -O dist/home.html
 
-if ! cat home.html | grep -q -i -e "Welcome to TegFS"
+if ! cat dist/home.html | grep -q -i -e "Welcome to TegFS"
 then
     echo "Docker server responded with an unexpected HTML." 1>&2
     exit 1
@@ -28,4 +28,4 @@ fi
 
 docker exec tegfs pkill -1 guile
 
-rm -f dist/dockerlog home.html
+rm -f dist/dockerlog dist/home.html
