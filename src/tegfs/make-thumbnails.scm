@@ -23,6 +23,7 @@
     :use-module ((euphrates dprintln) :select (dprintln))
     :use-module ((euphrates file-delete) :select (file-delete))
     :use-module ((euphrates file-or-directory-exists-q) :select (file-or-directory-exists?))
+    :use-module ((euphrates list-ref-or) :select (list-ref-or))
     :use-module ((euphrates make-directories) :select (make-directories))
     :use-module ((euphrates make-temporary-filename) :select (make-temporary-filename))
     :use-module ((euphrates raisu) :select (raisu))
@@ -104,8 +105,9 @@
 
   (define link1
     (string-strip
-     (car
-      (string->lines link1/uns))))
+     (list-ref-or
+      (string->lines link1/uns)
+      0 "")))
 
   (define __12832
     (unless (= 0 status1)
