@@ -3,6 +3,12 @@
 set -e
 make --silent test-setup
 
+case "$0" in
+    *manualtest-*)
+        make --silent dist/dbfiles
+        ;;
+esac
+
 GUILE="guile --r7rs -L src/ -s"
 
 TEGFS=dist/tegfs
