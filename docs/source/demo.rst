@@ -37,10 +37,10 @@ First, let's make sure we are working on the test database by issuing the follow
 .. code-block:: bash
 
    cd tegfs
-   make test-files
-   export TEGFS_ROOT="$PWD/dist/exampleroot-wd"
+   make test-files-all
+   export TEGFS_ROOT="$PWD/dist/testroot"
 
-This sets the root of the TegFS database to the ``dist/exampleroot-wd`` directory relative to the current working directory.
+This sets the root of the TegFS database to the ``dist/testroot`` directory relative to the current working directory.
 
 Now, let's generate some data for testing. In the terminal, type the following commands:
 
