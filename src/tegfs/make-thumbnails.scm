@@ -1,52 +1,5 @@
-;;;; Copyright (C) 2022  Otto Jung
-;;;;
-;;;; This program is free software: you can redistribute it and/or modify
-;;;; it under the terms of the GNU Affero General Public License as published
-;;;; by the Free Software Foundation, either version 3 of the License, or
-;;;; (at your option) any later version.
-;;;;
-;;;; This program is distributed in the hope that it will be useful,
-;;;; but WITHOUT ANY WARRANTY; without even the implied warranty of
-;;;; MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-;;;; GNU Affero General Public License for more details.
-;;;;
-;;;; You should have received a copy of the GNU Affero General Public License
-;;;; along with this program.  If not, see <https://www.gnu.org/licenses/>.
-
-(cond-expand
- (guile
-  (define-module (tegfs make-thumbnails)
-    :export (tegfs-make-thumbnails/parse tegfs-make-thumbnails tegfs-make-image-thumbnails tegfs-make-senderideo-thumbnails)
-    :use-module ((euphrates asyncproc-input-text-p) :select (asyncproc-input-text/p))
-    :use-module ((euphrates catchu-case) :select (catchu-case))
-    :use-module ((euphrates comp) :select (appcomp comp))
-    :use-module ((euphrates dprintln) :select (dprintln))
-    :use-module ((euphrates file-delete) :select (file-delete))
-    :use-module ((euphrates file-or-directory-exists-q) :select (file-or-directory-exists?))
-    :use-module ((euphrates list-ref-or) :select (list-ref-or))
-    :use-module ((euphrates make-directories) :select (make-directories))
-    :use-module ((euphrates make-temporary-filename) :select (make-temporary-filename))
-    :use-module ((euphrates raisu) :select (raisu))
-    :use-module ((euphrates run-syncproc-re-star) :select (run-syncproc/re*))
-    :use-module ((euphrates run-syncproc) :select (run-syncproc))
-    :use-module ((euphrates string-strip) :select (string-strip))
-    :use-module ((euphrates string-to-lines) :select (string->lines))
-    :use-module ((euphrates string-to-seconds-columned) :select (string->seconds/columned))
-    :use-module ((euphrates string-to-words) :select (string->words))
-    :use-module ((euphrates stringf) :select (stringf))
-    :use-module ((euphrates system-fmt) :select (system-fmt))
-    :use-module ((euphrates tilda-a) :select (~a))
-    :use-module ((euphrates url-goto) :select (url-goto))
-    :use-module ((tegfs a-weblink-q) :select (a-weblink?))
-    :use-module ((tegfs fatal) :select (fatal))
-    :use-module ((tegfs file-is-image-q) :select (file-is-image?))
-    :use-module ((tegfs file-is-video-q) :select (file-is-video?))
-    :use-module ((tegfs make-temporary-filename-local) :select (make-temporary-filename/local))
-    :use-module ((tegfs web-preview-height) :select (web::preview-height))
-    :use-module ((tegfs web-preview-width) :select (web::preview-width))
-    )))
-
-
+;;;; Copyright (C) 2022, 2023  Otto Jung
+;;;; This program is free software: you can redistribute it and/or modify it under the terms of the GNU Affero General Public License as published by the Free Software Foundation, either version 3 of the License, or (at your option) any later version. This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU Affero General Public License for more details. You should have received a copy of the GNU Affero General Public License along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
 (define (tegfs-make-thumbnails/parse <input> <output>)
   (catchu-case
@@ -74,7 +27,7 @@
   (dprintln "Done!"))
 
 (define (tegfs-make-thumbnails <input> <output>)
-  (let ((dir (dirname <output>)))
+  (let ((dir (path-get-dirname <output>)))
     (unless (file-or-directory-exists? dir)
       (make-directories dir)))
 
@@ -118,26 +71,24 @@
 
   (let* ((link/full (url-goto <input> link1))
          (temp (make-temporary-filename/local))
-         (do (unless (= 0 (status:exit-val (system* "wget" user-agent "--no-verbose" link/full "-O" temp)))
+         (do (unless (= 0 (system*/exit-code "wget" user-agent "--no-verbose" link/full "-O" temp))
                (raisu 'could-not-download-the-preview link/full)))
          (ret (tegfs-make-image-thumbnails temp <output>)))
     (file-delete temp)
     ret))
 
 (define (tegfs-make-image-thumbnails <input> <output>)
-  (or (= 0
-         (status:exit-val
-          (system*
-           "convert"
-           "-limit" "memory" "32mb"
-           (string-append <input> "[0]")
-           "-thumbnail" (string-append (~a (* web::preview-width web::preview-height)) "@")
-           "-quality" "30"
-           "-gravity" "center"
-           "-background" "transparent"
-           "-extent" (stringf "~ax~a" web::preview-width web::preview-height)
-           <output>
-           )))
+  (or (= 0 (system*/exit-code
+            "convert"
+            "-limit" "memory" "32mb"
+            (string-append <input> "[0]")
+            "-thumbnail" (string-append (~a (* web::preview-width web::preview-height)) "@")
+            "-quality" "30"
+            "-gravity" "center"
+            "-background" "transparent"
+            "-extent" (stringf "~ax~a" web::preview-width web::preview-height)
+            <output>
+            ))
       'could-not-convert-image))
 
 ;; TODO: Maybe do video previews that are videos
@@ -145,10 +96,9 @@
 (define (tegfs-make-senderideo-thumbnails <input> <output>)
   (define status #f)
   (define probe
-    (with-output-to-string
-      (lambda _
-        (parameterize ((current-error-port (current-output-port)))
-          (set! status (run-syncproc "ffprobe" <input>))))))
+    (with-output-stringified
+     (parameterize ((current-error-port (current-output-port)))
+       (set! status (run-syncproc "ffprobe" <input>)))))
   (define _121312
     (unless (= 0 status) (raisu 'probe-failed status probe)))
 
