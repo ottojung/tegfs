@@ -1,11 +1,11 @@
 #! /bin/sh
 
 set -e
-make --silent test-setup
+make --silent test-setup -f tests/setup.make
 
 case "$0" in
     *manualtest-*)
-        make --silent test-files-all
+        make --silent test-files-all -f tests/setup.make
         ;;
 esac
 

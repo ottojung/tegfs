@@ -12,7 +12,7 @@ fi
 rm -rf "$TEGFS_ROOT"
 mkdir -p "$TEGFS_ROOT" 1>/dev/null 2>/dev/null
 
-make --silent dist/dbfiles
+make --silent dist/dbfiles -f tests/setup.make
 
 sh tests/make-example-config.sh "$TEGFS_ROOT"
 sh tests/make-example-categorization.sh "$TEGFS_ROOT"
