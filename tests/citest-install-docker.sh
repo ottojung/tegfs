@@ -14,11 +14,15 @@ docker run --rm -d -p 33470:80 --name tegfs tegfs 1>/dev/null
 
 sleep 20
 
-wget --quiet \
+if ! wget --quiet \
      --retry-on-http-error=200 \
      --retry-connrefused \
      localhost:33470 \
      -O dist/home.html
+then
+    echo "Process wget failed." 1>&2
+    exit 1
+fi
 
 if ! cat dist/home.html | grep -q -i -e "Welcome to TegFS"
 then
