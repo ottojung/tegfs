@@ -2,4 +2,4 @@
 
 . tests/common.sh
 
-$TEGFS prolog
+t_tegfs prolog

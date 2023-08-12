@@ -2,4 +2,4 @@
 
 . tests/common.sh
 
-$TEGFS query --talk
+t_tegfs query --talk

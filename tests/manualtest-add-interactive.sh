@@ -2,4 +2,4 @@
 
 . tests/common.sh
 
-$TEGFS add --interactive --tag meme
+t_tegfs add --interactive --tag meme

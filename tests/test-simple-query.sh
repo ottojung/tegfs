@@ -2,7 +2,7 @@
 
 . tests/common.sh
 
-case $($TEGFS --quiet query --format mimetype -- image | sort | uniq) in
+case $(t_tegfs --quiet query --format mimetype -- image | sort | uniq) in
     "image/jpeg
 inode/directory") ;;
     *)

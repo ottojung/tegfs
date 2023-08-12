@@ -2,7 +2,7 @@
 
 . tests/common.sh
 
-RESULT=$($TEGFS --quiet categorization list-categories)
+RESULT=$(t_tegfs --quiet categorization list-categories)
 case "$RESULT" in
     "audio
 video

@@ -6,9 +6,9 @@
 #  but expecting to be queriable by "clip"
 #  because of rules.tegfs.txt content
 
-$TEGFS --seed 777 add --tag person=X --tag song --content "hello this is a test content" 1>/dev/null
+t_tegfs --seed 777 add --tag person=X --tag song --content "hello this is a test content" 1>/dev/null
 
-RESULT=$($TEGFS --quiet query --format 'id "," mimetype "," tags' -- song)
+RESULT=$(t_tegfs --quiet query --format 'id "," mimetype "," tags' -- song)
 case "$RESULT" in
     "sc9yp8lgg9btp0knyzki8g7l7wk27f,audio/mpeg,song audio
 c5rbsiw81b6mg644ya2cev2ejeh1jx,audio/mpeg,song audio

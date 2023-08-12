@@ -2,10 +2,10 @@
 
 . tests/common.sh
 
-CATEGORIES=$($TEGFS --quiet categorization list-categories)
+CATEGORIES=$(t_tegfs --quiet categorization list-categories)
 
 for C1 in $CATEGORIES
 do
     echo "> query $C1"
-    $TEGFS --quiet query --format id $C1 | sort
+    t_tegfs --quiet query --format id $C1 | sort
 done

@@ -2,4 +2,4 @@
 
 . tests/common.sh
 
-$TEGFS categorization change
+t_tegfs categorization change

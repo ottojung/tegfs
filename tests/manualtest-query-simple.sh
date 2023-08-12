@@ -2,4 +2,4 @@
 
 . tests/common.sh
 
-$TEGFS query hi
+t_tegfs query hi
