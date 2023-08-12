@@ -2,13 +2,19 @@
 
 . tests/common.sh
 
-export TEGFS_ROOT=dist/recreateroot
+export TEGFS_ROOT="$1"
+if test -z "$TEGFS_ROOT"
+then
+    echo "Expected root directory as first argument" 1>&2
+    exit 1
+fi
 
 rm -rf "$TEGFS_ROOT"
+mkdir -p "$TEGFS_ROOT"
 
-sh tests/make-example-config.sh
-sh tests/make-example-categorization.sh
-sh tests/make-example-rules.sh
+sh tests/make-example-config.sh "$TEGFS_ROOT"
+sh tests/make-example-categorization.sh "$TEGFS_ROOT"
+sh tests/make-example-rules.sh "$TEGFS_ROOT"
 
 t_tegfs add \
     --title "Lambda Calculus paper" \

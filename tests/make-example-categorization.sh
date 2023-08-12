@@ -1,6 +1,13 @@
 #! /bin/sh
 
-mkdir -p "$TEGFS_ROOT"
+TARGET_ROOT="$1"
+if test -z "$TARGET_ROOT"
+then
+    echo "Expected root directory as first argument" 1>&2
+    exit 1
+fi
+
+mkdir -p "$TARGET_ROOT"
 
 echo "
 audio video image text
@@ -9,4 +16,4 @@ video : clip recording lecture
 image : photo meme drawing
 photo : selfie
 text : book pasta
-" > "$TEST_ROOT/categorization.tegfs.txt"
+" > "$TARGET_ROOT/categorization.tegfs.txt"
