@@ -3,16 +3,10 @@
   (tegfs categorization-translate-direct-parsed-choice)
   (export
     categorization-translate-direct-parsed-choice)
-  (import (only (euphrates tilda-a) ~a))
   (import
-    (only (scheme base)
-          append
-          begin
-          car
-          define
-          list
-          map
-          quote))
+    (only (tegfs categorization-make-choice)
+          categorization-make-choice))
+  (import (only (scheme base) begin car define))
   (cond-expand
     (guile (import (only (guile) include-from-path))
            (begin

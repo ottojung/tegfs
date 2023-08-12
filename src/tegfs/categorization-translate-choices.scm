@@ -15,13 +15,7 @@
      (define tag/parsed/all (parser tag/unstarred))
 
      (for-each
-      (lambda (tag/parsed/0)
-        (define tag/parsed
-          (list (car tag/parsed/0)
-                (apply string-append
-                       (list-intersperse
-                        "," (map ~a (cdr tag/parsed/0))))))
-
+      (lambda (tag/parsed)
         (for-each
          (lambda (production)
            (define consequent (car production))
@@ -35,9 +29,7 @@
             ((member tag antecedents)
              (let ((impl (if (equal? consequent main-name) (car tag/parsed) consequent/no*)))
                (yield
-                (append
-                 (list '%choice (~a impl))
-                 (map ~a tag/parsed)))))))
+                (categorization-make-choice impl tag/parsed))))))
          ast/flatten))
       tag/parsed/all))
    starred)
