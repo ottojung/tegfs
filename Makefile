@@ -62,6 +62,6 @@ dist/dockerfile: dist/tegfs tests/* scripts/* assets/* deps/*
 	touch "$@"
 
 rundocker: dist/dockerfile
-	docker run --rm -p "33470:80" --name tegfs tegfs
+	docker run --rm --detach --publish "33470:80" --name tegfs tegfs
 
 .PHONY: all build clean install reinstall uninstall rundocker
