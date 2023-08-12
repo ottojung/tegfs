@@ -44,6 +44,9 @@
     (only (tegfs categorization-filename)
           categorization-filename))
   (import
+    (only (tegfs categorization-read)
+          categorization-read))
+  (import
     (only (tegfs categorization-split)
           categorization-split))
   (import (only (tegfs edit-tags) tegfs-edit-tags))

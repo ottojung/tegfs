@@ -74,13 +74,8 @@
      (ok return-tags)
      (choices return-choices)))
 
-  (unless (file-or-directory-exists? categorization-file)
-    (write-string-file
-     categorization-file
-     ";; This file is for categorization of the tags\n\n-----------\n\n"))
-
   (unless (file-or-directory-exists? working-file)
-    (copy-contents categorization-file working-file))
+    (write-string-file working-file (categorization-read)))
 
   (hashmap-set! state 'choices (make-hashset))
   (hashmap-set! state 'handled-vars (make-hashset))
