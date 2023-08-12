@@ -2,7 +2,7 @@
 ;;;; This program is free software: you can redistribute it and/or modify it under the terms of the GNU Affero General Public License as published by the Free Software Foundation, either version 3 of the License, or (at your option) any later version. This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU Affero General Public License for more details. You should have received a copy of the GNU Affero General Public License along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
 (define (dump-clipboard-temp mimetype)
-  (dprintln "Dumping clipboard...")
+  (log-info "Dumping clipboard.")
   (let ((result (dump-clipboard-to-temporary mimetype)))
     (unless result
       (fatal "Could not dump"))
@@ -33,24 +33,30 @@
      ,(alist-initialize!:unset 'inferred-tags))))
 
 (define (print-text-content ret)
-  (newline)
-  (print-in-frame #t #f 3 35 0 #\space "    Clipboard text content")
-  (newline)
-  (print-in-frame #t #t 3 60 0 #\space ret)
-  (newline))
+  (log-info
+   "~a" (with-output-stringified
+         (newline)
+         (print-in-frame #t #f 3 35 0 #\space "    Clipboard text content")
+         (newline)
+         (print-in-frame #t #t 3 60 0 #\space ret)
+         (newline))))
 
 (define (print-inferred-tags inferred-tags)
   (when inferred-tags
-    (display " Inferred tags: ")
-    (display (words->string (map ~a inferred-tags)))
-    (newline)
-    (newline)))
+    (log-info
+     "~a" (with-output-stringified
+           (display " Inferred tags: ")
+           (display (words->string (map ~a inferred-tags)))
+           (newline)
+           (newline)))))
 
-(define (print-setter-fields get-alist current-setter)
+(define (display-setter-fields get-alist current-setter)
   (define setters (alist-initialize!:current-setters))
   (print-inferred-tags (assq-or 'inferred-tags (get-alist)))
 
-  (dprintln " Enter *number* to edit one of below.")
+  (display " Enter *number* to edit one of below.")
+  (newline)
+
   (for-each
    (lambda (setter i)
      (unless (equal? '* (car setter))
@@ -66,7 +72,7 @@
             (value1 (~s value1))
             (else "")))
 
-         (dprintln "   ~a~a) ~a: ~a"
+         (printf "   ~a~a) ~a: ~a\n"
                    (if (equal? current-setter (car setter)) ">" " ")
                    (+ 1 i)
                    (car setter)
@@ -80,16 +86,18 @@
       (fatal "Cannot infer the value of ~s" name))
 
     (if recalculate?
-        (dprintln "\n Switched to ~s" (~s name))
-        (begin
+        (log-info "\n Switched to ~s" (~s name))
+        (log-info
+         "~a" (with-output-stringified
           (newline) (newline) (newline) (newline) (newline) (newline) (newline) (newline) (newline) (newline)
           (newline) (newline) (newline) (newline) (newline) (newline) (newline) (newline) (newline) (newline)
           (newline) (newline) (newline) (newline) (newline) (newline) (newline) (newline) (newline) (newline)
           (newline) (newline) (newline) (newline) (newline) (newline) (newline) (newline) (newline) (newline)
           (newline) (newline) (newline) (newline) (newline) (newline) (newline) (newline) (newline) (newline)
           (newline) (newline) (newline) (newline) (newline) (newline) (newline) (newline) (newline) (newline)
-          (print-setter-fields get-alist name)))
-    (newline)
+          (display-setter-fields get-alist name))))
+
+    (log-info "\n")
     (thunk)))
 
 (define (CLI::save::loop
@@ -224,7 +232,7 @@
       (and (-temporary-file 'or #f)
            (or (get-file-mimetype (-temporary-file))
                (begin
-                 (dprintln "Could not determine the file type of ~s" (-temporary-file))
+                 (log-warning "Could not determine the file type of ~s" (-temporary-file))
                  #f)))))
 
     (target-basename

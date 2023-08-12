@@ -12,7 +12,6 @@
           alist-initialize-loop))
   (import (only (euphrates assq-or) assq-or))
   (import (only (euphrates comp) comp))
-  (import (only (euphrates dprintln) dprintln))
   (import
     (only (euphrates list-deduplicate)
           list-deduplicate/reverse))
@@ -35,11 +34,15 @@
           path-without-extension))
   (import
     (only (euphrates print-in-frame) print-in-frame))
+  (import (only (euphrates printf) printf))
   (import (only (euphrates range) range))
   (import (only (euphrates tilda-a) ~a))
   (import (only (euphrates tilda-s) ~s))
   (import
     (only (euphrates url-get-path) url-get-path))
+  (import
+    (only (euphrates with-output-stringified)
+          with-output-stringified))
   (import
     (only (euphrates words-to-string) words->string))
   (import
@@ -97,6 +100,8 @@
   (import (only (tegfs get-root) get-root))
   (import
     (only (tegfs get-save-plugins) get-save-plugins))
+  (import (only (tegfs log-info) log-info))
+  (import (only (tegfs log-warning) log-warning))
   (import
     (only (tegfs make-tag-parser) make-tag-parser))
   (import
