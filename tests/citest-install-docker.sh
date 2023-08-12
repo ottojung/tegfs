@@ -12,7 +12,7 @@ fi
 
 docker run --rm -d -p 33470:80 --name tegfs tegfs 1>/dev/null
 
-sleep 10
+sleep 20
 
 wget --quiet \
      --retry-on-http-error=200 \
