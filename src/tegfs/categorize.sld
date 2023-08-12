@@ -9,7 +9,6 @@
     (only (euphrates append-posix-path)
           append-posix-path))
   (import (only (euphrates assq-or) assq-or))
-  (import (only (euphrates dprintln) dprintln))
   (import
     (only (euphrates file-or-directory-exists-q)
           file-or-directory-exists?))
@@ -24,6 +23,8 @@
           hashset-add!
           hashset-difference
           make-hashset))
+  (import
+    (only (euphrates lines-to-string) lines->string))
   (import (only (euphrates raisu) raisu))
   (import
     (only (euphrates read-string-file)
@@ -47,6 +48,8 @@
           categorization-split))
   (import (only (tegfs edit-tags) tegfs-edit-tags))
   (import (only (tegfs get-root) get-root))
+  (import (only (tegfs log-error) log-error))
+  (import (only (tegfs log-info) log-info))
   (import
     (only (tegfs make-tag-parser)
           make-tag-structure-parser))
@@ -80,6 +83,7 @@
           lambda
           let
           let*
+          list
           map
           member
           null?

@@ -3,7 +3,9 @@
 
 (define (tegfs-categorize/parse)
   (define result (tegfs-categorize #f))
-  (dprintln "Categorized! The list of chosen tags is:\n~a" (words->string (map ~a (cdr result)))))
+  (log-info
+   "Categorized! The list of chosen tags is:\n~a"
+   (words->string (map ~a (cdr result)))))
 
 (define (tegfs-categorize working-file-maybe)
   (define categorization-file (append-posix-path (get-root) categorization-filename))
@@ -90,16 +92,19 @@
     (define result (tegfs-edit-tags working-file))
     (cond
      ((assoc 'ambiguous result)
-      (dprintln "Error categorizing:")
-      (print-errors (cdr (assoc 'ambiguous result)))
-      (dprintln "Press enter to continue...")
+      (log-error
+       (lines->string
+        (append
+         (format-errors (cdr (assoc 'ambiguous result)))
+         (list "Press enter to continue."))))
       (read-string-line)
       (loop))
      ((assoc 'duplicates result)
-      (dprintln "Error categorizing:")
-      (dprintln "These tags were chosen twice: ")
-      (dprintln "~s" (cdr (assoc 'duplicates result)))
-      (dprintln "Press enter to continue...")
+      (log-error
+       (lines->string
+        (list "These tags were chosen twice: ~s."
+              "Press enter to continue."))
+       (cdr (assoc 'duplicates result)))
       (read-string-line)
       (loop))
      ((assoc 'choices result)
@@ -139,8 +144,8 @@
              (stringf "Unexpected result from edit: ~s" result)
              result)))))
 
-(define (print-errors errors)
-  (for-each
+(define (format-errors errors)
+  (map
    (lambda (line)
-     (dprintln "Tag \"~s\" has ambiguous parents: ~s" (car line) (cdr line)))
+     (stringf "Tag ~s has ambiguous parents: ~s." (~a (car line)) (cdr line)))
    errors))
