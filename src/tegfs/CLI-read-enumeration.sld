@@ -2,7 +2,6 @@
 (define-library
   (tegfs CLI-read-enumeration)
   (export CLI::read-enumeration)
-  (import (only (euphrates dprintln) dprintln))
   (import
     (only (euphrates list-intersperse)
           list-intersperse))
@@ -11,6 +10,7 @@
   (import
     (only (tegfs CLI-read-answer-string)
           CLI::read-answer-string))
+  (import (only (tegfs log-question) log-question))
   (import
     (only (scheme base)
           apply
