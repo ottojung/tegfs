@@ -28,6 +28,7 @@
           lambda
           let
           member
+          null?
           reverse))
   (cond-expand
     (guile (import (only (guile) include-from-path))

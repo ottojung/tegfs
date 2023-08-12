@@ -141,3 +141,43 @@
   (categorization-parse-tree
    "audio video image*")
   '(audio* image*)))
+
+
+
+
+
+(assert=
+ '()
+
+ (categorization-translate-choices
+  (make-tag-parser 0)
+  (categorization-parse-tree "")
+  '(audio* image*)))
+
+
+
+
+
+
+(assert=
+ '()
+
+ (categorization-translate-choices
+  (make-tag-parser 0)
+  (categorization-parse-tree
+   "audio video image*")
+  '()))
+
+
+
+
+
+
+(assert=
+ '()
+
+ (categorization-translate-choices
+  (make-tag-parser 0)
+  (categorization-parse-tree
+   "audio video image*")
+  '()))

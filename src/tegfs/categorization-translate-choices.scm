@@ -7,7 +7,8 @@
   (define (yield x) (stack-push! ret x))
 
   (define main-name
-    (car (car ast/flatten)))
+    (if (null? ast/flatten) #f
+        (car (car ast/flatten))))
 
   (for-each
    (lambda (tag)
