@@ -162,7 +162,7 @@
 
     (source
      (if --source <source>
-         (or (and (a-weblink? (-text-content)) (-temporary-file) (-text-content))
+         (or (and (-text-content) (a-weblink? (-text-content)) (-temporary-file))
              'none)))
 
     (-text-content
@@ -181,7 +181,7 @@
       (else
        (cond
         ((equal? <kind> 'localfile) 'no)
-        ((a-weblink? (-text-content))
+        ((and (-text-content) (a-weblink? (-text-content)))
          (let ((name (url-get-path (-text-content))))
            (and (or (file-is-video? name)
                     (file-is-image? name)
@@ -191,7 +191,9 @@
 
     (kind
      (or <kind>
-         (classify-clipboard-text-content (-text-content))))
+         (and (-text-content)
+              (classify-clipboard-text-content (-text-content)))
+         'data))
 
     (-temporary-file
      (or
@@ -199,12 +201,14 @@
            (-text-content))
       (and (equal? 'link (kind))
            (equal? 'yes (download?))
+           (-text-content)
            (download-to-temporary-file (-text-content)))
       (and (equal? 'data (kind))
            (mimetype 'or #f)
            (and --interactive
                 (dump-clipboard-temp (mimetype))))
       (and (equal? 'pasta (kind))
+           (-text-content)
            (let* ((temp-name (make-temporary-filename)))
              (write-string-file temp-name (-text-content))
              temp-name))))
@@ -228,6 +232,7 @@
       (and <add-target>
            (path-without-extension <add-target>))
       (and (equal? 'localfile (kind))
+           (-text-content)
            (path-without-extension (path-get-basename (-text-content))))
       (get-random-basename)))
 
@@ -237,6 +242,7 @@
            (path-extensions <add-target>))
       (and (equal? 'pasta (kind)) ".txt")
       (and (equal? 'localfile (kind))
+           (-text-content)
            (path-extensions (-text-content)))
       (and (equal? 'link (kind))
            (equal? 'no (download?))
