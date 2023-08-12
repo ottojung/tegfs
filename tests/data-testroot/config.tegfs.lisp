@@ -1,0 +1,5 @@
+(user (admin (pass . "e6c3da5b206634d7f3f3586d747ffdb36b5c675757b380c6a5fe5c570c714349")))
+(fileserver . "xdg-open://")
+(authorization . "yes")
+(sharedir . "/tmp/tegfs-share")
+(port . 33470)
