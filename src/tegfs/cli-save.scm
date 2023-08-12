@@ -18,6 +18,10 @@
   (define series (cdr (assoc 'series state)))
   (define series? (case series ((yes) #t) ((no) #f) (else (fatal "Bad value for series ~s" series))))
   (define link? (case (cdr (assoc 'link? state)) ((yes) #t) ((no) #f) (else (fatal "Bad value for link? ~s" (cdr (assoc 'link? state))))))
+  (define dirpreview?/0 (assq-or 'dirpreview? state #f))
+  (define dirpreview? (case dirpreview?/0 ((yes) #t) ((no) #f) (else (fatal "Bad value for dirpreview? ~s" dirpreview?/0))))
+  (define diropen?/0 (assq-or 'diropen? state #f))
+  (define diropen? (case diropen?/0 ((yes) #t) ((no) #f) (else (fatal "Bad value for diropen? ~s" diropen?/0))))
   (define -temporary-file (cdr (assoc '-temporary-file state)))
   (define -text-content (cdr (assoc '-text-content state)))
   (define registry-dir (append-posix-path (get-root) default-db-path))
@@ -30,6 +34,8 @@
      (if source (list (cons "source" source)) (list))
      (if (string? note) (list (cons "note" note)) (list))
      (if mimetype (list (cons "mimetype" mimetype)) (list))
+     (if dirpreview? (list (list "dirpreview")) (list))
+     (if diropen? (list (list "diropen")) (list))
      additional-properties
      ))
 

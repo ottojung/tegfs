@@ -90,6 +90,7 @@
  (tags image=X photo=X collection-of=X,$)
  (choices (%choice "collection-of" "collection-of" "X,$") (%choice "photo" "photo" "X") (%choice "image" "image" "X"))
  (mimetype . "inode/directory")
+ (dirpreview)
  (target . "i0/wallpapers")
  (id . "i12k87lof1hxwvyyn5u09gyzv9j33v"))
 

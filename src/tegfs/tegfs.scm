@@ -115,8 +115,8 @@
      :default (--sexp-format #t)
      :exclusive (--sexp-format --format)
 
-     :default (--diropen #t)
-     :exclusive (--diropen --no-diropen)
+     :default (--no-diropen #t)
+     :exclusive (--no-diropen --diropen)
 
      :default (--unsure-if-download #t)
      :exclusive (--unsure-if-download --download --no-download)
