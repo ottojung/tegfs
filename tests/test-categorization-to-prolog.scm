@@ -9,8 +9,6 @@
   (categorization-parse-tree
    "audio video image text")))
 
-(exit 0)
-
 (assert=
  '(((audio X) (%choice "audio" ANYSYM X))
    ((audio X) (song X))
