@@ -6,7 +6,7 @@
 #  but expecting to be queriable by "clip"
 #  because of rules.tegfs.txt content
 
-t_tegfs --seed 777 add --tag person=X --tag song --content "hello this is a test content" 1>/dev/null
+t_tegfs add --tag person=X --tag song --content "hello this is a test content" 1>/dev/null
 
 RESULT=$(t_tegfs --quiet query --format 'id "," mimetype "," tags' -- song)
 case "$RESULT" in
