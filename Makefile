@@ -48,13 +48,10 @@ clean:
 deps/euphrates/.git:
 	git submodule update --init
 
-dist/tegfs: $(SUBMODULES) src/*/*.scm dist
+dist/tegfs: $(SUBMODULES) src/*/*.scm
+	mkdir -p "dist"
 	guile -s scripts/make-binary.scm "$(CODE_ROOT)" > "$@"
 	chmod +x "$@"
-
-dist:
-	mkdir -p "$@"
-	touch "$@"
 
 dist/dockerfile: dist/tegfs tests/* scripts/* assets/* deps/*
 	export DOCKER_BUILDKIT=1 ; \
