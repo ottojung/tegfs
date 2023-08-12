@@ -1,35 +1,5 @@
-;;;; Copyright (C) 2022  Otto Jung
-;;;;
-;;;; This program is free software: you can redistribute it and/or modify
-;;;; it under the terms of the GNU Affero General Public License as published
-;;;; by the Free Software Foundation, either version 3 of the License, or
-;;;; (at your option) any later version.
-;;;;
-;;;; This program is distributed in the hope that it will be useful,
-;;;; but WITHOUT ANY WARRANTY; without even the implied warranty of
-;;;; MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-;;;; GNU Affero General Public License for more details.
-;;;;
-;;;; You should have received a copy of the GNU Affero General Public License
-;;;; along with this program.  If not, see <https://www.gnu.org/licenses/>.
-
-(cond-expand
- (guile
-  (define-module (tegfs get)
-    :export (tegfs-get tegfs-get/parse tegfs-get/cached)
-    :use-module ((euphrates absolute-posix-path-q) :select (absolute-posix-path?))
-    :use-module ((euphrates dprintln) :select (dprintln))
-    :use-module ((euphrates hashmap) :select (hashmap-clear! hashmap-ref make-hashmap))
-    :use-module ((tegfs entries-for-each) :select (entries-for-each))
-    :use-module ((tegfs entries-to-hashmap) :select (entries->hashmap))
-    :use-module ((tegfs entry-print-formatted) :select (entry-print/formatted))
-    :use-module ((tegfs entry-print) :select (entry-print))
-    :use-module ((tegfs keyword-id) :select (keyword-id))
-    :use-module ((tegfs log-info) :select (log-info))
-    :use-module ((tegfs standalone-file-to-entry) :select (standalone-file->entry))
-    )))
-
-
+;;;; Copyright (C) 2022, 2023  Otto Jung
+;;;; This program is free software: you can redistribute it and/or modify it under the terms of the GNU Affero General Public License as published by the Free Software Foundation, either version 3 of the License, or (at your option) any later version. This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU Affero General Public License for more details. You should have received a copy of the GNU Affero General Public License along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
 (define (tegfs-get/parse <get-format> <showid>)
   (define entry (tegfs-get <showid>))
