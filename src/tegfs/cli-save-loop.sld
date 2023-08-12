@@ -126,6 +126,7 @@
           list?
           map
           newline
+          not
           or
           quasiquote
           quote

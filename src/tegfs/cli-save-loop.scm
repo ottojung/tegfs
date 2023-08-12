@@ -248,7 +248,8 @@
            (equal? 'no (download?))
            'ignore)
       (and (mimetype 'or #f)
-           (get-clipboard-type-extension (mimetype)))))
+           (get-clipboard-type-extension (mimetype)))
+      (and (not (-temporary-file)) 'none)))
 
     (note (or <note> 'none))
 
