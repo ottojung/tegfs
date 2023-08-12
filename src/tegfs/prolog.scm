@@ -1,46 +1,5 @@
-;;;; Copyright (C) 2022  Otto Jung
-;;;;
-;;;; This program is free software: you can redistribute it and/or modify
-;;;; it under the terms of the GNU Affero General Public License as published
-;;;; by the Free Software Foundation, either version 3 of the License, or
-;;;; (at your option) any later version.
-;;;;
-;;;; This program is distributed in the hope that it will be useful,
-;;;; but WITHOUT ANY WARRANTY; without even the implied warranty of
-;;;; MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-;;;; GNU Affero General Public License for more details.
-;;;;
-;;;; You should have received a copy of the GNU Affero General Public License
-;;;; along with this program.  If not, see <https://www.gnu.org/licenses/>.
-
-(cond-expand
- (guile
-  (define-module (tegfs prolog)
-    :export (tegfs-prolog/parse tegfs-prolog tegfs-dump-prolog translate-entry-tags)
-    :use-module ((euphrates assq-or) :select (assq-or))
-    :use-module ((euphrates comp) :select (appcomp))
-    :use-module ((euphrates dprintln) :select (dprintln))
-    :use-module ((euphrates file-delete) :select (file-delete))
-    :use-module ((euphrates hashset) :select (hashset->list hashset-add! make-hashset))
-    :use-module ((euphrates list-deduplicate) :select (list-deduplicate/reverse))
-    :use-module ((euphrates open-file-port) :select (open-file-port))
-    :use-module ((euphrates raisu) :select (raisu))
-    :use-module ((euphrates stack) :select (stack->list stack-make stack-push!))
-    :use-module ((euphrates tilda-a) :select (~a))
-    :use-module ((tegfs a-weblink-q) :select (a-weblink?))
-    :use-module ((tegfs dump-rules) :select (dump-rules))
-    :use-module ((tegfs entries-for-each) :select (entries-for-each))
-    :use-module ((tegfs entry-get-target) :select (entry-get-target))
-    :use-module ((tegfs keyword-id) :select (keyword-id))
-    :use-module ((tegfs keyword-tags) :select (keyword-tags))
-    :use-module ((tegfs make-temporary-filename-local) :select (make-temporary-filename/local))
-    :use-module ((tegfs make-tag-parser) :select (make-tag-parser))
-    :use-module ((tegfs print-prolog-inference) :select (print-prolog-inference))
-    :use-module ((tegfs tag-to-prolog-term) :select (print-tag-as-prolog-term))
-    :use-module ((tegfs tags-this-variable) :select (tags-this-variable/string))
-    )))
-
-
+;;;; Copyright (C) 2022, 2023  Otto Jung
+;;;; This program is free software: you can redistribute it and/or modify it under the terms of the GNU Affero General Public License as published by the Free Software Foundation, either version 3 of the License, or (at your option) any later version. This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU Affero General Public License for more details. You should have received a copy of the GNU Affero General Public License along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
 (define (tegfs-prolog/parse)
   (tegfs-prolog)
@@ -116,7 +75,7 @@
 
 (define (tegfs-prolog)
   (define output-path (tegfs-dump-prolog-file))
-  (system* "swipl" output-path)
+  (system*/exit-code "swipl" output-path)
   (file-delete output-path))
 
 (define (translate-registries yield)
