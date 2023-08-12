@@ -32,7 +32,7 @@ $(BINARY_PATH): dist/tegfs $(PREFIX_BIN)
 	mkdir -p "$(CODE_INSTALL_ROOT)"
 	rm -rf "$(CODE_INSTALL_ROOT)"
 	cp -p -T -L -r "src" "$(CODE_INSTALL_ROOT)"
-	guile -s scripts/make-binary.scm "$(INSTALL_ROOT)" "$(CODE_INSTALL_ROOT)" > "$@"
+	guile -s scripts/make-binary.scm "$(CODE_INSTALL_ROOT)" > "$@"
 	chmod +x "$@"
 
 $(PREFIX_BIN):
@@ -48,7 +48,7 @@ deps/euphrates/.git:
 	git submodule update --init
 
 dist/tegfs: $(SUBMODULES) src/*/*.scm dist
-	guile -s scripts/make-binary.scm "$(TEST_ROOT_WD)" "$(CODE_ROOT)" > "$@"
+	guile -s scripts/make-binary.scm "$(CODE_ROOT)" > "$@"
 	chmod +x "$@"
 
 dist:

@@ -2,8 +2,7 @@
 (define args
   (cdr (command-line)))
 
-(define root (car args))
-(define code_root (cadr args))
+(define code_root (car args))
 
 (display "#! ")
 (flush-all-ports)
