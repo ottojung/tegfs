@@ -5,4 +5,8 @@
   (define filepath
     (append-posix-path
      (root/p) categorization-filename))
+
+  (unless (file-or-directory-exists? filepath)
+    (write-string-file filepath ""))
+
   (read-string-file filepath))
