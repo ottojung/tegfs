@@ -2,11 +2,11 @@
 
 . tests/common.sh
 
-echo > log
+echo > dist/dockerlog
 
-if ! make dist/dockerfile 1>>log 2>>log
+if ! make dist/dockerfile 1>>dist/dockerlog 2>>dist/dockerlog
 then
-    cat log 1>&2
+    cat dist/dockerlog 1>&2
     exit 1
 fi
 
@@ -28,4 +28,4 @@ fi
 
 docker exec tegfs pkill -1 guile
 
-rm -f log home.html
+rm -f dist/dockerlog home.html

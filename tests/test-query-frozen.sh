@@ -2,8 +2,8 @@
 
 . tests/common.sh
 
-sh tests/freeze-query.sh > frozen-query
+sh tests/freeze-query.sh > dist/frozen-query
 
-diff frozen-query tests/data-frozen-query.txt
+diff dist/frozen-query tests/data-frozen-query.txt
 
-rm -f frozen-query
+rm -f dist/frozen-query
