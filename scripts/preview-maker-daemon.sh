@@ -7,4 +7,4 @@ LASTFILE="$TEGFS_ROOT/lastid.tegfs.txt"
 touch "$LASTFILE"
 
 rm -rf "$TEGFS_ROOT/cache/failed-previews/$PREVIEW"
-echo "$LASTFILE" | entr -n sh "$DIR/make-all-previews.sh"
+echo "$LASTFILE" | entr -n sh "$DIR/make-all-previews.sh" "$@"
