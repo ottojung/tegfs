@@ -24,7 +24,7 @@
 
    )
 
-  (dprintln "Done!"))
+  (log-info "Done!"))
 
 (define (tegfs-make-thumbnails <input> <output>)
   (let ((dir (path-get-dirname <output>)))
@@ -64,7 +64,7 @@
 
   (define __12832
     (unless (= 0 status1)
-      (dprintln "Could not process the link: ~a" status1)))
+      (log-warning "Could not process the link: ~a." status1)))
 
   (when (string-null? link1)
     (raisu 'no-web::thumbnails))

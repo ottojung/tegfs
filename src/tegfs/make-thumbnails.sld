@@ -12,7 +12,6 @@
   (import
     (only (euphrates catchu-case) catchu-case))
   (import (only (euphrates comp) appcomp comp))
-  (import (only (euphrates dprintln) dprintln))
   (import
     (only (euphrates file-delete) file-delete))
   (import
@@ -60,6 +59,8 @@
     (only (tegfs file-is-image-q) file-is-image?))
   (import
     (only (tegfs file-is-video-q) file-is-video?))
+  (import (only (tegfs log-info) log-info))
+  (import (only (tegfs log-warning) log-warning))
   (import
     (only (tegfs make-temporary-filename-local)
           make-temporary-filename/local))
