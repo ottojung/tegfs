@@ -8,7 +8,6 @@
     translate-entry-tags)
   (import (only (euphrates assq-or) assq-or))
   (import (only (euphrates comp) appcomp))
-  (import (only (euphrates dprintln) dprintln))
   (import
     (only (euphrates file-delete) file-delete))
   (import
@@ -39,6 +38,7 @@
     (only (tegfs entry-get-target) entry-get-target))
   (import (only (tegfs keyword-id) keyword-id))
   (import (only (tegfs keyword-tags) keyword-tags))
+  (import (only (tegfs log-info) log-info))
   (import
     (only (tegfs make-tag-parser) make-tag-parser))
   (import

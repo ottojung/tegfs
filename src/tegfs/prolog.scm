@@ -3,7 +3,7 @@
 
 (define (tegfs-prolog/parse)
   (tegfs-prolog)
-  (dprintln "done(prolog)."))
+  (log-info "done(prolog)."))
 
 (define (yield-for-prolog thing)
   (print-tag-as-prolog-term thing)
