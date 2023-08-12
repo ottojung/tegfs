@@ -42,6 +42,7 @@ $(PREFIX_BIN):
 reinstall: | uninstall clean install
 
 clean:
+	chmod -R u+w dist || true
 	rm -rf dist
 
 deps/euphrates/.git:
