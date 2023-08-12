@@ -12,11 +12,12 @@ fi
 
 make --silent rundocker 1>/dev/null
 
-sleep 20
-
 if ! wget --quiet \
-     --retry-on-http-error=200 \
      --retry-connrefused \
+     --waitretry=1 \
+     --read-timeout=2 \
+     --timeout=30 \
+     -t 0 \
      localhost:33470 \
      -O dist/home.html
 then
