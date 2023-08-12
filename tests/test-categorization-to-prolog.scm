@@ -63,3 +63,7 @@
 		 photo : selfie
 		 text : book pasta
 ")))
+
+(assert=
+ '() (categorization->prolog
+      (categorization-parse-tree "")))

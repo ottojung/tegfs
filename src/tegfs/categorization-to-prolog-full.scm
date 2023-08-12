@@ -16,7 +16,9 @@
   (define ast/unstarred
     (map (comp (map unstar-symbol)) categorization/ast))
 
-  (define root-predicate-name (car (car ast/unstarred)))
+  (define root-predicate-name
+    (if (null? ast/unstarred) #f
+        (car (car ast/unstarred))))
 
   (for-each
    (lambda (production)

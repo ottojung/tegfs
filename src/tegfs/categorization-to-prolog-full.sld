@@ -32,6 +32,7 @@
           define
           equal?
           for-each
+          if
           lambda
           let
           map
