@@ -2,7 +2,6 @@
 (define-library
   (tegfs CLI-read-answer-string)
   (export CLI::read-answer-string)
-  (import (only (euphrates dprintln) dprintln))
   (import
     (only (euphrates read-string-line)
           read-string-line))
@@ -13,6 +12,8 @@
     (only (tegfs CLI-swiched-field-huh-p)
           CLI::swiched-field?/p))
   (import (only (tegfs fatal) fatal))
+  (import (only (tegfs log-error) log-error))
+  (import (only (tegfs log-question) log-question))
   (import
     (only (scheme base)
           begin
@@ -24,8 +25,8 @@
           parameterize
           quote
           string->number
+          string-append
           when))
-  (import (only (scheme write) display))
   (cond-expand
     (guile (import (only (guile) include-from-path))
            (begin

@@ -4,9 +4,7 @@
 (define (CLI::read-answer-string question)
   (let loop ()
     (define _2
-      (begin
-        (display " ")
-        (display question)))
+      (log-question (string-append " " question)))
 
     ;; (define state (state/p))
     (define answer (read-string-line))
@@ -20,6 +18,6 @@
               (parameterize ((CLI::swiched-field?/p #t))
                 ((cdr name+setter) 'recalculate))
               (begin
-                (dprintln "Bad index ~s, must be one of the listed items" num)
+                (log-error "Bad index ~s, must be one of the listed items." num)
                 (loop))))
         answer)))
