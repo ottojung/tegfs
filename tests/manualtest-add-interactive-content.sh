@@ -3,4 +3,4 @@
 . tests/common.sh
 
 cp guix.scm dist/
-$TEST_FS add --interactive --content dist/guix.scm
+$TEGFS add --interactive --content dist/guix.scm

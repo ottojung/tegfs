@@ -2,5 +2,5 @@
 
 . tests/common.sh
 
-$TEST_FS get "non-existent-id"
-$TEST_FS get "$(cat $TEGFS_ROOT/lastid.tegfs.txt)"
+$TEGFS get "non-existent-id"
+$TEGFS get "$(cat $TEGFS_ROOT/lastid.tegfs.txt)"
