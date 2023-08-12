@@ -15,7 +15,13 @@
      (define tag/parsed/all (parser tag/unstarred))
 
      (for-each
-      (lambda (tag/parsed)
+      (lambda (tag/parsed/0)
+        (define tag/parsed
+          (list (car tag/parsed/0)
+                (apply string-append
+                       (list-intersperse
+                        "," (map ~a (cdr tag/parsed/0))))))
+
         (for-each
          (lambda (production)
            (define consequent (car production))

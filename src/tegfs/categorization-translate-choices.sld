@@ -3,6 +3,9 @@
   (tegfs categorization-translate-choices)
   (export categorization-translate-choices)
   (import
+    (only (euphrates list-intersperse)
+          list-intersperse))
+  (import
     (only (euphrates stack)
           stack->list
           stack-make
@@ -16,6 +19,7 @@
   (import
     (only (scheme base)
           append
+          apply
           begin
           car
           cdr
@@ -30,7 +34,8 @@
           map
           member
           quote
-          reverse))
+          reverse
+          string-append))
   (cond-expand
     (guile (import (only (guile) include-from-path))
            (begin
