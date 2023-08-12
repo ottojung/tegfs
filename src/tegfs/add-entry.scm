@@ -7,9 +7,6 @@
     (list->string
      (random-choice 30 alphanum-lowercase/alphabet)))
 
-  (define (get-date)
-    (date-get-current-string "~Y-~m-~dT~H:~M:~S+0000"))
-
   (define (tosymbol x)
     (cond
      ((symbol? x) x)
@@ -51,7 +48,7 @@
 
   (define entry1
     (assoc-set-default
-     keyword-date (get-date)
+     keyword-date (generate-entry-date-timestamp)
      (assoc-set-value
       keyword-id id
       entry0)))

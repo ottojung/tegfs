@@ -22,9 +22,6 @@
           assoc-set-value))
   (import (only (euphrates assq-or) assq-or))
   (import
-    (only (euphrates date-get-current-string)
-          date-get-current-string))
-  (import
     (only (euphrates file-or-directory-exists-q)
           file-or-directory-exists?))
   (import
@@ -55,6 +52,9 @@
   (import
     (only (tegfs entry-get-target) entry-get-target))
   (import (only (tegfs entry-print) entry-print))
+  (import
+    (only (tegfs generate-entry-date-timestamp)
+          generate-entry-date-timestamp))
   (import
     (only (tegfs get-file-mimetype)
           get-file-mimetype))
