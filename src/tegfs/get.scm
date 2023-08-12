@@ -23,8 +23,8 @@
             (if id-pair
                 (when (equal? (cdr id-pair) <showid>)
                   (k entry))
-                (parameterize ((current-output-port (current-error-port)))
-                  (dprintln "Entry does not have an id: ~s" entry)))))
+                (log-warning
+                 "Entry does not have an id: ~s" entry))))
          #f))))
 
 (define tegfs-get/cached

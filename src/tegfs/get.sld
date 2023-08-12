@@ -8,7 +8,6 @@
   (import
     (only (euphrates absolute-posix-path-q)
           absolute-posix-path?))
-  (import (only (euphrates dprintln) dprintln))
   (import
     (only (euphrates hashmap)
           hashmap-clear!
@@ -25,6 +24,7 @@
   (import (only (tegfs entry-print) entry-print))
   (import (only (tegfs keyword-id) keyword-id))
   (import (only (tegfs log-info) log-info))
+  (import (only (tegfs log-warning) log-warning))
   (import
     (only (tegfs standalone-file-to-entry)
           standalone-file->entry))
@@ -34,8 +34,6 @@
           begin
           call-with-current-continuation
           cdr
-          current-error-port
-          current-output-port
           define
           equal?
           if
@@ -43,7 +41,6 @@
           let
           newline
           or
-          parameterize
           when))
   (import (only (scheme process-context) exit))
   (cond-expand
