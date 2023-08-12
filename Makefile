@@ -72,16 +72,16 @@ test-root:
 
 test-files-all: test-copy-files-all
 
-test-copy-files-all:
-	rsync --chmod=u+w --recursive --delete "dist/rootdb/" "dist/testroot/db/"
+test-copy-files-all: test-root dist/rootcomplement
+	rsync --chmod=u+w --recursive "dist/rootcomplement/" "dist/testroot/"
 
-dist/dbfiles: dist/rootdb
+dist/dbfiles: dist/rootcomplement
 	mkdir "$@"
-	cp -r dist/rootdb/*/* dist/dbfiles/
+	cp -r dist/rootcomplement/db/*/* dist/dbfiles/
 	chmod -R u+w "$@"
 	touch "$@" # update the glitching timestamp
 
-dist/rootdb: dist/tegfs-testfiles.tar
+dist/rootcomplement: dist/tegfs-testfiles.tar
 	cd dist && tar -xf tegfs-testfiles.tar
 	chmod -R a-w "$@"
 	touch "$@" # update the glitching timestamp
