@@ -2,11 +2,14 @@
 
 . tests/common.sh
 
-case $(t_tegfs --quiet query --format mimetype -- image | sort | uniq) in
+RESULT=$(t_tegfs --quiet query --format mimetype -- image | sort | uniq)
+
+case "$RESULT" in
     "image/jpeg
-inode/directory") ;;
+inode/directory
+tegfs/entry") ;;
     *)
-        echo "Expected a different set of ids" 1>&2
+        printf "Expected a different set of mimetypes, got:\n%s" "$RESULT" 1>&2
         exit 1
         ;;
 esac

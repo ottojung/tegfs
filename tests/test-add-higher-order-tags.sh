@@ -10,8 +10,8 @@ t_tegfs add --tag person=X --tag song --content "hello this is a test content" 1
 
 RESULT=$(t_tegfs --quiet query --format 'id "," mimetype "," tags' -- song)
 case "$RESULT" in
-    "sc9yp8lgg9btp0knyzki8g7l7wk27f,audio/mpeg,song audio
-c5rbsiw81b6mg644ya2cev2ejeh1jx,audio/mpeg,song audio
+    "8qka96sjlzzvnnrc6q23bua8bzxycv,audio/mpeg,song audio
+ns1b5nlgc2wpoxrdv0605mcfsxmodz,audio/mpeg,song audio
 40k34vl0txfywxxjuqjq7kcrsqrga9,text/plain,song person=X audio") ;;
     *)
         printf "Expected different entries, got:\n%s" "$RESULT" 1>&2

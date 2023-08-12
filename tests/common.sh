@@ -13,4 +13,4 @@ t_tegfs() {
     $TEGFS --seed $((TEGFSSEED - 10)) "$@"
 }
 
-export TEGFS_ROOT=dist/exampleroot-wd
+export TEGFS_ROOT=dist/testroot

@@ -10,10 +10,6 @@ CODE_ROOT=$(PWD)/src
 
 SUBMODULES = deps/euphrates/.git
 
-TEST_ROOT_WD=$(PWD)/dist/exampleroot-wd
-TEST_ROOT=$(PWD)/dist/exampleroot
-TEST_FILES=$(TEST_ROOT) $(TEST_ROOT_WD)
-
 all: dist/tegfs
 
 build: dist/tegfs
@@ -72,18 +68,21 @@ dist/exampleroot.tar:
 	wget --quiet "https://vau.place/static/tegfs-example-root.tar" -O "$@"
 	touch "$@"
 
-test-setup: test-files build test-root-wd
+test-setup: build test-files
 
-test-root-wd:
-	rsync --chmod=u+w --archive --recursive --delete "$(TEST_ROOT)/" "$(TEST_ROOT_WD)/"
+test-files: test-root
 
-$(TEST_ROOT_WD): test-root-wd
+test-root:
+	rsync --chmod=u+w --recursive --delete "tests/data-testroot/" "dist/testroot/"
 
-$(TEST_ROOT): dist/exampleroot.tar
-	cd dist && tar -xf ./exampleroot.tar
+dist/dbfiles: dist/tegfs-testfiles.tar
+	cd dist && tar -xf tegfs-testfiles.tar
 	chmod -R a-w "$@"
 	touch "$@" # update the glitching timestamp
 
-test-files: $(TEST_FILES)
+dist/tegfs-testfiles.tar:
+	mkdir -p dist # glitch in filestamps
+	wget --quiet "https://vau.place/static/tegfs-testfiles.tar" -O "$@"
+	touch "$@"
 
-.PHONY: all build clean install reinstall uninstall test test-files test-setup test-root-wd rundocker
+.PHONY: all build clean install reinstall uninstall rundocker test test-setup test-files test-root
