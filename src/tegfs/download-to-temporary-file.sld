@@ -2,7 +2,6 @@
 (define-library
   (tegfs download-to-temporary-file)
   (export download-to-temporary-file)
-  (import (only (euphrates dprintln) dprintln))
   (import
     (only (euphrates system-star-exit-code)
           system*/exit-code))
@@ -14,6 +13,7 @@
     (only (euphrates url-get-protocol)
           url-get-protocol))
   (import (only (tegfs fatal) fatal))
+  (import (only (tegfs log-info) log-info))
   (import
     (only (tegfs make-temporary-filename-local)
           make-temporary-filename/local))
