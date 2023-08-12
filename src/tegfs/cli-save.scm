@@ -52,6 +52,7 @@
   (define inferred-tags (if (equal? 'none inferred-tags/0) '() inferred-tags/0))
   (define tags inferred-tags)
   (define note (cdr (assoc 'note state)))
+  (define date (assq-or 'date state #f))
   (define target-extension (cdr (assoc 'target-extension state)))
   (define target-basename (cdr (assoc 'target-basename state)))
   (define mimetype (cdr (assoc 'mimetype state)))
@@ -74,7 +75,6 @@
      additional-properties
      ))
 
-  (define <date> #f)
   (define _11
     (unless (file-or-directory-exists? registry-dir)
       (make-directories registry-dir)))
@@ -91,12 +91,12 @@
          -temporary-file filename link?
          title tags
          series? key-value-pairs
-         <date>)
+         date)
         (let ((<target> (if (equal? kind 'pasta) #f -text-content)))
           (tegfs-add
            <target> title tags
            series? key-value-pairs
-           <date>))))
+           date))))
 
   (assq-or keyword-id entry (raisu 'impossible)))
 

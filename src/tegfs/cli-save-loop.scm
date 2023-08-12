@@ -251,6 +251,8 @@
            (get-clipboard-type-extension (mimetype)))
       (and (not (-temporary-file)) 'none)))
 
+    (date (or <date> (generate-entry-date-timestamp)))
+
     (note (or <note> 'none))
 
     )
@@ -269,6 +271,7 @@
     (link? (CLI::read-enumeration "Link target to the new location?" '(yes no)))
     (diropen? (CLI::read-enumeration "Diropen?" '(yes no)))
     (dirpreview? (CLI::read-enumeration "Dirpreview?" '(yes no)))
+    (date (CLI::read-answer-string "Date (example: \"2023-08-11T22:45:42+0000\")"))
     (note (CLI::read-answer-string "Note: "))
     ;; (confirm (get-confirm)) ;; TODO: fix this and enable again
     )

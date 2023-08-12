@@ -86,6 +86,9 @@
   (import
     (only (tegfs file-is-video-q) file-is-video?))
   (import
+    (only (tegfs generate-entry-date-timestamp)
+          generate-entry-date-timestamp))
+  (import
     (only (tegfs get-file-mimetype)
           get-file-mimetype))
   (import
