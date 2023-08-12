@@ -50,7 +50,7 @@
   (define selected-tags (assq-or 'tags state '()))
   (define inferred-tags/0 (assq-or 'inferred-tags state '()))
   (define inferred-tags (if (equal? 'none inferred-tags/0) '() inferred-tags/0))
-  (define tags (append selected-tags inferred-tags))
+  (define tags inferred-tags)
   (define note (cdr (assoc 'note state)))
   (define target-extension (cdr (assoc 'target-extension state)))
   (define target-basename (cdr (assoc 'target-basename state)))

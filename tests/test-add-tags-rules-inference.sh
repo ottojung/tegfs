@@ -10,7 +10,7 @@ $TEGFS --seed 777 add --tag song --tag video --content "hello this is a test con
 
 RESULT=$($TEGFS --quiet query --format 'id "," mimetype "," tags' -- clip)
 case "$RESULT" in
-    "40k34vl0txfywxxjuqjq7kcrsqrga9,text/plain,audio song video") ;;
+    "40k34vl0txfywxxjuqjq7kcrsqrga9,text/plain,video song audio") ;;
     *)
         printf "Expected different entries, got:\n%s" "$RESULT" 1>&2
         exit 1
