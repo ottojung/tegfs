@@ -6,13 +6,13 @@ test-files: test-root
 
 test-root:
 	mkdir -p dist
-	rsync --chmod=u+w --recursive --delete "tests/data-testroot/" "dist/testroot/"
+	rsync --chmod=u+w --recursive --links --delete "tests/data-testroot/" "dist/testroot/"
 
 test-files-all: test-copy-files-all
 
 test-copy-files-all: test-root dist/rootcomplement
 	mkdir -p dist
-	rsync --chmod=u+w --recursive "dist/rootcomplement/" "dist/testroot/"
+	rsync --chmod=u+w --recursive --links "dist/rootcomplement/" "dist/testroot/"
 
 dist/dbfiles: dist/rootcomplement
 	mkdir -p "$@"
