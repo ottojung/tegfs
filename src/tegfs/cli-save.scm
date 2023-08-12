@@ -1,47 +1,5 @@
 ;;;; Copyright (C) 2022, 2023  Otto Jung
-;;;;
-;;;; This program is free software: you can redistribute it and/or modify
-;;;; it under the terms of the GNU Affero General Public License as published
-;;;; by the Free Software Foundation, either version 3 of the License, or
-;;;; (at your option) any later version.
-;;;;
-;;;; This program is distributed in the hope that it will be useful,
-;;;; but WITHOUT ANY WARRANTY; without even the implied warranty of
-;;;; MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-;;;; GNU Affero General Public License for more details.
-;;;;
-;;;; You should have received a copy of the GNU Affero General Public License
-;;;; along with this program.  If not, see <https://www.gnu.org/licenses/>.
-
-(cond-expand
- (guile
-  (define-module (tegfs cli-save)
-    :export (CLI::save)
-    :use-module ((euphrates append-posix-path) :select (append-posix-path))
-    :use-module ((euphrates assq-or) :select (assq-or))
-    :use-module ((euphrates file-delete) :select (file-delete))
-    :use-module ((euphrates file-or-directory-exists-q) :select (file-or-directory-exists?))
-    :use-module ((euphrates get-command-line-arguments) :select (get-command-line-arguments))
-    :use-module ((euphrates make-directories) :select (make-directories))
-    :use-module ((euphrates path-get-basename) :select (path-get-basename))
-    :use-module ((euphrates path-normalize) :select (path-normalize))
-    :use-module ((euphrates raisu) :select (raisu))
-    :use-module ((euphrates run-syncproc) :select (run-syncproc))
-    :use-module ((euphrates stringf) :select (stringf))
-    :use-module ((tegfs add) :select (tegfs-add tegfs-add-file))
-    :use-module ((tegfs cli-remote) :select (CLI::remote))
-    :use-module ((tegfs cli-save-loop) :select (CLI::save::loop))
-    :use-module ((tegfs cli-save-working-file-p) :select (CLI::save-working-file/p))
-    :use-module ((tegfs cli-share) :select (CLI::share))
-    :use-module ((tegfs clipboard) :select (classify-clipboard-text-content))
-    :use-module ((tegfs default-db-path) :select (default-db-path))
-    :use-module ((tegfs dump-clipboard) :select (tegfs-dump-clipboard tegfs-dump-clipboard/pasta))
-    :use-module ((tegfs fatal) :select (fatal))
-    :use-module ((tegfs get-random-basename) :select (get-random-basename))
-    :use-module ((tegfs get-root) :select (get-root))
-    :use-module ((tegfs keyword-id) :select (keyword-id))
-    :use-module ((tegfs make-temporary-filename-local) :select (make-temporary-filename/local))
-    )))
+;;;; This program is free software: you can redistribute it and/or modify it under the terms of the GNU Affero General Public License as published by the Free Software Foundation, either version 3 of the License, or (at your option) any later version. This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU Affero General Public License for more details. You should have received a copy of the GNU Affero General Public License along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
 (define (send-state state)
   (define title/0 (cdr (assoc 'title state)))
