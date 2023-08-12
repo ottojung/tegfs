@@ -50,6 +50,7 @@
   (import (only (tegfs get-root) get-root))
   (import (only (tegfs log-error) log-error))
   (import (only (tegfs log-info) log-info))
+  (import (only (tegfs log-question) log-question))
   (import
     (only (tegfs make-tag-parser)
           make-tag-structure-parser))

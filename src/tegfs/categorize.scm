@@ -95,16 +95,16 @@
       (log-error
        (lines->string
         (append
-         (format-errors (cdr (assoc 'ambiguous result)))
-         (list "Press enter to continue."))))
+         (list "Ambiguous choices:")
+         (format-errors (cdr (assoc 'ambiguous result))))))
+      (log-question "Press enter to continue.")
       (read-string-line)
       (loop))
      ((assoc 'duplicates result)
       (log-error
-       (lines->string
-        (list "These tags were chosen twice: ~s."
-              "Press enter to continue."))
+       "These tags were chosen twice: ~s."
        (cdr (assoc 'duplicates result)))
+      (log-question "Press enter to continue.")
       (read-string-line)
       (loop))
      ((assoc 'choices result)
