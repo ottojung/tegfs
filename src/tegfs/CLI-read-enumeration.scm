@@ -15,5 +15,5 @@
     (if (member answer option-list/down)
         (string->symbol answer)
         (begin
-          (dprintln "\nPlease choose on of the following: ~a" hint/inner)
+          (dprintln "\nPlease choose one of the following: ~a" hint/inner)
           (loop)))))
