@@ -10,9 +10,6 @@
   (import
     (only (euphrates alist-initialize-loop)
           alist-initialize-loop))
-  (import
-    (only (euphrates append-posix-path)
-          append-posix-path))
   (import (only (euphrates assq-or) assq-or))
   (import (only (euphrates comp) comp))
   (import (only (euphrates dprintln) dprintln))
@@ -39,9 +36,6 @@
   (import
     (only (euphrates print-in-frame) print-in-frame))
   (import (only (euphrates range) range))
-  (import
-    (only (euphrates read-string-file)
-          read-string-file))
   (import (only (euphrates tilda-a) ~a))
   (import (only (euphrates tilda-s) ~s))
   (import
@@ -65,8 +59,8 @@
     (only (tegfs categorization-complete-selection)
           categorization-complete-selection))
   (import
-    (only (tegfs categorization-filename)
-          categorization-filename))
+    (only (tegfs categorization-read)
+          categorization-read))
   (import
     (only (tegfs categorization-translate-direct-choice)
           categorization-translate-direct-choice))
@@ -102,7 +96,6 @@
     (only (tegfs get-save-plugins) get-save-plugins))
   (import
     (only (tegfs make-tag-parser) make-tag-parser))
-  (import (only (tegfs root-p) root/p))
   (import
     (only (tegfs run-save-plugins) run-save-plugins))
   (import

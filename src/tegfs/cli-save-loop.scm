@@ -154,8 +154,7 @@
      (and (tags-choices)
           (assq-or
            'ok (categorization-complete-selection
-                (read-string-file
-                 (append-posix-path (root/p) categorization-filename))
+                (categorization-read)
                 (tags-choices)))))
 
     (additional-properties
