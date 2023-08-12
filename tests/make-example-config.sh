@@ -1,5 +1,7 @@
 #! /bin/sh
 
+mkdir -p "$TEGFS_ROOT"
+
 PASS="$(printf '%s' pass1 | sha256sum | cut '-d ' -f 1 | tr -d '\n')"
 
 printf '' > "$TEST_ROOT/config.tegfs.lisp"
