@@ -12,6 +12,8 @@ fi
 rm -rf "$TEGFS_ROOT"
 mkdir -p "$TEGFS_ROOT"
 
+make dist/dbfiles
+
 sh tests/make-example-config.sh "$TEGFS_ROOT"
 sh tests/make-example-categorization.sh "$TEGFS_ROOT"
 sh tests/make-example-rules.sh "$TEGFS_ROOT"
