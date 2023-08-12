@@ -10,7 +10,7 @@ then
     exit 1
 fi
 
-docker run --rm -d -p 33470:80 --name tegfs tegfs 1>/dev/null
+make --silent rundocker 1>/dev/null
 
 sleep 20
 
