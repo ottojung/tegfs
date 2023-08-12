@@ -31,6 +31,6 @@ then
     exit 1
 fi
 
-docker exec tegfs pkill -1 guile
+docker stop tegfs 1>/dev/null
 
 rm -f dist/dockerlog dist/home.html
