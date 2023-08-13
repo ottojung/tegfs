@@ -38,7 +38,8 @@
 
   (define all-args
     (append
-     (list "wget" user-agent verbosity
+     (list "timeout" "20s"
+           "wget" user-agent verbosity
            "--timeout=10" ;; 10 seconds for response.
            "--random-wait"
            "--no-netrc"
