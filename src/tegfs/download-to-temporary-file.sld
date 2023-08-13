@@ -2,9 +2,6 @@
 (define-library
   (tegfs download-to-temporary-file)
   (export download-to-temporary-file)
-  (import
-    (only (euphrates system-star-exit-code)
-          system*/exit-code))
   (import (only (euphrates tilda-s) ~s))
   (import
     (only (euphrates url-get-hostname-and-port)
@@ -12,6 +9,8 @@
   (import
     (only (euphrates url-get-protocol)
           url-get-protocol))
+  (import
+    (only (tegfs download-file) download-file))
   (import (only (tegfs fatal) fatal))
   (import (only (tegfs log-info) log-info))
   (import
@@ -23,8 +22,11 @@
           begin
           define
           let*
+          quasiquote
+          quote
           string-append
-          unless))
+          unless
+          unquote))
   (cond-expand
     (guile (import (only (guile) include-from-path))
            (begin

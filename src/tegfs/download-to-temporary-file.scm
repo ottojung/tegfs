@@ -5,9 +5,8 @@
   (log-info "Downloading ~s." url)
   (let* ((target (make-temporary-filename/local))
          ;; NOTE: some websites (looking at you 8chan) require referer to be set to its domain name, which is silly!! and which is stupid >:
-         (home (string-append (url-get-protocol url) "://" (url-get-hostname-and-port url)))
-         (headers (string-append "referer: " (~s home))))
-    (unless (= 0 (system*/exit-code "wget" url "-O" target))
-      (unless (= 0 (system*/exit-code "wget" "--header" headers url "-O" target))
+         (home (string-append (url-get-protocol url) "://" (url-get-hostname-and-port url))))
+    (unless (= 0 (download-file '() url target))
+      (unless (= 0 (download-file `((referer . ,(~s home))) url target))
         (fatal "Could not download ~s" url)))
     target))
