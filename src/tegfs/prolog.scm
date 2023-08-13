@@ -55,11 +55,7 @@
   (let ((ret
          (translate-registries yield-for-prolog)))
     (dump-rules print-prolog-inference)
-    (display "v(_, _) :- false.\n")
-    (display "t('%diff', [X, Y]) :- X \\= Y.\n")
-    (display "t('%any', _).\n")
-    (display "vandthis(This, X) :- X = This ; v(This, X).\n")
-    ;; (display "what(X, Y) :- t(Y, X) ; t(K, Z), member(X, Z), Y = [K | Z].") (newline)
+    (display prolog-additional-static-predicates)
     ret))
 
 (define (tegfs-dump-prolog-file)

@@ -48,6 +48,9 @@
     (only (tegfs print-prolog-inference)
           print-prolog-inference))
   (import
+    (only (tegfs prolog-additional-static-predicates)
+          prolog-additional-static-predicates))
+  (import
     (only (tegfs tag-to-prolog-term)
           print-tag-as-prolog-term))
   (import
