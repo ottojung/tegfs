@@ -32,7 +32,7 @@ The following dependencies are required to install and use TegFS:
 +-------------------+------------------------------------------------+
 | Dependency        | Description                                    |
 +===================+================================================+
-| GNU guile         | version >1.8 for running the main              |
+| GNU guile         | version >=3.0.8 for running the main           |
 |                   | program  **(MUST HAVE)**                       |
 +-------------------+------------------------------------------------+
 | wget              | for saving stuff from the internet             |
