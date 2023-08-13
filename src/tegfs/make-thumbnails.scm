@@ -23,6 +23,8 @@
     (fatal "FFMpeg failed with status: ~s." status))
    (('imagemagick-failed status)
     (fatal "ImageMagick failed with status: ~s." status))
+   (('did-not-produce-output output)
+    (fatal "Failed to produce the output file."))
 
    )
 
@@ -41,7 +43,10 @@
    ((file-is-video? <input>)
     (tegfs-make-senderideo-thumbnails <input> <output>))
    (else
-    (raisu 'could-not-recognize-filetype))))
+    (raisu 'could-not-recognize-filetype)))
+
+  (unless (file-or-directory-exists? <output>)
+    (raisu 'did-not-produce-output <output>)))
 
 (define (tegfs-make-url-thumbnails <input> <output>)
   (define-values html
