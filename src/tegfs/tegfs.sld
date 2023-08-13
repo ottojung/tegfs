@@ -52,11 +52,6 @@
           get-texteditor/default))
   (import (only (tegfs get) tegfs-get/parse))
   (import
-    (only (tegfs keyword-diropen) keyword-diropen))
-  (import
-    (only (tegfs keyword-dirpreview)
-          keyword-dirpreview))
-  (import
     (only (tegfs keyword-target) keyword-target))
   (import
     (only (tegfs make-thumbnails)

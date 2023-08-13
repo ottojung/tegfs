@@ -30,6 +30,7 @@
           length
           let
           newline
+          not
           or
           quasiquote
           quote

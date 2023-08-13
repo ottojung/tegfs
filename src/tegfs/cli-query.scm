@@ -1,7 +1,7 @@
 ;;;; Copyright (C) 2022, 2023  Otto Jung
 ;;;; This program is free software: you can redistribute it and/or modify it under the terms of the GNU Affero General Public License as published by the Free Software Foundation, either version 3 of the License, or (at your option) any later version. This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU Affero General Public License for more details. You should have received a copy of the GNU Affero General Public License along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
-(define (CLI::query --diropen --dirpreview --sexp-format <format> <query...>)
+(define (CLI::query --no-diropen --dirpreview --sexp-format <format> <query...>)
   (define print-func
     (cond
      (--sexp-format (lambda (entry) (entry-print entry) (newline)))
@@ -15,7 +15,7 @@
     (profune-communicator-handle
      (tegfs-make-communicator)
      `(whats
-       (diropen? ,--diropen)
+       (diropen? ,(not --no-diropen))
        (dirpreview? ,--dirpreview)
        (query ,<query...>)
        (entry E)

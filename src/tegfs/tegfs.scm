@@ -38,6 +38,7 @@
       /        --no-interactive
       /        --diropen
       /        --no-diropen
+      /        --unsure-if-diropen
       /        --dirpreview
       /        --no-dirpreview
       /        --download
@@ -55,9 +56,7 @@
       /        --date <date>
       /        --key <key...> <value...>
       QUERYARGS : QUERYOPT* FIN? QUERYQ*
-      QUERYOPT : --diropen
-      /          --no-diropen
-      /          --dirpreview
+      QUERYOPT : --dirpreview
       /          --no-dirpreview
       /          FORMAT
       FORMAT : --format <format> / --sexp-format
@@ -117,8 +116,8 @@
      :default (--sexp-format #t)
      :exclusive (--sexp-format --format)
 
-     :default (--no-diropen #t)
-     :exclusive (--no-diropen --diropen)
+     :default (--unsure-if-diropen #t)
+     :exclusive (--unsure-if-diropen --no-diropen --diropen)
 
      :default (--unsure-if-download #t)
      :exclusive (--unsure-if-download --download --no-download)
@@ -157,8 +156,8 @@
      :help (print (stringf "Print the contents of entry's ~a, or nothing if entry is not a file entry" keyword-target))
      :help (edit (stringf "Edit the contents of entry's ~a, or exit with an error if entry is not a file entry" keyword-target))
      :help (<remote> "A remote address like 'user1@example.com'.")
-     :help (--diropen (stringf "Acknowledge <~a> property by treating elements of the ~a directory as entries having the same tags as the original entry." keyword-diropen keyword-target))
-     :help (--dirpreview (stringf "Acknowledge <~a> property by treating elements of the ~a directory as entries having the same tags as the original entry." keyword-dirpreview keyword-target))
+     :help (--diropen (stringf "Entry property that makes elements of the ~a directory appear as entries having the same tags as the original entry." keyword-target))
+     :help (--dirpreview (stringf "Entry property that makes elements of the ~a directory appear as entries having the same tags as the original entry." keyword-target))
      :help (<content> "This could be a filename, a URL, or simply text. TegFS will try to figure out the type.")
      :help (<kind> (stringf "This forces ~s to be recognized as of certain type." (quote <content>)))
      :help (--share (stringf "Instead of returning the id, returns the url to saved file."))
@@ -214,7 +213,7 @@
          (serve (tegfs-serve/parse))
          ((and prolog repl) (CLI::prolog-repl))
          ((and prolog print-file) (CLI::prolog-print-file))
-         (query (CLI::query --diropen --dirpreview --sexp-format <format> <query...>))
+         (query (CLI::query --no-diropen --dirpreview --sexp-format <format> <query...>))
          ((and get <entry-id>) (tegfs-get/parse <format> <entry-id>))
          (delete (CLI::delete <entry-id> --keep-files))
          (print (CLI::print <entry-id>))
