@@ -116,9 +116,9 @@
          --no-dirpreview
          --download
          --no-download
+         --unsure-if-download
          --source <source>
          --no-source
-         --unsure-if-download
          --target <add-target>
          --mimetype <mimetype>
          --note <note>
