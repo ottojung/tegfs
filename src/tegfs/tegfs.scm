@@ -189,6 +189,7 @@
                --no-series
                --diropen
                --no-diropen
+               --unsure-if-diropen
                --dirpreview
                --no-dirpreview
                --download
