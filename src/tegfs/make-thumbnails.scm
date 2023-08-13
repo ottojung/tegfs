@@ -6,21 +6,23 @@
    (tegfs-make-thumbnails <input> <output>)
 
    (('could-not-recognize-filetype)
-    (fatal "Could not recognize the file type"))
+    (fatal "Could not recognize the file type."))
+   (('input-not-found input)
+    (fatal "Input file ~s does not exist." (~a input)))
    (('no-web::thumbnails)
-    (fatal "The webpage does not have a thumbnail"))
+    (fatal "The webpage does not have a thumbnail."))
    (('could-not-convert-image)
-    (fatal "Image conversion failed"))
+    (fatal "Image conversion failed."))
    (('could-not-download-the-webpage input)
-    (fatal "Could not download the webpage"))
+    (fatal "Could not download the webpage."))
    (('could-not-download-the-preview input)
-    (fatal "Could not download the preview"))
+    (fatal "Could not download the preview."))
    (('probe-failed status probe)
-    (fatal "FFMpeg probe failed with status: ~s" status))
+    (fatal "FFMpeg probe failed with status: ~s." status))
    (('ffmpeg-failed status)
-    (fatal "FFMpeg failed with status: ~s" status))
+    (fatal "FFMpeg failed with status: ~s." status))
    (('imagemagick-failed status)
-    (fatal "ImageMagick failed with status: ~s" status))
+    (fatal "ImageMagick failed with status: ~s." status))
 
    )
 
@@ -78,6 +80,9 @@
     ret))
 
 (define (tegfs-make-image-thumbnails <input> <output>)
+  (unless (file-or-directory-exists? <input>)
+    (raisu 'input-not-found <input>))
+
   (or (= 0 (system*/exit-code
             "convert"
             "-limit" "memory" "32mb"
@@ -94,6 +99,9 @@
 ;; TODO: Maybe do video previews that are videos
 ;;       Take a look: https://stackoverflow.com/questions/42747935/cut-multiple-senderideos-and-merge-with-ffmpeg
 (define (tegfs-make-senderideo-thumbnails <input> <output>)
+  (unless (file-or-directory-exists? <input>)
+    (raisu 'input-not-found <input>))
+
   (define status #f)
   (define probe
     (with-output-stringified
