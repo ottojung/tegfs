@@ -24,7 +24,7 @@
       /      categorization CATOPT
       /      remote <remote> MAIN
       /      talk TALKOPTS*
-      /      prolog
+      /      prolog PROLOGOPT
       /      make-thumbnails THUMBOPT
       /      dump-clipboard
 
@@ -70,6 +70,7 @@
       SHAREOPT : --for-duration <share-duration>
       DELETEOPT? : --keep-files / --no-keep-files
       TALKOPTS : --web
+      PROLOGOPT : repl
       THUMBOPT : FIN? <target> <output>
       CONFIGOPT  : CONFIGFORK
       CONFIGFORK : get CONFIGKEY*
@@ -208,7 +209,7 @@
          ((and categorization show) (CLI::categorization-show))
          ((and categorization list-categories) (CLI::categorization-list-categories))
          (serve (tegfs-serve/parse))
-         (prolog (tegfs-prolog/parse))
+         ((and prolog repl) (CLI::prolog-repl))
          (query (CLI::query --diropen --dirpreview --sexp-format <format> <query...>))
          ((and get <entry-id>) (tegfs-get/parse <format> <entry-id>))
          (delete (CLI::delete <entry-id> --keep-files))

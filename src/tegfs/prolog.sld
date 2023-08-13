@@ -2,14 +2,11 @@
 (define-library
   (tegfs prolog)
   (export
-    tegfs-prolog/parse
-    tegfs-prolog
     tegfs-dump-prolog
+    tegfs-dump-prolog-file
     translate-entry-tags)
   (import (only (euphrates assq-or) assq-or))
   (import (only (euphrates comp) appcomp))
-  (import
-    (only (euphrates file-delete) file-delete))
   (import
     (only (euphrates hashset)
           hashset->list
@@ -26,9 +23,6 @@
           stack->list
           stack-make
           stack-push!))
-  (import
-    (only (euphrates system-star-exit-code)
-          system*/exit-code))
   (import (only (euphrates tilda-a) ~a))
   (import (only (tegfs a-weblink-q) a-weblink?))
   (import (only (tegfs dump-rules) dump-rules))
@@ -38,7 +32,6 @@
     (only (tegfs entry-get-target) entry-get-target))
   (import (only (tegfs keyword-id) keyword-id))
   (import (only (tegfs keyword-tags) keyword-tags))
-  (import (only (tegfs log-info) log-info))
   (import
     (only (tegfs make-tag-parser) make-tag-parser))
   (import

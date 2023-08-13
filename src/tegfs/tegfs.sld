@@ -20,6 +20,8 @@
     (only (tegfs CLI-categorization-show)
           CLI::categorization-show))
   (import
+    (only (tegfs CLI-prolog-repl) CLI::prolog-repl))
+  (import
     (only (tegfs categorize) tegfs-categorize/parse))
   (import (only (tegfs cli-delete) CLI::delete))
   (import (only (tegfs cli-edit) CLI::edit))
@@ -56,7 +58,6 @@
   (import
     (only (tegfs make-thumbnails)
           tegfs-make-thumbnails/parse))
-  (import (only (tegfs prolog) tegfs-prolog/parse))
   (import (only (tegfs root-p) root/p))
   (import
     (only (tegfs tegfs-version) tegfs-version))
