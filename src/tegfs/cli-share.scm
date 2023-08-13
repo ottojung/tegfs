@@ -27,14 +27,14 @@
      <entry-id> seconds
      ))
 
-  (define-values (html status0)
-    (run-syncproc/re* "wget" "--quiet"
-                      (stringf "http://localhost:~a/api?key=~a&stc=~a"
-                               port key stc)
-                      "-O" "-"))
+  (define-values html
+    (catchu-case
+     (download-string
+      '() (stringf "http://localhost:~a/api?key=~a&stc=~a"
+                   port key stc))
 
-  (unless (= 0 status0)
-    (fatal "Could not submit share request to a running server. Maybe the server is not running?"))
+     (('download-failed . args)
+      (fatal "Could not submit share request to a running server. Maybe the server is not running?"))))
 
   (define answer
     (un~s html))

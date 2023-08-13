@@ -4,6 +4,8 @@
   (export CLI::share CLI::share/parse)
   (import (only (euphrates assq-or) assq-or))
   (import
+    (only (euphrates catchu-case) catchu-case))
+  (import
     (only (euphrates list-and-map) list-and-map))
   (import
     (only (euphrates list-singleton-q)
@@ -12,9 +14,6 @@
     (only (euphrates read-string-file)
           read-string-file))
   (import
-    (only (euphrates run-syncproc-re-star)
-          run-syncproc/re*))
-  (import
     (only (euphrates string-to-seconds)
           string->seconds))
   (import (only (euphrates stringf) stringf))
@@ -22,6 +21,8 @@
   (import (only (euphrates un-tilda-s) un~s))
   (import (only (tegfs a-weblink-q) a-weblink?))
   (import (only (tegfs config-get) config-get))
+  (import
+    (only (tegfs download-string) download-string))
   (import (only (tegfs fatal) fatal))
   (import (only (tegfs get-config) get-config))
   (import
@@ -43,7 +44,6 @@
           web::get-target-link))
   (import
     (only (scheme base)
-          =
           and
           begin
           car
