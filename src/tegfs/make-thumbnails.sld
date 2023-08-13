@@ -54,6 +54,10 @@
     (only (euphrates with-output-stringified)
           with-output-stringified))
   (import (only (tegfs a-weblink-q) a-weblink?))
+  (import
+    (only (tegfs download-file) download-file))
+  (import
+    (only (tegfs download-string) download-string))
   (import (only (tegfs fatal) fatal))
   (import
     (only (tegfs file-is-image-q) file-is-image?))
