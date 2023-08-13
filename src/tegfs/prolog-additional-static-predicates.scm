@@ -3,13 +3,18 @@
 
 (define prolog-additional-static-predicates
   "
+id(X, ID) :- i(X, ID).
+id(NAME, ID) :- i(X, ID), v(X, NAME).
+
 v(_, _) :- false.
+
 t('%diff', [X, Y]) :- X \\= Y.
 t('%any', _).
+
 vandthis(This, X) :- X = This ; v(This, X).
 %% what(X, Y) :- t(Y, X) ; t(K, Z), member(X, Z), Y = [K | Z].
 
-build_conjunction([H], X, R, (i(X, R), t(H, X))).
+build_conjunction([H], X, R, (t(H, X), id(X, R))).
 build_conjunction([H|T], X, R, (t(H, X), ConjunctionT)) :-
     build_conjunction(T, X, R, ConjunctionT).
 
