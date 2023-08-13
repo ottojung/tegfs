@@ -71,6 +71,7 @@
       DELETEOPT? : --keep-files / --no-keep-files
       TALKOPTS : --web
       PROLOGOPT : repl
+      /           print-file
       THUMBOPT : FIN? <target> <output>
       CONFIGOPT  : CONFIGFORK
       CONFIGFORK : get CONFIGKEY*
@@ -160,7 +161,9 @@
      :help (--dirpreview (stringf "Acknowledge <~a> property by treating elements of the ~a directory as entries having the same tags as the original entry." keyword-dirpreview keyword-target))
      :help (<content> "This could be a filename, a URL, or simply text. TegFS will try to figure out the type.")
      :help (<kind> (stringf "This forces ~s to be recognized as of certain type." (quote <content>)))
-     :help (--share (stringf "Instead of returning the id, returns the url to saved file"))
+     :help (--share (stringf "Instead of returning the id, returns the url to saved file."))
+     :help (repl (stringf "Enter prolog REPL with definitions for every entry in the TegFS database."))
+     :help (print-file (stringf "Print prolog file that is normally used for ~s ~s." (quote prolog) (quote repl)))
 
      (with-randomizer-seed
       (or <seed> 'random)
@@ -210,6 +213,7 @@
          ((and categorization list-categories) (CLI::categorization-list-categories))
          (serve (tegfs-serve/parse))
          ((and prolog repl) (CLI::prolog-repl))
+         ((and prolog print-file) (CLI::prolog-print-file))
          (query (CLI::query --diropen --dirpreview --sexp-format <format> <query...>))
          ((and get <entry-id>) (tegfs-get/parse <format> <entry-id>))
          (delete (CLI::delete <entry-id> --keep-files))

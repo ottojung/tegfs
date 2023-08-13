@@ -20,6 +20,9 @@
     (only (tegfs CLI-categorization-show)
           CLI::categorization-show))
   (import
+    (only (tegfs CLI-prolog-print-file)
+          CLI::prolog-print-file))
+  (import
     (only (tegfs CLI-prolog-repl) CLI::prolog-repl))
   (import
     (only (tegfs categorize) tegfs-categorize/parse))
