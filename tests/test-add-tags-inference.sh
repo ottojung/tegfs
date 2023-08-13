@@ -2,7 +2,7 @@
 
 . tests/common.sh
 
-t_tegfs add --tag pasta --content "hello this is a test content" 1>/dev/null
+t_tegfs add --tag pasta --content "hello this is a test content"
 
 RESULT=$(t_tegfs --quiet  query --format 'id "," mimetype "," tags' -- pasta)
 case "$RESULT" in

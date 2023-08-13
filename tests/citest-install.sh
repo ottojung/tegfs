@@ -7,5 +7,5 @@ then MAYBESUDO=sudo
 else MAYBESUDO=""
 fi
 
-$MAYBESUDO make --silent install
-tegfs --version 1>/dev/null
+$MAYBESUDO make install
+tegfs --version

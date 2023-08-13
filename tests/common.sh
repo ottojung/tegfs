@@ -1,6 +1,6 @@
 #! /bin/sh
 
-set -e
+set -xe
 make --silent test-setup -f tests/setup.make
 
 case "$0" in
