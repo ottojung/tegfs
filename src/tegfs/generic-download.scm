@@ -45,6 +45,6 @@
            "--tries=1000"
            )
      header-arguments
-     "-O" outfile url))
+     (list "-O" outfile url)))
 
   (apply caller all-args))
