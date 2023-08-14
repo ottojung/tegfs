@@ -57,15 +57,15 @@ The following dependencies are required to install and use TegFS:
 | entr              | for checking if new previews need              |
 |                   | to be made **(MUST HAVE)**                     |
 +-------------------+------------------------------------------------+
-| third-party file  | server, such as ``Nginx``, if using            |
-| server            | ``--offload-filesharing`` option for           |
-|                   | ``tegfs serve``                                |
+| third-party web   | for serving files in the web UI, unless        |
+| server            | the ``fileserver`` config option is            |
+| (ex. ``Nginx``)   | set to "xdg-open://"                           |
 +-------------------+------------------------------------------------+
-| xdg-open          | if not using                                   |
-|                   | ``--offload-filesharing``                      |
-|                   | option for ``tegfs serve``                     |
+| xdg-open          | for serving files in the web UI when           |
+|                   | the ``fileserver`` config option is            |
+|                   | set to "xdg-open://"                           |
 +-------------------+------------------------------------------------+
-| pup               | for generating weblink thumbnails              |
+| pup               | for generating thumbnails from URLs            |
 +-------------------+------------------------------------------------+
 
 .. note::
