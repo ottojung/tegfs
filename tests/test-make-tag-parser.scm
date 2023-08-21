@@ -35,24 +35,24 @@
 (assert-throw
  'type-error
  (let ((parser (make-tag-parser 7)))
-   (assert= '((video)) (parser 'video=))))
+   (parser 'video=)))
 
 (assert-throw
  'type-error
  (let ((parser (make-tag-parser 7)))
-   (assert= '((video)) (parser 'video=X=))))
+   (parser 'video=X=)))
 
 (assert-throw
  'type-error
  (let ((parser (make-tag-parser 7)))
-   (assert= '((video)) (parser 'video==))))
+   (parser 'video==)))
 
 (assert-throw
  'type-error
  (let ((parser (make-tag-parser 7)))
-   (assert= '((video)) (parser 'video==X))))
+   (parser 'video==X)))
 
 (assert-throw
  'type-error
  (let ((parser (make-tag-parser 7)))
-   (assert= '((video)) (parser '=X))))
+   (parser '=X)))

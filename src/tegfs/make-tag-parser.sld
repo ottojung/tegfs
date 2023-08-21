@@ -4,7 +4,13 @@
   (export
     make-tag-parser
     make-tag-structure-parser)
+  (import
+    (only (euphrates cartesian-product)
+          cartesian-product))
   (import (only (euphrates comp) comp))
+  (import
+    (only (euphrates lalr-parser-simple)
+          lalr-parser/simple))
   (import
     (only (euphrates list-intersperse)
           list-intersperse))
@@ -12,6 +18,7 @@
     (only (euphrates list-or-map) list-or-map))
   (import
     (only (euphrates list-split-on) list-split-on))
+  (import (only (euphrates raisu-star) raisu*))
   (import (only (euphrates raisu) raisu))
   (import (only (euphrates stringf) stringf))
   (import (only (euphrates tilda-a) ~a))
@@ -26,20 +33,25 @@
           tags-this-variable/string))
   (import
     (only (scheme base)
+          /
+          =
           append
           apply
           begin
           cadr
           car
           case
+          cddr
           cdr
           cond
           cons
           define
           else
           equal?
+          if
           lambda
           let*
+          list
           list->string
           map
           not
@@ -48,6 +60,7 @@
           quote
           string->list
           string->symbol
+          unless
           unquote
           unquote-splicing
           when))
