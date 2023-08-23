@@ -7,18 +7,14 @@
   (import
     (only (euphrates cartesian-product)
           cartesian-product))
-  (import
-    (only (euphrates lalr-parser-simple)
-          lalr-parser/simple))
   (import (only (euphrates raisu-star) raisu*))
-  (import (only (euphrates tilda-a) ~a))
+  (import
+    (only (tegfs tag-to-parse-tree) tag->parse-tree))
   (import
     (only (tegfs tags-this-variable)
           tags-this-variable/string))
   (import
     (only (scheme base)
-          /
-          =
           begin
           cadr
           cddr
@@ -29,15 +25,9 @@
           list
           map
           null?
-          quasiquote
           quote
-          string
           string->symbol
-          unless
-          unquote))
-  (cond-expand
-    (guile (import (only (srfi srfi-1) any)))
-    (else (import (only (srfi 1) any))))
+          unless))
   (cond-expand
     (guile (import (only (guile) include-from-path))
            (begin
