@@ -8,6 +8,7 @@
     (only (euphrates cartesian-product)
           cartesian-product))
   (import (only (euphrates raisu-star) raisu*))
+  (import (only (euphrates raisu) raisu))
   (import
     (only (tegfs tag-to-parse-tree) tag->parse-tree))
   (import
@@ -17,11 +18,16 @@
     (only (scheme base)
           begin
           cadr
+          car
           cddr
           cdr
+          cond
           define
+          else
+          equal?
           if
           lambda
+          let
           list
           map
           null?

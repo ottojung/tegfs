@@ -12,20 +12,27 @@
               :message "Input tag is malformed"
               :args (list tag)))
 
-    (define pred
-      (string->symbol
-       (cadr single-tree)))
+    (define tag-body (cadr single-tree))
 
-    (define args0
-      (map cdr (cddr single-tree)))
+    (cond
+     ((equal? 'flat-tag (car tag-body))
+      (let ()
+        (define pred
+          (string->symbol
+           (cadr tag-body)))
 
-    (define args
-      (if (null? args0)
-          (list (list tags-this-variable/string))
-          args0))
+        (define args0
+          (map cdr (cddr tag-body)))
 
-    (define tags
-      (cartesian-product
-       (list pred) args))
+        (define args
+          (if (null? args0)
+              (list (list tags-this-variable/string))
+              args0))
 
-    tags))
+        (define tags
+          (cartesian-product
+           (list pred) args))
+
+        tags))
+     (else
+      (raisu 'impossible-tag-type tag-body)))))
