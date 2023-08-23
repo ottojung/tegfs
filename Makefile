@@ -26,6 +26,9 @@ uninstall:
 test: build
 	sh scripts/run-tests.sh
 
+test-files:
+	$(MAKE) -f tests/setup.make test-files-all
+
 $(BINARY_PATH): dist/tegfs $(PREFIX_BIN)
 	mkdir -p "$(INSTALL_ROOT)"
 	chown "$(USER):" "$(INSTALL_ROOT)" || true
