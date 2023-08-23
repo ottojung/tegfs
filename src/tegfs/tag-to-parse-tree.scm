@@ -5,8 +5,8 @@
   (lalr-parser/simple
    `(:grammar ,tag-grammar
      :join (normal-variable quoted-variable word)
-     :inline (variable word arg* idset)
-     :skip (equal comma))))
+     :inline (variable word arg* separated-arg separated-arg* idset)
+     :skip (equal comma lbracket rbracket space space+ space*))))
 
 (define (tag->parse-tree tag)
   (define (errorp . args) #f)

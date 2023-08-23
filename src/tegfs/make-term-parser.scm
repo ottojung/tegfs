@@ -48,5 +48,37 @@
            (list pred) args))
 
         tags))
+
+     ((equal? 'sexp-tag (car tag-body))
+      (let ()
+        (define pred
+          (string->symbol
+           (cadr tag-body)))
+
+        (define args0
+          (cddr tag-body))
+
+        (define args1
+          (map (lambda (var)
+                 (cond
+                  ((equal? 'normal-variable (car var))
+                   (string->symbol (cadr var)))
+                  ((equal? 'quoted-variable (car var))
+                   (if (equal? (cadr var) tags-this-variable/string)
+                       (cadr var)
+                       (un~s (cadr var))))
+                  (else (raisu 'impossible-var-type var))))
+               args0))
+
+        (define args
+          (if (null? args1)
+              (list tags-this-variable/string)
+              args1))
+
+        (define tags
+          (list (cons pred args)))
+
+        tags))
+
      (else
       (raisu 'impossible-tag-type tag-body)))))

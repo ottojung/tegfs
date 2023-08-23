@@ -62,3 +62,23 @@
 (test1 "video=$" '((video "$")))
 
 (test-error "video=\"X\"Y" 'type-error)
+
+(test1 '(video) `((video "$")))
+(test1 '(video X) '((video X)))
+(test1 '(video X Y) '((video X Y)))
+(test1 '(video X Y Z W) '((video X Y Z W)))
+(test1 '(video $) '((video "$")))
+(test1 '(video "$") '((video "$")))
+(test1 '(video $ Y) '((video "$" Y)))
+(test1 '(video X $) '((video X "$")))
+(test1 '(video X $ Y) '((video X "$" Y)))
+
+(test1 '("video") `((video "$")))
+(test1 '("video" X) '((video X)))
+(test1 '("video" X Y) '((video X Y)))
+(test1 '("video" X Y Z W) '((video X Y Z W)))
+(test1 '("video" $) '((video "$")))
+(test1 '("video" "$") '((video "$")))
+(test1 '("video" $ Y) '((video "$" Y)))
+(test1 '("video" X $) '((video X "$")))
+(test1 '("video" X $ Y) '((video X "$" Y)))

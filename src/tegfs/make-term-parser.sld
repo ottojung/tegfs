@@ -21,6 +21,7 @@
           cddr
           cdr
           cond
+          cons
           define
           else
           equal?

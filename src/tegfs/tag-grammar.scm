@@ -3,8 +3,9 @@
 
 (define tag-grammar
   `( tag = flat-tag / sexp-tag
-     sexp-tag = "(" word arg* ")"
+     sexp-tag = lbracket space* word separated-arg* space* rbracket
      flat-tag = word arg*
+     separated-arg = space+ variable
      arg = equal idset
      idset = variable comma idset / variable
      word = wordc+ / quoted
@@ -14,11 +15,14 @@
      normal-variable = letter alnum*
 
      ;; tokens
+     lbracket = "("
+     rbracket = ")"
+     comma = "," / "+"
+     equal = "=" / ":"
+     quoted = (re string)
      alnum = letter / digit
      letter = (re alpha)
      digit = (re numeric)
-     quoted = (re string)
-     comma = "," / "+"
-     equal = "=" / ":"
+     space = (re " ")
      other = (re any)
      ))

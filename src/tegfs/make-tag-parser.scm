@@ -5,11 +5,11 @@
   (define term-parser (make-term-parser counter))
   (lambda (tag)
     (define terms (term-parser tag))
-    (define ret
-      (map
-       (lambda (parsed-term)
-         (cons (car parsed-term)
-               (map ~a (cdr parsed-term))))
-       terms))
 
-    ret))
+    (if (or (symbol? tag) (string? tag))
+        (map
+         (lambda (parsed-term)
+           (cons (car parsed-term)
+                 (map ~a (cdr parsed-term))))
+         terms)
+        terms)))

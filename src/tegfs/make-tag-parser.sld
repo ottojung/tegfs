@@ -14,8 +14,12 @@
           cdr
           cons
           define
+          if
           lambda
-          map))
+          map
+          or
+          string?
+          symbol?))
   (cond-expand
     (guile (import (only (guile) include-from-path))
            (begin
