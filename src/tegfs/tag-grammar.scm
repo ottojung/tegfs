@@ -9,7 +9,11 @@
      idset = variable comma idset / variable
      word = wordc+ / quoted
      wordc = alnum / "%" / "-"
-     variable = letter alnum* / quoted / ,tags-this-variable/string
+     variable = normal-variable / quoted-variable
+     quoted-variable = quoted / ,tags-this-variable/string
+     normal-variable = letter alnum*
+
+     ;; tokens
      alnum = letter / digit
      letter = (re alpha)
      digit = (re numeric)

@@ -4,7 +4,7 @@
 (define backend-parser
   (lalr-parser/simple
    `(:grammar ,tag-grammar
-     :join (variable word)
+     :join (normal-variable quoted-variable word)
      :inline (variable word arg* idset)
      :skip (equal comma))))
 

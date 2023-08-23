@@ -4,36 +4,18 @@
   (export
     make-tag-parser
     make-tag-structure-parser)
+  (import (only (euphrates tilda-a) ~a))
   (import
-    (only (euphrates cartesian-product)
-          cartesian-product))
-  (import (only (euphrates raisu-star) raisu*))
-  (import (only (euphrates raisu) raisu))
-  (import
-    (only (tegfs tag-to-parse-tree) tag->parse-tree))
-  (import
-    (only (tegfs tags-this-variable)
-          tags-this-variable/string))
+    (only (tegfs make-term-parser) make-term-parser))
   (import
     (only (scheme base)
           begin
-          cadr
           car
-          cddr
           cdr
-          cond
+          cons
           define
-          else
-          equal?
-          if
           lambda
-          let
-          list
-          map
-          null?
-          quote
-          string->symbol
-          unless))
+          map))
   (cond-expand
     (guile (import (only (guile) include-from-path))
            (begin
