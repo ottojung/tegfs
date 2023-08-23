@@ -15,7 +15,7 @@
   (define working-file working-file0)
   (define cfg-part #f)
   (define state (make-hashmap))
-  (define currently-handling-var tags-this-variable)
+  (define currently-handling-var tags-this-variable/string)
 
   (define (add-choice tag-term)
     (hashset-add! (hashmap-ref state 'choices #f) tag-term))
@@ -28,24 +28,25 @@
 
   (define (handle-new-tag tag)
     (define parsed (parser tag))
-    (define variables (apply append (map cddr parsed)))
+    (define variables (apply append (map cdr parsed)))
     (add-tag tag)
     (for-each add-all-var variables))
 
   (define counter
     (let ((cnt 0))
       (lambda _ (set! cnt (+ 1 cnt)) cnt)))
-  (define parser (make-tag-structure-parser counter))
+  (define parser (make-tag-parser counter))
 
   (define (add-current-to-tags tags)
     (define parsed (apply append (map parser tags)))
+    (define replace
+      (curry-if (comp (equal? tags-this-variable/string))
+                (const currently-handling-var)))
+    (define add
+      (curry-if (negate (comp (member currently-handling-var)))
+                (lambda (tag) (append tag (list currently-handling-var)))))
     (define added
-      (map (lambda (p)
-             (if (and (equal? tags-this-variable currently-handling-var)
-                      (member (car p) '(single prefix-suffix)))
-                 (cdr p)
-                 (append (cdr p) `(,currently-handling-var))))
-           parsed))
+      (map (comp replace add) parsed))
     (define unparsed (map unparse-tag added))
     unparsed)
 

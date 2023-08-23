@@ -9,6 +9,9 @@
     (only (euphrates append-posix-path)
           append-posix-path))
   (import (only (euphrates assq-or) assq-or))
+  (import (only (euphrates comp) comp))
+  (import (only (euphrates const) const))
+  (import (only (euphrates curry-if) curry-if))
   (import
     (only (euphrates file-or-directory-exists-q)
           file-or-directory-exists?))
@@ -25,6 +28,7 @@
           make-hashset))
   (import
     (only (euphrates lines-to-string) lines->string))
+  (import (only (euphrates negate) negate))
   (import (only (euphrates raisu) raisu))
   (import
     (only (euphrates read-string-file)
@@ -55,27 +59,25 @@
   (import (only (tegfs log-info) log-info))
   (import (only (tegfs log-question) log-question))
   (import
-    (only (tegfs make-tag-parser)
-          make-tag-structure-parser))
+    (only (tegfs make-tag-parser) make-tag-parser))
   (import
     (only (tegfs make-temporary-filename-local)
           make-temporary-filename/local))
   (import
     (only (tegfs tags-this-variable)
-          tags-this-variable))
+          tags-this-variable
+          tags-this-variable/string))
   (import (only (tegfs unparse-tag) unparse-tag))
   (import
     (only (scheme base)
           +
           _
-          and
           append
           apply
           assoc
           begin
           call-with-values
           car
-          cddr
           cdr
           cond
           define
@@ -92,12 +94,10 @@
           member
           null?
           or
-          quasiquote
           quote
           set!
           string-append
           unless
-          unquote
           when))
   (import (only (scheme file) delete-file))
   (cond-expand
