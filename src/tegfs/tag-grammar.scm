@@ -3,15 +3,23 @@
 
 (define tag-grammar
   `( tag = flat-tag / sexp-tag
-     sexp-tag = lbracket space* word separated-arg* space* rbracket
+
+     ;; flat tags
      flat-tag = word arg*
-     separated-arg = space+ variable
      arg = equal idset
      idset = variable comma idset / variable
+
+     ;; sexp tags
+     sexp-tag = lbracket space* word separated-arg* space* rbracket
+     separated-arg = space+ variable
+
+     ;; words
      word = normal-word / quoted-word
      normal-word = wordc+
      quoted-word = quoted
      wordc = alnum / "%" / "-"
+
+     ;; variables
      variable = normal-variable / quoted-variable
      quoted-variable = quoted / ,tags-this-variable/string
      normal-variable = letter alnum*
@@ -25,6 +33,6 @@
      alnum = letter / digit
      letter = (re alpha)
      digit = (re numeric)
-     space = (re " ")
+     space = (re whitespace)
      other = (re any)
      ))
