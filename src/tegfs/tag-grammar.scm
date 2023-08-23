@@ -8,7 +8,9 @@
      separated-arg = space+ variable
      arg = equal idset
      idset = variable comma idset / variable
-     word = wordc+ / quoted
+     word = normal-word / quoted-word
+     normal-word = wordc+
+     quoted-word = quoted
      wordc = alnum / "%" / "-"
      variable = normal-variable / quoted-variable
      quoted-variable = quoted / ,tags-this-variable/string

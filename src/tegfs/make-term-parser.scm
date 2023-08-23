@@ -14,12 +14,22 @@
 
     (define tag-body (cadr single-tree))
 
+    (define (get-pred tag-body)
+      (define pred-p (cadr tag-body))
+      (define pred-type (car pred-p))
+
+      (string->symbol
+       (cond
+        ((equal? pred-type 'normal-word)
+         (cadr pred-p))
+        ((equal? pred-type 'quoted-word)
+         (un~s (cadr pred-p)))
+        (else (raisu 'impossible-word-type pred-p tag-body)))))
+
     (cond
      ((equal? 'flat-tag (car tag-body))
       (let ()
-        (define pred
-          (string->symbol
-           (cadr tag-body)))
+        (define pred (get-pred tag-body))
 
         (define args0
           (map cdr (cddr tag-body)))
@@ -51,9 +61,7 @@
 
      ((equal? 'sexp-tag (car tag-body))
       (let ()
-        (define pred
-          (string->symbol
-           (cadr tag-body)))
+        (define pred (get-pred tag-body))
 
         (define args0
           (cddr tag-body))

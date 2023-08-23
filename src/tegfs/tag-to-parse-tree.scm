@@ -4,10 +4,19 @@
 (define backend-parser
   (lalr-parser/simple
    `(:grammar ,tag-grammar
-     :join (normal-variable quoted-variable word)
+     :join (normal-variable quoted-variable normal-word quoted-word)
      :inline (variable word arg* separated-arg separated-arg* idset)
      :skip (equal comma lbracket rbracket space space+ space*))))
 
 (define (tag->parse-tree tag)
   (define (errorp . args) #f)
-  (backend-parser errorp (~a tag)))
+  (define s
+    (cond
+     ((string? tag) tag)
+     ((symbol? tag) (symbol->string tag))
+     ((list? tag) (~s tag))
+     (else (raisu* :from "tag->parse-tree"
+                   :type 'type-error
+                   :message "Tag to parse tree transformer expected either a tag in the form of a string, a symbol or a list, but got something else"
+                   :args (list tag)))))
+  (backend-parser errorp s))

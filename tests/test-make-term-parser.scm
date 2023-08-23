@@ -68,11 +68,11 @@
 (test-error "vid=Y eo=X" 'type-error)
 (test-error "vid\neo" 'type-error)
 
-(test1 "\"vid eo\"" `((#{"vid eo"}# "$")))
-(test1 "\"vid eo\"=X" `((#{"vid eo"}# X)))
-(test1 "\"vid eo=X\"" `((#{"vid eo=X"}# "$")))
-(test1 "\"vid=Y eo\"=X" `((#{"vid=Y eo"}# X)))
-(test1 "\"vid\neo\"" `((#{"vid\xa;eo"}# "$")))
+(test1 "\"vid eo\"" `((#{vid eo}# "$")))
+(test1 "\"vid eo\"=X" `((#{vid eo}# X)))
+(test1 "\"vid eo=X\"" `((#{vid eo=X}# "$")))
+(test1 "\"vid=Y eo\"=X" `((#{vid=Y eo}# X)))
+(test1 "\"vid\neo\"" `((#{vid\xa;eo}# "$")))
 
 (test-error "\"vid eo=\"X" 'type-error)
 
@@ -99,8 +99,10 @@
 
 (test1 '("video") `((video "$")))
 (test1 '("video" X) '((video X)))
+(test1 '("video" "X") '((video "X")))
 (test1 '("video" X Y) '((video X Y)))
 (test1 '("video" X Y Z W) '((video X Y Z W)))
+(test1 '("video" X Y "Z" W) '((video X Y "Z" W)))
 (test1 '("video" $) '((video "$")))
 (test1 '("video" "$") '((video "$")))
 (test1 '("video" $ Y) '((video "$" Y)))
