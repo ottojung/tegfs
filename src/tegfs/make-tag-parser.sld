@@ -31,9 +31,13 @@
           null?
           quasiquote
           quote
+          string
           string->symbol
           unless
           unquote))
+  (cond-expand
+    (guile (import (only (srfi srfi-1) any)))
+    (else (import (only (srfi 1) any))))
   (cond-expand
     (guile (import (only (guile) include-from-path))
            (begin

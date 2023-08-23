@@ -5,14 +5,16 @@
   `( tag = word arg*
      arg = equal idset
      idset = variable comma idset / variable
-     word = wordc+
+     word = wordc+ / quoted
      wordc = alnum / "%" / "-"
      variable = letter alnum*  / ,tags-this-variable/string
      alnum = letter / digit
      letter = (re alpha)
      digit = (re numeric)
+     quoted = (re string)
      comma = "," / "+"
      equal = "=" / ":"
+     other = (re any)
      ))
 
 (define backend-parser
