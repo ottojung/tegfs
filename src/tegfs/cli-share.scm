@@ -30,7 +30,7 @@
      <entry-id> seconds
      ))
 
-  (define-values html
+  (define html
     (catchu-case
      (download-string
       '() (stringf "http://localhost:~a/api?key=~a&stc=~a"

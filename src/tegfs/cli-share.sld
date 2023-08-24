@@ -51,7 +51,6 @@
           begin
           car
           define
-          define-values
           if
           list
           list?
