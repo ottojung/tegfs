@@ -14,9 +14,12 @@
      (list keyword-config-fileserver) config
      (fatal "Expected ~s to be set in the config file" (~a keyword-config-fileserver))))
 
+  (define key-file
+    (web::get-server-operator-key-file))
   (define key
-    (read-string-file
-     (web::get-server-operator-key-file)))
+    (if (file-or-directory-exists? key-file)
+        (read-string-file key-file)
+        (fatal "Server key does not exist, is there a server running? Cannot share files without it.")))
 
   (define seconds
     (string->seconds <share-duration>))

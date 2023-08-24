@@ -6,6 +6,9 @@
   (import
     (only (euphrates catchu-case) catchu-case))
   (import
+    (only (euphrates file-or-directory-exists-q)
+          file-or-directory-exists?))
+  (import
     (only (euphrates list-and-map) list-and-map))
   (import
     (only (euphrates list-singleton-q)
