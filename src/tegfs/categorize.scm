@@ -82,10 +82,14 @@
   (hashmap-set! state 'handled-vars (make-hashset))
   (hashmap-set! state 'all-vars (make-hashset))
   (hashmap-set! state 'tags (make-hashset))
+
   (add-all-var tags-this-variable)
 
   (let loop ()
     (define result (tegfs-edit-tags working-file))
+
+    (add-handled-var tags-this-variable)
+
     (cond
      ((assoc 'ambiguous result)
       (log-error
