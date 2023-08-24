@@ -5,11 +5,13 @@
   (define term-parser (make-term-parser counter))
   (lambda (tag)
     (define terms (term-parser tag))
+    (define (concretisize x)
+      (if (number? x) x (~a x)))
 
     (if (or (symbol? tag) (string? tag))
         (map
          (lambda (parsed-term)
            (cons (car parsed-term)
-                 (map ~a (cdr parsed-term))))
+                 (map concretisize (cdr parsed-term))))
          terms)
         terms)))

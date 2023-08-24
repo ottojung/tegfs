@@ -31,8 +31,11 @@
           list
           map
           null?
+          or
           quote
+          string->number
           string->symbol
+          string?
           unless))
   (cond-expand
     (guile (import (only (guile) include-from-path))

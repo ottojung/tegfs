@@ -17,12 +17,12 @@
      word = normal-word / quoted-word
      normal-word = wordc+
      quoted-word = quoted
-     wordc = alnum / "%" / "-"
+     wordc = alnumx / "%" / "-"
 
      ;; variables
      variable = normal-variable / quoted-variable
      quoted-variable = quoted / ,tags-this-variable/string
-     normal-variable = letter alnum*
+     normal-variable = letter alnumx* / digit+
 
      ;; tokens
      lbracket = "("
@@ -30,6 +30,7 @@
      comma = "," / "+"
      equal = "=" / ":"
      quoted = (re string)
+     alnumx = letter / digit / "_"
      alnum = letter / digit
      letter = (re alpha)
      digit = (re numeric)

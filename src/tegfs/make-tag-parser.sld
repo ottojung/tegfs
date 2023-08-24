@@ -17,6 +17,7 @@
           if
           lambda
           map
+          number?
           or
           string?
           symbol?))
