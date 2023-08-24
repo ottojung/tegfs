@@ -9,6 +9,7 @@
            (let ((name (prolog-var-name obj)))
              (cond
               ((symbol? name) name)
+              ((number? name) name)
               (else (un~s name))))
            obj))
      clause))
