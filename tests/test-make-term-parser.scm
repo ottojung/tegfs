@@ -121,3 +121,4 @@
 (test1 "vi_deo=\"X\"" '((vi_deo "X")))
 (test1 "vi_deo=0" '((vi_deo 0)))
 (test1 "vi_deo=\"0\"" '((vi_deo 0)))
+(test1 'vi_deo=_X '((vi_deo _X)))

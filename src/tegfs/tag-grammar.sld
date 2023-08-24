@@ -11,6 +11,7 @@
           =
           begin
           define
+          or
           quasiquote
           string
           unquote))
