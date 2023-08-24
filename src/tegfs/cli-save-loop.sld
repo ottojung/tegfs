@@ -12,6 +12,7 @@
           alist-initialize-loop))
   (import (only (euphrates assq-or) assq-or))
   (import (only (euphrates comp) comp))
+  (import (only (euphrates ignore) ignore))
   (import
     (only (euphrates list-deduplicate)
           list-deduplicate/reverse))
@@ -101,6 +102,7 @@
   (import
     (only (tegfs get-save-plugins) get-save-plugins))
   (import (only (tegfs log-info) log-info))
+  (import (only (tegfs log-question) log-question))
   (import (only (tegfs log-warning) log-warning))
   (import
     (only (tegfs make-tag-parser) make-tag-parser))

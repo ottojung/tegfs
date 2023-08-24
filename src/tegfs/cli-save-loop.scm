@@ -32,28 +32,26 @@
      ,(alist-initialize!:unset 'tags)
      ,(alist-initialize!:unset 'inferred-tags))))
 
-(define (print-text-content ret)
-  (log-info
-   "~a" (with-output-stringified
-         (newline)
-         (print-in-frame #t #f 3 35 0 #\space "    Clipboard text content")
-         (newline)
-         (print-in-frame #t #t 3 60 0 #\space ret)
-         (newline))))
+(define (display-text-content ret)
+  (when ret
+    (newline)
+    (print-in-frame #t #f 3 35 0 #\space "    Clipboard text content")
+    (newline)
+    (print-in-frame #t #t 3 60 0 #\space ret)
+    (newline)))
 
-(define (print-inferred-tags inferred-tags)
+(define (display-inferred-tags inferred-tags)
   (when inferred-tags
-    (log-info
-     "~a" (with-output-stringified
-           (display " Inferred tags: ")
-           (display (words->string (map ~a inferred-tags)))
-           (newline)
-           (newline)))))
+    (display " Inferred tags: ")
+    (display (words->string (map ~a inferred-tags)))
+    (newline)
+    (newline)))
 
 (define (display-setter-fields get-alist current-setter)
   (define setters (alist-initialize!:current-setters))
-  (print-inferred-tags (assq-or 'inferred-tags (get-alist)))
 
+  (display-text-content (assq-or '-clipboard-text (get-alist)))
+  (display-inferred-tags (assq-or 'inferred-tags (get-alist)))
   (display " Enter *number* to edit one of below.")
   (newline)
 
@@ -72,11 +70,12 @@
             (value1 (~s value1))
             (else "")))
 
-         (printf "   ~a~a) ~a: ~a\n"
-                   (if (equal? current-setter (car setter)) ">" " ")
-                   (+ 1 i)
-                   (car setter)
-                   value))))
+         (printf
+          "   ~a~a) ~a: ~a\n"
+          (if (equal? current-setter (car setter)) ">" " ")
+          (+ 1 i)
+          (car setter)
+          value))))
    setters
    (range (length setters))))
 
@@ -87,15 +86,15 @@
 
     (if recalculate?
         (log-info "\n Switched to ~s" (~s name))
-        (log-info
+        (log-question
          "~a" (with-output-stringified
-          (newline) (newline) (newline) (newline) (newline) (newline) (newline) (newline) (newline) (newline)
-          (newline) (newline) (newline) (newline) (newline) (newline) (newline) (newline) (newline) (newline)
-          (newline) (newline) (newline) (newline) (newline) (newline) (newline) (newline) (newline) (newline)
-          (newline) (newline) (newline) (newline) (newline) (newline) (newline) (newline) (newline) (newline)
-          (newline) (newline) (newline) (newline) (newline) (newline) (newline) (newline) (newline) (newline)
-          (newline) (newline) (newline) (newline) (newline) (newline) (newline) (newline) (newline) (newline)
-          (display-setter-fields get-alist name))))
+               (newline) (newline) (newline) (newline) (newline) (newline) (newline) (newline) (newline) (newline)
+               (newline) (newline) (newline) (newline) (newline) (newline) (newline) (newline) (newline) (newline)
+               (newline) (newline) (newline) (newline) (newline) (newline) (newline) (newline) (newline) (newline)
+               (newline) (newline) (newline) (newline) (newline) (newline) (newline) (newline) (newline) (newline)
+               (newline) (newline) (newline) (newline) (newline) (newline) (newline) (newline) (newline) (newline)
+               (newline) (newline) (newline) (newline) (newline) (newline) (newline) (newline) (newline) (newline)
+               (display-setter-fields get-alist name))))
 
     (log-info "\n")
     (thunk)))
@@ -174,12 +173,12 @@
          (or (and (-text-content) (a-weblink? (-text-content)) (-temporary-file))
              'none)))
 
+    (-clipboard-text
+     (and --interactive
+          (get-clipboard-text-content)))
+
     (-text-content
-     (or <content>
-         (and --interactive
-              (let ((ret (get-clipboard-text-content)))
-                (and ret (print-text-content ret))
-                ret))))
+     (or <content> (-clipboard-text)))
 
     (* (run-save-plugins root current plugins))
 
