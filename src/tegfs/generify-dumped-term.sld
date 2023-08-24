@@ -18,6 +18,8 @@
           lambda
           let
           map
+          number?
+          pair?
           string->symbol
           symbol?))
   (cond-expand

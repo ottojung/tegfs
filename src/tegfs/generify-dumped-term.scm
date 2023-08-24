@@ -9,6 +9,8 @@
            (let ((name (prolog-var-name obj)))
              (cond
               ((symbol? name) name)
+              ((number? name) name)
+              ((pair? name) name)
               (else (string->symbol (~a name)))))
            obj))
      clause))

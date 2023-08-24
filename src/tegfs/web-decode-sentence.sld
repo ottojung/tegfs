@@ -4,27 +4,13 @@
   (export web::decode-sentence)
   (import
     (only (euphrates string-to-words) string->words))
-  (import (only (euphrates un-tilda-s) un~s))
+  (import
+    (only (tegfs generify-dumped-term)
+          generify-dumped-term))
   (import
     (only (tegfs prolog-query-parse)
           prolog-query-parse))
-  (import
-    (only (tegfs prolog-var)
-          prolog-var-name
-          prolog-var?))
-  (import
-    (only (scheme base)
-          begin
-          cdr
-          cond
-          define
-          else
-          if
-          lambda
-          let
-          map
-          number?
-          symbol?))
+  (import (only (scheme base) begin define))
   (cond-expand
     (guile (import (only (guile) include-from-path))
            (begin
