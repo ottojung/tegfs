@@ -91,7 +91,7 @@
   (lambda (name)
     (if (equal? name tags-this-variable/string)
         cnt
-        (string-append prefix name))))
+        (string-append prefix (~a name)))))
 
 (define (translate-parsed-tag yield cnt)
   (define convert (alpha-convert-variable cnt))
