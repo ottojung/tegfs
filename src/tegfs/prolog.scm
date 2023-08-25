@@ -93,11 +93,15 @@
         cnt
         (string-append prefix (~a name)))))
 
-(define (translate-parsed-tag yield cnt)
-  (define convert (alpha-convert-variable cnt))
-  (lambda (t)
-    (define converted (map convert (cdr t)))
-    (yield `(t ,(car t) ,@converted))))
+(define (translate-parsed-tag with-variables? yield cnt)
+  (if with-variables?
+      (let ()
+        (define convert (alpha-convert-variable cnt))
+        (lambda (t)
+          (define converted (map convert (cdr t)))
+          (yield `(t ,(car t) ,@converted))))
+      (lambda (t)
+        (yield (cons 't t)))))
 
 (define (translate-variable-binding yield cnt)
   (define convert (alpha-convert-variable cnt))
@@ -142,7 +146,7 @@
 
     (define parsed-tags tags)
 
-    (for-each (translate-parsed-tag yield cnt) parsed-tags)
+    (for-each (translate-parsed-tag with-variables? yield cnt) parsed-tags)
     (when with-variables?
       (let ()
         (define variables
