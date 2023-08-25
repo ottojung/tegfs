@@ -159,3 +159,5 @@ t_tegfs add \
     --content "dist/dbfiles/shake1.txt" \
     --tag pasta \
     --date "2023-07-20T18:40:47+0000"
+
+rmdir dist/dbfiles
