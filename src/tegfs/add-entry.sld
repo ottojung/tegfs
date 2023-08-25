@@ -72,8 +72,12 @@
   (import
     (only (tegfs last-id-filename) last-id-filename))
   (import
+    (only (tegfs make-tag-parser) make-tag-parser))
+  (import
     (only (scheme base)
           and
+          append
+          apply
           assq
           begin
           car

@@ -30,8 +30,19 @@
   (define result
     (filter (negate (comp car (equal? '%choice))) result/0))
 
+  (define parser (make-tag-parser 0))
+  (define (resultag->humantag resultag)
+    (appcomp resultag
+             cadr
+             (string-append (symbol->string (car resultag)) "=")
+             parser
+             car
+             unparse-tag
+             ~a
+             string->symbol))
+
   (define result/for-humans
-    (map unparse-tag result))
+    (map resultag->humantag result))
 
   (define result/final
     (list-deduplicate/reverse

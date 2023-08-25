@@ -117,14 +117,14 @@
 (define (translate-entry-tags* with-variables? yield counter)
   (define (add-special-sorted-status-tag tags)
     (if (null? tags)
-        (cons '%unsorted tags)
+        (cons `(%unsorted "$") tags)
         tags))
   (define (add-special-locality-tag target tags)
     (if target
         (if (a-weblink? target)
-            (cons '%remote tags)
-            (cons '%local tags))
-        (cons '%notarget tags)))
+            (cons `(%remote "$") tags)
+            (cons `(%local "$") tags))
+        (cons `(%notarget "$") tags)))
 
   (lambda (entry)
     (define cnt (counter))
@@ -140,8 +140,7 @@
                add-special-sorted-status-tag
                (add-special-locality-tag target)))
 
-    (define parser (make-tag-parser counter))
-    (define parsed-tags (apply append (map parser tags)))
+    (define parsed-tags tags)
 
     (for-each (translate-parsed-tag yield cnt) parsed-tags)
     (when with-variables?

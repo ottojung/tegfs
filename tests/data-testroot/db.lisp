@@ -5,7 +5,7 @@
 
 ((title . "Lambda Calculus paper")
  (date . "2022-12-26T13:33:25+0000")
- (tags document science)
+ (tags (document "$") (science "$"))
  (choices (%choice "science" "science" "$") (%choice "document" "document" "$"))
  (mimetype . "application/pdf")
  (target . "4e/church.pdf")
@@ -13,7 +13,7 @@
 
 ((title . "Photo of a guy")
  (date . "2022-12-26T13:36:07+0000")
- (tags object=X photo man=X with=X,$ image)
+ (tags (object "X") (photo "$") (man "X") (with "X" "$") (image "$"))
  (choices (%choice "with" "with" "X,$") (%choice "man" "man" "X") (%choice "photo" "photo" "$") (%choice "object" "object" "X"))
  (mimetype . "image/jpeg")
  (target . "0d/pexels-artūras-kokorevas-14795847.jpg")
@@ -21,14 +21,14 @@
 
 ((title . "Woman in greece")
  (date . "2022-12-26T13:36:31+0000")
- (tags object=X photo woman=X with=X,$ image)
+ (tags (object "X") (photo "$") (woman "X") (with "X" "$") (image "$"))
  (choices (%choice "with" "with" "X,$") (%choice "woman" "woman" "X") (%choice "photo" "photo" "$") (%choice "object" "object" "X"))
  (mimetype . "tegfs/entry")
  (id . "2ovnot1gxrvwbqjialqvloysewezr2"))
 
 ((title . "Photo of a city")
  (date . "2022-12-26T13:36:44+0000")
- (tags photo image)
+ (tags (photo "$") (image "$"))
  (choices (%choice "photo" "photo" "$"))
  (mimetype . "image/jpeg")
  (target . "63/pexels-céline-14771128.jpg")
@@ -36,7 +36,7 @@
 
 ((title . "Bread")
  (date . "2022-12-26T13:36:58+0000")
- (tags photo image)
+ (tags (photo "$") (image "$"))
  (choices (%choice "photo" "photo" "$"))
  (mimetype . "image/jpeg")
  (target . "m2/pexels-geraud-pfeiffer-6608542.jpg")
@@ -44,7 +44,7 @@
 
 ((title . "Photo of a city")
  (date . "2022-12-26T13:37:07+0000")
- (tags photo image)
+ (tags (photo "$") (image "$"))
  (choices (%choice "photo" "photo" "$"))
  (mimetype . "image/jpeg")
  (target . "ok/pexels-hatice-baran-14770663.jpg")
@@ -52,7 +52,7 @@
 
 ((title . "Colorful art")
  (date . "2022-12-26T13:37:25+0000")
- (tags art drawing image)
+ (tags (art "$") (drawing "$") (image "$"))
  (choices (%choice "drawing" "drawing" "$") (%choice "art" "art" "$"))
  (mimetype . "image/jpeg")
  (target . "ss/pexels-steve-johnson-1548110.jpg")
@@ -60,7 +60,7 @@
 
 ((title . "Football commercial")
  (date . "2022-12-26T13:38:28+0000")
- (tags video)
+ (tags (video "$"))
  (choices (%choice "video" "video" "$"))
  (source . "https://ia800203.us.archive.org/31/items/FischersBrea/FischersBrea.mp4")
  (mimetype . "video/mp4")
@@ -69,7 +69,7 @@
 
 ((title . "carpet commercial")
  (date . "2022-12-26T13:38:54+0000")
- (tags video)
+ (tags (video "$"))
  (choices (%choice "video" "video" "$"))
  (source . "https://ia600301.us.archive.org/23/items/allen_carpet/allen_carpet.mp4")
  (mimetype . "video/mp4")
@@ -78,7 +78,7 @@
 
 ((title . "Toothpaste commercial")
  (date . "2022-12-26T13:39:41+0000")
- (tags video)
+ (tags (video "$"))
  (choices (%choice "video" "video" "$"))
  (source . "https://ia800205.us.archive.org/6/items/macleanstoot/macleanstoot.mp4")
  (mimetype . "video/mp4")
@@ -87,7 +87,7 @@
 
 ((title . "Collection of wallpapers")
  (date . "2022-12-26T13:45:01+0000")
- (tags image=X photo=X collection-of=X,$)
+ (tags (image "X") (photo "X") (collection-of "X" "$"))
  (choices (%choice "collection-of" "collection-of" "X,$") (%choice "photo" "photo" "X") (%choice "image" "image" "X"))
  (mimetype . "inode/directory")
  (dirpreview)
@@ -96,7 +96,7 @@
 
 ((title . "Soundie - [Hawaiian Hula Song]")
  (date . "2022-12-26T13:47:35+0000")
- (tags song audio)
+ (tags (song "$") (audio "$"))
  (choices (%choice "song" "song" "$"))
  (source . "https://ia800301.us.archive.org/12/items/soundie_5/soundie_5.mp3")
  (mimetype . "audio/mpeg")
@@ -105,7 +105,7 @@
 
 ((title . "USA's DOD nuclear war ASMR")
  (date . "2022-12-26T13:50:51+0000")
- (tags recording audio)
+ (tags (recording "$") (audio "$"))
  (choices (%choice "audio" "audio" "$") (%choice "recording" "recording" "$"))
  (source . "https://ia800402.us.archive.org/8/items/0771_Duck_and_Cover_12_33_20_12/0771_Duck_and_Cover_12_33_20_12.mp3")
  (mimetype . "audio/mpeg")
@@ -114,7 +114,7 @@
 
 ((title . "Once in a while")
  (date . "2022-12-26T13:52:19+0000")
- (tags song audio)
+ (tags (song "$") (audio "$"))
  (choices (%choice "song" "song" "$"))
  (source . "https://ia800300.us.archive.org/30/items/SoundieP/SoundieP.mp3")
  (mimetype . "audio/mpeg")
@@ -123,7 +123,7 @@
 
 ((title . "vau.place website")
  (date . "2022-12-26T13:54:27+0000")
- (tags document)
+ (tags (document "$"))
  (choices (%choice "document" "document" "$"))
  (source . "https://vau.place")
  (mimetype . "inode/directory")
@@ -132,7 +132,7 @@
 
 ((title . "Prelinger public archive")
  (date . "2022-12-26T13:56:25+0000")
- (tags website document)
+ (tags (website "$") (document "$"))
  (target . "https://archive.org/details/prelinger")
  (choices (%choice "document" "document" "$") (%choice "website" "website" "$"))
  (mimetype . "text/uri-list")
@@ -140,7 +140,7 @@
 
 ((title . "Lecture 1A: Overview and Introduction to Lisp")
  (date . "2022-12-26T13:58:38+0000")
- (tags lecture video)
+ (tags (lecture "$") (video "$"))
  (target . "https://youtube.com/watch?v=-J_xL4IGhJA")
  (choices (%choice "lecture" "lecture" "$"))
  (mimetype . "text/uri-list")
@@ -148,7 +148,7 @@
 
 ((title . "Eneida by Kotlarevskiy")
  (date . "2023-07-20T18:17:02+0000")
- (tags book text)
+ (tags (book "$") (text "$"))
  (choices (%choice "book" "book" "$"))
  (mimetype . "text/plain")
  (target . "bd/eneida.txt")
@@ -156,7 +156,7 @@
 
 ((title . "Shall I compare thee to a summer’s day?")
  (date . "2023-07-20T18:40:47+0000")
- (tags pasta text)
+ (tags (pasta "$") (text "$"))
  (choices (%choice "pasta" "pasta" "$"))
  (mimetype . "text/plain")
  (target . "nc/shake1.txt")

@@ -23,6 +23,7 @@
     :use-module ((tegfs entry-target-fullpath) :select (entry-target-fullpath))
     :use-module ((tegfs get-preview-path) :select (get-preview-path))
     :use-module ((tegfs keyword-tags) :select (keyword-tags))
+    :use-module ((tegfs unparse-tag) :select (unparse-tag))
     )))
 
 
@@ -49,7 +50,7 @@
       ((equal? keyword-tags element)
        (let ((tags (entry-get-tags entry)))
          (display
-          (or (and tags (words->string (map symbol->string tags))) "//NA//")
+          (or (and tags (words->string (map unparse-tag tags))) "//NA//")
           port)))
       ((symbol? element)
        (let ((p (assoc element entry)))

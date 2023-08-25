@@ -5,10 +5,17 @@
   (import
     (only (euphrates list-intersperse)
           list-intersperse))
+  (import
+    (only (euphrates list-singleton-q)
+          list-singleton?))
   (import (only (euphrates tilda-a) ~a))
   (import
     (only (tegfs tags-this-variable)
           tags-this-variable/string))
+  (import
+    (only (tegfs unparse-tag-var) unparse-tag-var))
+  (import
+    (only (tegfs unparse-tag-word) unparse-tag-word))
   (import
     (only (scheme base)
           and
@@ -16,16 +23,14 @@
           begin
           car
           cdr
-          cond
           define
-          else
           equal?
+          if
           map
           null?
+          or
           quasiquote
-          string->symbol
           string-append
-          symbol->string
           unquote
           unquote-splicing))
   (cond-expand

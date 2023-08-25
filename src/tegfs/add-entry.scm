@@ -54,12 +54,19 @@
       entry0)))
 
   (define entry2
-    (let ((tags0 (assq-or keyword-tags entry1 #f)))
+    (let ()
+      (define tags0 (assq-or keyword-tags entry1 #f))
+      (define parser (make-tag-parser 0))
+      (define tags1
+        (list-deduplicate/reverse
+         (map ~a tags0)))
+
+      (define tags2
+        (apply append (map parser tags1)))
+
       (if tags0
           (assoc-set-value
-           keyword-tags
-           (list-deduplicate/reverse
-            (map tosymbol tags0))
+           keyword-tags tags2
            entry1)
           entry1)))
 

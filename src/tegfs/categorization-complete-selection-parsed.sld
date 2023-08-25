@@ -2,7 +2,7 @@
 (define-library
   (tegfs categorization-complete-selection-parsed)
   (export categorization-complete-selection/parsed)
-  (import (only (euphrates comp) comp))
+  (import (only (euphrates comp) appcomp comp))
   (import
     (only (euphrates list-and-map) list-and-map))
   (import
@@ -12,9 +12,12 @@
     (only (euphrates list-get-duplicates)
           list-get-duplicates))
   (import (only (euphrates negate) negate))
+  (import (only (euphrates tilda-a) ~a))
   (import
     (only (tegfs categorization-to-prolog-full)
           categorization->prolog/full))
+  (import
+    (only (tegfs make-tag-parser) make-tag-parser))
   (import
     (only (tegfs profun-compute-ground)
           profun-compute-ground))
@@ -28,6 +31,7 @@
           and
           append
           begin
+          cadr
           car
           cdr
           cons
@@ -43,7 +47,9 @@
           null?
           quasiquote
           quote
-          string->symbol))
+          string->symbol
+          string-append
+          symbol->string))
   (import (only (scheme cxr) caddr cdddr))
   (cond-expand
     (guile (import (only (srfi srfi-1) filter)))

@@ -1,22 +1,15 @@
-;;;; Copyright (C) 2022, 2023  Otto Jung
+;;;; Copyright (C) 2023  Otto Jung
 ;;;; This program is free software: you can redistribute it and/or modify it under the terms of the GNU Affero General Public License as published by the Free Software Foundation, either version 3 of the License, or (at your option) any later version. This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU Affero General Public License for more details. You should have received a copy of the GNU Affero General Public License along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
-(define (unparse-tag parsed-tag)
-  (define word
-    (unparse-tag-word (~a (car parsed-tag))))
+(define word-grammar
+  `( main = normal-word
+     ,@tag-grammar
+    ))
 
-  (define args
-    (map unparse-tag-var (cdr parsed-tag)))
+(define backend-parser
+  (lalr-parser/simple
+   `(:grammar ,word-grammar
+     :on-conflict ,ignore)))
 
-  (define args-list
-    (list-intersperse "," args))
-
-  (define basic-tag?
-    (or (null? args)
-        (and (list-singleton? args)
-             (equal? tags-this-variable/string (car args)))))
-
-  (if basic-tag? word
-      (apply
-       string-append
-       `(,word "=" ,@args-list))))
+(define (is-normal-tag-word? tag-word/str)
+  (backend-parser ignore tag-word/str))

@@ -33,8 +33,6 @@
   (import (only (tegfs keyword-id) keyword-id))
   (import (only (tegfs keyword-tags) keyword-tags))
   (import
-    (only (tegfs make-tag-parser) make-tag-parser))
-  (import
     (only (tegfs make-temporary-filename-local)
           make-temporary-filename/local))
   (import
