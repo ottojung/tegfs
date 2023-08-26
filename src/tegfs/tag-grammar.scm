@@ -17,7 +17,7 @@
      word = normal-word / quoted-word
      normal-word = wordc+
      quoted-word = quoted
-     wordc = alnum / "%" / "-"
+     wordc = alnum / "%" / "-" / "<" / ">"
 
      ;; variables
      variable = normal-variable / quoted-variable
