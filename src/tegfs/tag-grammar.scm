@@ -33,6 +33,7 @@
      alnum = letter / digit
      letter = (re (or alpha "_"))
      digit = (re numeric)
+     newline = (re newline)
      space = (re whitespace)
      other = (re any)
      ))

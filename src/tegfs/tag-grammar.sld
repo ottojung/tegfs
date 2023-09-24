@@ -11,6 +11,7 @@
           =
           begin
           define
+          newline
           or
           quasiquote
           string

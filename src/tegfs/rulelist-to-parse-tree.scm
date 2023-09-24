@@ -3,20 +3,22 @@
 
 (define backend-parser
   (lalr-parser/simple
-   `(:grammar ,rule-grammar
+   `(:grammar ,rulelist-grammar
      :join (tag)
      :flatten (antecedents consequents)
      :inline (space)
      :skip (implication)
      )))
 
-(define (rule->parse-tree tag)
-  (define (errorp . error-args) #f)
+(define (rulelist->parse-tree tag)
+  (define (errorp . error-args)
+    (debugs error-args)
+    #f)
   (define s
     (cond
      ((string? tag) tag)
-     (else (raisu* :from "rule->parse-tree"
+     (else (raisu* :from "rulelist->parse-tree"
                    :type 'type-error
-                   :message "Rule to parse tree transformer expected a rule in the form of a string, but got something else"
+                   :message "Rulelist to parse tree transformer expected a rulelist in the form of a string, but got something else"
                    :args (list tag)))))
   (backend-parser errorp s))
