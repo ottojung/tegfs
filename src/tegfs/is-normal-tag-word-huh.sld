@@ -2,10 +2,15 @@
 (define-library
   (tegfs is-normal-tag-word-huh)
   (export is-normal-tag-word?)
+  (import (only (euphrates debugs) debugs))
   (import (only (euphrates ignore) ignore))
   (import
-    (only (euphrates lalr-parser-simple)
-          lalr-parser/simple))
+    (only (euphrates
+            parselynn-simple-run-with-error-handler)
+          parselynn:simple:run/with-error-handler))
+  (import
+    (only (euphrates parselynn-simple)
+          parselynn:simple))
   (import (only (tegfs tag-grammar) tag-grammar))
   (import
     (only (scheme base)
