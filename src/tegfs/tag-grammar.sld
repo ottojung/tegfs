@@ -9,12 +9,13 @@
     (only (scheme base)
           /
           =
+          and
           begin
           define
           newline
+          not
           or
           quasiquote
-          string
           unquote))
   (cond-expand
     (guile (import (only (srfi srfi-1) any)))

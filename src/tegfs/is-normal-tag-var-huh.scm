@@ -7,9 +7,12 @@
     ))
 
 (define backend-parser
-  (lalr-parser/simple
+  (parselynn:simple
    `(:grammar ,var-grammar
-     :on-conflict ,ignore)))
+     :on-conflict ,ignore
+     :sync-to-disk "/tmp/parser-tegfs-is-normal-tag-var-huh.scm"
+     )))
 
 (define (is-normal-tag-var? tag-var/str)
-  (backend-parser ignore tag-var/str))
+  (parselynn:simple:run/with-error-handler
+   backend-parser ignore tag-var/str))
