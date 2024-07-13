@@ -16,6 +16,12 @@
 
   (lambda (rule-string)
     (define tree (rule->parse-tree rule-string))
+    (unless tree
+      (raisu* :from "make-rule-parser"
+              :type 'type-error
+              :message "Input rule is malformed"
+              :args (list rule-string)))
+
     (define antecendents (list-ref tree 1))
     (define consequents (list-ref tree 2))
     (define antecendents/p

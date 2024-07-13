@@ -3,6 +3,6 @@
 
 (define rule-list-grammar
   `( rulelist = line+
-     line = space* "rule" space+ rule newline
+     line = space* "rule" space rule newline
      ,@rule-grammar
      ))

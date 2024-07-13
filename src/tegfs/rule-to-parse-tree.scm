@@ -3,7 +3,6 @@
 
 (define (rule->parse-tree tag)
   (define (errorp . error-args)
-    (debugs error-args)
     #f)
 
   (define s

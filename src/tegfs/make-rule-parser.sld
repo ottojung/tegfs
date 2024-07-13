@@ -6,6 +6,7 @@
     (only (euphrates cartesian-product)
           cartesian-product))
   (import (only (euphrates negate) negate))
+  (import (only (euphrates raisu-star) raisu*))
   (import
     (only (tegfs make-term-parser) make-term-parser))
   (import
@@ -23,7 +24,9 @@
           list
           list-ref
           map
-          string?))
+          quote
+          string?
+          unless))
   (cond-expand
     (guile (import (only (srfi srfi-1) filter)))
     (else (import (only (srfi 1) filter))))

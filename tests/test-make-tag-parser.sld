@@ -8,6 +8,7 @@
     (only (tegfs make-tag-parser) make-tag-parser))
   (import
     (only (scheme base)
+          =>
           begin
           define
           quasiquote

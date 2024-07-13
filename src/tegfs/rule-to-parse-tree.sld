@@ -2,7 +2,6 @@
 (define-library
   (tegfs rule-to-parse-tree)
   (export rule->parse-tree)
-  (import (only (euphrates debugs) debugs))
   (import
     (only (euphrates
             parselynn-simple-run-with-error-handler)

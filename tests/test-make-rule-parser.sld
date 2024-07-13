@@ -7,7 +7,11 @@
   (import
     (only (tegfs make-rule-parser) make-rule-parser))
   (import
-    (only (scheme base) begin define quasiquote))
+    (only (scheme base)
+          begin
+          define
+          quasiquote
+          quote))
   (cond-expand
     (guile (import (only (srfi srfi-64) test-error)))
     (else (import (only (srfi 64) test-error))))

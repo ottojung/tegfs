@@ -54,11 +54,18 @@
 (test-error 'video,, 'type-error)
 (test-error 'video,= 'type-error)
 (test-error 'video,= 'type-error)
+(test-error '=> 'type-error)
 
 (test1 "video" `((video "$")))
 (test1 "video=X" '((video "X")))
 (test1 "video=X,Y" '((video "X" "Y")))
 
+(test-error "   video" 'type-error)
+(test-error "video   " 'type-error)
+(test-error "   video   " 'type-error)
+(test-error "video=X   " 'type-error)
+(test-error "   video=X" 'type-error)
+(test-error "   video=X   " 'type-error)
 (test-error "vid eo" 'type-error)
 (test-error "vid eo=X" 'type-error)
 (test-error "vid=Y eo=X" 'type-error)

@@ -6,6 +6,6 @@
    `(:grammar ,rule-grammar
      :join (tag)
      :flatten (antecedents consequents)
-     :inline (space)
+     :inline (space space+)
      :skip (implication)
      )))
