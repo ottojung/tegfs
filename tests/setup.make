@@ -27,7 +27,7 @@ dist/rootcomplement: dist/tegfs-testfiles.tar
 
 dist/tegfs-testfiles.tar:
 	mkdir -p dist
-	wget --quiet "https://vau.place/static/tegfs-testfiles.tar" -O "$@"
+	wget --inet4-only --quiet "https://vau.place/static/tegfs-testfiles.tar" -O "$@"
 	touch "$@"
 
 .PHONY: test test-setup test-files test-root test-files-all test-copy-files-all
