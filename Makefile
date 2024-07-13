@@ -65,3 +65,4 @@ rundocker: dist/dockerfile
 	docker run --rm --detach --publish "33470:80" --name tegfs tegfs
 
 .PHONY: all build clean install reinstall uninstall rundocker
+.SECONDARY:
