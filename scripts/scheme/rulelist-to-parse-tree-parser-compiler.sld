@@ -1,0 +1,1 @@
+(define-library (rulelist->parse-tree:parser:compiler) (import (tegfs rulelist-to-parse-tree-parser-definition)) (import (parser-compiler-generic)) (import (only (scheme base) begin quote)) (begin (parser-compiler/generic rulelist->parse-tree:parser:definition "rulelist-to-parse-tree-parser-implementation" (quote rulelist->parse-tree:parser:implementation))))

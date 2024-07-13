@@ -7,9 +7,6 @@
     (only (euphrates
             parselynn-simple-run-with-error-handler)
           parselynn:simple:run/with-error-handler))
-  (import
-    (only (euphrates parselynn-simple)
-          parselynn:simple))
   (import (only (euphrates raisu-star) raisu*))
   (import
     (only (scheme base)
@@ -18,10 +15,8 @@
           define
           else
           list
-          quasiquote
           quote
-          string?
-          unquote))
+          string?))
   (cond-expand
     (guile (import (only (guile) include-from-path))
            (begin

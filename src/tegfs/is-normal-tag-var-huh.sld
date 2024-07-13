@@ -8,21 +8,9 @@
             parselynn-simple-run-with-error-handler)
           parselynn:simple:run/with-error-handler))
   (import
-    (only (euphrates parselynn-simple)
-          parselynn:simple))
-  (import (only (tegfs tag-grammar) tag-grammar))
-  (import
-    (only (tegfs tags-this-variable)
-          tags-this-variable/string))
-  (import
-    (only (scheme base)
-          /
-          =
-          begin
-          define
-          quasiquote
-          unquote
-          unquote-splicing))
+    (only (tegfs is-normal-tag-var-huh-parser-implementation)
+          is-normal-tag-var?:parser:implementation))
+  (import (only (scheme base) begin define))
   (cond-expand
     (guile (import (only (guile) include-from-path))
            (begin

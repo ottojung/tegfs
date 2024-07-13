@@ -51,10 +51,16 @@ clean:
 deps/euphrates/.git:
 	git submodule update --init
 
-dist/tegfs: $(SUBMODULES) src/*/*.scm
+dist/tegfs: $(SUBMODULES) src/*/*.sld src/tegfs/rule-to-parse-tree-parser.sld src/tegfs/rulelist-to-parse-tree-parser.sld src/tegfs/is-normal-tag-word-huh-parser.sld src/tegfs/is-normal-tag-var-huh-parser.sld src/tegfs/tag-to-parse-tree-parser.sld
 	mkdir -p "dist"
 	guile -s scripts/make-binary.scm "$(CODE_ROOT)" > "$@"
 	chmod +x "$@"
+
+src/tegfs/%-parser.sld: scripts/scheme/%-parser-compiler.sld | $(SUBMODULES)
+	guile --r7rs -L scripts/scheme -s $^
+
+scripts/scheme/%-parser-compiler.sld: src/tegfs/%-parser-definition.sld | $(SUBMODULES)
+	guile --r7rs -L scripts/scheme -s scripts/scheme/compile-parser.sld $^ $@
 
 dist/dockerfile: dist/tegfs tests/* scripts/* assets/* deps/*
 	export DOCKER_BUILDKIT=1 ; \

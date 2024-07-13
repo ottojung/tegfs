@@ -7,11 +7,10 @@
     (only (euphrates
             parselynn-simple-run-with-error-handler)
           parselynn:simple:run/with-error-handler))
-  (import
-    (only (euphrates parselynn-simple)
-          parselynn:simple))
   (import (only (euphrates raisu-star) raisu*))
-  (import (only (tegfs rule-grammar) rule-grammar))
+  (import
+    (only (tegfs rule-to-parse-tree-parser-implementation)
+          rule->parse-tree:parser:implementation))
   (import
     (only (scheme base)
           begin
@@ -19,10 +18,8 @@
           define
           else
           list
-          quasiquote
           quote
-          string?
-          unquote))
+          string?))
   (cond-expand
     (guile (import (only (guile) include-from-path))
            (begin

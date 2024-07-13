@@ -1,0 +1,1 @@
+(define-library (tag->parse-tree:parser:compiler) (import (tegfs tag-to-parse-tree-parser-definition)) (import (parser-compiler-generic)) (import (only (scheme base) begin quote)) (begin (parser-compiler/generic tag->parse-tree:parser:definition "tag-to-parse-tree-parser-implementation" (quote tag->parse-tree:parser:implementation))))

@@ -1,0 +1,1 @@
+(define-library (is-normal-tag-var?:parser:compiler) (import (tegfs is-normal-tag-var-huh-parser-definition)) (import (parser-compiler-generic)) (import (only (scheme base) begin quote)) (begin (parser-compiler/generic is-normal-tag-var?:parser:definition "is-normal-tag-var-huh-parser-implementation" (quote is-normal-tag-var?:parser:implementation))))

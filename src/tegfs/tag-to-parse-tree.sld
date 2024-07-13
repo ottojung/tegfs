@@ -6,12 +6,11 @@
     (only (euphrates
             parselynn-simple-run-with-error-handler)
           parselynn:simple:run/with-error-handler))
-  (import
-    (only (euphrates parselynn-simple)
-          parselynn:simple))
   (import (only (euphrates raisu-star) raisu*))
   (import (only (euphrates tilda-s) ~s))
-  (import (only (tegfs tag-grammar) tag-grammar))
+  (import
+    (only (tegfs tag-to-parse-tree-parser-implementation)
+          tag->parse-tree:parser:implementation))
   (import
     (only (scheme base)
           begin
@@ -20,12 +19,10 @@
           else
           list
           list?
-          quasiquote
           quote
           string?
           symbol->string
-          symbol?
-          unquote))
+          symbol?))
   (cond-expand
     (guile (import (only (guile) include-from-path))
            (begin
