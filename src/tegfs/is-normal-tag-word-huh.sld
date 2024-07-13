@@ -2,7 +2,7 @@
 (define-library
   (tegfs is-normal-tag-word-huh)
   (export is-normal-tag-word?)
-  (import (only (euphrates debugs) debugs))
+  (import (only (euphrates ignore) ignore))
   (import
     (only (euphrates
             parselynn-simple-run-with-error-handler)

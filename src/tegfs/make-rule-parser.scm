@@ -19,7 +19,7 @@
     (unless tree
       (raisu* :from "make-rule-parser"
               :type 'type-error
-              :message "Input rule is malformed"
+              :message "Input rule is malformed."
               :args (list rule-string)))
 
     (define antecendents (list-ref tree 1))

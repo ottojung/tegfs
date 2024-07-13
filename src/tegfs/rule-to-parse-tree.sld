@@ -3,9 +3,8 @@
   (tegfs rule-to-parse-tree)
   (export rule->parse-tree)
   (import
-    (only (euphrates
-            parselynn-simple-run-with-error-handler)
-          parselynn:simple:run/with-error-handler))
+    (only (euphrates parselynn-simple-run)
+          parselynn:simple:run))
   (import (only (euphrates raisu-star) raisu*))
   (import
     (only (tegfs rule-to-parse-tree-parser-implementation)

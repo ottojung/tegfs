@@ -36,13 +36,13 @@
          ((text "$") (video "$") (image X Y "Z" W))))
 
 (test-error "    video    =>      audio"
-            'type-error)
+            'parse-error)
 
 (test-error "video    =>      audio          "
-            'type-error)
+            'parse-error)
 
 (test-error "    video    =>      audio     "
-            'type-error)
+            'parse-error)
 
 (test-error "    video   image    =>      audio   text     "
-            'type-error)
+            'parse-error)

@@ -2,12 +2,13 @@
 (define-library
   (tegfs rulelist-to-parse-tree)
   (export rulelist->parse-tree)
-  (import (only (euphrates debugs) debugs))
   (import
-    (only (euphrates
-            parselynn-simple-run-with-error-handler)
-          parselynn:simple:run/with-error-handler))
+    (only (euphrates parselynn-simple-run)
+          parselynn:simple:run))
   (import (only (euphrates raisu-star) raisu*))
+  (import
+    (only (tegfs rulelist-to-parse-tree-parser-implementation)
+          rulelist->parse-tree:parser:implementation))
   (import
     (only (scheme base)
           begin

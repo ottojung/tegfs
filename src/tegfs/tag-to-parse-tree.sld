@@ -3,9 +3,8 @@
   (tegfs tag-to-parse-tree)
   (export tag->parse-tree)
   (import
-    (only (euphrates
-            parselynn-simple-run-with-error-handler)
-          parselynn:simple:run/with-error-handler))
+    (only (euphrates parselynn-simple-run)
+          parselynn:simple:run))
   (import (only (euphrates raisu-star) raisu*))
   (import (only (euphrates tilda-s) ~s))
   (import
