@@ -8,12 +8,12 @@ make rundocker
 
 wget \
      --retry-connrefused \
-     --waitretry=1 \
-     --read-timeout=2 \
-     --timeout=30 \
-     -t 0 \
-     localhost:33470 \
-     -O dist/home.html
+     --waitretry 1 \
+     --read-timeout 2 \
+     --timeout 30 \
+     --tries 0 \
+     --output-document dist/home.html \
+     -- localhost:33470
 
 if ! cat dist/home.html | grep -q -i -e "Welcome to TegFS"
 then

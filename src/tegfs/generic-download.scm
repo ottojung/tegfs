@@ -40,12 +40,12 @@
     (append
      (list "timeout" "20s"
            "wget" user-agent verbosity
-           "--timeout=10" ;; 10 seconds for response.
+           "--timeout" "10" ;; 10 seconds for response.
            "--random-wait"
            "--no-netrc"
-           "--tries=1000"
+           "--tries" "1000"
            )
      header-arguments
-     (list "-O" outfile url)))
+     (list "--output-document" outfile "--" url)))
 
   (apply caller all-args))
